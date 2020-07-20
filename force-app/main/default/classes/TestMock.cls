@@ -5,6 +5,7 @@ public class TestMock implements StubProvider {
     // TODO: implement a variation of the recorder model that is almost identical to this one, if that's possible
 
     private TestExpectations expectations = new TestExpectations();
+    private TestExpectations whens        = new TestExpectations();
 
     Type classType;
 
@@ -26,12 +27,26 @@ public class TestMock implements StubProvider {
         return newExpectation;
     }
 
+    public TestExpectation when() {
+        TestExpectation newExpectation = new TestExpectation( this );
+        this.whens.add( newExpectation );
+        return newExpectation;
+    }
+
     public Object handleMethodCall( Object       mockedObject,
                                     String       mockedMethod,
                                     Type         returnType,
                                     List<Type>   parameterTypes,
                                     List<String> parameterNames,
                                     List<Object> parameters ) {
+
+        if ( whens.hasExpectations() ) {
+            TestExpectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameters );
+            if ( whenExpectation != null ) {
+                return whenExpectation.getReturnValue();
+            }
+        }
+
         System.assertEquals( false, expectations.isEmpty(), String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
         TestExpectation thisExpectation = expectations.unshift();
         thisExpectation.verify( mockedMethod, parameters );

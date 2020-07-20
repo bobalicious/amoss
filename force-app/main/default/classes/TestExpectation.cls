@@ -3,7 +3,7 @@ public class TestExpectation {
     // TODO: add the object name into this, so we can give a better message - can now mockControl.getClassName()
 
     private String expectedMethod;
-    private List<Object> parameters = new List<Object>();
+    private List<Object> expectedParameters = new List<Object>();
     private Boolean withAnyParameters = false;
     private Object returnValue;
 
@@ -23,6 +23,10 @@ public class TestExpectation {
         return this.mockControl;
     }
 
+    public TestMock also() {
+        return then();
+    }
+
     public TestExpectation method( String method ) {
         this.expectedMethod = method;
         return this;
@@ -33,13 +37,17 @@ public class TestExpectation {
         return this;
     }
 
+    public TestExpectation withAnyParameter() {
+        return withAnyParameters();
+    }
+
     public TestExpectation withParameters( Object[] parameters ) { // to encourage the shorter syntax
-        this.parameters = parameters;
+        this.expectedParameters = parameters;
         return this;
     }
 
     public TestExpectation withParameter( Object parameterValue ) {
-        this.parameters.add( parameterValue );
+        this.expectedParameters.add( parameterValue );
         return this;
     }
 
@@ -50,6 +58,10 @@ public class TestExpectation {
     public TestExpectation returning( Object returnValue ) {
         this.returnValue = returnValue;
         return this;
+    }
+
+    public TestExpectation returns( Object returnValue ) {
+        return returning( returnValue );
     }
 
     public Object getReturnValue() {
@@ -64,15 +76,34 @@ public class TestExpectation {
             return;
         }
 
-        System.assertEquals( parameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, expectedMethod } ) );
+        System.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, expectedMethod } ) );
 
-        for ( Integer parameterNumber = 0; parameterNumber < parameters.size(); parameterNumber++ ) {
-            System.assertEquals( parameters[ parameterNumber ], parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, expectedMethod, String.valueOf( parameterNumber ) } ) );
+        for ( Integer parameterNumber = 0; parameterNumber < expectedParameters.size(); parameterNumber++ ) {
+            System.assertEquals( expectedParameters[ parameterNumber ], parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, expectedMethod, String.valueOf( parameterNumber ) } ) );
         }
     }
 
     public String getCallDescription() {
         // TODO: put the parameters in there
         return this.expectedMethod;
+    }
+
+    public Boolean matches( String mockedMethod, List<Object> parameters ) {
+
+        if ( mockedMethod != this.expectedMethod ) {
+            return false;
+        }
+
+        if ( withAnyParameters ) {
+            return true;
+        }
+
+        for ( Integer parameterNumber = 0; parameterNumber < parameters.size(); parameterNumber++ ) {
+            if ( expectedParameters[ parameterNumber ] != parameters[ parameterNumber ] ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
