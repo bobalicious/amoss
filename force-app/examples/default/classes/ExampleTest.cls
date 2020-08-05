@@ -132,4 +132,46 @@ public with sharing class ExampleTest {
         warehouse.verify(); // this will always pass, as we have no expectations
         System.assertEquals( false, order.isFilled(), 'filling, when the warehouse does not have stock, will state that the order is not filled' );
     }
+
+    @isTest
+    public static void fillingDoesNotRemoveIfTheWarehouseThrowsAnException() {
+
+        Order order = new Order(TALISKER, 51);
+
+        TestMock warehouse = new TestMock( Warehouse.class );
+            
+        warehouse.expects()
+            .method( 'hasInventory' )
+            .withParameter( TALISKER )
+            .andParameter( 51 )
+            .throwing( new Warehouse.WarehouseException( 'Some error happened' ) );
+
+        Test.startTest();
+            order.fill( (Warehouse)warehouse.proxy() );
+        Test.stopTest();
+
+        warehouse.verify();
+        System.assertEquals( false, order.isFilled(), 'filling, when the warehouse throws an exception, will state that the order is not filled' );
+    }
+
+    @isTest
+    public static void fillingDoesNotRemoveIfTheWarehouseThrowsAnException_canUseStandardExceptions() {
+
+        Order order = new Order(TALISKER, 51);
+
+        TestMock warehouse = new TestMock( Warehouse.class );
+            
+        warehouse.expects()
+            .method( 'hasInventory' )
+            .withParameter( TALISKER )
+            .andParameter( 51 )
+            .throwing( new DmlException( 'Some error happened' ) );
+
+        Test.startTest();
+            order.fill( (Warehouse)warehouse.proxy() );
+        Test.stopTest();
+
+        warehouse.verify();
+        System.assertEquals( false, order.isFilled(), 'filling, when the warehouse throws an exception, will state that the order is not filled' );
+    }   
 }

@@ -1,5 +1,7 @@
 public class Warehouse {
 
+    public class WarehouseException extends Exception {}
+
     public Warehouse() {
 
     }

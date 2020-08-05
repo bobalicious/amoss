@@ -11,12 +11,17 @@ public class Order {
     }
 
     public Boolean fill( Warehouse warehouse ) {
-        if ( ! warehouse.hasInventory( product, numberRequired ) ) {
+
+        try {
+            if ( ! warehouse.hasInventory( product, numberRequired ) ) {
+                return false;
+            }
+
+            this.isFilled = warehouse.remove( product, numberRequired );
+            return this.isFilled;
+        } catch ( Exception e ) {
             return false;
         }
-
-        this.isFilled = warehouse.remove( product, numberRequired );
-        return this.isFilled;
     }
 
     public Boolean isFilled() {

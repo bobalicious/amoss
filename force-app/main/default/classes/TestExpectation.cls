@@ -6,6 +6,7 @@ public class TestExpectation {
     private List<Object> expectedParameters = new List<Object>();
     private Boolean withAnyParameters = false;
     private Object returnValue;
+    private Exception exceptionToThrow;
 
     private TestMock mockControl;
 
@@ -64,7 +65,19 @@ public class TestExpectation {
         return returning( returnValue );
     }
 
+    public TestExpectation throwing( Exception exceptionToThrow ) {
+        this.exceptionToThrow = exceptionToThrow;
+        return this;
+    }
+
+    public TestExpectation throws( Exception exceptionToThrow ) {
+        return this.throwing( exceptionToThrow );
+    }
+
     public Object getReturnValue() {
+        if ( this.exceptionToThrow != null ) {
+            throw this.exceptionToThrow;
+        }
         return this.returnValue;
     }
 

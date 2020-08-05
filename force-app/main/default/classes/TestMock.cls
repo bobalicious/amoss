@@ -1,9 +1,5 @@
 public class TestMock implements StubProvider {
 
-    // TODO: implement 'when' or 'responds' which is not like 'expects' - doesn't care about the order
-    // TODO: push the asserts up as high as possible so that the stack trace isn't too big - ideally all in here
-    // TODO: implement a variation of the recorder model that is almost identical to this one, if that's possible
-
     private TestExpectations expectations = new TestExpectations();
     private TestExpectations whens        = new TestExpectations();
 
