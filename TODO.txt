@@ -1,4 +1,14 @@
+Principles
+
+In order for the project to succeed it must:
+    * Require as little code as possible to create Test Mocks and Spies, so that mocking does not get in the way of testing.
+    * Use natural language to express the configuration so tests are as clear as possible to read.
+    * Have an auto-complete considered class structure, so that IDEs give you as much guidence as possible when tests are being written.
+    * Issue assertion failures that are as clear as possible, so the meaning of the failure is easy to understand.
+
 Implement
+
+    Rename 'master'
 
     Spy
         Lots of checking on what you can call, when
