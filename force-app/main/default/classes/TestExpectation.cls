@@ -4,7 +4,7 @@ public class TestExpectation {
 
     private String expectedMethod;
     private List<Object> expectedParameters = new List<Object>();
-    private Boolean withAnyParameters = false;
+    private Boolean withAnyParameters = true;
     private Object returnValue;
     private Exception exceptionToThrow;
 
@@ -43,16 +43,19 @@ public class TestExpectation {
     }
 
     public TestExpectation withParameters( Object[] parameters ) { // to encourage the shorter syntax
+        this.withAnyParameters = false;
         this.expectedParameters = parameters;
         return this;
     }
 
     public TestExpectation withParameter( Object parameterValue ) {
+        this.withAnyParameters = false;
         this.expectedParameters.add( parameterValue );
         return this;
     }
 
     public TestExpectation andParameter( Object parameterValue ) {
+        this.withAnyParameters = false;
         return withParameter( parameterValue );
     }
 
@@ -62,6 +65,10 @@ public class TestExpectation {
     }
 
     public TestExpectation returns( Object returnValue ) {
+        return returning( returnValue );
+    }
+
+    public TestExpectation willReturn( Object returnValue ) {
         return returning( returnValue );
     }
 
