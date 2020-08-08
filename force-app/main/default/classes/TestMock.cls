@@ -58,38 +58,54 @@ public class TestMock implements StubProvider {
         System.assertEquals( '', expectations.getRemainingCallsDescription(), 'Expected call stack for ' + getClassName() + ' should be empty, and it is not' );
     }
 
-
-    private String getCalledMethodContext;
-    private Integer getCalledCallNumberContext;
-    private Integer getCalledParameterNumberContext;
-
-    public TestMock of( String method ) {
-        this.getCalledMethodContext = method;
-        return this;
+    public CallChecker call( Integer callNumber ) {
+        return new CallChecker( callLog ).call( callNumber );
     }
 
-    public TestMock call( Integer callNumber ) {
-        if ( callNumber > 0 ) {
-            this.getCalledCallNumberContext = callNumber;
-        } else {
-            this.getCalledCallNumberContext = callLog.numberOfCalls( this.getCalledMethodContext ) - callNumber;
+    public CallChecker latestCallOf( String method ) {
+        return new CallChecker( callLog ).latestCallOf( method );
+    }
+
+    public class CallChecker {
+
+        String method;
+        Integer callNumber;
+        Integer parameterNumber;
+
+        CallLog callLog;
+
+        public CallChecker( CallLog callLog ) {
+            this.callLog = callLog;
         }
-        return this;
-    }
 
-    public TestMock latestCallOf( String method ) {
-        this.getCalledMethodContext     = method;
-        this.getCalledCallNumberContext = callLog.numberOfCalls( this.getCalledMethodContext );
-        return this;
-    }
+        public CallChecker of( String method ) {
+            this.method = method;
+            return this;
+        }
 
-    public Object parameter( Integer parameterNumber ) {
-        this.getCalledParameterNumberContext = parameterNumber;
-        return callLog.getCallLogParameter( this.getCalledMethodContext, this.getCalledCallNumberContext, this.getCalledParameterNumberContext );
-    }
+        public CallChecker call( Integer callNumber ) {
+            if ( callNumber > 0 ) {
+                this.callNumber = callNumber;
+            } else {
+                this.callNumber = callLog.numberOfCalls( this.method ) - callNumber;
+            }
+            return this;
+        }
 
-    public List<Object> parameters() {
-        return callLog.getCallLogParameters( this.getCalledMethodContext, this.getCalledCallNumberContext );
+        public CallChecker latestCallOf( String method ) {
+            this.method     = method;
+            this.callNumber = callLog.numberOfCalls( this.method ) - 1;
+            return this;
+        }
+
+        public Object parameter( Integer parameterNumber ) {
+            this.parameterNumber = parameterNumber;
+            return callLog.getCallLogParameter( this.method, this.callNumber, this.parameterNumber );
+        }
+
+        public List<Object> parameters() {
+            return callLog.getCallLogParameters( this.method, this.callNumber );
+        }
     }
 
     private class CallLogEntry {
@@ -112,12 +128,19 @@ public class TestMock implements StubProvider {
         }
 
         public Object getParameter( Integer parameterNumber ) {
-            // TODO throw exception if not there
+            if ( parameters == null ) {
+                throw new CallLogException( method + ' was not called, or was called with no parameters' );
+            }
+            if ( parameters.size() < parameterNumber ) {
+                throw new CallLogException( method + ' was not called with ' + ( parameterNumber + 1 ) + ' parameters' );
+            }
             return parameters[ parameterNumber ];
         }
 
         public List<Object> getParameters() {
-            // TODO throw exception if not there
+            if ( parameters == null ) {
+                throw new CallLogException( method + ' was not called, or was called with no parameters' );
+            }
             return parameters;
         }
     }
@@ -138,12 +161,10 @@ public class TestMock implements StubProvider {
             if ( ! callLogEntries.containsKey( method ) ) {
                 throw new CallLogException( method + ' was never called' );
             }
-
-            if ( callLogEntries.get( method ).size() < callNumber ) {
-                throw new CallLogException( method + ' was not called ' + callNumber + ' times' );
+            if ( callNumber >= callLogEntries.get( method ).size() ) {
+                throw new CallLogException( method + ' was not called ' + ( callNumber + 1 ) + ' times' );
             }
-            
-            return callLogEntries.get( method )[ callNumber - 1 ];
+            return callLogEntries.get( method )[ callNumber ];
         }
 
         public Integer numberOfCalls( String method ) {

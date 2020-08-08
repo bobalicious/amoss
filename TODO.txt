@@ -5,6 +5,7 @@ Implement
         Split out the spy methods, to make it easier with auto-complete
         Defer the calculations of which call number to return, so there's more flexibility in the order?
 
+        REALLY split the CallChecker class down, so you end up with perfect auto-complete
 
     Think about 'allowAnyCall'
         Default to 'true' - so spy is easy to set up
