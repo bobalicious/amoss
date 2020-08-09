@@ -1,3 +1,4 @@
+@isTest
 public with sharing class TestExpectations {
 
     private List<TestExpectation> expectations = new List<TestExpectation>();

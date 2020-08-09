@@ -1,6 +1,5 @@
+@isTest
 public class TestExpectation {
-
-    // TODO: add the object name into this, so we can give a better message - can now mockControl.getClassName()
 
     private String expectedMethod;
     private List<Object> expectedParameters = new List<Object>();

@@ -1,3 +1,4 @@
+@isTest
 public class TestMock implements StubProvider {
 
     class CallLogException extends Exception {}
