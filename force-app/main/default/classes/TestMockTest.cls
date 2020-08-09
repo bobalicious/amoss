@@ -1,9 +1,6 @@
 @isTest
 public with sharing class TestMockTest {
 
-    // call.of.parameters
-        // call given negative number too high
-
     /**
     * @method  call.of.parameters
     * @case    when given the details of a method call that happened
