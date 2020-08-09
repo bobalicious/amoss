@@ -10,67 +10,90 @@ Implement
 
     Rename 'master'
 
-    Spy
-        Lots of checking on what you can call, when
-        Split out the spy methods, to make it easier with auto-complete
-        Defer the calculations of which call number to return, so there's more flexibility in the order?
+    General:
 
-        REALLY split the CallChecker class down, so you end up with perfect auto-complete
+        Think about 'withAnyParameters' a bit more
+            Need some error conditions, in case you try to set up something invalid.
 
+        Implement means of stating that you don't care about a single parameter
+        E.g.
+            templateGenerator
+                .expects()
+                    .method( 'generate' )
+                    .withParameter( 'One We Care About' )
+                    .andAnyParameter()
+                    .andParameter( 'Another One We Care About' )
+                    .returning( 'Something' );
+
+        Think about 'only checking a single parameter'
+            withParameterAtPosition
+
+            E.g.
+                templateGenerator
+                    .expects()
+                        .method( 'generate' )
+                        .withParameterAtPostion( 2, 'One We Care About' )
+                        .returning( 'Something' );
+
+        Documentation
+        Developer Documentation
+
+    Mock:
+
+        Change andParameter to andThenParameter
+        Implement andThenAnyParameter
+        
+        Type checking prior to checking equality - otherwise you get an indecipherable error
+
+        How to pass an 'expects parameter' when we're passing sObjects?
+
+        Consider splitting the class down, to improve the auto-complete
+
+        handledBy
+            Can use standard Stub interface
+            Can use a simplified Stub interface
+
+    Spy:
+        Checking on what you can call, when
+        Consider splitting the CallChecker class down, so you end up with perfect auto-complete
         implement - was called x times
 
-    Think about 'allowAnyCall'
-        Default to 'true' - so spy is easy to set up
-        If expects is set, then set back to false
-            UNLESS 'allowAnyCall' is called explicitly
-        Then remove a lot of setup code from TestMockTest that is no longer needed
+        Think about 'allowAnyCall'
+            Default to 'true' - so spy is easy to set up
+            If expects is set, then set back to false
+                UNLESS 'allowAnyCall' is called explicitly
+            Then remove a lot of setup code from TestMockTest that is no longer needed
 
-    Think about 'withAnyParameter' a bit more
-        Need some error conditions, in case you try to set up something invalid
 
-    Think about 'only checking a single parameter'
-        withParameterAtPosition
+    Current Limitations:
 
-    Type checking prior to checking equality - otherwise you get an indecipherable error
+        Need to be able to test:
 
-    No need to set 'withAnyParameter' - just imply it from the absence of parameters
+            TestMock templateGenerator = new TestMock( TemplateGenerator.class );
 
-    handledBy
-        Can use standard Stub interface
-        Can use a simplified Stub interface
+            templateGenerator
+                .expects()
+                .method( 'generate' )
+                .withParameter( 'Opportunity' )
+                .andParameter( 'Opportunity_Products_Offered' )
+                .andParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
+                .returning( new Map<Id,String>{ opportunityLineItemList[0].OpportunityId => 'The generated Template' } ); // and here too
 
-    Need to be able to test:
+            Maybe:
 
-        TestMock templateGenerator = new TestMock( TemplateGenerator.class );
+            templateGenerator
+                .expects()
+                .method( 'generate' )
+                .withParameter( 'Opportunity' )
+                .andParameter( 'Opportunity_Products_Offered' )
+                .andAnyParameter()
+                .handledBy( new TemplateGeneratorMockHandler() );
 
-        templateGenerator
-            .expects()
-            .method( 'generate' )
-            .withParameter( 'Opportunity' )
-            .andParameter( 'Opportunity_Products_Offered' )
-            .andParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
-            .returning( new Map<Id,String>{ opportunityLineItemList[0].OpportunityId => 'The generated Template' } ); // and here too
+        
+            System.assertEquals( templateGenerator.called( 'generate' ).number( 1 ).parameter( 3 ).was() )
 
-        Maybe:
-
-        templateGenerator
-            .expects()
-            .method( 'generate' )
-            .withParameter( 'Opportunity' )
-            .andParameter( 'Opportunity_Products_Offered' )
-            .andAnyParameter()
-            .handledBy( new TemplateGeneratorMockHandler() );
-
-    
-        System.assertEquals( templateGenerator.called( 'generate' ).number( 1 ).parameter( 3 ).was() )
-
-        That's why we need a spy, and a 'handled by'
-
-        assertContains
+            That's why we need a spy, and a 'handled by'
 
 Test:
     The behaviours work with Sobjects
     The behaviours work with Object instantiations
-
-Think:
-    How to pass 'expects parameter' when we're passing sObjects?
