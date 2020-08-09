@@ -67,6 +67,10 @@ public class TestMock implements StubProvider {
         return new CallChecker( callLog ).latestCallOf( method );
     }
 
+    public Integer countOf( String method ) {
+        return callLog.numberOfCalls( method );
+    }
+
     public class CallChecker {
 
         String method;

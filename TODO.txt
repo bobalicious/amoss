@@ -8,8 +8,6 @@ In order for the project to succeed it must:
 
 Implement
 
-    Rename 'master'
-
     General:
 
         Think about 'withAnyParameters' a bit more
@@ -22,7 +20,7 @@ Implement
                     .method( 'generate' )
                     .withParameter( 'One We Care About' )
                     .andAnyParameter()
-                    .andParameter( 'Another One We Care About' )
+                    .andThenParameter( 'Another One We Care About' )
                     .returning( 'Something' );
 
         Think about 'only checking a single parameter'
@@ -40,7 +38,6 @@ Implement
 
     Mock:
 
-        Change andParameter to andThenParameter
         Implement andThenAnyParameter
         
         Type checking prior to checking equality - otherwise you get an indecipherable error
@@ -60,14 +57,12 @@ Implement
     Spy:
         Checking on what you can call, when
         Consider splitting the CallChecker class down, so you end up with perfect auto-complete
-        implement - was called x times
 
         Think about 'allowAnyCall'
             Default to 'true' - so spy is easy to set up
             If expects is set, then set back to false
                 UNLESS 'allowAnyCall' is called explicitly
             Then remove a lot of setup code from TestMockTest that is no longer needed
-
 
     Current Limitations:
 
@@ -79,8 +74,8 @@ Implement
                 .expects()
                 .method( 'generate' )
                 .withParameter( 'Opportunity' )
-                .andParameter( 'Opportunity_Products_Offered' )
-                .andParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
+                .andThenParameter( 'Opportunity_Products_Offered' )
+                .andThenParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
                 .returning( new Map<Id,String>{ opportunityLineItemList[0].OpportunityId => 'The generated Template' } ); // and here too
 
             Maybe:
@@ -89,7 +84,7 @@ Implement
                 .expects()
                 .method( 'generate' )
                 .withParameter( 'Opportunity' )
-                .andParameter( 'Opportunity_Products_Offered' )
+                .andThenParameter( 'Opportunity_Products_Offered' )
                 .andAnyParameter()
                 .handledBy( new TemplateGeneratorMockHandler() );
 

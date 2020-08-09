@@ -14,7 +14,7 @@ public with sharing class ExampleTest {
                 .returning( true )
             .then().expects()
                 .method( 'remove' )
-                .withParameter( TALISKER ).andParameter( 50 )
+                .withParameter( TALISKER ).andThenParameter( 50 )
                 .returning( true );
 
         Order order = new Order( TALISKER, 50 );
@@ -119,7 +119,7 @@ public with sharing class ExampleTest {
         warehouse.when()
             .method( 'hasInventory' )
             .withParameter( TALISKER )
-            .andParameter( 51 )
+            .andThenParameter( 51 )
             .willReturn( false )
         .also().when()
             .method( 'hasInventory' )
@@ -147,7 +147,7 @@ public with sharing class ExampleTest {
         warehouse.when()
             .method( 'hasInventory' )
             .withParameter( TALISKER )
-            .andParameter( 51 )
+            .andThenParameter( 51 )
             .willReturn( false );
 
         warehouse.when()
@@ -173,7 +173,7 @@ public with sharing class ExampleTest {
         warehouse.expects()
             .method( 'hasInventory' )
             .withParameter( TALISKER )
-            .andParameter( 51 )
+            .andThenParameter( 51 )
             .throwing( new Warehouse.WarehouseException( 'Some error happened' ) );
 
         Test.startTest();
@@ -194,7 +194,7 @@ public with sharing class ExampleTest {
         warehouse.expects()
             .method( 'hasInventory' )
             .withParameter( TALISKER )
-            .andParameter( 51 )
+            .andThenParameter( 51 )
             .throwing( new DmlException( 'Some error happened' ) );
 
         Test.startTest();

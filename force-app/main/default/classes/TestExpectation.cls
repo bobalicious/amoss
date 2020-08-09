@@ -53,7 +53,7 @@ public class TestExpectation {
         return this;
     }
 
-    public TestExpectation andParameter( Object parameterValue ) {
+    public TestExpectation andThenParameter( Object parameterValue ) {
         this.withAnyParameters = false;
         return withParameter( parameterValue );
     }

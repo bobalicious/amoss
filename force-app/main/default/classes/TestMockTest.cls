@@ -2,6 +2,66 @@
 public with sharing class TestMockTest {
 
     /**
+    * @method  countOf
+    * @case    when given a method call that happened
+    * @result  will return the number of times that method was called
+    */
+    @isTest
+    private static void callCount_whenGivenAMethodCallThatHappened_willReturnTheNumberOfCalls() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .when()
+                .method( 'methodUnderMock' )
+                .willReturn( 'something' )
+            .also().when()
+                .method( 'otherMethodUnderMock' )
+                .willReturn( 'something' );
+
+        Test.startTest();
+            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            classUnderMockProxy.methodUnderMock( 'ActualParam1', 1 );
+            classUnderMockProxy.methodUnderMock( 'ActualParam2', 2 );
+            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 2 );
+            classUnderMockProxy.methodUnderMock( 'ActualParam3', 3 ); // this is the one we're going to retrieve
+            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 3 );
+            classUnderMockProxy.methodUnderMock( 'ActualParam4', 4 );
+
+            Integer returnedMethodCallCount = classUnderMock.countOf( 'methodUnderMock' );
+        Test.stopTest();
+        
+        System.assertEquals( 4, returnedMethodCallCount, 'countOf, when given the details of a method call that happened amongst many - will return the number of calls' );
+    }
+
+    /**
+    * @method  countOf
+    * @case    when given a method call that did not happen
+    * @result  will return zero
+    */
+    @isTest
+    private static void callCount_whenGivenAMethodCallThatDidNotHappen_willReturnZero() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .when()
+                .method( 'methodUnderMock' )
+                .willReturn( 'something' )
+            .also().when()
+                .method( 'otherMethodUnderMock' )
+                .willReturn( 'something' );
+
+        Test.startTest();
+            Integer returnedMethodCallCount = classUnderMock.countOf( 'methodUnderMock' );
+        Test.stopTest();
+        
+        System.assertEquals( 0, returnedMethodCallCount, 'countOf, when given the details of a method call that did not happen - will return zero' );
+    }
+
+    /**
     * @method  call.of.parameters
     * @case    when given the details of a method call that happened
     * @result  will return the parameters of that call
