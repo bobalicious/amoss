@@ -17,10 +17,13 @@ Implement
 
         REALLY split the CallChecker class down, so you end up with perfect auto-complete
 
+        implement - was called x times
+
     Think about 'allowAnyCall'
         Default to 'true' - so spy is easy to set up
         If expects is set, then set back to false
             UNLESS 'allowAnyCall' is called explicitly
+        Then remove a lot of setup code from TestMockTest that is no longer needed
 
     Think about 'withAnyParameter' a bit more
         Need some error conditions, in case you try to set up something invalid
