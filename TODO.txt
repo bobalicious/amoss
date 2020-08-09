@@ -53,6 +53,10 @@ Implement
             Can use standard Stub interface
             Can use a simplified Stub interface
 
+    Mock - Test Recorder format
+
+        Can you simply add the Test Recorder format into the framework - for flexibility
+
     Spy:
         Checking on what you can call, when
         Consider splitting the CallChecker class down, so you end up with perfect auto-complete
