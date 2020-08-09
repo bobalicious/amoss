@@ -84,17 +84,13 @@ public class TestMock implements StubProvider {
         }
 
         public CallChecker call( Integer callNumber ) {
-            if ( callNumber > 0 ) {
-                this.callNumber = callNumber;
-            } else {
-                this.callNumber = callLog.numberOfCalls( this.method ) - callNumber;
-            }
+            this.callNumber = callNumber;
             return this;
         }
 
         public CallChecker latestCallOf( String method ) {
             this.method     = method;
-            this.callNumber = callLog.numberOfCalls( this.method ) - 1;
+            this.callNumber = -1;
             return this;
         }
 
@@ -129,17 +125,24 @@ public class TestMock implements StubProvider {
 
         public Object getParameter( Integer parameterNumber ) {
             if ( parameters == null ) {
-                throw new CallLogException( method + ' was not called, or was called with no parameters' );
+                throw new CallLogException( method + ' was not called' );
             }
-            if ( parameters.size() < parameterNumber ) {
+            if ( parameters.size() == 0 ) {
+                throw new CallLogException( method + ' was not called with any parameters' );
+            }
+
+            if ( parameters.size() < parameterNumber + 1 ) {
                 throw new CallLogException( method + ' was not called with ' + ( parameterNumber + 1 ) + ' parameters' );
+            }
+            if ( parameterNumber < 0 ) {
+                throw new CallLogException( 'Cannot request a negative parameter number (got ' + parameterNumber + ')' );
             }
             return parameters[ parameterNumber ];
         }
 
         public List<Object> getParameters() {
             if ( parameters == null ) {
-                throw new CallLogException( method + ' was not called, or was called with no parameters' );
+                throw new CallLogException( method + ' was not called' );
             }
             return parameters;
         }
@@ -158,12 +161,20 @@ public class TestMock implements StubProvider {
         }
 
         public CallLogEntry getCallLog( String method, Integer callNumber ) {
+
             if ( ! callLogEntries.containsKey( method ) ) {
                 throw new CallLogException( method + ' was never called' );
             }
             if ( callNumber >= callLogEntries.get( method ).size() ) {
                 throw new CallLogException( method + ' was not called ' + ( callNumber + 1 ) + ' times' );
             }
+            if ( ( callLogEntries.get( method ).size() + callNumber ) < 0 ) {
+                throw new CallLogException( method + ' was not called ' + ( Math.abs( callNumber ) ) + ' times' );
+            }
+            if ( callNumber < 0 ) {
+                callNumber = callLogEntries.get( method ).size() + callNumber;
+            }
+
             return callLogEntries.get( method )[ callNumber ];
         }
 
