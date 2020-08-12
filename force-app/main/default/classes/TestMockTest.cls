@@ -1,6 +1,42 @@
 @isTest
 public with sharing class TestMockTest {
 
+    //
+    // Mock Object behaviour tests
+    //
+    // expects.method - when the method is called, passes
+    // expects.method - when the method is not called more than once, fails
+    // expects.method - no verify - when the method is not called, passes
+    // expects.method - verify - when the method is not called, fails
+    //
+    // expects.method.returns - when the method is called, passes
+    // expects.method.returns - when the method is not called more than once, fails
+    // expects.method.returns - no verify - when the method is not called, passes
+    // expects.method.returns - verify - when the method is not called, fails
+    //
+    // expects.method.withAnyParameter.returns - when the method is called, passes
+    // expects.method.withAnyParameter.returns - when the method is not called more than once, fails
+    // expects.method.withAnyParameter.returns - no verify - when the method is not called, passes
+    // expects.method.withAnyParameter.returns - verify - when the method is not called, fails
+
+    // expects.method.withParameter.andThenParameter.returns - when the method call matches, passes
+    // expects.method.withParameter.andThenParameter.returns - when the method call does not match, fails
+    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
+    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and does not match, fails
+
+    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
+
+    // expects.method.then.expects.method - when both methods are called in order, passes
+    // expects.method.then.expects.method - when both methods called, but out of order, fails
+    // expects.method.then.expects.method - no verify when one method called, passes
+    // expects.method.then.expects.method - verify when one method called, fails
+
+    // expects.method.also.expects.method - when both methods are called in order, passes
+
+    //
+    // Test Spy behaviour tests
+    //
+
     /**
     * @method  countOf
     * @case    when given a method call that happened
@@ -83,6 +119,29 @@ public with sharing class TestMockTest {
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call that happened, will return the parameters of that call' );
+    }
+
+    /**
+    * @method  call.of.parameters
+    * @case    when given the details of a method that does not return anything, and a call that happened
+    * @result  will return the parameters of that call
+    */
+    @isTest
+    private static void callOfParameters_whenGivenACallOfMethodWithNoReturnThatHappened_willReturnTheParametersOfThatCall() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .when()
+            .method( 'methodUnderMockWithNoReturn' );
+
+        Test.startTest();
+            classUnderMockProxy.methodUnderMockWithNoReturn( 'ActualParam', 2 );
+            List<Object> passedParameters = classUnderMock.call( 0 ).of( 'methodUnderMockWithNoReturn' ).parameters();
+        Test.stopTest();
+        
+        System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call to a method thar returns nothing, will return the parameters of that call' );
     }
 
     /**

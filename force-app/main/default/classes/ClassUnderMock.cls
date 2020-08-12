@@ -3,6 +3,8 @@ public with sharing class ClassUnderMock {
     public String methodUnderMock( String parameter1, Integer parameter2 ) {
         return 'TheReturn';
     }
+    public void methodUnderMockWithNoReturn( String parameter1, Integer parameter2 ) {
+    }
     public String methodWithNoParametersUnderMock() {
         return 'TheReturn';
     }

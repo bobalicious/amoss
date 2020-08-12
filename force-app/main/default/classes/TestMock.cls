@@ -9,6 +9,32 @@ public class TestMock implements StubProvider {
 
     Type classType;
 
+    private TestAsserts assertionMechanism = new TestAsserts();
+    
+    /**
+    * Internal method that should not be called directly in tests.
+    * 
+    * Get the assertion mechanism for this mock object implementation
+    *
+    * @return  TestAsserts - The assertionMechanism object
+    */
+    public TestAsserts getTestAsserts() {
+        return this.assertionMechanism;
+    }
+    
+    /**
+    * Internal method that should not be called directly in tests.
+    * 
+    * Set the assertion mechanism for this mock object implementation
+    *
+    * @param   TestAsserts - The assertionMechanism
+    * @return  TestMock - Itself, allowing for a fluent interface
+    */
+    public TestMock setTestAsserts( TestAsserts assertionMechanism ) {
+        this.assertionMechanism = assertionMechanism;
+        return this;
+    }
+
     public TestMock( Type classType ) {
         this.classType = classType;
     }
@@ -70,7 +96,7 @@ public class TestMock implements StubProvider {
     * Generally called immediately prior to the test's assertions.
     */
     public void verify() {
-        System.assertEquals( '', expectations.getRemainingCallsDescription(), 'Expected call stack for ' + getClassName() + ' should be empty, and it is not' );
+        assertionMechanism.assertEquals( '', expectations.getRemainingCallsDescription(), 'Expected call stack for ' + getClassName() + ' should be empty, and it is not' );
     }
 
     /**
@@ -147,9 +173,9 @@ public class TestMock implements StubProvider {
             }
         }
 
-        System.assertEquals( false, expectations.isEmpty(), String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+        assertionMechanism.assert( ! expectations.isEmpty(), String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
         TestExpectation thisExpectation = expectations.unshift();
-        thisExpectation.verify( mockedMethod, parameters );
+        thisExpectation.verify( assertionMechanism, mockedMethod, parameters );
         return thisExpectation.getReturnValue();
     }
 

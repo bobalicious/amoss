@@ -38,14 +38,31 @@ Design Principles:
 
 Implement
 
+    Test:
+        Test using expectations
+        
+        methodUnderMockWithNoReturn - when setup to return something
+        methodUnderMock - when setup not to return anything
+
     General:
+
+        What happens with methods that are not supposed to return something?
+            Looks like it works, just need to write tests to prove it
+
+        Rename:
+            TestMock - Amoss_Instance
+            TestExpectation - Amoss_Expectation
+            TestExpectations - Amoss_Expectations
+            TestAsserts - Amoss_Asserts
+
+            TestMockTest - Amoss_InstanceTest
+
+        Can we wrap some of the inner classes with public interfaces, so that the consumer only sees that layer.
 
         Should everything be moved into one class file with inner classes?
         Assertions should all be moved into handleMethodCall, so that everything else can be properly tested
 
         Move the assertions out into another class that is instantiated, so it can be mocked in tests
-
-        What happens with methods that are not supposed to return something?
 
         Think about 'withAnyParameters' a bit more
             Need some error conditions, in case you try to set up something invalid.
