@@ -58,6 +58,36 @@ public with sharing class ExampleTest {
     }
 
     @isTest
+    public static void fillingRemovesInventoryIfInStock_usingASpyThatStatesGet() {
+
+        TestMock warehouse = new TestMock( Warehouse.class );
+        warehouse
+            .when()
+                .method( 'hasInventory' )
+                .willReturn( true )
+            .also().when()
+                .method( 'remove' )
+                .willReturn( true );
+
+        Order order = new Order( TALISKER, 50 );
+        
+        Test.startTest();
+            order.fill( (Warehouse)warehouse.proxy() );
+        Test.stopTest();
+
+        System.assert( order.isFilled(), 'filling, when the warehouse has stock, will state that the order is filled' );
+
+        System.assertEquals( TALISKER, warehouse.get().latestCallOf( 'hasInventory' ).parameter( 0 )
+                            , 'filling, will call hasInventory against the warehouse, passing the product required, to find out if there is stock' );
+
+        System.assertEquals( 50, warehouse.get().latestCallOf( 'hasInventory' ).parameter( 1 )
+                            , 'filling, will call hasInventory against the warehouse, passing the number required, to find out if there is stock' );
+
+        System.assertEquals( new List<Object>{ TALISKER, 50 }, warehouse.get().call( 0 ).of( 'remove' ).parameters()
+                            , 'filling, when the warehouse has stock, will call remove against the warehouse, passing the product and number required' );
+    }
+
+    @isTest
     public static void fillingDoesNotRemoveIfNotEnoughInStock() {
 
         Order order = new Order(TALISKER, 51);

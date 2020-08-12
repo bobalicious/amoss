@@ -604,5 +604,55 @@ public with sharing class TestMockTest {
 
         System.assert( exceptionThrown, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception' );
         TestAsserts.assertContains( 'methodWithNoParametersUnderMock was not called with any parameters', exceptionMessage, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception with a useful message' );
-    }    
+    }
+
+    /**
+    * @method  get.call.of.parameters
+    * @case    when given the details of a method call that happened
+    * @result  will return the parameters of that call
+    */
+    @isTest
+    private static void getCallOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .when()
+            .method( 'methodUnderMock' )
+            .willReturn( 'something' );
+
+        Test.startTest();
+            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
+            List<Object> passedParameters = classUnderMock.get().call( 0 ).of( 'methodUnderMock' ).parameters();
+        Test.stopTest();
+        
+        System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'get.call.of.parameters, when given the details of a method call that happened, will return the parameters of that call' );
+    }
+
+    /**
+    * @method  get.latestCallOf.parameters
+    * @case    when given the details of the last method call that happened
+    * @result  will return the parameters of that call
+    */
+    @isTest
+    private static void getLatestCallOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .when()
+            .method( 'methodUnderMock' )
+            .willReturn( 'something' );
+
+        Test.startTest();
+            classUnderMockProxy.methodUnderMock( 'ActualParam1', 2 );
+            classUnderMockProxy.methodUnderMock( 'ActualParam2', 3 );
+            classUnderMockProxy.methodUnderMock( 'ActualParam3', 4 );
+            List<Object> passedParameters = classUnderMock.get().latestCallOf( 'methodUnderMock' ).parameters();
+        Test.stopTest();
+        
+        System.assertEquals( new List<Object>{ 'ActualParam3', 4 }, passedParameters, 'get.latestCallOf.parameters, when given the details of a method call that happened, will return the parameters of that call' );
+    }   
 }

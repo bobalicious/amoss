@@ -13,26 +13,124 @@ public class TestMock implements StubProvider {
         this.classType = classType;
     }
 
-    public String getClassName() {
-        return String.valueOf( this.classType );
-    }
-
+    /**
+    * Generates the instance of the class that you use in the application under test.
+    *
+    * @return Object  - The instance to use in your test
+    */
     public Object proxy() {
         return Test.createStub( classType, this );
     }
 
+    /**
+    * States that the next method definition is expected to be called in the order it appears.
+    *
+    * If a method is subsequently called out of order, will fail the test.
+    *
+    * Calling 'verify' will check that all expectations have been met, failing the test if not.
+    *
+    * 'Expectations' take lower priority than 'whens' (I.E. if a matching 'when' is defined at call time, then it will match that over the next 'expect').
+    *
+    * Define in the format:
+    * expects()
+    *       .method( 'methodName' )
+    *       .withParameter( 'parameterValue' )
+    *       .returning( 'theValueItShouldReturn' )
+    */
     public TestExpectation expects() {
         TestExpectation newExpectation = new TestExpectation( this );
         this.expectations.add( newExpectation );
         return newExpectation;
     }
 
+    /**
+    * States that the when a method is called that matched the definition, stated behaviour will
+    * be exhibited.
+    *
+    * Call order is not checked, and 'verify' will not check that 'whens' have been met.
+    *
+    * 'Whens' take higher priority than 'expectations' (I.E. if a matching 'when' is defined at call time, then it
+    * will match that over the next 'expect').
+    *
+    * Define in the format:
+    *   when()
+    *   .method( 'methodName' )
+    *   .withParameter( 'parameterValue' )
+    *   .willReturn( 'theValueItShouldReturn' )
+    */
     public TestExpectation when() {
         TestExpectation newExpectation = new TestExpectation( this );
         this.whens.add( newExpectation );
         return newExpectation;
     }
 
+    /**
+    * Checks that all configured 'expectations' have been met, failing the test if they have not.
+    *
+    * Generally called immediately prior to the test's assertions.
+    */
+    public void verify() {
+        System.assertEquals( '', expectations.getRemainingCallsDescription(), 'Expected call stack for ' + getClassName() + ' should be empty, and it is not' );
+    }
+
+    /**
+    * The start of a request for information on a call in the mock's call stack.
+    *
+    * Allows the object to be used as a Test Spy.
+    *
+    * Use in the following formats:
+    *   get().call( 2 ).of( 'methodName' ).parameter( 1 )
+    *   get().latestCallOf( 'methodName' ).parameter( 1 )
+    *
+    */
+    public CallChecker get() {
+        return new CallChecker( callLog );
+    }
+
+    /**
+    * The start of a request for information on a call in the mock's call stack.
+    *
+    * Allows the object to be used as a Test Spy.
+    *
+    * Use in the format:
+    *   call( 2 ).of( 'methodName' ).parameter( 1 )
+    *
+    * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+    */
+    public CallChecker call( Integer callNumber ) {
+        return new CallChecker( callLog ).call( callNumber );
+    }
+
+    /**
+    * The start of a request for information on the last call of a given method in the mock's call stack.
+    *
+    * Allows the object to be used as a Test Spy.
+    *
+    * Use in the format:
+    *   latestCallOf( 'methodName' ).parameter( 1 )
+    *
+    * @param String - The method to get the last call of
+    */
+    public CallChecker latestCallOf( String method ) {
+        return new CallChecker( callLog ).latestCallOf( method );
+    }
+
+    /**
+    * Returns the count of the number of calls that were made of the stated method.
+    *
+    * Allows the object to be used as a Test Spy.
+    *
+    * @param String - The method to get the count of calls of
+    */
+    public Integer countOf( String method ) {
+        return callLog.numberOfCalls( method );
+    }
+
+    /**
+    * Internal method that should not be called directly in tests.
+    *
+    * Is the StubProvider.handleMethodCall method that handles the resulting method calls to the mock object.
+    */
     public Object handleMethodCall( Object       mockedObject,
                                     String       mockedMethod,
                                     Type         returnType,
@@ -55,22 +153,22 @@ public class TestMock implements StubProvider {
         return thisExpectation.getReturnValue();
     }
 
-    public void verify() {
-        System.assertEquals( '', expectations.getRemainingCallsDescription(), 'Expected call stack for ' + getClassName() + ' should be empty, and it is not' );
+    /**
+    * Internal method that should not be called directly in tests.
+    *
+    * Provides the name of the class that this mock is mimicing.
+    */
+    public String getClassName() {
+        return String.valueOf( this.classType );
     }
 
-    public CallChecker call( Integer callNumber ) {
-        return new CallChecker( callLog ).call( callNumber );
-    }
-
-    public CallChecker latestCallOf( String method ) {
-        return new CallChecker( callLog ).latestCallOf( method );
-    }
-
-    public Integer countOf( String method ) {
-        return callLog.numberOfCalls( method );
-    }
-
+    /**
+    * Internal class that provides a mechanism for checking if a call of a method
+    * was made against a given call log.
+    *
+    * Should not be referenced directly in tests, only via the return from
+    * methods on other classes.
+    */
     public class CallChecker {
 
         String method;
@@ -83,51 +181,132 @@ public class TestMock implements StubProvider {
             this.callLog = callLog;
         }
 
+        /**
+        * Defines the name of the method that is being checked.
+        *
+        * Use in the format:
+        *   call( 2 ).of( 'methodName' ).parameter( 1 )
+        *
+        * @param String - The method to check
+        */
         public CallChecker of( String method ) {
             this.method = method;
             return this;
         }
 
+        /**
+        * The start of a request for information on a call in the mock's call stack.
+        *
+        * Allows the object to be used as a Test Spy.
+        *
+        * Use in the format:
+        *   get().call( 2 ).of( 'methodName' ).parameter( 1 )
+        *
+        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+        */
         public CallChecker call( Integer callNumber ) {
             this.callNumber = callNumber;
             return this;
         }
 
+        /**
+        * The start of a request for information on the last call of a given method in the mock's call stack.
+        *
+        * Allows the object to be used as a Test Spy.
+        *
+        * Use in the format:
+        *   get().latestCallOf( 'methodName' ).parameter( 1 )
+        *
+        * @param String - The method to get the last call of
+        */
         public CallChecker latestCallOf( String method ) {
             this.method     = method;
             this.callNumber = -1;
             return this;
         }
 
+        /**
+        * Requests the parameter at the stated position (zero-indexed), for the 
+        * current method and call count context.
+        *
+        * Allows the object to be used as a Test Spy.
+        *
+        * Use in the formats:
+        *   call( 1 ).of( 'methodName' ).parameter( 1 )
+        *   latestCallOf( 'methodName' ).parameter( 1 )
+        *
+        * @param Object - The parameter that was passed in when the stated method was called
+        */
         public Object parameter( Integer parameterNumber ) {
             this.parameterNumber = parameterNumber;
             return callLog.getCallLogParameter( this.method, this.callNumber, this.parameterNumber );
         }
 
+        /**
+        * Requests a list of the parameters for the current method and call count context.
+        *
+        * Allows the object to be used as a Test Spy.
+        *
+        * Use in the formats:
+        *   call( 1 ).of( 'methodName' ).parameters()
+        *   latestCallOf( 'methodName' ).parameters()
+        *
+        * @param List<Object> - The parameters that were passed in when the stated method was called
+        */
         public List<Object> parameters() {
             return callLog.getCallLogParameters( this.method, this.callNumber );
         }
     }
 
+    /**
+    * Internal class that provides a mechanism for representing a call to a given method
+    * with a given list of parameter values and means of retrieving some or all of those
+    * parameters.
+    *
+    * Should not be referenced directly in tests, only via the return from
+    * methods on other classes.
+    */
     private class CallLogEntry {
 
         String       method;
         List<Object> parameters;
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the name of the method that this stack represents.
+        */
         public CallLogEntry setMethod( String method ) {
             this.method = method;
             return this;
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the name of the method that this stack represents.
+        */
         public String getMethod() {
             return this.method;
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the parameters that were passed in on this method call.
+        */
         public CallLogEntry setParameters( List<Object> parameters ) {
             this.parameters = parameters;
             return this;
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameter at the specified position that was passed in on this method call.
+        *
+        * If the parameter does not exist then an exception is thrown.
+        */
         public Object getParameter( Integer parameterNumber ) {
             if ( parameters == null ) {
                 throw new CallLogException( method + ' was not called' );
@@ -145,6 +324,13 @@ public class TestMock implements StubProvider {
             return parameters[ parameterNumber ];
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameters for this call.
+        *
+        * If the parameters exist then an exception is thrown.
+        */
         public List<Object> getParameters() {
             if ( parameters == null ) {
                 throw new CallLogException( method + ' was not called' );
@@ -153,10 +339,24 @@ public class TestMock implements StubProvider {
         }
     }
 
+    /**
+    * Internal class that provides a mechanism for representing a stack of calls
+    * with a means of getting a reference to a particular call of a particular method.
+    *
+    * Should not be referenced directly in tests, only via the return from
+    * methods on other classes.
+    */
     private class CallLog {
 
         Map<String,List<CallLogEntry>> callLogEntries = new Map<String,List<CallLogEntry>>();
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Adds the given call log entry to the call stack.
+        *
+        * @param CallLogEntry - The call log entry to add.
+        */
         public CallLog addEntry( CallLogEntry entry ) {
             if ( ! callLogEntries.containsKey( entry.getMethod() ) ) {
                 callLogEntries.put( entry.getMethod(), new List<CallLogEntry>() );
@@ -165,6 +365,16 @@ public class TestMock implements StubProvider {
             return this;
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the call log entry for the given method, at the given position on the stack.
+        *
+        * If the method wasn't called, or called enough times, will throw an exception
+        *
+        * @param String  - The method to retrieve the call log entry for.
+        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+        */
         public CallLogEntry getCallLog( String method, Integer callNumber ) {
 
             if ( ! callLogEntries.containsKey( method ) ) {
@@ -183,6 +393,14 @@ public class TestMock implements StubProvider {
             return callLogEntries.get( method )[ callNumber ];
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the number of times the stated method appears in the call stack.
+        *
+        * @param  String  - The method to retrieve the call count for.
+        * @return Integer - The number of times the stated method was called.
+        */
         public Integer numberOfCalls( String method ) {
 
             if ( ! callLogEntries.containsKey( method ) ) {
@@ -192,13 +410,31 @@ public class TestMock implements StubProvider {
             return callLogEntries.get( method ).size();
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameter at the stated position that was passed into the stated method at the stated call number in the stack.
+        *
+        * @param  String  - The method to retrieve the parameters for.
+        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param  Integer - The position of the parameter in the call. Indexed from 0.
+        * @return Object  - The requested parameter value.
+        */
         public Object getCallLogParameter( String method, Integer callNumber, Integer parameterNumber ) {
             return getCallLog( method, callNumber ).getParameter( parameterNumber );
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameters that were passed into the stated method at the stated call number in the stack.
+        *
+        * @param  String  - The method to retrieve the parameters for.
+        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @return List<Object> - The requested parameter values.
+        */
         public List<Object> getCallLogParameters( String method, Integer callNumber ) {
             return getCallLog( method, callNumber ).getParameters();
         }
-
     }
 }
