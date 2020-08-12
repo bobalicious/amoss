@@ -40,6 +40,8 @@ Implement
 
     Test:
         Test using expectations
+        Test the behaviour of 'when' matching
+        Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
         
         methodUnderMockWithNoReturn - when setup to return something
         methodUnderMock - when setup not to return anything
