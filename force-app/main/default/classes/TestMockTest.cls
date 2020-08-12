@@ -713,5 +713,81 @@ public with sharing class TestMockTest {
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam3', 4 }, passedParameters, 'get.latestCallOf.parameters, when given the details of a method call that happened, will return the parameters of that call' );
-    }   
+    }
+
+    /**
+    * @method  parameter
+    * @case    when a parameter is a list of objects
+    * @result  will return the parameter
+    */
+    @isTest
+    private static void parameters_whenAParameterIsAListOfObjects_willReturnTheParameter() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .when()
+            .method( 'methodWithListObject' );
+
+        Test.startTest();
+            List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
+
+            classUnderMockProxy.methodWithListObject( parameterPassed );
+            List<Object> parameterReturned = (List<Object>)classUnderMock.call( 0 ).of( 'methodWithListObject' ).parameter( 0 );
+        Test.stopTest();
+        
+        System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a list of objects, will return the parameter' );
+    }
+
+    /**
+    * @method  parameter
+    * @case    when a parameter is a set of objects
+    * @result  will return the parameter
+    */
+    @isTest
+    private static void parameters_whenAParameterIsASetOfObjects_willReturnTheParameter() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .when()
+            .method( 'methodWithSetObject' );
+
+        Test.startTest();
+            Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
+
+            classUnderMockProxy.methodWithSetObject( parameterPassed );
+            Set<Object> parameterReturned = (Set<Object>)classUnderMock.call( 0 ).of( 'methodWithSetObject' ).parameter( 0 );
+        Test.stopTest();
+        
+        System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a set of objects, will return the parameter' );
+    }
+
+    /**
+    * @method  parameter
+    * @case    when a parameter is a map of objects
+    * @result  will return the parameter
+    */
+    @isTest
+    private static void parameters_whenAParameterIsAMapOfObjects_willReturnTheParameter() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .when()
+            .method( 'methodWithMapStringObject' );
+
+        Test.startTest();
+            Map<String,Object> parameterPassed = new Map<String,Object>{ 'one' => 1, 'two' => '2', 'three' => new Contact() };
+
+            classUnderMockProxy.methodWithMapStringObject( parameterPassed );
+            Map<String,Object> parameterReturned = (Map<String,Object>)classUnderMock.call( 0 ).of( 'methodWithMapStringObject' ).parameter( 0 );
+        Test.stopTest();
+        
+        System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a map of objects, will return the parameter' );
+    }
+
 }
