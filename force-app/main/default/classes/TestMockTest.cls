@@ -997,15 +997,128 @@ public with sharing class TestMockTest {
         System.assertEquals( expectedAssertion  , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
-    // expects.method - when the method is called, passes
-    // expects.method - when the method is not called more than once, fails
-    // expects.method - no verify - when the method is not called, passes
-    // expects.method - verify - when the method is not called, fails
-    //
-    // expects.method.withAnyParameter.returns - when the method is called, passes
-    // expects.method.withAnyParameter.returns - when the method is not called more than once, fails
-    // expects.method.withAnyParameter.returns - no verify - when the method is not called, passes
-    // expects.method.withAnyParameter.returns - verify - when the method is not called, fails
+    /**
+    * @method  expects.method.withAnyParameters.returning
+    * @case    when the method is called
+    * @result  will not fail, and will return the stated result
+    */
+    @isTest
+    private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .withAnyParameters()
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            String actualReturn = classUnderMockProxy.methodUnderMock( 'this', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'TheReturn', actualReturn, 'expects.method.withAnyParameters.returning, when the method is called, will not fail, and will return the stated result' );
+    }
+
+    /**
+    * @method  expects.method.withAnyParameters.returning
+    * @case    when the method is called more than once
+    * @result  will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+        
+        TestMock mockAsserts = new TestMock( TestAsserts.class );
+        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        mockAsserts
+            .allows()
+                .method( 'assertEquals' )
+            .also().when()
+                .method( 'assert' )
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        classUnderMock.setTestAsserts( mockAssertsProxy );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .withAnyParameters()
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classUnderMockProxy.methodUnderMock( 'this', 1 );
+
+            try {
+                classUnderMockProxy.methodUnderMock( 'thisNew', 2 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String expectedAssertion = 'ClassUnderMock.methodUnderMock was called more times than was expected';
+        System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called more times than expected, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method  expects.method.withAnyParameters.returning
+    * @case    when the method is not called, but neither is verify
+    * @result  will not fail
+    */
+    @isTest
+    private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .withAnyParameters()
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            // we do nothing, because we're testing what happens when the method is not called
+        Test.stopTest();
+        
+        System.assertEquals( 0, classUnderMock.countOf( 'methodUnderMock' ), 'expects.method.withAnyParameters.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
+    }
+
+    /**
+    * @method  expects.method.withAnyParameters.returning
+    * @case    when the method is not called, and verify is
+    * @result  will fail
+    */
+    @isTest
+    private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsNotCalledAndVerifyId_willFail() {
+        
+        TestMock mockAsserts = new TestMock( TestAsserts.class );
+        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        mockAsserts
+            .allows()
+                .method( 'assertEquals' );
+
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        classUnderMock.setTestAsserts( mockAssertsProxy );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .withAnyParameters()
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classUnderMock.verify();
+        Test.stopTest();
+        
+        String expectedAssertion = 'Expected call stack for ClassUnderMock should be empty, and it is not';
+
+        System.assertEquals( ''                 , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( 'methodUnderMock()', mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion  , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
 
     // expects.method.withParameter.andThenParameter.returns - when the method call matches, passes
     // expects.method.withParameter.andThenParameter.returns - when the method call does not match, fails
