@@ -100,7 +100,11 @@ Implement
     Mock:
 
         Implement andThenAnyParameter
-        
+            look in tests for the following, without specifying a parameter:
+                .also().when()
+                    .method( 'assert' )        
+            Change this so that false will stop the test
+
         Type checking prior to checking equality - otherwise you get an indecipherable error
             Looks like you would need to pass the type into the expectation
             Or try / catch the assertion and report that it was probably a type error
@@ -181,9 +185,8 @@ Test:
 
 
 Example Tests:
+
     Brittle version using Mock behaviours
-
-
 
     Less brittle version, using Spy behaviours
 
