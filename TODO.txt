@@ -43,6 +43,9 @@ Implement
         Test the behaviour of 'when' matching
             include a method that isn't set up
 
+        Setting 'returning' when the method has a void return
+        Not setting 'returning' when the method has a non void return
+
         Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
         Test returns List, Set, Map
 
