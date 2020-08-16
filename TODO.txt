@@ -176,3 +176,47 @@ Implement
 Test:
     The behaviours work with Sobjects
     The behaviours work with Object instantiations
+
+
+
+
+Example Tests:
+    Brittle version using Mock behaviours
+
+
+
+    Less brittle version, using Spy behaviours
+
+    @isTest
+    private static void expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+        
+        TestMock mockAsserts = new TestMock( TestAsserts.class );
+        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        mockAsserts
+            .allows()
+                .method( 'assertEquals' )
+            .also().when()
+                .method( 'assert' )
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        classUnderMock.setTestAsserts( mockAssertsProxy );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classUnderMockProxy.methodUnderMock( 'this', 1 );
+
+            try {
+                classUnderMockProxy.methodUnderMock( 'this', 1 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String expectedAssertion = 'ClassUnderMock.methodUnderMock was called more times than was expected';
+        System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
+    }
