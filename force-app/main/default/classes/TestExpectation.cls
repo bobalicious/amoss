@@ -294,7 +294,11 @@ public class TestExpectation {
     * @return String - A description of the current expection's call.
     */
     public String getCallDescription() {
-        return this.expectedMethod;
+        List<String> stringParameters = new List<String>();
+        for( Object thisParameter : expectedParameters ) {
+            stringParameters.add( String.valueOf( thisParameter ) );
+        }
+        return this.expectedMethod + '(' + String.join( stringParameters, ',' ) + ')';
     }
 
     /**

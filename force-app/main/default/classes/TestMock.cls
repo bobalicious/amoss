@@ -91,12 +91,32 @@ public class TestMock implements StubProvider {
     }
 
     /**
+    * States that the when a method is called that matched the definition, stated behaviour will
+    * be exhibited.  Very similar to 'when'
+    *
+    * Call order is not checked, and 'verify' will not check that 'whens' have been met.
+    *
+    * 'Whens' take higher priority than 'expectations' (I.E. if a matching 'when' is defined at call time, then it
+    * will match that over the next 'expect').
+    *
+    * Define in the format:
+    *   allows()
+    *   .method( 'methodName' )
+    *   .withParameter( 'parameterValue' )
+    *   .willReturn( 'theValueItShouldReturn' )
+    */
+    public TestExpectation allows() {
+        // TODO: will switch the allowsAll flag to false, when that is added
+        return when();
+    }
+
+    /**
     * Checks that all configured 'expectations' have been met, failing the test if they have not.
     *
     * Generally called immediately prior to the test's assertions.
     */
     public void verify() {
-        assertionMechanism.assertEquals( '', expectations.getRemainingCallsDescription(), 'Expected call stack for ' + getClassName() + ' should be empty, and it is not' );
+        assertionMechanism.assertEquals( '', expectations.getRemainingCallsDescription(), String.format( 'Expected call stack for {0} should be empty, and it is not', new List<String>{ getClassName() } );
     }
 
     /**
@@ -173,7 +193,10 @@ public class TestMock implements StubProvider {
             }
         }
 
-        assertionMechanism.assert( ! expectations.isEmpty(), String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+        // We could assertEquals( ! expectations.isEmpty() ), but I do it this way so that the test for this method is clearer
+        if ( expectations.isEmpty() ) {
+            assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+        }
         TestExpectation thisExpectation = expectations.unshift();
         thisExpectation.verify( assertionMechanism, mockedMethod, parameters );
         return thisExpectation.getReturnValue();

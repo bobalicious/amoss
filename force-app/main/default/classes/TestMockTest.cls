@@ -1,37 +1,7 @@
 @isTest
 public with sharing class TestMockTest {
 
-    //
-    // Mock Object behaviour tests
-    //
-    // expects.method - when the method is called, passes
-    // expects.method - when the method is not called more than once, fails
-    // expects.method - no verify - when the method is not called, passes
-    // expects.method - verify - when the method is not called, fails
-    //
-    // expects.method.returns - when the method is called, passes
-    // expects.method.returns - when the method is not called more than once, fails
-    // expects.method.returns - no verify - when the method is not called, passes
-    // expects.method.returns - verify - when the method is not called, fails
-    //
-    // expects.method.withAnyParameter.returns - when the method is called, passes
-    // expects.method.withAnyParameter.returns - when the method is not called more than once, fails
-    // expects.method.withAnyParameter.returns - no verify - when the method is not called, passes
-    // expects.method.withAnyParameter.returns - verify - when the method is not called, fails
-
-    // expects.method.withParameter.andThenParameter.returns - when the method call matches, passes
-    // expects.method.withParameter.andThenParameter.returns - when the method call does not match, fails
-    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
-    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and does not match, fails
-
-    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
-
-    // expects.method.then.expects.method - when both methods are called in order, passes
-    // expects.method.then.expects.method - when both methods called, but out of order, fails
-    // expects.method.then.expects.method - no verify when one method called, passes
-    // expects.method.then.expects.method - verify when one method called, fails
-
-    // expects.method.also.expects.method - when both methods are called in order, passes
+    class TestException extends Exception {}
 
     //
     // Test Spy behaviour tests
@@ -789,5 +759,153 @@ public with sharing class TestMockTest {
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a map of objects, will return the parameter' );
     }
+
+    //
+    // Mock Object behaviour tests
+    //
+    /**
+    * @method  expects.method.returning
+    * @case    when the method is called
+    * @result  will not fail, and will return the stated result
+    */
+    @isTest
+    private static void expectsMethodReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            String actualReturn = classUnderMockProxy.methodUnderMock( 'this', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'TheReturn', actualReturn, 'expects.method, when the method is called, will not fail, and will return the stated result' );
+    }
+
+    /**
+    * @method  expects.method.returning
+    * @case    when the method is called more than once
+    * @result  will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+        
+        TestMock mockAsserts = new TestMock( TestAsserts.class );
+        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        mockAsserts
+            .allows()
+                .method( 'assertEquals' )
+
+            .also().expects()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenParameter( 'ClassUnderMock.methodUnderMock was called more times than was expected' )
+                .throwing( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        classUnderMock.setTestAsserts( mockAssertsProxy );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classUnderMockProxy.methodUnderMock( 'this', 1 );
+
+            try {
+                classUnderMockProxy.methodUnderMock( 'this', 1 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        mockAsserts.verify();
+    }
+
+    /**
+    * @method  expects.method.returning
+    * @case    when the method is not called, but neither is verify
+    * @result  will not fail
+    */
+    @isTest
+    private static void expectsMethodReturning_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            // we do nothing, because we're testing what happens when the method is not called
+        Test.stopTest();
+        
+        System.assertEquals( 0, classUnderMock.countOf( 'methodUnderMock' ), 'expects.method, when the method is not called, and neither is verify, will not fail - and the call cound will be zero' );
+    }
+
+    /**
+    * @method  expects.method.returning
+    * @case    when the method is not called, and verify is
+    * @result  will fail
+    */
+    @isTest
+    private static void expectsMethodReturning_whenTheMethodIsNotCalledAndVerifyId_willFail() {
+        
+        TestMock mockAsserts = new TestMock( TestAsserts.class );
+        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        mockAsserts
+            .expects()
+                .method( 'assertEquals' )
+                .withParameter( '' )
+                .andThenParameter( 'methodUnderMock()' )
+                .andThenParameter( 'Expected call stack for ClassUnderMock should be empty, and it is not' );
+
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        classUnderMock.setTestAsserts( mockAssertsProxy );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classUnderMock.verify();
+        Test.stopTest();
+        
+        // this would normally be covered by the 'expects' + 'verify', but since we're testing expects in this tes we should test using a spy
+        System.assertEquals( ''                 , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( 'methodUnderMock()', mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an actual non empty call stack' );
+    }
+
+    // expects.method - when the method is called, passes
+    // expects.method - when the method is not called more than once, fails
+    // expects.method - no verify - when the method is not called, passes
+    // expects.method - verify - when the method is not called, fails
+    //
+    // expects.method.withAnyParameter.returns - when the method is called, passes
+    // expects.method.withAnyParameter.returns - when the method is not called more than once, fails
+    // expects.method.withAnyParameter.returns - no verify - when the method is not called, passes
+    // expects.method.withAnyParameter.returns - verify - when the method is not called, fails
+
+    // expects.method.withParameter.andThenParameter.returns - when the method call matches, passes
+    // expects.method.withParameter.andThenParameter.returns - when the method call does not match, fails
+    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
+    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and does not match, fails
+
+    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
+
+    // expects.method.then.expects.method - when both methods are called in order, passes
+    // expects.method.then.expects.method - when both methods called, but out of order, fails
+    // expects.method.then.expects.method - no verify when one method called, passes
+    // expects.method.then.expects.method - verify when one method called, fails
+
+    // expects.method.also.expects.method - when both methods are called in order, passes
 
 }
