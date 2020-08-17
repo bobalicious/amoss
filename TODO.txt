@@ -43,6 +43,9 @@ Implement
         Test the behaviour of 'when' matching
             include a method that isn't set up
 
+        Test
+            andThenAnyParameter / thenAnyParameter
+
         Setting 'returning' when the method has a void return
         Not setting 'returning' when the method has a non void return
 
