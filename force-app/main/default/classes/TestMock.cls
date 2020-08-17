@@ -116,7 +116,7 @@ public class TestMock implements StubProvider {
     * Generally called immediately prior to the test's assertions.
     */
     public void verify() {
-        assertionMechanism.assertEquals( '', expectations.getRemainingCallsDescription(), String.format( 'Expected call stack for {0} should be empty, and it is not', new List<String>{ getClassName() } );
+        assertionMechanism.assertEquals( '', expectations.getRemainingCallsDescription(), String.format( 'Expected call stack for {0} should be empty, and it is not', new List<String>{ getClassName() } ) );
     }
 
     /**

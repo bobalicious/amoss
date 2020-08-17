@@ -8,7 +8,7 @@
 public class TestExpectation {
 
     private String expectedMethod;
-    private List<Object> expectedParameters = new List<Object>();
+    private List<TestExpectationParameter> expectedParameters = new List<TestExpectationParameter>();
     private Boolean withAnyParameters = true;
     private Object returnValue;
     private Exception exceptionToThrow;
@@ -95,7 +95,12 @@ public class TestExpectation {
     */
     public TestExpectation withParameters( Object[] parameterValues ) { // to encourage the shorter syntax
         this.withAnyParameters = false;
-        this.expectedParameters = parameterValues;
+
+        this.expectedParameters = new List<TestExpectationParameter>();
+        for ( Object thisParameterValue : parameterValues ) {
+            this.expectedParameters.add( new TestExpectationParameter().setValue( thisParameterValue ) );
+        }
+
         return this;
     }
 
@@ -116,9 +121,22 @@ public class TestExpectation {
     */
     public TestExpectation withParameter( Object parameterValue ) {
         this.withAnyParameters = false;
-        this.expectedParameters.add( parameterValue );
+        this.expectedParameters.add( new TestExpectationParameter().setValue( parameterValue ) );
         return this;
     }
+
+    // TODO: document
+    // TODO: test
+    public TestExpectation thenAnyParameter() {
+        this.expectedParameters.add( new TestExpectationParameter().anyValue() );
+        return this;
+    }
+
+    // TODO: document
+    // TODO: test
+    public TestExpectation andThenAnyParameter() {
+        return thenAnyParameter();
+    }    
 
     /**
     * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
@@ -138,6 +156,13 @@ public class TestExpectation {
     public TestExpectation andThenParameter( Object parameterValue ) {
         return withParameter( parameterValue );
     }
+
+    // TODO: test
+    // TODO: document
+    public TestExpectation thenParameter( Object parameterValue ) {
+        return withParameter( parameterValue );
+    }
+
 
     /**
     * States the value that should be returned when this 'expectation' or 'when' is met. 
@@ -282,7 +307,11 @@ public class TestExpectation {
         assertionMechanism.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, expectedMethod } ) );
 
         for ( Integer parameterNumber = 0; parameterNumber < expectedParameters.size(); parameterNumber++ ) {
-            assertionMechanism.assertEquals( expectedParameters[ parameterNumber ], parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, expectedMethod, String.valueOf( parameterNumber ) } ) );
+
+            if ( expectedParameters[ parameterNumber ].allowsAnyValue() ) {
+                continue;
+            }
+            assertionMechanism.assertEquals( expectedParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, expectedMethod, String.valueOf( parameterNumber ) } ) );
         }
     }
 
@@ -321,11 +350,51 @@ public class TestExpectation {
         }
 
         for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
-            if ( expectedParameters[ parameterNumber ] != parameterValues[ parameterNumber ] ) {
+            if ( ! expectedParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ) ) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    // TODO: document
+    // TODO: test
+    class TestExpectationParameter {
+
+        Boolean anyValue = false;
+        Object  value;
+
+        public TestExpectationParameter anyValue() {
+            anyValue = true;
+            return this;
+        }
+
+        public TestExpectationParameter setValue( Object value ) {
+            this.value = value;
+            return this;
+        }
+
+        public Object getValue() {
+            return this.value;
+        }
+
+        public Boolean allowsAnyValue() {
+            return anyValue;
+        }
+
+        public override String toString() {
+            if ( anyValue ) {
+                return 'any';
+            }
+            return String.valueOf( this.value );
+        }
+
+        public Boolean matches( Object value ) {
+            if ( anyValue ) {
+                return true;
+            }
+            return this.value == value;
+        }
     }
 }

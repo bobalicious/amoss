@@ -1120,8 +1120,75 @@ public with sharing class TestMockTest {
         System.assertEquals( expectedAssertion  , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
-    // expects.method.withParameter.andThenParameter.returns - when the method call matches, passes
-    // expects.method.withParameter.andThenParameter.returns - when the method call does not match, fails
+    /**
+    * @method  expects.method.withParameter.andThenParameter.returning
+    * @case    when the method is called with matching parameters
+    * @result  will not fail, and will return the stated result
+    */
+    @isTest
+    private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
+        
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .withParameter( 'this' )
+                .andThenParameter( 1 )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            String actualReturn = classUnderMockProxy.methodUnderMock( 'this', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'TheReturn', actualReturn, 'expects.method.withParameter.andThenParameter.returning, when the method is called with matching parameters, will not fail, and will return the stated result' );
+    }
+
+    /**
+    * @method  expects.method.withParameter.andThenParameter.returning
+    * @case    when the method is called with non-matching parameters
+    * @result  will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalledWithNonMatchingParameters_willFailTheTest() {
+        
+        TestMock mockAsserts = new TestMock( TestAsserts.class );
+        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        mockAsserts
+            .when()
+                .method( 'assertEquals' )
+                .withParameter( 'this' )
+                .andThenParameter( 'not-this' )
+                .andThenAnyParameter()
+                .throws( new TestException( 'Mismatching assertion would normally halt the test, so we will too' ) )
+            .also().allows()
+                .method( 'assertEquals' )
+                .withAnyParameter();
+
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        classUnderMock.setTestAsserts( mockAssertsProxy );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .withParameter( 'this' )
+                .andThenParameter( 1 )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            try {
+                classUnderMockProxy.methodUnderMock( 'not-this', 1 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+        
+        String expectedAssertion = 'ClassUnderMock.methodUnderMock was called with the wrong parameter value in position 0';
+        System.assertEquals( 'this'           , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
+        System.assertEquals( 'not-this'       , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
+        System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
+    }    
+
     // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
     // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and does not match, fails
 
