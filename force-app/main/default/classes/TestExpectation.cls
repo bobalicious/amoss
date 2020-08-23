@@ -8,7 +8,7 @@
 public class TestExpectation {
 
     private String expectedMethod;
-    private List<Object> expectedParameters = new List<Object>();
+    private List<TestExpectationParameter> expectedParameters = new List<TestExpectationParameter>();
     private Boolean withAnyParameters = true;
     private Object returnValue;
     private Exception exceptionToThrow;
@@ -54,30 +54,10 @@ public class TestExpectation {
     *       .withAnyParameter()
     *       .willReturn( 'theValueItShouldReturn' )
     *
-    * Has 'withAnyParameter' as a synonym, and these methods are entirely interchangeable based on preference.
     */
     public TestExpectation withAnyParameters() {
         this.withAnyParameters = true;
         return this;
-    }
-
-    /**
-    * States that this 'expection' or 'when' is valid for any combination of parameters.
-    *
-    * Is optional, as omitting parameter definitions will result in any parameter being valid.
-    *
-    * Generally used for stubbing methods that are not the primary focus of a given test.
-    *
-    * Has 'withAnyParameters' as a synonym, and these methods are entirely interchangeable based on preference.
-    *
-    * For example:
-    *   .when()
-    *       .method( 'methodName' )
-    *       .withAnyParameters()
-    *       .willReturn( 'theValueItShouldReturn' )
-    */
-    public TestExpectation withAnyParameter() {
-        return withAnyParameters();
     }
 
     /**
@@ -95,7 +75,12 @@ public class TestExpectation {
     */
     public TestExpectation withParameters( Object[] parameterValues ) { // to encourage the shorter syntax
         this.withAnyParameters = false;
-        this.expectedParameters = parameterValues;
+
+        this.expectedParameters = new List<TestExpectationParameter>();
+        for ( Object thisParameterValue : parameterValues ) {
+            this.expectedParameters.add( new TestExpectationParameter().setValue( thisParameterValue ) );
+        }
+
         return this;
     }
 
@@ -116,9 +101,67 @@ public class TestExpectation {
     */
     public TestExpectation withParameter( Object parameterValue ) {
         this.withAnyParameters = false;
-        this.expectedParameters.add( parameterValue );
+        this.expectedParameters.add( new TestExpectationParameter().setValue( parameterValue ) );
         return this;
     }
+
+
+    /**
+    * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .withAnyParameter()
+    *       .thenParameter( false )
+    *       .willReturn( 'theValueItShouldReturn' )
+    *
+    * Has 'andThenAnyParameter' and 'thenAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
+    *
+    */
+    // TODO: test at the public interface level
+    public TestExpectation withAnyParameter() {
+        this.expectedParameters.add( new TestExpectationParameter().anyValue() );
+        return this;
+    }
+
+    /**
+    * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .withParameter( 'Parameter1' )
+    *       .thenAnyParameter()
+    *       .thenParameter( false )
+    *       .willReturn( 'theValueItShouldReturn' )
+    *
+    * Has 'andThenAnyParameter' and 'withAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
+    *
+    */
+    // TODO: test at the public interface level
+    public TestExpectation thenAnyParameter() {
+        return withAnyParameter();
+    }
+
+    /**
+    * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .withParameter( 'Parameter1' )
+    *       .andThenAnyParameter()
+    *       .andThenParameter( false )
+    *       .willReturn( 'theValueItShouldReturn' )
+    *
+    * Has 'thenAnyParameter' and 'withAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
+    *
+    */
+    // TODO: test at the public interface level
+    public TestExpectation andThenAnyParameter() {
+        return withAnyParameter();
+    }    
 
     /**
     * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
@@ -131,11 +174,31 @@ public class TestExpectation {
     *       .andThenParameter( false )
     *       .willReturn( 'theValueItShouldReturn' )
     *
-    * Has 'withParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+    * Has 'withParameter' and 'thenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
     *
     * @param Object - The parameter value to add to the list of expected ones
     */
     public TestExpectation andThenParameter( Object parameterValue ) {
+        return withParameter( parameterValue );
+    }
+
+    /**
+    * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .withParameter( 'Parameter1' )
+    *       .thenParameter( 4 )
+    *       .thenParameter( false )
+    *       .willReturn( 'theValueItShouldReturn' )
+    *
+    * Has 'withParameter' and 'andThenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+    *
+    * @param Object - The parameter value to add to the list of expected ones
+    */
+    // TODO: test at the public interface level
+    public TestExpectation thenParameter( Object parameterValue ) {
         return withParameter( parameterValue );
     }
 
@@ -271,18 +334,22 @@ public class TestExpectation {
     * @param String - The method to check this expectation against.
     * @param List<Object> - The parameters to check this expectation against.
     */
-    public void verify( String method, List<Object> parameterValues ) {
+    public void verify( TestAsserts assertionMechanism, String method, List<Object> parameterValues ) {
 
-        System.assertEquals( expectedMethod, method, String.format( '{0}.{1} was expected to be called', new List<String>{ className, expectedMethod } ) );
+        assertionMechanism.assertEquals( expectedMethod, method, String.format( '{0}.{1} was expected to be called', new List<String>{ className, expectedMethod } ) );
 
         if ( withAnyParameters ) {
             return;
         }
 
-        System.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, expectedMethod } ) );
+        assertionMechanism.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, expectedMethod } ) );
 
         for ( Integer parameterNumber = 0; parameterNumber < expectedParameters.size(); parameterNumber++ ) {
-            System.assertEquals( expectedParameters[ parameterNumber ], parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, expectedMethod, String.valueOf( parameterNumber ) } ) );
+
+            if ( expectedParameters[ parameterNumber ].allowsAnyValue() ) {
+                continue;
+            }
+            assertionMechanism.assertEquals( expectedParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, expectedMethod, String.valueOf( parameterNumber ) } ) );
         }
     }
 
@@ -294,7 +361,11 @@ public class TestExpectation {
     * @return String - A description of the current expection's call.
     */
     public String getCallDescription() {
-        return this.expectedMethod;
+        List<String> stringParameters = new List<String>();
+        for( Object thisParameter : expectedParameters ) {
+            stringParameters.add( String.valueOf( thisParameter ) );
+        }
+        return this.expectedMethod + '(' + String.join( stringParameters, ',' ) + ')';
     }
 
     /**
@@ -317,11 +388,96 @@ public class TestExpectation {
         }
 
         for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
-            if ( expectedParameters[ parameterNumber ] != parameterValues[ parameterNumber ] ) {
+            if ( ! expectedParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ) ) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of a Parameter that is expected to be passed into a mocked method call
+    *
+    */
+    class TestExpectationParameter {
+
+        Boolean anyValue = false;
+        Object  value;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * States that this parameter can be set to any value and will match when being checked against an actual call
+        *
+        * @return TestExpectationParameter - Itself, allowing for a fluent interface
+        */
+        public TestExpectationParameter anyValue() {
+            anyValue = true;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the value that this parameter is expectd to be
+        *
+        * @param  Object - The value that this parameter is expected to be
+        * @return TestExpectationParameter - Itself, allowing for a fluent interface
+        */
+        public TestExpectationParameter setValue( Object value ) {
+            this.value = value;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the value that this parameter is expected to be.
+        *
+        * @return Object - The value that this parameter is expected to be.
+        */
+        public Object getValue() {
+            return this.value;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes whether this parameter is allowed to be any value (true), or must be a specific value (false)
+        *
+        * @return Boolean - Is this parameter allowed to be any value?
+        */
+        public Boolean allowsAnyValue() {
+            return anyValue;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * @return String - String description of the expected value.
+        */
+        public override String toString() {
+            if ( anyValue ) {
+                return 'any';
+            }
+            return String.valueOf( this.value );
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes if this parameter matches the value that is passed into it.
+        *
+        * @return Boolean - Does the passed parameter match this object's expected parameter.
+        */
+        public Boolean matches( Object value ) {
+            if ( anyValue ) {
+                return true;
+            }
+            return this.value == value;
+        }
     }
 }

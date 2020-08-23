@@ -35,30 +35,69 @@ Design Principles:
                     * also
         * However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a TestMock
 
-
 Implement
 
+    Test:
+        Test using expectations
+        Test the behaviour of 'when' matching
+            include a method that isn't set up
+
+        Test
+            andThenAnyParameter / thenAnyParameter
+            TestExpectations
+            TestExpectation
+            TestExpectation.TestExpectationParameter
+
+        Setting 'returning' when the method has a void return
+        Not setting 'returning' when the method has a non void return
+
+        Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
+        Test returns List, Set, Map
+
+        methodUnderMockWithNoReturn - when setup to return something
+        methodUnderMock - when setup not to return anything
+
     General:
+
+        What happens with methods that are not supposed to return something?
+            Looks like it works, just need to write tests to prove it
+
+        Rename:
+            Repository - Amoss
+
+            TestMock - Amoss_Instance
+            TestExpectation - Amoss_Expectation
+            TestExpectations - Amoss_Expectations
+            TestAsserts - Amoss_Asserts
+
+            TestMockTest - Amoss_InstanceTest
+
+        Going for:
+
+                Amoss_Instance objectUnderMockConfiguration = new Amoss_Instance( ClassUnderMock.class );
+
+                objectUnderMockConfiguration
+                    .allows()
+                        .method( 'methodUnderMock' )
+                    .also().when()
+                        .method( 'otherMethodUnderMock' )
+                        .withParameter( 'thisParameter' )
+                        .returns( true );
+
+                ClassUnderMock objectUnderMock = objectUnderMockConfiguration.generateMock();
+
+
+
+
+        Can we wrap some of the inner classes with public interfaces, so that the consumer only sees that layer.
 
         Should everything be moved into one class file with inner classes?
         Assertions should all be moved into handleMethodCall, so that everything else can be properly tested
 
         Move the assertions out into another class that is instantiated, so it can be mocked in tests
 
-        What happens with methods that are not supposed to return something?
-
         Think about 'withAnyParameters' a bit more
             Need some error conditions, in case you try to set up something invalid.
-
-        Implement means of stating that you don't care about a single parameter
-        E.g.
-            templateGenerator
-                .expects()
-                    .method( 'generate' )
-                    .withParameter( 'One We Care About' )
-                    .andAnyParameter()
-                    .andThenParameter( 'Another One We Care About' )
-                    .returning( 'Something' );
 
         Think about 'only checking a single parameter'
             withParameterAtPosition
@@ -75,8 +114,6 @@ Implement
 
     Mock:
 
-        Implement andThenAnyParameter
-        
         Type checking prior to checking equality - otherwise you get an indecipherable error
             Looks like you would need to pass the type into the expectation
             Or try / catch the assertion and report that it was probably a type error
@@ -93,15 +130,33 @@ Implement
 
         Can you simply add the Test Recorder format into the framework - for flexibility
 
+
     Spy:
+
+        Currently supports
+            mockThing.countOf( 'method' )
+        why not 
+            mockThing.get().countOf( 'method' )
+            this would be in line with the parameter getters
+
 
         Checking on what you can call, when
         Consider splitting the CallChecker class down, so you end up with perfect auto-complete
 
         Think about 'allowAnyCall'
+
             Default to 'true' - so spy is easy to set up
-            If expects is set, then set back to false
-                UNLESS 'allowAnyCall' is called explicitly
+
+            allows
+                switches off allowAnyCall
+            when
+                does not switch off allowAnyCall
+            expects
+                switches off allowAnyCall
+
+            allowsAnyCall
+                switches on allowAnyCall, and does not allow it to be switched off again
+
             Then remove a lot of setup code from TestMockTest that is no longer needed
 
     Assertions:
@@ -131,7 +186,6 @@ Implement
                 .andAnyParameter()
                 .handledBy( new TemplateGeneratorMockHandler() );
 
-        
             System.assertEquals( templateGenerator.called( 'generate' ).number( 1 ).parameter( 3 ).was() )
 
             That's why we need a spy, and a 'handled by'
@@ -139,3 +193,43 @@ Implement
 Test:
     The behaviours work with Sobjects
     The behaviours work with Object instantiations
+
+Example Tests:
+
+    Brittle version using Mock behaviours
+
+    Less brittle version, using Spy behaviours
+
+    @isTest
+    private static void expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+        
+        TestMock mockAsserts = new TestMock( TestAsserts.class );
+        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        mockAsserts
+            .allows()
+                .method( 'assertEquals' )
+            .also().when()
+                .method( 'assert' )
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        classUnderMock.setTestAsserts( mockAssertsProxy );
+        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+
+        classUnderMock
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classUnderMockProxy.methodUnderMock( 'this', 1 );
+
+            try {
+                classUnderMockProxy.methodUnderMock( 'this', 1 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String expectedAssertion = 'ClassUnderMock.methodUnderMock was called more times than was expected';
+        System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
+    }
