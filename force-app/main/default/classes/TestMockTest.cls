@@ -800,6 +800,8 @@ public with sharing class TestMockTest {
                 .method( 'assertEquals' )
             .also().when()
                 .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         TestMock classUnderMock = new TestMock( ClassUnderMock.class );
@@ -916,6 +918,8 @@ public with sharing class TestMockTest {
                 .method( 'assertEquals' )
             .also().when()
                 .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         TestMock classUnderMock = new TestMock( ClassUnderMock.class );
@@ -1036,6 +1040,8 @@ public with sharing class TestMockTest {
                 .method( 'assertEquals' )
             .also().when()
                 .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         TestMock classUnderMock = new TestMock( ClassUnderMock.class );

@@ -358,31 +358,69 @@ public class TestExpectation {
         return true;
     }
 
-    // TODO: document
-    // TODO: test
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of a Parameter that is expected to be passed into a mocked method call
+    *
+    */
     class TestExpectationParameter {
 
         Boolean anyValue = false;
         Object  value;
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * States that this parameter can be set to any value and will match when being checked against an actual call
+        *
+        * @return TestExpectationParameter - Itself, allowing for a fluent interface
+        */
         public TestExpectationParameter anyValue() {
             anyValue = true;
             return this;
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the value that this parameter is expectd to be
+        *
+        * @param  Object - The value that this parameter is expected to be
+        * @return TestExpectationParameter - Itself, allowing for a fluent interface
+        */
         public TestExpectationParameter setValue( Object value ) {
             this.value = value;
             return this;
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the value that this parameter is expected to be.
+        *
+        * @return Object - The value that this parameter is expected to be.
+        */
         public Object getValue() {
             return this.value;
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes whether this parameter is allowed to be any value (true), or must be a specific value (false)
+        *
+        * @return Boolean - Is this parameter allowed to be any value?
+        */
         public Boolean allowsAnyValue() {
             return anyValue;
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * @return String - String description of the expected value.
+        */
         public override String toString() {
             if ( anyValue ) {
                 return 'any';
@@ -390,6 +428,13 @@ public class TestExpectation {
             return String.valueOf( this.value );
         }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes if this parameter matches the value that is passed into it.
+        *
+        * @return Boolean - Does the passed parameter match this object's expected parameter.
+        */
         public Boolean matches( Object value ) {
             if ( anyValue ) {
                 return true;
