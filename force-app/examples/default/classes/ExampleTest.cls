@@ -6,8 +6,8 @@ public with sharing class ExampleTest {
     @isTest
     public static void fillingRemovesInventoryIfInStock() {
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
-        warehouse
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+        warehouseController
             .expects()
                 .method( 'hasInventory' )
                 .withParameters( new Object[]{ TALISKER, 50 } )
@@ -20,18 +20,18 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
-        warehouse.verify();
+        warehouseController.verify();
         System.assert( order.isFilled(), 'filling, when the warehouse has stock, will state that the order is filled' );
     }
 
     @isTest
     public static void fillingRemovesInventoryIfInStock_usingASpy() {
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
-        warehouse
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+        warehouseController
             .when()
                 .method( 'hasInventory' )
                 .willReturn( true )
@@ -42,26 +42,26 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
         System.assert( order.isFilled(), 'filling, when the warehouse has stock, will state that the order is filled' );
 
-        System.assertEquals( TALISKER, warehouse.latestCallOf( 'hasInventory' ).parameter( 0 )
+        System.assertEquals( TALISKER, warehouseController.latestCallOf( 'hasInventory' ).parameter( 0 )
                             , 'filling, will call hasInventory against the warehouse, passing the product required, to find out if there is stock' );
 
-        System.assertEquals( 50, warehouse.latestCallOf( 'hasInventory' ).parameter( 1 )
+        System.assertEquals( 50, warehouseController.latestCallOf( 'hasInventory' ).parameter( 1 )
                             , 'filling, will call hasInventory against the warehouse, passing the number required, to find out if there is stock' );
 
-        System.assertEquals( new List<Object>{ TALISKER, 50 }, warehouse.call( 0 ).of( 'remove' ).parameters()
+        System.assertEquals( new List<Object>{ TALISKER, 50 }, warehouseController.call( 0 ).of( 'remove' ).parameters()
                             , 'filling, when the warehouse has stock, will call remove against the warehouse, passing the product and number required' );
     }
 
     @isTest
     public static void fillingRemovesInventoryIfInStock_usingASpyThatStatesGet() {
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
-        warehouse
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+        warehouseController
             .when()
                 .method( 'hasInventory' )
                 .willReturn( true )
@@ -72,26 +72,26 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
         System.assert( order.isFilled(), 'filling, when the warehouse has stock, will state that the order is filled' );
 
-        System.assertEquals( TALISKER, warehouse.get().latestCallOf( 'hasInventory' ).parameter( 0 )
+        System.assertEquals( TALISKER, warehouseController.get().latestCallOf( 'hasInventory' ).parameter( 0 )
                             , 'filling, will call hasInventory against the warehouse, passing the product required, to find out if there is stock' );
 
-        System.assertEquals( 50, warehouse.get().latestCallOf( 'hasInventory' ).parameter( 1 )
+        System.assertEquals( 50, warehouseController.get().latestCallOf( 'hasInventory' ).parameter( 1 )
                             , 'filling, will call hasInventory against the warehouse, passing the number required, to find out if there is stock' );
 
-        System.assertEquals( new List<Object>{ TALISKER, 50 }, warehouse.get().call( 0 ).of( 'remove' ).parameters()
+        System.assertEquals( new List<Object>{ TALISKER, 50 }, warehouseController.get().call( 0 ).of( 'remove' ).parameters()
                             , 'filling, when the warehouse has stock, will call remove against the warehouse, passing the product and number required' );
     }
 
     @isTest
     public static void fillingRemovesInventoryIfInStock_whenAMethodHasNoReturns() {
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
-        warehouse
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+        warehouseController
             .expects()
                 .method( 'hasInventory' )
                 .withParameters( new Object[]{ TALISKER, 50 } )
@@ -103,10 +103,10 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fillWithoutReturn( (Warehouse)warehouse.generateMock() );
+            order.fillWithoutReturn( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
-        warehouse.verify();
+        warehouseController.verify();
         // there's nothing to assert here because there's no effect that is visible except in Warehouse
     }
 
@@ -115,18 +115,18 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
             
-        warehouse.expects()
+        warehouseController.expects()
             .method( 'hasInventory' )
             .withAnyParameters()
             .returning( false );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
-        warehouse.verify();
+        warehouseController.verify();
         System.assertEquals( false, order.isFilled(), 'filling, when the warehouse does not have stock, will state that the order is not filled' );
     }
 
@@ -135,27 +135,27 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
             
         // If you didn't care which methods get called, you just want them to return
         // certain values, you can use 'when'.  These are examined before the expects
         // so you can mix them, as long as the whens don't overlap with the expects.
 
-        warehouse.when()
+        warehouseController.when()
             .method( 'hasInventory' )
             .withAnyParameters()
             .willReturn( false );
 
-        warehouse.when()
+        warehouseController.when()
             .method( 'remove' )
             .withAnyParameters()
             .willReturn( false );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
-        warehouse.verify(); // this will always pass, as we have no expectations
+        warehouseController.verify(); // this will always pass, as we have no expectations
         System.assertEquals( false, order.isFilled(), 'filling, when the warehouse does not have stock, will state that the order is not filled' );
     }
 
@@ -164,12 +164,12 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
             
         // We can set up conditional responses - they are looked at in order - if 51 is sent
         // we'll get a false, otherwise we'll get true
 
-        warehouse.when()
+        warehouseController.when()
             .method( 'hasInventory' )
             .withParameter( TALISKER )
             .andThenParameter( 51 )
@@ -180,10 +180,10 @@ public with sharing class ExampleTest {
             .willReturn( true );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
-        warehouse.verify(); // this will always pass, as we have no expectations
+        warehouseController.verify(); // this will always pass, as we have no expectations
         System.assertEquals( false, order.isFilled(), 'filling, when the warehouse does not have stock, will state that the order is not filled' );
     }
 
@@ -192,27 +192,27 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
             
         // We can set up conditional responses - they are looked at in order - if 51 is sent
         // we'll get a false, otherwise we'll get true
 
-        warehouse.when()
+        warehouseController.when()
             .method( 'hasInventory' )
             .withParameter( TALISKER )
             .andThenParameter( 51 )
             .willReturn( false );
 
-        warehouse.when()
+        warehouseController.when()
             .method( 'hasInventory' )
             .withAnyParameters()
             .willReturn( true );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
-        warehouse.verify(); // this will always pass, as we have no expectations
+        warehouseController.verify(); // this will always pass, as we have no expectations
         System.assertEquals( false, order.isFilled(), 'filling, when the warehouse does not have stock, will state that the order is not filled' );
     }
 
@@ -221,19 +221,19 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
             
-        warehouse.expects()
+        warehouseController.expects()
             .method( 'hasInventory' )
             .withParameter( TALISKER )
             .andThenParameter( 51 )
             .throwing( new Warehouse.WarehouseException( 'Some error happened' ) );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
-        warehouse.verify();
+        warehouseController.verify();
         System.assertEquals( false, order.isFilled(), 'filling, when the warehouse throws an exception, will state that the order is not filled' );
     }
 
@@ -242,19 +242,19 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
+        Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
             
-        warehouse.expects()
+        warehouseController.expects()
             .method( 'hasInventory' )
             .withParameter( TALISKER )
             .andThenParameter( 51 )
             .throwing( new DmlException( 'Some error happened' ) );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateMock() );
         Test.stopTest();
 
-        warehouse.verify();
+        warehouseController.verify();
         System.assertEquals( false, order.isFilled(), 'filling, when the warehouse throws an exception, will state that the order is not filled' );
     }   
 }

@@ -59,6 +59,8 @@ Implement
 
     General:
 
+        Reference Fowler's article, or completely re-write ExampleTest
+
         Rename:
             Repository - Amoss
 
