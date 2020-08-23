@@ -1,4 +1,4 @@
-public with sharing class TestAsserts {
+public with sharing class Amoss_Asserts {
 
     public void assertEquals( Object expectedObject, Object actualObject, String assertionMessage ) {
         System.assertEquals( expectedObject, actualObject, assertionMessage );

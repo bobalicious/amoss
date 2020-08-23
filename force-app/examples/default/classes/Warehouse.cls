@@ -14,4 +14,7 @@ public class Warehouse {
         return true;
     }
 
+    public void removeWithoutReturn( String product, Integer numberRequired ) {
+    }
+
 }

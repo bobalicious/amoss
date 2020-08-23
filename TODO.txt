@@ -44,9 +44,9 @@ Implement
 
         Test
             andThenAnyParameter / thenAnyParameter
-            TestExpectations
-            TestExpectation
-            TestExpectation.TestExpectationParameter
+            Amoss_Expectations
+            Amoss_Expectation
+            Amoss_Expectation.Amoss_ExpectationParameter
 
         Setting 'returning' when the method has a void return
         Not setting 'returning' when the method has a non void return
@@ -59,37 +59,16 @@ Implement
 
     General:
 
-        What happens with methods that are not supposed to return something?
-            Looks like it works, just need to write tests to prove it
-
         Rename:
             Repository - Amoss
 
-            TestMock - Amoss_Instance
-            TestExpectation - Amoss_Expectation
-            TestExpectations - Amoss_Expectations
-            TestAsserts - Amoss_Asserts
+        Should CallLog, etc be changed to Amoss_CallLog, etc?  Or is it OK because they are inner classes?
 
-            TestMockTest - Amoss_InstanceTest
-
-        Going for:
-
-                Amoss_Instance objectUnderMockConfiguration = new Amoss_Instance( ClassUnderMock.class );
-
-                objectUnderMockConfiguration
-                    .allows()
-                        .method( 'methodUnderMock' )
-                    .also().when()
-                        .method( 'otherMethodUnderMock' )
-                        .withParameter( 'thisParameter' )
-                        .returns( true );
-
-                ClassUnderMock objectUnderMock = objectUnderMockConfiguration.generateMock();
-
-
-
+        What happens with methods that are not supposed to return something?
+            Looks like it works, just need to write tests to prove it
 
         Can we wrap some of the inner classes with public interfaces, so that the consumer only sees that layer.
+        Only if it doesn't increase the assertion failure call stack - although that can probably be solved with exceptions.
 
         Should everything be moved into one class file with inner classes?
         Assertions should all be moved into handleMethodCall, so that everything else can be properly tested
@@ -166,9 +145,9 @@ Implement
 
         Need to be able to test:
 
-            TestMock templateGenerator = new TestMock( TemplateGenerator.class );
+            TestMock templateGeneratorController = new Amoss_Instance( TemplateGenerator.class );
 
-            templateGenerator
+            templateGeneratorController
                 .expects()
                 .method( 'generate' )
                 .withParameter( 'Opportunity' )
@@ -178,7 +157,7 @@ Implement
 
             Maybe:
 
-            templateGenerator
+            templateGeneratorController
                 .expects()
                 .method( 'generate' )
                 .withParameter( 'Opportunity' )
@@ -186,7 +165,9 @@ Implement
                 .andAnyParameter()
                 .handledBy( new TemplateGeneratorMockHandler() );
 
-            System.assertEquals( templateGenerator.called( 'generate' ).number( 1 ).parameter( 3 ).was() )
+            ....
+
+            System.assertEquals( templateGeneratorController.called( 'generate' ).number( 1 ).parameter( 3 ) )
 
             That's why we need a spy, and a 'handled by'
 
@@ -212,9 +193,9 @@ Example Tests:
                 .method( 'assert' )
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
+        TestMock classUnderMock = new TestMock( Amoss_ClassUnderMock.class );
         classUnderMock.setTestAsserts( mockAssertsProxy );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_ClassUnderMock classUnderMockProxy = (Amoss_ClassUnderMock)classUnderMock.proxy();
 
         classUnderMock
             .expects()
@@ -229,7 +210,7 @@ Example Tests:
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'ClassUnderMock.methodUnderMock was called more times than was expected';
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was called more times than was expected';
         System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
         System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }

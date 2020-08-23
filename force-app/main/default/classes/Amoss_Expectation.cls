@@ -5,15 +5,15 @@
 *
 */
 @isTest
-public class TestExpectation {
+public class Amoss_Expectation {
 
     private String expectedMethod;
-    private List<TestExpectationParameter> expectedParameters = new List<TestExpectationParameter>();
+    private List<Amoss_ExpectationParameter> expectedParameters = new List<Amoss_ExpectationParameter>();
     private Boolean withAnyParameters = true;
     private Object returnValue;
     private Exception exceptionToThrow;
 
-    private TestMock mockControl;
+    private Amoss_Instance mockControl;
 
     private String className {
         get {
@@ -21,7 +21,7 @@ public class TestExpectation {
         }
     }
 
-    public TestExpectation( TestMock mockControl ) {
+    public Amoss_Expectation( Amoss_Instance mockControl ) {
         this.mockControl = mockControl;
     }
 
@@ -36,7 +36,7 @@ public class TestExpectation {
     *
     * @param String - The method that this expectation is for
     */
-    public TestExpectation method( String method ) {
+    public Amoss_Expectation method( String method ) {
         this.expectedMethod = method;
         return this;
     }
@@ -55,7 +55,7 @@ public class TestExpectation {
     *       .willReturn( 'theValueItShouldReturn' )
     *
     */
-    public TestExpectation withAnyParameters() {
+    public Amoss_Expectation withAnyParameters() {
         this.withAnyParameters = true;
         return this;
     }
@@ -73,12 +73,12 @@ public class TestExpectation {
     *
     * @param Object[] - The list of parameter values that are expected
     */
-    public TestExpectation withParameters( Object[] parameterValues ) { // to encourage the shorter syntax
+    public Amoss_Expectation withParameters( Object[] parameterValues ) { // to encourage the shorter syntax
         this.withAnyParameters = false;
 
-        this.expectedParameters = new List<TestExpectationParameter>();
+        this.expectedParameters = new List<Amoss_ExpectationParameter>();
         for ( Object thisParameterValue : parameterValues ) {
-            this.expectedParameters.add( new TestExpectationParameter().setValue( thisParameterValue ) );
+            this.expectedParameters.add( new Amoss_ExpectationParameter().setValue( thisParameterValue ) );
         }
 
         return this;
@@ -99,9 +99,9 @@ public class TestExpectation {
     *
     * @param Object - The parameter value to add to the list of expected ones
     */
-    public TestExpectation withParameter( Object parameterValue ) {
+    public Amoss_Expectation withParameter( Object parameterValue ) {
         this.withAnyParameters = false;
-        this.expectedParameters.add( new TestExpectationParameter().setValue( parameterValue ) );
+        this.expectedParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
         return this;
     }
 
@@ -120,8 +120,8 @@ public class TestExpectation {
     *
     */
     // TODO: test at the public interface level
-    public TestExpectation withAnyParameter() {
-        this.expectedParameters.add( new TestExpectationParameter().anyValue() );
+    public Amoss_Expectation withAnyParameter() {
+        this.expectedParameters.add( new Amoss_ExpectationParameter().anyValue() );
         return this;
     }
 
@@ -140,7 +140,7 @@ public class TestExpectation {
     *
     */
     // TODO: test at the public interface level
-    public TestExpectation thenAnyParameter() {
+    public Amoss_Expectation thenAnyParameter() {
         return withAnyParameter();
     }
 
@@ -159,7 +159,7 @@ public class TestExpectation {
     *
     */
     // TODO: test at the public interface level
-    public TestExpectation andThenAnyParameter() {
+    public Amoss_Expectation andThenAnyParameter() {
         return withAnyParameter();
     }    
 
@@ -178,7 +178,7 @@ public class TestExpectation {
     *
     * @param Object - The parameter value to add to the list of expected ones
     */
-    public TestExpectation andThenParameter( Object parameterValue ) {
+    public Amoss_Expectation andThenParameter( Object parameterValue ) {
         return withParameter( parameterValue );
     }
 
@@ -198,7 +198,7 @@ public class TestExpectation {
     * @param Object - The parameter value to add to the list of expected ones
     */
     // TODO: test at the public interface level
-    public TestExpectation thenParameter( Object parameterValue ) {
+    public Amoss_Expectation thenParameter( Object parameterValue ) {
         return withParameter( parameterValue );
     }
 
@@ -214,7 +214,7 @@ public class TestExpectation {
     *
     * @param Object - The value to return when this expectation is met.
     */
-    public TestExpectation returning( Object returnValue ) {
+    public Amoss_Expectation returning( Object returnValue ) {
         this.returnValue = returnValue;
         return this;
     }
@@ -231,7 +231,7 @@ public class TestExpectation {
     *
     * @param Object - The value to return when this expectation is met.
     */
-    public TestExpectation returns( Object returnValue ) {
+    public Amoss_Expectation returns( Object returnValue ) {
         return returning( returnValue );
     }
 
@@ -247,7 +247,7 @@ public class TestExpectation {
     *
     * @param Object - The value to return when this expectation is met.
     */
-    public TestExpectation willReturn( Object returnValue ) {
+    public Amoss_Expectation willReturn( Object returnValue ) {
         return returning( returnValue );
     }
 
@@ -263,7 +263,7 @@ public class TestExpectation {
     *
     * @param Object - The Exception to throw when this expectation is met.
     */
-    public TestExpectation throwing( Exception exceptionToThrow ) {
+    public Amoss_Expectation throwing( Exception exceptionToThrow ) {
         this.exceptionToThrow = exceptionToThrow;
         return this;
     }
@@ -280,12 +280,12 @@ public class TestExpectation {
     *
     * @param Object - The Exception to throw when this expectation is met.
     */
-    public TestExpectation throws( Exception exceptionToThrow ) {
+    public Amoss_Expectation throws( Exception exceptionToThrow ) {
         return this.throwing( exceptionToThrow );
     }
 
     /**
-    * Allows another 'expectation' or 'when' to be defined against the TestMock
+    * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance
     *
     * For example:
     * .then().expects()
@@ -293,12 +293,12 @@ public class TestExpectation {
     *       .withParameter( 'parameterValue' )
     *       .returning( 'theValueItShouldReturn' )
     */
-    public TestMock then() {
+    public Amoss_Instance then() {
         return this.mockControl;
     }
 
     /**
-    * Allows another 'expectation' or 'when' to be defined against the TestMock.
+    * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance.
     *
     * Is a synonym for 'then'.
     *
@@ -308,7 +308,7 @@ public class TestExpectation {
     *       .withParameter( 'parameterValue' )
     *       .willReturn( 'theValueItShouldReturn' )
     */
-    public TestMock also() {
+    public Amoss_Instance also() {
         return then();
     }
 
@@ -334,7 +334,7 @@ public class TestExpectation {
     * @param String - The method to check this expectation against.
     * @param List<Object> - The parameters to check this expectation against.
     */
-    public void verify( TestAsserts assertionMechanism, String method, List<Object> parameterValues ) {
+    public void verify( Amoss_Asserts assertionMechanism, String method, List<Object> parameterValues ) {
 
         assertionMechanism.assertEquals( expectedMethod, method, String.format( '{0}.{1} was expected to be called', new List<String>{ className, expectedMethod } ) );
 
@@ -402,7 +402,7 @@ public class TestExpectation {
     * Describes the specification of a Parameter that is expected to be passed into a mocked method call
     *
     */
-    class TestExpectationParameter {
+    class Amoss_ExpectationParameter {
 
         Boolean anyValue = false;
         Object  value;
@@ -412,9 +412,9 @@ public class TestExpectation {
         *
         * States that this parameter can be set to any value and will match when being checked against an actual call
         *
-        * @return TestExpectationParameter - Itself, allowing for a fluent interface
+        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
         */
-        public TestExpectationParameter anyValue() {
+        public Amoss_ExpectationParameter anyValue() {
             anyValue = true;
             return this;
         }
@@ -425,9 +425,9 @@ public class TestExpectation {
         * Sets the value that this parameter is expectd to be
         *
         * @param  Object - The value that this parameter is expected to be
-        * @return TestExpectationParameter - Itself, allowing for a fluent interface
+        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
         */
-        public TestExpectationParameter setValue( Object value ) {
+        public Amoss_ExpectationParameter setValue( Object value ) {
             this.value = value;
             return this;
         }

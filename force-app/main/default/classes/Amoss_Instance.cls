@@ -1,24 +1,24 @@
 @isTest
-public class TestMock implements StubProvider {
+public class Amoss_Instance implements StubProvider {
 
     class CallLogException extends Exception {}
 
-    private TestExpectations expectations = new TestExpectations();
-    private TestExpectations whens        = new TestExpectations();
-    private CallLog          callLog      = new CallLog();
+    private Amoss_Expectations expectations = new Amoss_Expectations();
+    private Amoss_Expectations whens        = new Amoss_Expectations();
+    private CallLog            callLog      = new CallLog();
 
     Type classType;
 
-    private TestAsserts assertionMechanism = new TestAsserts();
+    private Amoss_Asserts assertionMechanism = new Amoss_Asserts();
     
     /**
     * Internal method that should not be called directly in tests.
     * 
     * Get the assertion mechanism for this mock object implementation
     *
-    * @return  TestAsserts - The assertionMechanism object
+    * @return  Amoss_Asserts - The assertionMechanism object
     */
-    public TestAsserts getTestAsserts() {
+    public Amoss_Asserts getAsserts() {
         return this.assertionMechanism;
     }
     
@@ -27,15 +27,15 @@ public class TestMock implements StubProvider {
     * 
     * Set the assertion mechanism for this mock object implementation
     *
-    * @param   TestAsserts - The assertionMechanism
-    * @return  TestMock - Itself, allowing for a fluent interface
+    * @param   Amoss_Asserts - The assertionMechanism
+    * @return  Amoss_Instance - Itself, allowing for a fluent interface
     */
-    public TestMock setTestAsserts( TestAsserts assertionMechanism ) {
+    public Amoss_Instance setAsserts( Amoss_Asserts assertionMechanism ) {
         this.assertionMechanism = assertionMechanism;
         return this;
     }
 
-    public TestMock( Type classType ) {
+    public Amoss_Instance( Type classType ) {
         this.classType = classType;
     }
 
@@ -44,7 +44,7 @@ public class TestMock implements StubProvider {
     *
     * @return Object  - The instance to use in your test
     */
-    public Object proxy() {
+    public Object generateMock() {
         return Test.createStub( classType, this );
     }
 
@@ -63,8 +63,8 @@ public class TestMock implements StubProvider {
     *       .withParameter( 'parameterValue' )
     *       .returning( 'theValueItShouldReturn' )
     */
-    public TestExpectation expects() {
-        TestExpectation newExpectation = new TestExpectation( this );
+    public Amoss_Expectation expects() {
+        Amoss_Expectation newExpectation = new Amoss_Expectation( this );
         this.expectations.add( newExpectation );
         return newExpectation;
     }
@@ -84,8 +84,8 @@ public class TestMock implements StubProvider {
     *   .withParameter( 'parameterValue' )
     *   .willReturn( 'theValueItShouldReturn' )
     */
-    public TestExpectation when() {
-        TestExpectation newExpectation = new TestExpectation( this );
+    public Amoss_Expectation when() {
+        Amoss_Expectation newExpectation = new Amoss_Expectation( this );
         this.whens.add( newExpectation );
         return newExpectation;
     }
@@ -105,7 +105,7 @@ public class TestMock implements StubProvider {
     *   .withParameter( 'parameterValue' )
     *   .willReturn( 'theValueItShouldReturn' )
     */
-    public TestExpectation allows() {
+    public Amoss_Expectation allows() {
         // TODO: will switch the allowsAll flag to false, when that is added
         return when();
     }
@@ -187,7 +187,7 @@ public class TestMock implements StubProvider {
         callLog.addEntry( new CallLogEntry().setMethod( mockedMethod ).setParameters( parameters ) );
 
         if ( whens.hasExpectations() ) {
-            TestExpectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameters );
+            Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameters );
             if ( whenExpectation != null ) {
                 return whenExpectation.getReturnValue();
             }
@@ -197,7 +197,7 @@ public class TestMock implements StubProvider {
         if ( expectations.isEmpty() ) {
             assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
         }
-        TestExpectation thisExpectation = expectations.unshift();
+        Amoss_Expectation thisExpectation = expectations.unshift();
         thisExpectation.verify( assertionMechanism, mockedMethod, parameters );
         return thisExpectation.getReturnValue();
     }
