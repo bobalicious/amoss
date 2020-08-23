@@ -24,6 +24,18 @@ public class Order {
         }
     }
 
+    public void fillWithoutReturn( Warehouse warehouse ) {
+
+        try {
+            if ( ! warehouse.hasInventory( product, numberRequired ) ) {
+                return;
+            }
+
+            warehouse.removeWithoutReturn( product, numberRequired );
+        } catch ( Exception e ) {
+        }
+    }
+
     public Boolean isFilled() {
         return this.isFilled;
     }

@@ -5,20 +5,20 @@
 *
 */
 @isTest
-public with sharing class TestExpectations {
+public with sharing class Amoss_Expectations {
 
-    private List<TestExpectation> expectations = new List<TestExpectation>();
+    private List<Amoss_Expectation> expectations = new List<Amoss_Expectation>();
 
-    public void add( TestExpectation expectation ) {
+    public void add( Amoss_Expectation expectation ) {
         expectations.add( expectation );
     }
 
     /**
     * Removes the first expectation in the queue and then returns it.  
     *
-    * @return TestExpectation - The first expectation from the queue.
+    * @return Amoss_Expectation - The first expectation from the queue.
     */
-    public TestExpectation unshift() {
+    public Amoss_Expectation unshift() {
         return expectations.remove(0);
     }
 
@@ -47,7 +47,7 @@ public with sharing class TestExpectations {
     */
     public String getRemainingCallsDescription() {
         List<String> remainingCallDescriptions = new List<String>();
-        for ( TestExpectation thisExpectation : expectations ) {
+        for ( Amoss_Expectation thisExpectation : expectations ) {
             remainingCallDescriptions.add( thisExpectation.getCallDescription() );
         }
         return String.join( remainingCallDescriptions, ',' );
@@ -59,11 +59,11 @@ public with sharing class TestExpectations {
     *
     * Returns the *first* expectation that does, or null if non do.
     *
-    * @return TestExpectation - The matching expectation
+    * @return Amoss_Expectation - The matching expectation
     */
-    public TestExpectation getMatchingExpectation( String mockedMethod, List<Object> parameters ) {
+    public Amoss_Expectation getMatchingExpectation( String mockedMethod, List<Object> parameters ) {
 
-        for ( TestExpectation thisExpectation : expectations ) {
+        for ( Amoss_Expectation thisExpectation : expectations ) {
             if ( thisExpectation.matches( mockedMethod, parameters ) ) {
                 return thisExpectation;
             }

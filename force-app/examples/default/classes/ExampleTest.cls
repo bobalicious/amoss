@@ -6,7 +6,7 @@ public with sharing class ExampleTest {
     @isTest
     public static void fillingRemovesInventoryIfInStock() {
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
         warehouse
             .expects()
                 .method( 'hasInventory' )
@@ -20,7 +20,7 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         warehouse.verify();
@@ -30,7 +30,7 @@ public with sharing class ExampleTest {
     @isTest
     public static void fillingRemovesInventoryIfInStock_usingASpy() {
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
         warehouse
             .when()
                 .method( 'hasInventory' )
@@ -42,7 +42,7 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         System.assert( order.isFilled(), 'filling, when the warehouse has stock, will state that the order is filled' );
@@ -60,7 +60,7 @@ public with sharing class ExampleTest {
     @isTest
     public static void fillingRemovesInventoryIfInStock_usingASpyThatStatesGet() {
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
         warehouse
             .when()
                 .method( 'hasInventory' )
@@ -72,7 +72,7 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         System.assert( order.isFilled(), 'filling, when the warehouse has stock, will state that the order is filled' );
@@ -88,11 +88,34 @@ public with sharing class ExampleTest {
     }
 
     @isTest
+    public static void fillingRemovesInventoryIfInStock_whenAMethodHasNoReturns() {
+
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
+        warehouse
+            .expects()
+                .method( 'hasInventory' )
+                .withParameters( new Object[]{ TALISKER, 50 } )
+                .returning( true )
+            .then().expects()
+                .method( 'removeWithoutReturn' )
+                .withParameter( TALISKER ).andThenParameter( 50 );
+
+        Order order = new Order( TALISKER, 50 );
+        
+        Test.startTest();
+            order.fillWithoutReturn( (Warehouse)warehouse.generateMock() );
+        Test.stopTest();
+
+        warehouse.verify();
+        // there's nothing to assert here because there's no effect that is visible except in Warehouse
+    }
+
+    @isTest
     public static void fillingDoesNotRemoveIfNotEnoughInStock() {
 
         Order order = new Order(TALISKER, 51);
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
             
         warehouse.expects()
             .method( 'hasInventory' )
@@ -100,7 +123,7 @@ public with sharing class ExampleTest {
             .returning( false );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         warehouse.verify();
@@ -112,7 +135,7 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
             
         // If you didn't care which methods get called, you just want them to return
         // certain values, you can use 'when'.  These are examined before the expects
@@ -129,7 +152,7 @@ public with sharing class ExampleTest {
             .willReturn( false );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         warehouse.verify(); // this will always pass, as we have no expectations
@@ -141,7 +164,7 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
             
         // We can set up conditional responses - they are looked at in order - if 51 is sent
         // we'll get a false, otherwise we'll get true
@@ -157,7 +180,7 @@ public with sharing class ExampleTest {
             .willReturn( true );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         warehouse.verify(); // this will always pass, as we have no expectations
@@ -169,7 +192,7 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
             
         // We can set up conditional responses - they are looked at in order - if 51 is sent
         // we'll get a false, otherwise we'll get true
@@ -186,7 +209,7 @@ public with sharing class ExampleTest {
             .willReturn( true );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         warehouse.verify(); // this will always pass, as we have no expectations
@@ -198,7 +221,7 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
             
         warehouse.expects()
             .method( 'hasInventory' )
@@ -207,7 +230,7 @@ public with sharing class ExampleTest {
             .throwing( new Warehouse.WarehouseException( 'Some error happened' ) );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         warehouse.verify();
@@ -219,7 +242,7 @@ public with sharing class ExampleTest {
 
         Order order = new Order(TALISKER, 51);
 
-        TestMock warehouse = new TestMock( Warehouse.class );
+        Amoss_Instance warehouse = new Amoss_Instance( Warehouse.class );
             
         warehouse.expects()
             .method( 'hasInventory' )
@@ -228,7 +251,7 @@ public with sharing class ExampleTest {
             .throwing( new DmlException( 'Some error happened' ) );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouse.proxy() );
+            order.fill( (Warehouse)warehouse.generateMock() );
         Test.stopTest();
 
         warehouse.verify();

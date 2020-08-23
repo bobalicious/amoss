@@ -1,5 +1,5 @@
 @isTest
-public with sharing class TestMockTest {
+public with sharing class Amoss_InstanceTest {
 
     class TestException extends Exception {}
 
@@ -15,10 +15,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void callCount_whenGivenAMethodCallThatHappened_willReturnTheNumberOfCalls() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
                 .method( 'methodUnderMock' )
                 .willReturn( 'something' )
@@ -27,15 +27,15 @@ public with sharing class TestMockTest {
                 .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam2', 2 );
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 2 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam3', 3 ); // this is the one we're going to retrieve
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 3 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam4', 4 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam2', 2 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam3', 3 ); // this is the one we're going to retrieve
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 3 );
+            classUnderMock.methodUnderMock( 'ActualParam4', 4 );
 
-            Integer returnedMethodCallCount = classUnderMock.countOf( 'methodUnderMock' );
+            Integer returnedMethodCallCount = classUnderMockController.countOf( 'methodUnderMock' );
         Test.stopTest();
         
         System.assertEquals( 4, returnedMethodCallCount, 'countOf, when given the details of a method call that happened amongst many - will return the number of calls' );
@@ -49,10 +49,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void callCount_whenGivenAMethodCallThatDidNotHappen_willReturnZero() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
                 .method( 'methodUnderMock' )
                 .willReturn( 'something' )
@@ -61,7 +61,7 @@ public with sharing class TestMockTest {
                 .willReturn( 'something' );
 
         Test.startTest();
-            Integer returnedMethodCallCount = classUnderMock.countOf( 'methodUnderMock' );
+            Integer returnedMethodCallCount = classUnderMockController.countOf( 'methodUnderMock' );
         Test.stopTest();
         
         System.assertEquals( 0, returnedMethodCallCount, 'countOf, when given the details of a method call that did not happen - will return zero' );
@@ -75,17 +75,17 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
-            List<Object> passedParameters = classUnderMock.call( 0 ).of( 'methodUnderMock' ).parameters();
+            classUnderMock.methodUnderMock( 'ActualParam', 2 );
+            List<Object> passedParameters = classUnderMockController.call( 0 ).of( 'methodUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call that happened, will return the parameters of that call' );
@@ -99,16 +99,16 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenACallOfMethodWithNoReturnThatHappened_willReturnTheParametersOfThatCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMockWithNoReturn' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMockWithNoReturn( 'ActualParam', 2 );
-            List<Object> passedParameters = classUnderMock.call( 0 ).of( 'methodUnderMockWithNoReturn' ).parameters();
+            classUnderMock.methodUnderMockWithNoReturn( 'ActualParam', 2 );
+            List<Object> passedParameters = classUnderMockController.call( 0 ).of( 'methodUnderMockWithNoReturn' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call to a method thar returns nothing, will return the parameters of that call' );
@@ -122,10 +122,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenACallThatHappenedAmongstMany_willReturnTheParametersOfThatCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
                 .method( 'methodUnderMock' )
                 .willReturn( 'something' )
@@ -134,15 +134,15 @@ public with sharing class TestMockTest {
                 .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam2', 2 );
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 2 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam3', 3 ); // this is the one we're going to retrieve
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 3 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam4', 4 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam2', 2 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam3', 3 ); // this is the one we're going to retrieve
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 3 );
+            classUnderMock.methodUnderMock( 'ActualParam4', 4 );
 
-            List<Object> passedParameters = classUnderMock.call( 2 ).of( 'methodUnderMock' ).parameters();
+            List<Object> passedParameters = classUnderMockController.call( 2 ).of( 'methodUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam3', 3 }, passedParameters, 'call.of.parameters, when given the details of a method call that happened amongst many - index from 0, will return the parameters of that call' );
@@ -156,10 +156,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenAMinusOneCallNumber_willReturnTheParametersOfTheLastCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
                 .method( 'methodUnderMock' )
                 .willReturn( 'something' )
@@ -168,16 +168,16 @@ public with sharing class TestMockTest {
                 .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam2', 2 );
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 2 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam3', 3 );
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam3', 3 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam4', 4 );  // this is the one we're going to retrieve
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam4', 4 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam2', 2 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam3', 3 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam3', 3 );
+            classUnderMock.methodUnderMock( 'ActualParam4', 4 );  // this is the one we're going to retrieve
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam4', 4 );
 
-            List<Object> passedParameters = classUnderMock.call( -1 ).of( 'methodUnderMock' ).parameters();
+            List<Object> passedParameters = classUnderMockController.call( -1 ).of( 'methodUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam4', 4 }, passedParameters, 'call.of.parameters, when given the details of a method call with -1 call number, will return the parameters of the last call' );
@@ -191,10 +191,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void latestCallOfParameters_whenTheMethodHasBeenCalled_willReturnTheParametersOfTheLastCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
                 .method( 'methodUnderMock' )
                 .willReturn( 'something' )
@@ -203,16 +203,16 @@ public with sharing class TestMockTest {
                 .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam2', 2 );
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 2 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam3', 3 );
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam3', 3 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam4', 4 );  // this is the one we're going to retrieve
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam4', 4 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam2', 2 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam3', 3 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam3', 3 );
+            classUnderMock.methodUnderMock( 'ActualParam4', 4 );  // this is the one we're going to retrieve
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam4', 4 );
 
-            List<Object> passedParameters = classUnderMock.latestCallOf( 'methodUnderMock' ).parameters();
+            List<Object> passedParameters = classUnderMockController.latestCallOf( 'methodUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam4', 4 }, passedParameters, 'latestCallOf.parameters, when the method has been called, will return the parameters of the last call' );
@@ -226,10 +226,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenANegativeCallNumber_willReturnTheParametersOfTheCallThatManyFromTheEnd() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
                 .method( 'methodUnderMock' )
                 .willReturn( 'something' )
@@ -238,15 +238,15 @@ public with sharing class TestMockTest {
                 .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam2', 2 ); // this is the one we're going to retrieve
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 2 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam3', 3 );
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 3 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam4', 4 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam2', 2 ); // this is the one we're going to retrieve
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam3', 3 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 3 );
+            classUnderMock.methodUnderMock( 'ActualParam4', 4 );
 
-            List<Object> passedParameters = classUnderMock.call( -3 ).of( 'methodUnderMock' ).parameters();
+            List<Object> passedParameters = classUnderMockController.call( -3 ).of( 'methodUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam2', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call with a negative call number, will return the parameters of the call that many from the end' );
@@ -260,10 +260,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenACallThatHappenedWithAnSobject_willReturnTheParametersOfThatCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'sobjectMethodUnderMock' )
             .willReturn( 'something' );
@@ -271,8 +271,8 @@ public with sharing class TestMockTest {
         Test.startTest();
             Contact passedContact = new Contact( FirstName = 'Person' );
 
-            classUnderMockProxy.sobjectMethodUnderMock( passedContact );
-            List<Object> passedParameters = classUnderMock.call( 0 ).of( 'sobjectMethodUnderMock' ).parameters();
+            classUnderMock.sobjectMethodUnderMock( passedContact );
+            List<Object> passedParameters = classUnderMockController.call( 0 ).of( 'sobjectMethodUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ passedContact }, passedParameters, 'call.of.parameters, when given the details of a method call that happened with an sobject, will return the parameters of that call' );
@@ -286,17 +286,17 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenACallThatHappenedWithNoParameters_willReturnAnEmptyList() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodWithNoParametersUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.methodWithNoParametersUnderMock();
-            List<Object> passedParameters = classUnderMock.call( 0 ).of( 'methodWithNoParametersUnderMock' ).parameters();
+            classUnderMock.methodWithNoParametersUnderMock();
+            List<Object> passedParameters = classUnderMockController.call( 0 ).of( 'methodWithNoParametersUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>(), passedParameters, 'call.of.parameters, when given the details of a method call that happened without any parameters, will return an empty list' );
@@ -310,23 +310,23 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenACallNumberThatDidNotHappen_willThrowAnException() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
 
-            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam', 2 );
 
             Boolean exceptionThrown = false;
             String  exceptionMessage;
 
             try {
-                List<Object> passedParameters = classUnderMock.call( 1 ).of( 'methodUnderMock' ).parameters();
+                List<Object> passedParameters = classUnderMockController.call( 1 ).of( 'methodUnderMock' ).parameters();
             } catch ( Exception e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
@@ -335,7 +335,7 @@ public with sharing class TestMockTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameters, when given the details of a call number that did not happen, will throw an exception' );
-        TestAsserts.assertContains( 'methodUnderMock was not called 2 times', exceptionMessage, 'call.of.parameters, when given the details of a call number that did not happen, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'methodUnderMock was not called 2 times', exceptionMessage, 'call.of.parameters, when given the details of a call number that did not happen, will throw an exception with a useful message' );
     }
 
 
@@ -347,23 +347,23 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenANegativeCallNumberThatDidNotHappen_willThrowAnException() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
 
-            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam', 2 );
 
             Boolean exceptionThrown = false;
             String  exceptionMessage;
 
             try {
-                List<Object> passedParameters = classUnderMock.call( -2 ).of( 'methodUnderMock' ).parameters();
+                List<Object> passedParameters = classUnderMockController.call( -2 ).of( 'methodUnderMock' ).parameters();
             } catch ( Exception e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
@@ -372,7 +372,7 @@ public with sharing class TestMockTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameters, when given the details of a negative call number that did not happen, will throw an exception' );
-        TestAsserts.assertContains( 'methodUnderMock was not called 2 times', exceptionMessage, 'call.of.parameters, when given the details of a negative mcall number that did not happen, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'methodUnderMock was not called 2 times', exceptionMessage, 'call.of.parameters, when given the details of a negative mcall number that did not happen, will throw an exception with a useful message' );
     }
 
     /**
@@ -383,8 +383,8 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
         Test.startTest();
 
@@ -392,7 +392,7 @@ public with sharing class TestMockTest {
             String  exceptionMessage;
 
             try {
-                List<Object> passedParameters = classUnderMock.call( 0 ).of( 'methodUnderMock' ).parameters();
+                List<Object> passedParameters = classUnderMockController.call( 0 ).of( 'methodUnderMock' ).parameters();
             } catch ( Exception e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
@@ -401,7 +401,7 @@ public with sharing class TestMockTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameters, when given the details of a method that was never called, will throw an exception' );
-        TestAsserts.assertContains( 'methodUnderMock was never called', exceptionMessage, 'call.of.parameters, when given the details of method that was never called, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'methodUnderMock was never called', exceptionMessage, 'call.of.parameters, when given the details of method that was never called, will throw an exception with a useful message' );
     }
 
     /**
@@ -412,17 +412,17 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameter_whenGivenACallThatHappened_willReturnTheStatedParameterOfThatCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
-            Object passedParameter = classUnderMock.call( 0 ).of( 'methodUnderMock' ).parameter( 0 );
+            classUnderMock.methodUnderMock( 'ActualParam', 2 );
+            Object passedParameter = classUnderMockController.call( 0 ).of( 'methodUnderMock' ).parameter( 0 );
         Test.stopTest();
         
         System.assertEquals( 'ActualParam', passedParameter, 'call.of.parameter, when given the details of a method call that happened, will return the stated parameter of that call' );
@@ -436,10 +436,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameters_whenGivenACallThatHappenedAmongstMany_willReturnTheParameterOfThatCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
                 .method( 'methodUnderMock' )
                 .willReturn( 'something' )
@@ -448,15 +448,15 @@ public with sharing class TestMockTest {
                 .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam1', 1 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam2', 2 );
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 2 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam3', 3 ); // this is the one we're going to retrieve
-            classUnderMockProxy.otherMethodUnderMock( 'OtherActualParam2', 3 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam4', 4 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            classUnderMock.methodUnderMock( 'ActualParam2', 2 );
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam3', 3 ); // this is the one we're going to retrieve
+            classUnderMock.otherMethodUnderMock( 'OtherActualParam2', 3 );
+            classUnderMock.methodUnderMock( 'ActualParam4', 4 );
 
-            Object passedParameter = classUnderMock.call( 2 ).of( 'methodUnderMock' ).parameter( 1 );
+            Object passedParameter = classUnderMockController.call( 2 ).of( 'methodUnderMock' ).parameter( 1 );
         Test.stopTest();
         
         System.assertEquals( 3, passedParameter, 'call.of.parameter, when given the details of a method call that happened amongst many - index from 0, will return the parameters of that call' );
@@ -470,23 +470,23 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameter_whenGivenACallNumberThatDidNotHappen_willThrowAnException() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
 
-            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam', 2 );
 
             Boolean exceptionThrown = false;
             String  exceptionMessage;
 
             try {
-                Object passedParameter = classUnderMock.call( 1 ).of( 'methodUnderMock' ).parameter( 1 );
+                Object passedParameter = classUnderMockController.call( 1 ).of( 'methodUnderMock' ).parameter( 1 );
             } catch ( Exception e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
@@ -495,7 +495,7 @@ public with sharing class TestMockTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameter, when given the details of a call number that did not happen, will throw an exception' );
-        TestAsserts.assertContains( 'methodUnderMock was not called 2 times', exceptionMessage, 'call.of.parameter, when given the details of a call number that did not happen, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'methodUnderMock was not called 2 times', exceptionMessage, 'call.of.parameter, when given the details of a call number that did not happen, will throw an exception with a useful message' );
     }
 
     /**
@@ -506,8 +506,8 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameter_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
         Test.startTest();
 
@@ -515,7 +515,7 @@ public with sharing class TestMockTest {
             String  exceptionMessage;
 
             try {
-                Object passedParameter = classUnderMock.call( 0 ).of( 'methodUnderMock' ).parameter( 1 );
+                Object passedParameter = classUnderMockController.call( 0 ).of( 'methodUnderMock' ).parameter( 1 );
             } catch ( Exception e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
@@ -524,7 +524,7 @@ public with sharing class TestMockTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameter, when given the details of a method that was never called, will throw an exception' );
-        TestAsserts.assertContains( 'methodUnderMock was never called', exceptionMessage, 'call.of.parameter, when given the details of method that was never called, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'methodUnderMock was never called', exceptionMessage, 'call.of.parameter, when given the details of method that was never called, will throw an exception with a useful message' );
     }
 
     /**
@@ -535,23 +535,23 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameter_whenGivenAParameterNumberThatIsOutOfRange_willThrowAnException() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
 
-            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam', 2 );
 
             Boolean exceptionThrown = false;
             String  exceptionMessage;
 
             try {
-                Object passedParameter = classUnderMock.call( 0 ).of( 'methodUnderMock' ).parameter( 2 );
+                Object passedParameter = classUnderMockController.call( 0 ).of( 'methodUnderMock' ).parameter( 2 );
             } catch ( Exception e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
@@ -560,7 +560,7 @@ public with sharing class TestMockTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameter, when given a parameter number that is out of range, will throw an exception' );
-        TestAsserts.assertContains( 'methodUnderMock was not called with 3 parameters', exceptionMessage, 'call.of.parameter, when given a parameter number that is out of range, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'methodUnderMock was not called with 3 parameters', exceptionMessage, 'call.of.parameter, when given a parameter number that is out of range, will throw an exception with a useful message' );
     }
 
     /**
@@ -571,23 +571,23 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameter_whenGivenAParameterNumberThatIsNegative_willThrowAnException() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
 
-            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam', 2 );
 
             Boolean exceptionThrown = false;
             String  exceptionMessage;
 
             try {
-                Object passedParameter = classUnderMock.call( 0 ).of( 'methodUnderMock' ).parameter( -1 );
+                Object passedParameter = classUnderMockController.call( 0 ).of( 'methodUnderMock' ).parameter( -1 );
             } catch ( Exception e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
@@ -596,7 +596,7 @@ public with sharing class TestMockTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameter, when given a parameter number that is negative, will throw an exception' );
-        TestAsserts.assertContains( 'Cannot request a negative parameter number (got -1)', exceptionMessage, 'call.of.parameter, when given a parameter number that is negative, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'Cannot request a negative parameter number (got -1)', exceptionMessage, 'call.of.parameter, when given a parameter number that is negative, will throw an exception with a useful message' );
     }
 
     /**
@@ -607,23 +607,23 @@ public with sharing class TestMockTest {
     @isTest
     private static void callOfParameter_whenGivenAParameterForAMethodThatHasNoParameters_willThrowAnException() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodWithNoParametersUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
 
-            classUnderMockProxy.methodWithNoParametersUnderMock();
+            classUnderMock.methodWithNoParametersUnderMock();
 
             Boolean exceptionThrown = false;
             String  exceptionMessage;
 
             try {
-                Object passedParameter = classUnderMock.call( 0 ).of( 'methodWithNoParametersUnderMock' ).parameter( 0 );
+                Object passedParameter = classUnderMockController.call( 0 ).of( 'methodWithNoParametersUnderMock' ).parameter( 0 );
             } catch ( Exception e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
@@ -632,7 +632,7 @@ public with sharing class TestMockTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception' );
-        TestAsserts.assertContains( 'methodWithNoParametersUnderMock was not called with any parameters', exceptionMessage, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'methodWithNoParametersUnderMock was not called with any parameters', exceptionMessage, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception with a useful message' );
     }
 
     /**
@@ -643,17 +643,17 @@ public with sharing class TestMockTest {
     @isTest
     private static void getCallOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMock( 'ActualParam', 2 );
-            List<Object> passedParameters = classUnderMock.get().call( 0 ).of( 'methodUnderMock' ).parameters();
+            classUnderMock.methodUnderMock( 'ActualParam', 2 );
+            List<Object> passedParameters = classUnderMockController.get().call( 0 ).of( 'methodUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'get.call.of.parameters, when given the details of a method call that happened, will return the parameters of that call' );
@@ -667,19 +667,19 @@ public with sharing class TestMockTest {
     @isTest
     private static void getLatestCallOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodUnderMock' )
             .willReturn( 'something' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMock( 'ActualParam1', 2 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam2', 3 );
-            classUnderMockProxy.methodUnderMock( 'ActualParam3', 4 );
-            List<Object> passedParameters = classUnderMock.get().latestCallOf( 'methodUnderMock' ).parameters();
+            classUnderMock.methodUnderMock( 'ActualParam1', 2 );
+            classUnderMock.methodUnderMock( 'ActualParam2', 3 );
+            classUnderMock.methodUnderMock( 'ActualParam3', 4 );
+            List<Object> passedParameters = classUnderMockController.get().latestCallOf( 'methodUnderMock' ).parameters();
         Test.stopTest();
         
         System.assertEquals( new List<Object>{ 'ActualParam3', 4 }, passedParameters, 'get.latestCallOf.parameters, when given the details of a method call that happened, will return the parameters of that call' );
@@ -693,18 +693,18 @@ public with sharing class TestMockTest {
     @isTest
     private static void parameters_whenAParameterIsAListOfObjects_willReturnTheParameter() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodWithListObject' );
 
         Test.startTest();
             List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
 
-            classUnderMockProxy.methodWithListObject( parameterPassed );
-            List<Object> parameterReturned = (List<Object>)classUnderMock.call( 0 ).of( 'methodWithListObject' ).parameter( 0 );
+            classUnderMock.methodWithListObject( parameterPassed );
+            List<Object> parameterReturned = (List<Object>)classUnderMockController.call( 0 ).of( 'methodWithListObject' ).parameter( 0 );
         Test.stopTest();
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a list of objects, will return the parameter' );
@@ -718,18 +718,18 @@ public with sharing class TestMockTest {
     @isTest
     private static void parameters_whenAParameterIsASetOfObjects_willReturnTheParameter() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodWithSetObject' );
 
         Test.startTest();
             Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
 
-            classUnderMockProxy.methodWithSetObject( parameterPassed );
-            Set<Object> parameterReturned = (Set<Object>)classUnderMock.call( 0 ).of( 'methodWithSetObject' ).parameter( 0 );
+            classUnderMock.methodWithSetObject( parameterPassed );
+            Set<Object> parameterReturned = (Set<Object>)classUnderMockController.call( 0 ).of( 'methodWithSetObject' ).parameter( 0 );
         Test.stopTest();
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a set of objects, will return the parameter' );
@@ -743,18 +743,18 @@ public with sharing class TestMockTest {
     @isTest
     private static void parameters_whenAParameterIsAMapOfObjects_willReturnTheParameter() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .when()
             .method( 'methodWithMapStringObject' );
 
         Test.startTest();
             Map<String,Object> parameterPassed = new Map<String,Object>{ 'one' => 1, 'two' => '2', 'three' => new Contact() };
 
-            classUnderMockProxy.methodWithMapStringObject( parameterPassed );
-            Map<String,Object> parameterReturned = (Map<String,Object>)classUnderMock.call( 0 ).of( 'methodWithMapStringObject' ).parameter( 0 );
+            classUnderMock.methodWithMapStringObject( parameterPassed );
+            Map<String,Object> parameterReturned = (Map<String,Object>)classUnderMockController.call( 0 ).of( 'methodWithMapStringObject' ).parameter( 0 );
         Test.stopTest();
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a map of objects, will return the parameter' );
@@ -771,18 +771,18 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethod_whenTheMethodIsCalled_willNotFailAndWill() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMockWithNoReturn' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMockWithNoReturn( 'this', 1 );
+            classUnderMock.methodUnderMockWithNoReturn( 'this', 1 );
         Test.stopTest();
         
-        System.assertEquals( 1, classUnderMock.countOf( 'methodUnderMockWithNoReturn' ), 'expects.method, when the method is called once, will not fail - and the call count will be 1' );
+        System.assertEquals( 1, classUnderMockController.countOf( 'methodUnderMockWithNoReturn' ), 'expects.method, when the method is called once, will not fail - and the call count will be 1' );
     }
 
     /**
@@ -793,8 +793,8 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethod_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
         
-        TestMock mockAsserts = new TestMock( TestAsserts.class );
-        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        Amoss_Instance mockAsserts = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAssertsgenerateMock = (Amoss_Asserts)mockAsserts.generateMock();
         mockAsserts
             .allows()
                 .method( 'assertEquals' )
@@ -804,23 +804,23 @@ public with sharing class TestMockTest {
                 .andThenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        classUnderMock.setTestAsserts( mockAssertsProxy );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAssertsgenerateMock );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMockWithNoReturn' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMockWithNoReturn( 'this', 1 );
+            classUnderMock.methodUnderMockWithNoReturn( 'this', 1 );
 
             try {
-                classUnderMockProxy.methodUnderMockWithNoReturn( 'this', 1 );
+                classUnderMock.methodUnderMockWithNoReturn( 'this', 1 );
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'ClassUnderMock.methodUnderMockWithNoReturn was called more times than was expected';
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMockWithNoReturn was called more times than was expected';
         System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when the method is not called more times than expected, will fail by calling assert with false' );
         System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
@@ -833,10 +833,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethod_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMockWithNoReturn' );
 
@@ -844,7 +844,7 @@ public with sharing class TestMockTest {
             // we do nothing, because we're testing what happens when the method is not called
         Test.stopTest();
         
-        System.assertEquals( 0, classUnderMock.countOf( 'methodUnderMockWithNoReturn' ), 'expects.method, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
+        System.assertEquals( 0, classUnderMockController.countOf( 'methodUnderMockWithNoReturn' ), 'expects.method, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
     }
 
     /**
@@ -855,25 +855,25 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethod_whenTheMethodIsNotCalledAndVerifyId_willFail() {
         
-        TestMock mockAsserts = new TestMock( TestAsserts.class );
-        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        Amoss_Instance mockAsserts = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAssertsgenerateMock = (Amoss_Asserts)mockAsserts.generateMock();
         mockAsserts
             .allows()
                 .method( 'assertEquals' );
 
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        classUnderMock.setTestAsserts( mockAssertsProxy );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAssertsgenerateMock );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMockWithNoReturn' );
 
         Test.startTest();
-            classUnderMock.verify();
+            classUnderMockController.verify();
         Test.stopTest();
         
-        String expectedAssertion = 'Expected call stack for ClassUnderMock should be empty, and it is not';
+        String expectedAssertion = 'Expected call stack for Amoss_ClassUnderMock should be empty, and it is not';
 
         System.assertEquals( ''                             , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
         System.assertEquals( 'methodUnderMockWithNoReturn()', mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
@@ -888,16 +888,16 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .returning( 'TheReturn' );
 
         Test.startTest();
-            String actualReturn = classUnderMockProxy.methodUnderMock( 'this', 1 );
+            String actualReturn = classUnderMock.methodUnderMock( 'this', 1 );
         Test.stopTest();
         
         System.assertEquals( 'TheReturn', actualReturn, 'expects.method, when the method is called, will not fail, and will return the stated result' );
@@ -911,8 +911,8 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
         
-        TestMock mockAsserts = new TestMock( TestAsserts.class );
-        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        Amoss_Instance mockAsserts = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAssertsgenerateMock = (Amoss_Asserts)mockAsserts.generateMock();
         mockAsserts
             .allows()
                 .method( 'assertEquals' )
@@ -922,24 +922,24 @@ public with sharing class TestMockTest {
                 .andThenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        classUnderMock.setTestAsserts( mockAssertsProxy );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAssertsgenerateMock );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .returning( 'TheReturn' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMock( 'this', 1 );
+            classUnderMock.methodUnderMock( 'this', 1 );
 
             try {
-                classUnderMockProxy.methodUnderMock( 'this', 1 );
+                classUnderMock.methodUnderMock( 'this', 1 );
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'ClassUnderMock.methodUnderMock was called more times than was expected';
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was called more times than was expected';
         System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
         System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
@@ -952,10 +952,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodReturning_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .returning( 'TheReturn' );
@@ -964,7 +964,7 @@ public with sharing class TestMockTest {
             // we do nothing, because we're testing what happens when the method is not called
         Test.stopTest();
         
-        System.assertEquals( 0, classUnderMock.countOf( 'methodUnderMock' ), 'expects.method.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
+        System.assertEquals( 0, classUnderMockController.countOf( 'methodUnderMock' ), 'expects.method.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
     }
 
     /**
@@ -975,26 +975,26 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodReturning_whenTheMethodIsNotCalledAndVerifyId_willFail() {
         
-        TestMock mockAsserts = new TestMock( TestAsserts.class );
-        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        Amoss_Instance mockAsserts = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAssertsgenerateMock = (Amoss_Asserts)mockAsserts.generateMock();
         mockAsserts
             .allows()
                 .method( 'assertEquals' );
 
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        classUnderMock.setTestAsserts( mockAssertsProxy );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAssertsgenerateMock );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .returning( 'TheReturn' );
 
         Test.startTest();
-            classUnderMock.verify();
+            classUnderMockController.verify();
         Test.stopTest();
         
-        String expectedAssertion = 'Expected call stack for ClassUnderMock should be empty, and it is not';
+        String expectedAssertion = 'Expected call stack for Amoss_ClassUnderMock should be empty, and it is not';
 
         System.assertEquals( ''                 , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
         System.assertEquals( 'methodUnderMock()', mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
@@ -1009,17 +1009,17 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .withAnyParameters()
                 .returning( 'TheReturn' );
 
         Test.startTest();
-            String actualReturn = classUnderMockProxy.methodUnderMock( 'this', 1 );
+            String actualReturn = classUnderMock.methodUnderMock( 'this', 1 );
         Test.stopTest();
         
         System.assertEquals( 'TheReturn', actualReturn, 'expects.method.withAnyParameters.returning, when the method is called, will not fail, and will return the stated result' );
@@ -1033,8 +1033,8 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
         
-        TestMock mockAsserts = new TestMock( TestAsserts.class );
-        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        Amoss_Instance mockAsserts = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAssertsgenerateMock = (Amoss_Asserts)mockAsserts.generateMock();
         mockAsserts
             .allows()
                 .method( 'assertEquals' )
@@ -1044,25 +1044,25 @@ public with sharing class TestMockTest {
                 .andThenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        classUnderMock.setTestAsserts( mockAssertsProxy );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAssertsgenerateMock );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .withAnyParameters()
                 .returning( 'TheReturn' );
 
         Test.startTest();
-            classUnderMockProxy.methodUnderMock( 'this', 1 );
+            classUnderMock.methodUnderMock( 'this', 1 );
 
             try {
-                classUnderMockProxy.methodUnderMock( 'thisNew', 2 );
+                classUnderMock.methodUnderMock( 'thisNew', 2 );
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'ClassUnderMock.methodUnderMock was called more times than was expected';
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was called more times than was expected';
         System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called more times than expected, will fail by calling assert with false' );
         System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
@@ -1075,10 +1075,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .withAnyParameters()
@@ -1088,7 +1088,7 @@ public with sharing class TestMockTest {
             // we do nothing, because we're testing what happens when the method is not called
         Test.stopTest();
         
-        System.assertEquals( 0, classUnderMock.countOf( 'methodUnderMock' ), 'expects.method.withAnyParameters.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
+        System.assertEquals( 0, classUnderMockController.countOf( 'methodUnderMock' ), 'expects.method.withAnyParameters.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
     }
 
     /**
@@ -1099,27 +1099,27 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsNotCalledAndVerifyId_willFail() {
         
-        TestMock mockAsserts = new TestMock( TestAsserts.class );
-        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        Amoss_Instance mockAsserts = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAssertsgenerateMock = (Amoss_Asserts)mockAsserts.generateMock();
         mockAsserts
             .allows()
                 .method( 'assertEquals' );
 
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        classUnderMock.setTestAsserts( mockAssertsProxy );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAssertsgenerateMock );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .withAnyParameters()
                 .returning( 'TheReturn' );
 
         Test.startTest();
-            classUnderMock.verify();
+            classUnderMockController.verify();
         Test.stopTest();
         
-        String expectedAssertion = 'Expected call stack for ClassUnderMock should be empty, and it is not';
+        String expectedAssertion = 'Expected call stack for Amoss_ClassUnderMock should be empty, and it is not';
 
         System.assertEquals( ''                 , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
         System.assertEquals( 'methodUnderMock()', mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
@@ -1134,10 +1134,10 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
         
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .withParameter( 'this' )
@@ -1145,7 +1145,7 @@ public with sharing class TestMockTest {
                 .returning( 'TheReturn' );
 
         Test.startTest();
-            String actualReturn = classUnderMockProxy.methodUnderMock( 'this', 1 );
+            String actualReturn = classUnderMock.methodUnderMock( 'this', 1 );
         Test.stopTest();
         
         System.assertEquals( 'TheReturn', actualReturn, 'expects.method.withParameter.andThenParameter.returning, when the method is called with matching parameters, will not fail, and will return the stated result' );
@@ -1159,8 +1159,8 @@ public with sharing class TestMockTest {
     @isTest
     private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalledWithNonMatchingParameters_willFailTheTest() {
         
-        TestMock mockAsserts = new TestMock( TestAsserts.class );
-        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
+        Amoss_Instance mockAsserts = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAssertsgenerateMock = (Amoss_Asserts)mockAsserts.generateMock();
         mockAsserts
             .when()
                 .method( 'assertEquals' )
@@ -1172,11 +1172,11 @@ public with sharing class TestMockTest {
                 .method( 'assertEquals' )
                 .withAnyParameters();
 
-        TestMock classUnderMock = new TestMock( ClassUnderMock.class );
-        classUnderMock.setTestAsserts( mockAssertsProxy );
-        ClassUnderMock classUnderMockProxy = (ClassUnderMock)classUnderMock.proxy();
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAssertsgenerateMock );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMock
+        classUnderMockController
             .expects()
                 .method( 'methodUnderMock' )
                 .withParameter( 'this' )
@@ -1185,11 +1185,11 @@ public with sharing class TestMockTest {
 
         Test.startTest();
             try {
-                classUnderMockProxy.methodUnderMock( 'not-this', 1 );
+                classUnderMock.methodUnderMock( 'not-this', 1 );
             } catch ( TestException e ) {}
         Test.stopTest();
         
-        String expectedAssertion = 'ClassUnderMock.methodUnderMock was called with the wrong parameter value in position 0';
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was called with the wrong parameter value in position 0';
         System.assertEquals( 'this'           , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
         System.assertEquals( 'not-this'       , mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
         System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
