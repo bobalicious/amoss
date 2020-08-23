@@ -54,30 +54,10 @@ public class TestExpectation {
     *       .withAnyParameter()
     *       .willReturn( 'theValueItShouldReturn' )
     *
-    * Has 'withAnyParameter' as a synonym, and these methods are entirely interchangeable based on preference.
     */
     public TestExpectation withAnyParameters() {
         this.withAnyParameters = true;
         return this;
-    }
-
-    /**
-    * States that this 'expection' or 'when' is valid for any combination of parameters.
-    *
-    * Is optional, as omitting parameter definitions will result in any parameter being valid.
-    *
-    * Generally used for stubbing methods that are not the primary focus of a given test.
-    *
-    * Has 'withAnyParameters' as a synonym, and these methods are entirely interchangeable based on preference.
-    *
-    * For example:
-    *   .when()
-    *       .method( 'methodName' )
-    *       .withAnyParameters()
-    *       .willReturn( 'theValueItShouldReturn' )
-    */
-    public TestExpectation withAnyParameter() {
-        return withAnyParameters();
     }
 
     /**
@@ -125,17 +105,62 @@ public class TestExpectation {
         return this;
     }
 
-    // TODO: document
-    // TODO: test
-    public TestExpectation thenAnyParameter() {
+
+    /**
+    * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .withAnyParameter()
+    *       .thenParameter( false )
+    *       .willReturn( 'theValueItShouldReturn' )
+    *
+    * Has 'andThenAnyParameter' and 'thenAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
+    *
+    */
+    // TODO: test at the public interface level
+    public TestExpectation withAnyParameter() {
         this.expectedParameters.add( new TestExpectationParameter().anyValue() );
         return this;
     }
 
-    // TODO: document
-    // TODO: test
+    /**
+    * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .withParameter( 'Parameter1' )
+    *       .thenAnyParameter()
+    *       .thenParameter( false )
+    *       .willReturn( 'theValueItShouldReturn' )
+    *
+    * Has 'andThenAnyParameter' and 'withAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
+    *
+    */
+    // TODO: test at the public interface level
+    public TestExpectation thenAnyParameter() {
+        return withAnyParameter();
+    }
+
+    /**
+    * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .withParameter( 'Parameter1' )
+    *       .andThenAnyParameter()
+    *       .andThenParameter( false )
+    *       .willReturn( 'theValueItShouldReturn' )
+    *
+    * Has 'thenAnyParameter' and 'withAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
+    *
+    */
+    // TODO: test at the public interface level
     public TestExpectation andThenAnyParameter() {
-        return thenAnyParameter();
+        return withAnyParameter();
     }    
 
     /**
@@ -149,7 +174,7 @@ public class TestExpectation {
     *       .andThenParameter( false )
     *       .willReturn( 'theValueItShouldReturn' )
     *
-    * Has 'withParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+    * Has 'withParameter' and 'thenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
     *
     * @param Object - The parameter value to add to the list of expected ones
     */
@@ -157,12 +182,25 @@ public class TestExpectation {
         return withParameter( parameterValue );
     }
 
-    // TODO: test
-    // TODO: document
+    /**
+    * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .withParameter( 'Parameter1' )
+    *       .thenParameter( 4 )
+    *       .thenParameter( false )
+    *       .willReturn( 'theValueItShouldReturn' )
+    *
+    * Has 'withParameter' and 'andThenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+    *
+    * @param Object - The parameter value to add to the list of expected ones
+    */
+    // TODO: test at the public interface level
     public TestExpectation thenParameter( Object parameterValue ) {
         return withParameter( parameterValue );
     }
-
 
     /**
     * States the value that should be returned when this 'expectation' or 'when' is met. 

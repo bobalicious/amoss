@@ -1170,7 +1170,7 @@ public with sharing class TestMockTest {
                 .throws( new TestException( 'Mismatching assertion would normally halt the test, so we will too' ) )
             .also().allows()
                 .method( 'assertEquals' )
-                .withAnyParameter();
+                .withAnyParameters();
 
         TestMock classUnderMock = new TestMock( ClassUnderMock.class );
         classUnderMock.setTestAsserts( mockAssertsProxy );
