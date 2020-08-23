@@ -35,7 +35,6 @@ Design Principles:
                     * also
         * However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a TestMock
 
-
 Implement
 
     Test:
@@ -45,6 +44,9 @@ Implement
 
         Test
             andThenAnyParameter / thenAnyParameter
+            TestExpectations
+            TestExpectation
+            TestExpectation.TestExpectationParameter
 
         Setting 'returning' when the method has a void return
         Not setting 'returning' when the method has a non void return
@@ -70,6 +72,23 @@ Implement
 
             TestMockTest - Amoss_InstanceTest
 
+        Going for:
+
+                Amoss_Instance objectUnderMockConfiguration = new Amoss_Instance( ClassUnderMock.class );
+
+                objectUnderMockConfiguration
+                    .allows()
+                        .method( 'methodUnderMock' )
+                    .also().when()
+                        .method( 'otherMethodUnderMock' )
+                        .withParameter( 'thisParameter' )
+                        .returns( true );
+
+                ClassUnderMock objectUnderMock = objectUnderMockConfiguration.generateMock();
+
+
+
+
         Can we wrap some of the inner classes with public interfaces, so that the consumer only sees that layer.
 
         Should everything be moved into one class file with inner classes?
@@ -79,16 +98,6 @@ Implement
 
         Think about 'withAnyParameters' a bit more
             Need some error conditions, in case you try to set up something invalid.
-
-        Implement means of stating that you don't care about a single parameter
-        E.g.
-            templateGenerator
-                .expects()
-                    .method( 'generate' )
-                    .withParameter( 'One We Care About' )
-                    .andAnyParameter()
-                    .andThenParameter( 'Another One We Care About' )
-                    .returning( 'Something' );
 
         Think about 'only checking a single parameter'
             withParameterAtPosition
@@ -104,12 +113,6 @@ Implement
         Developer Documentation
 
     Mock:
-
-        Implement andThenAnyParameter
-            look in tests for the following, without specifying a parameter:
-                .also().when()
-                    .method( 'assert' )        
-            Change this so that false will stop the test
 
         Type checking prior to checking equality - otherwise you get an indecipherable error
             Looks like you would need to pass the type into the expectation
@@ -127,10 +130,15 @@ Implement
 
         Can you simply add the Test Recorder format into the framework - for flexibility
 
+
     Spy:
 
+        Currently supports
+            mockThing.countOf( 'method' )
         why not 
             mockThing.get().countOf( 'method' )
+            this would be in line with the parameter getters
+
 
         Checking on what you can call, when
         Consider splitting the CallChecker class down, so you end up with perfect auto-complete
@@ -178,7 +186,6 @@ Implement
                 .andAnyParameter()
                 .handledBy( new TemplateGeneratorMockHandler() );
 
-        
             System.assertEquals( templateGenerator.called( 'generate' ).number( 1 ).parameter( 3 ).was() )
 
             That's why we need a spy, and a 'handled by'
@@ -186,9 +193,6 @@ Implement
 Test:
     The behaviours work with Sobjects
     The behaviours work with Object instantiations
-
-
-
 
 Example Tests:
 
