@@ -95,6 +95,8 @@ Implement
 
     Mock:
 
+        Consider 'checkExpectationsWereMet' rather than 'verify'
+
         Type checking prior to checking equality - otherwise you get an indecipherable error
             Looks like you would need to pass the type into the expectation
             Or try / catch the assertion and report that it was probably a type error
