@@ -218,3 +218,11 @@ Example Tests:
         System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
         System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
+
+
+Other documentation notes:
+In addition, it hopes to address one of the shortcomings that traditionally blights Mock Object frameworks - that tests can very quickly become too brittle to maintain.  To do so, it allows a Test Double to operate as a Mock Object, a Test Spy and a simple Configurable Test Double all at the same time, and to allow for the specification of 'any parameter' to be passed in.  And all based on its (hopefully) natural English configuration.
+
+If you don't know what Mock Objects are for, and how they work, try reading Martin Fowler's short article here - https://martinfowler.com/articles/mocksArentStubs.html, from which his example is used over and over again in these docs.
+
+If that goes well, you might consider the section on Test Doubles in Gerard Meszaros's "xUnit Test Patterns".  All terminology in these documentations confirm to his patterns.

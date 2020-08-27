@@ -19,13 +19,7 @@ Particularly:
 
 Amoss provides a simple interface for implementing Mock, Test Spy and Stub objects (Test Doubles) for use in Unit Testing.
 
-It's intended to be very straightforward to write use and produce code that's even more straightforward to read.
-
-In addition, it hopes to address one of the shortcomings that traditionally blights Mock Object frameworks - that tests can very quickly become too brittle to maintain.  To do so, it allows a Test Double to operate as a Mock Object, a Test Spy and a simple Configurable Test Double all at the same time, and to allow for the specification of 'any parameter' to be passed in.  And all based on its (hopefully) natural English configuration.
-
-If you don't know what Mock Objects are for, and how they work, try reading Martin Fowler's short article here - https://martinfowler.com/articles/mocksArentStubs.html, from which his example is used over and over again in these docs.
-
-If that goes well, you might consider the section on Test Doubles in Gerard Meszaros's "xUnit Test Patterns".  All terminology in these documentations confirm to his patterns.
+It's intended to be very straightforward to use, and to result in code that's even more straightforward to read.
 
 ** NOTE: will probably replace the example code so it's not the same as Martin Fowler's **
 
@@ -50,72 +44,77 @@ Every non-static public method on the class is available, and when called, will 
 
 If a method has a return value, then `null` will be returned.
 
-You then use the Test Double as you would any other instance of the object.  In this example, we're testing `fill` on the class `Order`.  The method takes a `Warehouse` as a parameter, calls methods against it and then returns `true` when the stock is successfully reserved:
+You then use the Test Double as you would any other instance of the object.
+
+In this example, we're testing `fill` on the class `Order`.
+
+The method takes a `Warehouse` as a parameter, calls methods against it and then returns `true` when the stock is successfully reserved:
 
 ```java
 
-    Test.startTest();
-        Order order = new Order( TALISKER, 50 );
-        Boolean filled = order.fill( warehouseDouble );
-    Test.stopTest();
+Test.startTest();
+    Order order = new Order( TALISKER, 50 );
+    Boolean filled = order.fill( warehouseDouble );
+Test.stopTest();
 
-    System.assert( filled, 'fill, when called for an order that can be filled, will check the passed warehouse for stock and return true if the order can be filled' );
+System.assert( filled, 'fill, when called for an order that can be filled, will check the passed warehouse for stock and return true if the order can be filled' );
 
 ```
 
-What we need to do, is configure our Test Double version of `Warehouse` so that tells the order that there's stock available, and then allows the order to claim it, and there are lots of options available to us.
+What we need to do, is configure our Test Double version of `Warehouse` so that tells the order that there's stock available, and then allows the order to claim it.
 
 ### Configuring return values
 
-We can configure the Test Double, so that certain methods return certain values by calling `when`, `method`, `willReturn` or `returns` against the controller.
+We can configure the Test Double, so that certain methods return certain values by calling `when`, `method` and`willReturn` against the controller.
 
 ```java
-    Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-    warehouseController
-        .when()
-            .method( 'hasInventory' )
-            .willReturn( true )
-        .also().when()
-            .method( 'remove' )
-            .willReturn( true );
+Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+warehouseController
+    .when()
+        .method( 'hasInventory' )
+        .willReturn( true )
+    .also().when()
+        .method( 'remove' )
+        .willReturn( true );
 
-    Warehouse warehouseDouble = warehouseController.generateDouble();
+Warehouse warehouseDouble = warehouseController.generateDouble();
 
+...
 ```
 
 If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter` and `andThenParameter`:
 
 ```java
-    Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-    warehouseController
-        .when()
-            .method( 'hasInventory' )
-            .withParameter( TALISKER )
-            .andThenParameter( 50 )
-            .willReturn( true )
-        .also().when()
-            .method( 'hasInventory' )
-            .willReturn( false );
-    
-    Warehouse warehouseDouble = warehouseController.generateDouble();
+Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+warehouseController
+    .when()
+        .method( 'hasInventory' )
+        .withParameter( TALISKER )
+        .andThenParameter( 50 )
+        .willReturn( true )
+    .also().when()
+        .method( 'hasInventory' )
+        .willReturn( false );
 
-    ...
+Warehouse warehouseDouble = warehouseController.generateDouble();
+
+...
 ```
 
 If we want to be strict about some parameters, but don't care about others we can also be flexible about the contents of particular parameters, using `withAnyParameter`, and `andThenAnyParameter`:
 
 ```java
-    Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-    warehouseController
-        .when()
-            .method( 'hasInventory' )
-            .withParameter( TALISKER )
-            .andThenAnyParameter()
-            .willReturn( true );
-    
-    Warehouse warehouseDouble = warehouseController.generateDouble();
+Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+warehouseController
+    .when()
+        .method( 'hasInventory' )
+        .withParameter( TALISKER )
+        .andThenAnyParameter()
+        .willReturn( true );
 
-    ...
+Warehouse warehouseDouble = warehouseController.generateDouble();
+
+...
 ```
 
 This is very useful for making sure that our tests only configure the Test Doubles to care about the parameters that are important for the tests we are running, making them less brittle.
@@ -126,11 +125,11 @@ The controller can then be used as a Test Spy, allowing us to find out what valu
 
 ```java
 
-    System.assertEquals( TALISKER, warehouseController.latestCallOf( 'hasInventory' ).parameter( 0 )
-                        , 'filling, will call hasInventory against the warehouse, passing the product required, to find out if there is stock' );
+System.assertEquals( TALISKER, warehouseController.latestCallOf( 'hasInventory' ).parameter( 0 )
+                    , 'filling, will call hasInventory against the warehouse, passing the product required, to find out if there is stock' );
 
-    System.assertEquals( 50, warehouseController.call( 0 ).of( 'hasInventory' ).parameter( 1 )
-                        , 'filling, will call hasInventory against the warehouse, passing the number required, to find out if there is stock' );
+System.assertEquals( 50, warehouseController.call( 0 ).of( 'hasInventory' ).parameter( 1 )
+                    , 'filling, will call hasInventory against the warehouse, passing the number required, to find out if there is stock' );
 
 ```
 
@@ -141,24 +140,24 @@ This allows us to check that the correct parameters are passed into methods when
 A very similar configuraiton syntax can be used to define the Test Double as a self validating Mock Object using `expects` and `verify`:
 
 ```java
-    Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-    warehouseController
-        .expects()
-            .method( 'hasInventory' )
-            .withParameter( TALISKER )
-            .andThenParameter( 50 )
-            .returning( true )
-        .then().expects()
-            .method( 'remove' )
-            .withParameter( TALISKER )
-            .andThenParameter( 50 )
-            .returning( true );
+Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+warehouseController
+    .expects()
+        .method( 'hasInventory' )
+        .withParameter( TALISKER )
+        .andThenParameter( 50 )
+        .returning( true )
+    .then().expects()
+        .method( 'remove' )
+        .withParameter( TALISKER )
+        .andThenParameter( 50 )
+        .returning( true );
 
-    Warehouse warehouseDouble = warehouseController.generateDouble();
+Warehouse warehouseDouble = warehouseController.generateDouble();
 
-    ...
+...
 
-    warehouseController.verify();
+warehouseController.verify();
 ```
 
 When done, the Mock will raise a failure if any method other than those specified are called, or if any method is called out of sequence.
@@ -170,50 +169,50 @@ This can be very useful if the order and completeness of processing is absolutel
 A single object can be used as both a mock and a test spy at the same time:
 
 ```java
-    Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-    warehouseController
-        .expects()
-            .method( 'hasInventory' )
-            .withParameter( TALISKER )
-            .andThenParameter( 50 )
-            .returning( true )
-        .also().when()
-            .method( 'remove' )
-            .returning( true );
+Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+warehouseController
+    .expects()
+        .method( 'hasInventory' )
+        .withParameter( TALISKER )
+        .andThenParameter( 50 )
+        .returning( true )
+    .also().when()
+        .method( 'remove' )
+        .returning( true );
 
-    Warehouse warehouseDouble = warehouseController.generateDouble();
+Warehouse warehouseDouble = warehouseController.generateDouble();
 
-    ...
+...
 
-    warehouseController.verify();
+warehouseController.verify();
 
-    System.assertEquals( TALISKER, warehouseController.latestCallOf( 'remove' ).parameter( 0 )
-                        , 'filling, will call remove against the warehouse, passing the product required, to remove the stock' );
+System.assertEquals( TALISKER, warehouseController.latestCallOf( 'remove' ).parameter( 0 )
+                    , 'filling, will call remove against the warehouse, passing the product required, to remove the stock' );
 ```
 
-This will then allow `remove` to be called at any time, any number of times, but `hasInventory` must be called with the stated parameters, and be called only once.
+This will then allow `remove` to be called at any time (and any number of times), but `hasInventory` must be called with the stated parameters, and must be called exactly once.
 
 ### Configuring a stricter Test Double that isn't a Mock Object
 
 If you like the way Test Spies have clear assertions, but don't want just any method to be allowed to be called on your Test Double, you can use `allows`
 
 ```java
-    Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-    warehouseController
-        .allows()
-            .method( 'hasInventory' )
-            .withParameter( TALISKER )
-            .andThenParameter( 50 )
-            .returning( true )
-        .also().allows()
-            .method( 'remove' )
-            .withParameter( TALISKER )
-            .andThenParameter( 50 )
-            .returning( true );
+Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+warehouseController
+    .allows()
+        .method( 'hasInventory' )
+        .withParameter( TALISKER )
+        .andThenParameter( 50 )
+        .returning( true )
+    .also().allows()
+        .method( 'remove' )
+        .withParameter( TALISKER )
+        .andThenParameter( 50 )
+        .returning( true );
 
-    Warehouse warehouseDouble = warehouseController.generateDouble();
+Warehouse warehouseDouble = warehouseController.generateDouble();
 
-    ...
+...
 ```
 
 This means that `hasInventory` and `remove` can be called in any order, and do not *have* to be called, but that *only* these two methods with these precise parameters can be called, and any other method called against the Test Double will result a test failure.
@@ -223,25 +222,39 @@ This means that `hasInventory` and `remove` can be called in any order, and do n
 Test Doubles can also be told to throw exceptions, using `throwing`, `throws` or `willThrow`:
 
 ```java
-    Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-    warehouseController
-        .when()
-            .method( 'hasInventory' )
-            .withParameter( TALISKER )
-            .andThenParameter( 50 )
-            .throws( new Warehouse.WarehouseOutOfStockException( 'Warehouse does not have stock' ) );
+Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
+warehouseController
+    .when()
+        .method( 'hasInventory' )
+        .withParameter( TALISKER )
+        .andThenParameter( 50 )
+        .throws( new Warehouse.WarehouseOutOfStockException( 'Warehouse does not have stock' ) );
 
-    Warehouse warehouseDouble = warehouseController.generateDouble();
+Warehouse warehouseDouble = warehouseController.generateDouble();
 
-    ...
+...
 ```
 
 ## What? When?
 
 *Brief description of the different types, and when to use each of them*
 
-Test Double         when.method.with.returns
-Strict Test Double  allows.method.with.returns
-Test Spy            when.method.with.returns, call.of.parameter
-Strict Test Spy     allows.method.with.returns, call.of.parameter
-Mock Object         expect.method.with.returning, verify
+Type                | Pattern
+------------------- | -----------------------------------------------
+Test Double         | when.method.with.returns
+Strict Test Double  | allows.method.with.returns
+Test Spy            | when.method.with.returns, call.of.parameter
+Strict Test Spy     | allows.method.with.returns, call.of.parameter
+Mock Object         | expect.method.with.returning, verify
+
+## Synonyms
+
+Most of the functions have synonyms, allowing you to choose the phrasing that is most readable for your team
+
+* withParameter, thenParameter, andThenParameter
+* withAnyParameter, thenAnyParameter, andThenAnyParameter
+* returning, returns, willReturn
+* throwing, throws, willThrow
+* then, also
+* call, get().call
+* latestCallOf, call( -1 ).of
