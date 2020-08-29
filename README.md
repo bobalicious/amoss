@@ -463,40 +463,41 @@ Retrieving the parameters from the latest call of a method   | `latestCallOf`, `
 For those who are looking to contribute to the project.
 
 In order for the project to succeed it must:
-    * Require as little code as possible to create Test Mocks and Spies, so that mocking does not get in the way of testing.
-    * Use natural language to express the configuration so tests are as clear as possible to read.
-    * Have an auto-complete considered class structure, so that IDEs give you as much guidence as possible when tests are being written.
-    * Issue assertion failures that are as clear as possible, so the meaning of the failure is easy to understand.
+
+* Require as little code as possible to create Test Mocks and Spies, so that mocking does not get in the way of testing.
+* Use natural language to express the configuration so tests are as clear as possible to read.
+* Have an auto-complete considered class structure, so that IDEs give you as much guidence as possible when tests are being written.
+* Issue assertion failures that are as clear as possible, so the meaning of the failure is easy to understand.
 
 Design Principles:
 
-    * The consumer should not need to reference any class other than the instantiation of the mock in the first place.
-        * This limits the amount of noise in the specification of a mock.  Class names (espcially namespaced ones) get in the way of the meaning of the code and so they should not be required.
-    * Designing Methods:
-        * Every method call should be expressive of what it does in plain english, particularly within the context of where it is used.
-        * Methods should only have one parameter, which is described by the context provided in the method name, so that it is always clear what is being passed in.
-        * Methods should be set up so they can be strung together to form sentences giving a full description of the work being done.
-        * For example:
-            * call( 1 ).of( 'theStubbedMethod' ).parameters()
-            rather than:
-            * getParameters( 'theStubbedMethod', 1 )
+* The consumer should not need to reference any class other than the instantiation of the mock in the first place.
+    * This limits the amount of noise in the specification of a mock.  Class names (espcially namespaced ones) get in the way of the meaning of the code and so they should not be required.
+* Designing Methods:
+    * Every method call should be expressive of what it does in plain english, particularly within the context of where it is used.
+    * Methods should only have one parameter, which is described by the context provided in the method name, so that it is always clear what is being passed in.
+    * Methods should be set up so they can be strung together to form sentences giving a full description of the work being done.
+    * For example:
+        * call( 1 ).of( 'theStubbedMethod' ).parameters()
+        rather than:
+        * getParameters( 'theStubbedMethod', 1 )
 
-    * Designing Classes:
-        * Classes should be defined with the primary focus of making it easier for a consumer to use the framework, as opposed to making it easier for the developer to build the framework.
-        * Particularly, where the context of the phrasing changes, a new object should be returned that provides an interface that is appropriate for that part of the phrasing.
-        * For example:
-            * when and expects on TestMock both return a TestExpectation.
-                * The TestExpectation defines the phrasing (essentially the interface) for defining the expectation, being
-                    * method
-                    * withParameter / withAnyParameters / withParameterAtPostion
-                    * returning / returns / willReturn / throws / throwing
-                * The following methods then define the end of that phrasing, and result in a TestMock being returned
-                    * then
-                    * also
-        * However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a TestMock
+* Designing Classes:
+    * Classes should be defined with the primary focus of making it easier for a consumer to use the framework, as opposed to making it easier for the developer to build the framework.
+    * Particularly, where the context of the phrasing changes, a new object should be returned that provides an interface that is appropriate for that part of the phrasing.
+    * For example:
+        * when and expects on TestMock both return a TestExpectation.
+            * The TestExpectation defines the phrasing (essentially the interface) for defining the expectation, being
+                * method
+                * withParameter / withAnyParameters / withParameterAtPostion
+                * returning / returns / willReturn / throws / throwing
+            * The following methods then define the end of that phrasing, and result in a TestMock being returned
+                * then
+                * also
+    * However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a TestMock
 
 
 ## Roadmap
 
-- [] Ability to inject a Test Double with a Salesfore Stub Provider, allowing for code driven responses to method calls
-- [] Test Recorder style implementation of expectations
+- Ability to inject a Test Double with a Salesfore Stub Provider, allowing for code driven responses to method calls
+- Test Recorder style implementation of expectations
