@@ -1,4 +1,5 @@
 # Amoss
+
 Apex Mock Objects, Spies and Stubs - A Simple Mocking framework for Apex (Salesforce)
 
 ## Disclaimer
@@ -68,6 +69,7 @@ What we need to do, is configure our Test Double version of `Warehouse` so that 
 We can configure the Test Double, so that certain methods return certain values by calling `when`, `method` and`willReturn` against the controller.
 
 ```java
+
 Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
 warehouseController
     .when()
@@ -85,6 +87,7 @@ Warehouse warehouseDouble = warehouseController.generateDouble();
 If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter` and `andThenParameter`:
 
 ```java
+
 Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
 warehouseController
     .when()
@@ -104,6 +107,7 @@ Warehouse warehouseDouble = warehouseController.generateDouble();
 If we want to be strict about some parameters, but don't care about others we can also be flexible about the contents of particular parameters, using `withAnyParameter`, and `andThenAnyParameter`:
 
 ```java
+
 Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
 warehouseController
     .when()
@@ -140,6 +144,7 @@ This allows us to check that the correct parameters are passed into methods when
 A very similar configuraiton syntax can be used to define the Test Double as a self validating Mock Object using `expects` and `verify`:
 
 ```java
+
 Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
 warehouseController
     .expects()
@@ -169,6 +174,7 @@ This can be very useful if the order and completeness of processing is absolutel
 A single object can be used as both a mock and a test spy at the same time:
 
 ```java
+
 Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
 warehouseController
     .expects()
@@ -197,6 +203,7 @@ This will then allow `remove` to be called at any time (and any number of times)
 If you like the way Test Spies have clear assertions, but don't want just any method to be allowed to be called on your Test Double, you can use `allows`
 
 ```java
+
 Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
 warehouseController
     .allows()
@@ -222,6 +229,7 @@ This means that `hasInventory` and `remove` can be called in any order, and do n
 Test Doubles can also be told to throw exceptions, using `throwing`, `throws` or `willThrow`:
 
 ```java
+
 Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
 warehouseController
     .when()
@@ -262,6 +270,7 @@ It is of particular note that when implemented using 'withAnyParameter' (or with
 
 ```java
 
+testDoubleController
     .when()
         .method( 'methodName1' )
         .withAnyParameters()
@@ -300,6 +309,7 @@ Is not particularly brittle to changes in the implementation of the class being 
 
 ```java
 
+testDoubleController
     .allows()
         .method( 'methodName1' )
         .withAnyParameters()
@@ -331,10 +341,9 @@ Can be used to test that individual methods are called, and the order in which t
 
 #### Is characterised by the pattern: when.method.with.willReturn followed by call.of.parameter
 
-TODO: check the parameter and method call indexing
-
 ```java
 
+spiedUponObjectController
     .when()
         .method( 'methodName1' )
         .withAnyParameters()
@@ -344,39 +353,110 @@ TODO: check the parameter and method call indexing
         .withAnyParameters()
         .willReturn( true );
 
-    // followed by
+// followed by
 
-    System.assertEquals( 'expectedParameterValue1',
-                          spiedUponObject.latestCallOf( 'method1' ).parameter( 0 ),
-                         'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
+System.assertEquals( 'expectedParameterValue1',
+                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 0 ),
+                        'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
 
-    System.assertEquals( 'expectedParameterValue2',
-                          spiedUponObject.call( 0 ).of( 'method2' ).parameter( 0 ),
-                         'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
+System.assertEquals( 'expectedParameterValue2',
+                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 0 ),
+                        'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
+
+```
+
+### Strict Test Spy
+
+Similar to a Test Spy, although is defined in such a way that *only* the methods that are configured are allowed to be called.
+
+As with the Test Spy, is used to 'stub out' an object that *is* the focus of the test.
+
+That is, the test is checking that the method under test calls particular methods on the given Test Double passing parameters with certain values that are predictable.
+
+Can be used to test that individual methods are called, and the order in which that particular method is called.  However, cannot be used to test that different methods are called in a particular sequence.  In order to do that, a Mock Object (see below) is required.
+
+It is implied that it is important that *other* methods, those not specified, are *not* called.
+
+#### Is characterised by the pattern: allows.method.with.willReturn followed by call.of.parameter
+
+```java
+
+spiedUponObjectController
+    .allows()
+        .method( 'methodName1' )
+        .withAnyParameters()
+        .willReturn( true )
+    .also().allows()
+        .method( 'methodName2' )
+        .withAnyParameters()
+        .willReturn( true );
+
+// followed by
+
+System.assertEquals( 'expectedParameterValue1',
+                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 0 ),
+                        'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
+
+System.assertEquals( 'expectedParameterValue2',
+                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 0 ),
+                        'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
+
+```
+
+### Mock Object
+
+Similar to a Test Spy, although is defined in such a way that *only* the methods that are configured are allowed to be called, and only in the order that they are specified.
+
+If any specified method is called out of order, or with the wrong parameters, it will fail the test.
+
+Is therefore used to 'stub out' an object when the order of execution of different methods is important to the success of the test.
+
+It is also implied that it is important that *other* methods, those not specified, are *not* called.
+
+Because of the strict nature of the specification, this is the most brittle of the constructs, and often results in tests that fail when the implementation of the method under test is altered.
+
+#### Is characterised by the pattern: expects.method.with.willReturn followed by verify
+
+```java
+
+mockObjectController
+    .expects()
+        .method( 'methodName1' )
+        .withParameter( 'expectedParameterValue1' )
+        .willReturn( true )
+    .then().expects()
+        .method( 'methodName2' )
+        .withParameter( 'expectedParameterValue2' )
+        .willReturn( true );
+
+// followed by
+mockObjectController.verify();
 
 ```
 
 ### Summary
 
 Type                | Use Cases | Brittle? | Construct Pattern
-------------------- | -----------------------------------------------
-Test Double         | Ancillary objects, not the focus of the test | Least brittle | when.method.with.willReturn
-Strict Test Double  | Ancillary objects, not the focus of the test | Brittle to addition of new calls on object being stubbed | allows.method.with.returning
+------------------- | --------- | -------- | ------------------------
+Test Double         | Ancillary objects, parameters passed are not the main focus of the test             | Least brittle | when.method.with.willReturn
+Strict Test Double  | Ancillary objects, parameters passed are not the main focus of the test             | Brittle to addition of new calls on object being stubbed | allows.method.with.returning
 Test Spy            | Focus of the test, order of execution is not important, prefer the assertion syntax | Is brittle to the interface of the object being stubbed, less brittle to the implementation of the method under test | when.method.with.willReturn, call.of.parameter
-Strict Test Spy     | ??? | ??? | allows.method.with.returns, call.of.parameter
-Mock Object         | ??? | ??? | expect.method.with.returning, verify
+Strict Test Spy     | Focus of the test, order of execution is not important, prefer the assertion syntax | Is brittle to the interface of the object being stubbed and addition of new calls on object being stubbed, a little more brittle to the implementation of the method under test | allows.method.with.returns, call.of.parameter
+Mock Object         | Focus of the test, order of execution is important                                  | Most brittle construct, brittle to the implementation of the method under test | expect.method.with.returning, verify
 
 ## Synonyms
 
-Most of the functions have synonyms, allowing you to choose the phrasing that is most readable for your team
+Most of the functions have synonyms, allowing you to choose the phrasing that is most readable for your team.
 
-* withParameter, thenParameter, andThenParameter
-* withAnyParameter, thenAnyParameter, andThenAnyParameter
-* returning, returns, willReturn
-* throwing, throws, willThrow
-* then, also
-* call, get().call
-* latestCallOf, call( -1 ).of
+Purpose                                                      | Synonyms
+------------------------------------------------------------ | ---------------------------------
+Specifying individual parameters                             | `withParameter`, `thenParameter`, `andThenParameter`
+Stating that any single parameter is allowed                 | `withAnyParameter`, `thenAnyParameter`, `andThenAnyParameter`
+Stating the return value of a method                         | `returning`, `returns`, `willReturn`
+Stating that a method throws an exception                    | `throwing`, `throws`, `willThrow`
+Start the specification of an additional method              | `then`, `also`
+Retrieving the parameters from a particular call of a method | `call`, `get().call`
+Retrieving the parameters from the latest call of a method   | `latestCallOf`, `call( -1 ).of`
 
 ## Development Ideals
 
