@@ -378,7 +378,7 @@ public class Amoss_Instance implements StubProvider {
         *
         * Gets the parameters for this call.
         *
-        * If the parameters exist then an exception is thrown.
+        * If the parameters do not exist then an exception is thrown.
         */
         public List<Object> getParameters() {
             if ( parameters == null ) {

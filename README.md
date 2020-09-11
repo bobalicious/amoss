@@ -248,9 +248,8 @@ Warehouse warehouseDouble = warehouseController.generateDouble();
 With such flexibility, it's important that you make good decisions on which behaviours to use, and when.
 
 The decision will be based on a balance of two main factors:
-* Ensuring that you produce a meaningful test of the behaviour.
-whilst
-* Limiting the scope of test changes that are required when the implementation of the classes that are being stubbed change.
+* Ensuring that you produce a meaningful test of the behaviour, whilst
+* Limiting the scope of test changes that are required when the implementation of the classes that are being stubbed or tested change.
 
 The following aims to describe when to each of the constructs, roughly referencing the types of Test Doubles that are described in Gerard Meszaros's book "xUnit Test Patterns".
 
@@ -486,18 +485,22 @@ Design Principles:
     * Classes should be defined with the primary focus of making it easier for a consumer to use the framework, as opposed to making it easier for the developer to build the framework.
     * Particularly, where the context of the phrasing changes, a new object should be returned that provides an interface that is appropriate for that part of the phrasing.
     * For example:
-        * when and expects on TestMock both return a TestExpectation.
-            * The TestExpectation defines the phrasing (essentially the interface) for defining the expectation, being
+        * when and expects on `Amoss_Instance` both return an `Amoss_Expectation`.
+            * The `Amoss_Expectation` defines the phrasing (essentially the interface) for defining the expectation, being
                 * method
                 * withParameter / withAnyParameters / withParameterAtPostion
                 * returning / returns / willReturn / throws / throwing
-            * The following methods then define the end of that phrasing, and result in a TestMock being returned
+            * The following methods then define the end of that phrasing, and result in an `Amoss_Instance` being returned
                 * then
                 * also
-    * However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a TestMock
-
+    * However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a `Amoss_Instance`
 
 ## Roadmap
 
+Required for 1.0 release:
 - Ability to inject a Test Double with a Salesfore Stub Provider, allowing for code driven responses to method calls
+- Error handling of configurations
+
+Possible future development:
 - Test Recorder style implementation of expectations
+- 
