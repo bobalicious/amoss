@@ -3,6 +3,14 @@ public with sharing class Amoss_InstanceTest {
 
     class TestException extends Exception {}
 
+    // TODO
+    // full set of 'when' tests
+        // prove that when can be specified, and the values are returned based on it
+        //  include 'anyParameters' and 'anyParameter'
+        // prove that when can be specified and other calls will return null
+
+    // same as above, but for 'allows'
+
     //
     // Method definition tests
     //
@@ -105,14 +113,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-                .method( 'methodUnderMock' )
-                .willReturn( 'something' )
-            .also().when()
-                .method( 'otherMethodUnderMock' )
-                .willReturn( 'something' );
-
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
             classUnderMock.methodUnderMock( 'ActualParam1', 1 );
@@ -139,14 +139,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-                .method( 'methodUnderMock' )
-                .willReturn( 'something' )
-            .also().when()
-                .method( 'otherMethodUnderMock' )
-                .willReturn( 'something' );
-
         Test.startTest();
             Integer returnedMethodCallCount = classUnderMockController.countOf( 'methodUnderMock' );
         Test.stopTest();
@@ -164,11 +156,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
 
         Test.startTest();
             classUnderMock.methodUnderMock( 'ActualParam', 2 );
@@ -189,16 +176,12 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMockWithNoReturn' );
-
         Test.startTest();
             classUnderMock.methodUnderMockWithNoReturn( 'ActualParam', 2 );
             List<Object> passedParameters = classUnderMockController.call( 0 ).of( 'methodUnderMockWithNoReturn' ).parameters();
         Test.stopTest();
         
-        System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call to a method thar returns nothing, will return the parameters of that call' );
+        System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call that returns nothing, will return the parameters of that call' );
     }
 
     /**
@@ -211,14 +194,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-                .method( 'methodUnderMock' )
-                .willReturn( 'something' )
-            .also().when()
-                .method( 'otherMethodUnderMock' )
-                .willReturn( 'something' );
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -245,14 +220,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-                .method( 'methodUnderMock' )
-                .willReturn( 'something' )
-            .also().when()
-                .method( 'otherMethodUnderMock' )
-                .willReturn( 'something' );
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -281,14 +248,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-                .method( 'methodUnderMock' )
-                .willReturn( 'something' )
-            .also().when()
-                .method( 'otherMethodUnderMock' )
-                .willReturn( 'something' );
-
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
             classUnderMock.methodUnderMock( 'ActualParam1', 1 );
@@ -316,14 +275,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-                .method( 'methodUnderMock' )
-                .willReturn( 'something' )
-            .also().when()
-                .method( 'otherMethodUnderMock' )
-                .willReturn( 'something' );
-
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
             classUnderMock.methodUnderMock( 'ActualParam1', 1 );
@@ -350,11 +301,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'sobjectMethodUnderMock' )
-            .willReturn( 'something' );
-
         Test.startTest();
             Contact passedContact = new Contact( FirstName = 'Person' );
 
@@ -376,11 +322,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'methodWithNoParametersUnderMock' )
-            .willReturn( 'something' );
-
         Test.startTest();
             classUnderMock.methodWithNoParametersUnderMock();
             List<Object> passedParameters = classUnderMockController.call( 0 ).of( 'methodWithNoParametersUnderMock' ).parameters();
@@ -399,11 +340,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
 
         Test.startTest();
 
@@ -436,11 +372,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
 
         Test.startTest();
 
@@ -502,11 +433,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
-
         Test.startTest();
             classUnderMock.methodUnderMock( 'ActualParam', 2 );
             Object passedParameter = classUnderMockController.call( 0 ).of( 'methodUnderMock' ).parameter( 0 );
@@ -525,14 +451,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-                .method( 'methodUnderMock' )
-                .willReturn( 'something' )
-            .also().when()
-                .method( 'otherMethodUnderMock' )
-                .willReturn( 'something' );
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -559,11 +477,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
 
         Test.startTest();
 
@@ -625,11 +538,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
-
         Test.startTest();
 
             classUnderMock.methodUnderMock( 'ActualParam', 2 );
@@ -660,11 +568,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
 
         Test.startTest();
 
@@ -697,11 +600,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'methodWithNoParametersUnderMock' )
-            .willReturn( 'something' );
-
         Test.startTest();
 
             classUnderMock.methodWithNoParametersUnderMock();
@@ -733,11 +631,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
-
         Test.startTest();
             classUnderMock.methodUnderMock( 'ActualParam', 2 );
             List<Object> passedParameters = classUnderMockController.get().call( 0 ).of( 'methodUnderMock' ).parameters();
@@ -756,11 +649,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-            .method( 'methodUnderMock' )
-            .willReturn( 'something' );
 
         Test.startTest();
             classUnderMock.methodUnderMock( 'ActualParam1', 2 );
@@ -783,10 +671,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'methodWithListObject' );
-
         Test.startTest();
             List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
 
@@ -808,10 +692,6 @@ public with sharing class Amoss_InstanceTest {
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
 
-        classUnderMockController
-            .when()
-            .method( 'methodWithSetObject' );
-
         Test.startTest();
             Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
 
@@ -832,10 +712,6 @@ public with sharing class Amoss_InstanceTest {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
-
-        classUnderMockController
-            .when()
-            .method( 'methodWithMapStringObject' );
 
         Test.startTest();
             Map<String,Object> parameterPassed = new Map<String,Object>{ 'one' => 1, 'two' => '2', 'three' => new Contact() };
