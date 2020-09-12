@@ -4,6 +4,93 @@ public with sharing class Amoss_InstanceTest {
     class TestException extends Exception {}
 
     //
+    // Method definition tests
+    //
+
+    /**
+    * @case    when no methods are defined, and one that exists against the doubled class is called
+    * @result  will return null
+    */
+    @isTest
+    private static void whenNoMethodsAreDefinedAndAValidOneIsCalled_willReturnNull() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+
+        Test.startTest();
+            String returnFromMock = classUnderMock.methodUnderMock( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromMock, 'when no methods are defined, and one that exists against the doubled class is called, will return null' );
+    }
+
+    /**
+    * @method  allowAnyCall
+    * @case    when given false, no methods are defined, and one that exists against the doubled class is called
+    * @result  will return null
+    */
+    @isTest
+    private static void allowAnyCall_whenGivenFalseAndAndNoMethodsAreDefinedAndAValidOneIsCalled_willReturnNull() {
+        
+        // TODO: rename mockAsserts and mockAssertsgenerateMock
+
+        Amoss_Instance mockAsserts = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAssertsgenerateMock = (Amoss_Asserts)mockAsserts.generateMock();
+        mockAsserts
+            .allows()
+                .method( 'assertEquals' )
+            .also().when()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAssertsgenerateMock );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+
+        Test.startTest();
+            classUnderMockController
+                .allowsAnyCall( false );
+
+            try {
+                classUnderMock.methodUnderMock( 'OtherActualParam1', 1 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was called more times than was expected';
+        System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'allowsAnyCall, when given false, no methods are defined and a method is called, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'allowsAnyCall, when given false, no methods are defined and a method is called, will fail by calling assert with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method  allowAnyCall
+    * @case    when given true, no methods are defined, and one that exists against the doubled class is called
+    * @result  will return null
+    */
+    @isTest
+    private static void allowAnyCall_whenGivenTrueAndAndNoMethodsAreDefinedAndAValidOneIsCalled_willReturnNull() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+
+        Test.startTest();
+            classUnderMockController
+                .allowsAnyCall( true );
+            String returnFromMock = classUnderMock.methodUnderMock( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromMock, 'when given true, when no methods are defined, and one that exists against the doubled class is called, will return null' );
+    }
+
+    // expectation set, allowsAnyCall(true) is set, something else called that doesn't match, returns null
+    // allowAnyCall() combined with the following, when there is a match and there isn't a match
+    //  when
+    //  expects
+    //  allows
+    // cover both allowsAnyCall( true ) and allowsAnyCall( false )
+
+    //
     // Test Spy behaviour tests
     //
 

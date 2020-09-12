@@ -6,6 +6,9 @@ Documentation:
     Change the structure of the example tests so they don't match Martin Fowler's example.
     Add 'references'
 
+Review:
+    All the assertion texts - some appear to be wrong
+
 Implement
 
     Test:

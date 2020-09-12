@@ -10,31 +10,10 @@ public class Amoss_Instance implements StubProvider {
     Type classType;
 
     private Amoss_Asserts assertionMechanism = new Amoss_Asserts();
-    
-    /**
-    * Internal method that should not be called directly in tests.
-    * 
-    * Get the assertion mechanism for this mock object implementation
-    *
-    * @return  Amoss_Asserts - The assertionMechanism object
-    */
-    public Amoss_Asserts getAsserts() {
-        return this.assertionMechanism;
-    }
-    
-    /**
-    * Internal method that should not be called directly in tests.
-    * 
-    * Set the assertion mechanism for this mock object implementation
-    *
-    * @param   Amoss_Asserts - The assertionMechanism
-    * @return  Amoss_Instance - Itself, allowing for a fluent interface
-    */
-    public Amoss_Instance setAsserts( Amoss_Asserts assertionMechanism ) {
-        this.assertionMechanism = assertionMechanism;
-        return this;
-    }
 
+    private Boolean allowsAnyCall                  = true;
+    private Boolean allowsAnyCallExplicitlyDefined = false;
+    
     public Amoss_Instance( Type classType ) {
         this.classType = classType;
     }
@@ -64,6 +43,9 @@ public class Amoss_Instance implements StubProvider {
     *       .returning( 'theValueItShouldReturn' )
     */
     public Amoss_Expectation expects() {
+        if ( ! allowsAnyCallExplicitlyDefined ) {
+            allowsAnyCall = false;
+        }
         Amoss_Expectation newExpectation = new Amoss_Expectation( this );
         this.expectations.add( newExpectation );
         return newExpectation;
@@ -106,8 +88,28 @@ public class Amoss_Instance implements StubProvider {
     *   .willReturn( 'theValueItShouldReturn' )
     */
     public Amoss_Expectation allows() {
-        // TODO: will switch the allowsAll flag to false, when that is added
+        if ( ! allowsAnyCallExplicitlyDefined ) {
+            allowsAnyCall = false;
+        }
         return when();
+    }
+
+    /**
+    * States that whatever mechanism is used to defined the 'expectations' or 'whens' against this
+    * object, it will allow any call to a method to be successful and for those that are not defined
+    * to return null.
+    *
+    * Example usage:
+    *   allowsAnyCall( false )
+    *     .when( 'methodName' )
+    *     .method( 'methodName' )
+    *     .withParameter( 'parameterValue' )
+    *     .willReturn( 'theValueItShouldReturn' )
+    */
+    public Amoss_Instance allowsAnyCall( Boolean allowsAnyCall ) {
+        this.allowsAnyCallExplicitlyDefined = true;
+        this.allowsAnyCall = allowsAnyCall;
+        return this;
     }
 
     /**
@@ -194,12 +196,18 @@ public class Amoss_Instance implements StubProvider {
         }
 
         // We could assertEquals( ! expectations.isEmpty() ), but I do it this way so that the test for this method is clearer
-        if ( expectations.isEmpty() ) {
+
+        if ( allowsAnyCall == false && expectations.isEmpty() ) {
             assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
         }
-        Amoss_Expectation thisExpectation = expectations.unshift();
-        thisExpectation.verify( assertionMechanism, mockedMethod, parameters );
-        return thisExpectation.getReturnValue();
+
+        if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameters ) ) {
+            Amoss_Expectation thisExpectation = expectations.unshift();
+            thisExpectation.verify( assertionMechanism, mockedMethod, parameters );
+            return thisExpectation.getReturnValue();
+        }
+        
+        return null;
     }
 
     /**
@@ -209,6 +217,30 @@ public class Amoss_Instance implements StubProvider {
     */
     public String getClassName() {
         return String.valueOf( this.classType );
+    }
+
+    /**
+    * Internal method that should not be called directly in tests.
+    * 
+    * Get the assertion mechanism for this mock object implementation
+    *
+    * @return  Amoss_Asserts - The assertionMechanism object
+    */
+    public Amoss_Asserts getAsserts() {
+        return this.assertionMechanism;
+    }
+    
+    /**
+    * Internal method that should not be called directly in tests.
+    * 
+    * Set the assertion mechanism for this mock object implementation
+    *
+    * @param   Amoss_Asserts - The assertionMechanism
+    * @return  Amoss_Instance - Itself, allowing for a fluent interface
+    */
+    public Amoss_Instance setAsserts( Amoss_Asserts assertionMechanism ) {
+        this.assertionMechanism = assertionMechanism;
+        return this;
     }
 
     /**
