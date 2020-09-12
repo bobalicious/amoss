@@ -23,7 +23,7 @@ public class Amoss_Instance implements StubProvider {
     *
     * @return Object  - The instance to use in your test
     */
-    public Object generateMock() {
+    public Object generateDouble() {
         return Test.createStub( classType, this );
     }
 

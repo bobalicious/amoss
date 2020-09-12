@@ -20,7 +20,7 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         warehouseController.verify();
@@ -42,7 +42,7 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         System.assert( order.isFilled(), 'filling, when the warehouse has stock, will state that the order is filled' );
@@ -72,7 +72,7 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         System.assert( order.isFilled(), 'filling, when the warehouse has stock, will state that the order is filled' );
@@ -103,7 +103,7 @@ public with sharing class ExampleTest {
         Order order = new Order( TALISKER, 50 );
         
         Test.startTest();
-            order.fillWithoutReturn( (Warehouse)warehouseController.generateMock() );
+            order.fillWithoutReturn( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         warehouseController.verify();
@@ -123,7 +123,7 @@ public with sharing class ExampleTest {
             .returning( false );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         warehouseController.verify();
@@ -152,7 +152,7 @@ public with sharing class ExampleTest {
             .willReturn( false );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         warehouseController.verify(); // this will always pass, as we have no expectations
@@ -180,7 +180,7 @@ public with sharing class ExampleTest {
             .willReturn( true );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         warehouseController.verify(); // this will always pass, as we have no expectations
@@ -209,7 +209,7 @@ public with sharing class ExampleTest {
             .willReturn( true );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         warehouseController.verify(); // this will always pass, as we have no expectations
@@ -230,7 +230,7 @@ public with sharing class ExampleTest {
             .throwing( new Warehouse.WarehouseException( 'Some error happened' ) );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         warehouseController.verify();
@@ -251,7 +251,7 @@ public with sharing class ExampleTest {
             .throwing( new DmlException( 'Some error happened' ) );
 
         Test.startTest();
-            order.fill( (Warehouse)warehouseController.generateMock() );
+            order.fill( (Warehouse)warehouseController.generateDouble() );
         Test.stopTest();
 
         warehouseController.verify();

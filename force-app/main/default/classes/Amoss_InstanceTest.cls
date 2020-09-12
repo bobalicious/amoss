@@ -23,7 +23,7 @@ public with sharing class Amoss_InstanceTest {
     private static void whenNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             String returnFromMock = classUnderMock.methodUnderMock( 'OtherActualParam1', 1 );
@@ -44,7 +44,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callCount_whenGivenAMethodCallThatHappened_willReturnTheNumberOfCalls() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -70,7 +70,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callCount_whenGivenAMethodCallThatDidNotHappen_willReturnZero() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             Integer returnedMethodCallCount = classUnderMockController.countOf( 'methodUnderMock' );
@@ -88,7 +88,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.methodUnderMock( 'ActualParam', 2 );
@@ -107,7 +107,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenACallOfMethodWithNoReturnThatHappened_willReturnTheParametersOfThatCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.methodUnderMockWithNoReturn( 'ActualParam', 2 );
@@ -126,7 +126,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenACallThatHappenedAmongstMany_willReturnTheParametersOfThatCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -152,7 +152,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenAMinusOneCallNumber_willReturnTheParametersOfTheLastCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -179,7 +179,7 @@ public with sharing class Amoss_InstanceTest {
     private static void latestCallOfParameters_whenTheMethodHasBeenCalled_willReturnTheParametersOfTheLastCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -206,7 +206,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenANegativeCallNumber_willReturnTheParametersOfTheCallThatManyFromTheEnd() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -232,7 +232,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenACallThatHappenedWithAnSobject_willReturnTheParametersOfThatCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             Contact passedContact = new Contact( FirstName = 'Person' );
@@ -253,7 +253,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenACallThatHappenedWithNoParameters_willReturnAnEmptyList() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.methodWithNoParametersUnderMock();
@@ -272,7 +272,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenACallNumberThatDidNotHappen_willThrowAnException() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
 
@@ -304,7 +304,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenANegativeCallNumberThatDidNotHappen_willThrowAnException() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
 
@@ -335,7 +335,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
 
@@ -364,7 +364,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameter_whenGivenACallThatHappened_willReturnTheStatedParameterOfThatCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.methodUnderMock( 'ActualParam', 2 );
@@ -383,7 +383,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameters_whenGivenACallThatHappenedAmongstMany_willReturnTheParameterOfThatCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
@@ -409,7 +409,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameter_whenGivenACallNumberThatDidNotHappen_willThrowAnException() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
 
@@ -440,7 +440,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameter_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
 
@@ -469,7 +469,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameter_whenGivenAParameterNumberThatIsOutOfRange_willThrowAnException() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
 
@@ -500,7 +500,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameter_whenGivenAParameterNumberThatIsNegative_willThrowAnException() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
 
@@ -531,7 +531,7 @@ public with sharing class Amoss_InstanceTest {
     private static void callOfParameter_whenGivenAParameterForAMethodThatHasNoParameters_willThrowAnException() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
 
@@ -562,7 +562,7 @@ public with sharing class Amoss_InstanceTest {
     private static void getCallOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.methodUnderMock( 'ActualParam', 2 );
@@ -581,7 +581,7 @@ public with sharing class Amoss_InstanceTest {
     private static void getLatestCallOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMock.methodUnderMock( 'ActualParam1', 2 );
@@ -602,7 +602,7 @@ public with sharing class Amoss_InstanceTest {
     private static void parameters_whenAParameterIsAListOfObjects_willReturnTheParameter() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
@@ -623,7 +623,7 @@ public with sharing class Amoss_InstanceTest {
     private static void parameters_whenAParameterIsASetOfObjects_willReturnTheParameter() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
@@ -644,7 +644,7 @@ public with sharing class Amoss_InstanceTest {
     private static void parameters_whenAParameterIsAMapOfObjects_willReturnTheParameter() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             Map<String,Object> parameterPassed = new Map<String,Object>{ 'one' => 1, 'two' => '2', 'three' => new Contact() };
@@ -668,7 +668,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethod_whenTheMethodIsCalled_willNotFail() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -690,7 +690,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethod_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -702,7 +702,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -730,7 +730,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethod_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -752,14 +752,14 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethod_whenTheMethodIsNotCalledAndVerifyIs_willFail() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -785,7 +785,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -808,7 +808,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -820,7 +820,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -849,7 +849,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodReturning_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -872,14 +872,14 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodReturning_whenTheMethodIsNotCalledAndVerifyIs_willFail() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -906,7 +906,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -930,7 +930,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -942,7 +942,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -972,7 +972,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -996,14 +996,14 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsNotCalledAndVerifyIs_willFail() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -1031,7 +1031,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -1056,7 +1056,7 @@ public with sharing class Amoss_InstanceTest {
     private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalledWithNonMatchingParameters_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .when()
                 .method( 'assertEquals' )
@@ -1070,7 +1070,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .expects()
@@ -1116,7 +1116,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_whenGivenFalseAndNoMethodsAreDefinedAndAMethodIsCalled_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -1128,7 +1128,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMockController
@@ -1153,7 +1153,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_whenGivenTrueAndAndNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
         
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         Test.startTest();
             classUnderMockController
@@ -1173,7 +1173,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willNotFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -1185,7 +1185,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .allowsAnyCall( true )
@@ -1213,7 +1213,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_false_expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -1225,7 +1225,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .allowsAnyCall( false )
@@ -1255,7 +1255,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_true_expectsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -1267,7 +1267,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .allowsAnyCall( true )
@@ -1295,7 +1295,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_false_expectsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -1307,7 +1307,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .allowsAnyCall( false )
@@ -1337,7 +1337,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -1349,7 +1349,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .allowsAnyCall( true )
@@ -1379,7 +1379,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_false_expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -1391,7 +1391,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .allowsAnyCall( false )
@@ -1423,7 +1423,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledOnlyWithDifferentParameters_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .allows()
                 .method( 'assertEquals' )
@@ -1435,7 +1435,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .allowsAnyCall( true )
@@ -1464,7 +1464,7 @@ public with sharing class Amoss_InstanceTest {
     private static void allowAnyCall_false_expectsMethodReturning_whenTheMethodIsOnlyCalledWithDifferentParameters_willFailTheTest() {
         
         Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateMock();
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
         mockAssertsController
             .when()
                 .method( 'assertEquals' )
@@ -1478,7 +1478,7 @@ public with sharing class Amoss_InstanceTest {
 
         Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
         classUnderMockController.setAsserts( mockAsserts );
-        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateMock();
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
 
         classUnderMockController
             .allowsAnyCall( false )

@@ -10,12 +10,6 @@ No warranty is given and no liability is offered, this is experimental code and 
 
 The code may be downloaded and used for experimental purposes only and cannot be used in any context other than that until such time as a proper licence is selected an described in this file.
 
-** NOTE THAT THIS DOCUMENTATION IS CURRENTLY INACCURATE AND DESCRIBES THE DESIRED BEHAVIOUR, RATHER THAN THE IMPLEMENTED **
-
-Particularly:
-* The Test Double will **only** allow methods to be called if they have been configured, whereas the documentation states that any method can be called unless `allows` has been specified.  This behaviour change is the next thing that will be implemented.
-* The method to generate the test double is currently `generateMock`.  It will be changed to be `generateDouble`.
-
 ## Why use Amoss?
 
 Amoss provides a simple interface for implementing Mock, Test Spy and Stub objects (Test Doubles) for use in Unit Testing.
