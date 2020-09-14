@@ -6,10 +6,9 @@ public with sharing class Amoss_InstanceTest {
     //
     // Method definition tests
     //
-
     /**
-    * @case    when no methods are defined, and a method is called
-    * @result  will return null
+    * @case   when no methods are defined, and a method is called
+    * @result will return null
     */
     @isTest
     private static void whenNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
@@ -23,6 +22,237 @@ public with sharing class Amoss_InstanceTest {
         
         System.assertEquals( null, returnFromMock, 'when no methods are defined, and a method called, will return null' );
     }
+
+    /**
+    * @method when.method.willReturn
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWillReturn_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromMock = classUnderMock.methodUnderMock( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromMock, 'when.method.willReturn, and the method called, will return the stated value, regardless of the parameters passed' );
+    }
+
+    /**
+    * @method when.method.willReturn
+    * @case   when a different method is called
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWillReturn_whenADifferentMethodIsCalled_willReturnNull() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .willReturn( 'willNotBeReturned' );
+
+        Test.startTest();
+            String returnFromMock = classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromMock, 'when.method.willReturn, and a different method called, will return null' );
+    }
+
+    /**
+    * @method when.method.withParameter.willReturn
+    * @case   when that method is called with the stated parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromMock = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromMock, 'when.method.withParameter.willReturn, and the method called with the stated parameters, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.willReturn
+    * @case   when that method is called with different parameters
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParameterWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'willNotSeeThis' );
+
+        Test.startTest();
+            String returnFromMock = classUnderMock.methodUnderMock( 'DifferentParam', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromMock, 'when.method.withParameter.willReturn, and the method called with the different parameters, will return null' );
+    }
+
+    /**
+    * @method when.method.withParameter.willReturn multiple times
+    * @case   when that method is called with the stated parameters
+    * @result will return the stated value for each call
+    */
+    @isTest
+    private static void whenMethodWithParameterWillReturnMultiple_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValues() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn1' )
+            .also().when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam2' )
+                .andThenParameter( 2 )
+                .willReturn( 'expectedReturn2' );
+
+        Test.startTest();
+            String returnFromMock1 = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            String returnFromMock2 = classUnderMock.methodUnderMock( 'ActualParam2', 2 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn1', returnFromMock1, 'when.method.withParameter.willReturn multiple times, and the method called with the stated parameters, will return the stated value for the matching parameters' );
+        System.assertEquals( 'expectedReturn2', returnFromMock2, 'when.method.withParameter.willReturn multiple times, and the method called with the stated parameters, will return the stated value for the matching parameters' );
+    }
+
+    /**
+    * @method when.method.withParameter.willReturn multiple times 
+    * @case   when the same method is defiend with the same parameters and it is called multiple times
+    * @result will always return the first value with parameters that match
+    */
+    @isTest
+    private static void whenMethodWithParameterWillReturnMultiple_whenSameParamsUsed_willAlwaysReturnTheFirstMatch() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn1' )
+            .also().when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn1' );
+
+        Test.startTest();
+            String returnFromMock1 = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            String returnFromMock2 = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn1', returnFromMock1, 'when.method.withParameter.willReturn multiple times, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
+        System.assertEquals( 'expectedReturn1', returnFromMock2, 'when.method.withParameter.willReturn multiple times, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
+    }    
+
+    /**
+    * @method when.method.withParameter.willReturn multiple times
+    * @case   when different methods are defined with the same parameters
+    * @result will return the stated value for each call, based on the method called
+    */
+    @isTest
+    private static void whenMethodWithParameterWillReturnMultiple_whenDifferentMethodsDefined_willReturnTheStatedValues() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn1' )
+            .also().when()
+                .method( 'otherMethodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn2' );
+
+        Test.startTest();
+            String returnFromMock1 = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            String returnFromMock2 = classUnderMock.otherMethodUnderMock( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn1', returnFromMock1, 'when.method.withParameter.willReturn multiple times, with different methods with the same parameters, will return the stated value for the matching method (1)' );
+        System.assertEquals( 'expectedReturn2', returnFromMock2, 'when.method.withParameter.willReturn multiple times, with different methods with the same parameters, will return the stated value for the matching method (2)' );
+    }
+
+    /**
+    * @method when.method.withAnyParameter.willReturn
+    * @case   and multiple method calls are defined
+    * @result will match in order, returning the first definition that matches
+    */
+    @isTest
+    private static void whenMethodWithAnyParameterWillReturnMultiple_whenTheMethodIsCalledWithTheParameters_willReturnTheFirstMatching() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'willNotSeeThis' )
+            .also().when()
+                .method( 'methodUnderMock' )
+                .withAnyParameter()
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturnFor1' )
+            .also().when()
+                .method( 'methodUnderMock' )
+                .withAnyParameters()
+                .willReturn( 'expectedReturnForAnythingElse' );
+
+        Test.startTest();
+            String returnFromMock1 = classUnderMock.methodUnderMock( 'DropToWithAnyParam' , 1 );
+            String returnFromMock2 = classUnderMock.methodUnderMock( 'DropToWithAnyParams', 100 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturnFor1'           , returnFromMock1, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (1)' );
+        System.assertEquals( 'expectedReturnForAnythingElse', returnFromMock2, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (2)' );
+    }
+
+///////
+
 
     //
     // Test Spy behaviour tests

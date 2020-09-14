@@ -9,29 +9,15 @@ Documentation:
     Apply the licence copyright notice to every file
     Split out the tests / rename
 
-Review:
-    All the assertion texts - some appear to be wrong
-
 Implement
 
     Test:
-
-        Test the behaviour of 'when'
-            Calling a method that matches, returns the result defined
-            Calling a different method, returns null
-            Calling the same method with different parameters, returns null
-            Specify the same method with different parameters, each returns the right value
-            Specify different methods, each returns the right value
-            Specify withAnyParameters, returns the right value
-            Specify withAnyParameter, returns the right value
-            Specify a parameter and withAnyParameter, returns the right value
-            Specify a parameter and withAnyParameter, but pass the wrong value for the specified one returns null
 
         Test the behaviour of 'allows'
             Calling a method that matches, returns the result defined
             Calling a different method, throws an exception
             Calling the same method with different parameters, throws an exception
-            Specify the same method with different parameters, each returns the right value
+            Specify the same method with different parameters, each returns the right value - order of precedence
             Specify different methods, each returns the right value
             Specify withAnyParameters, returns the right value
             Specify withAnyParameter, returns the right value
@@ -43,7 +29,7 @@ Implement
                 Calling a method that matches, returns the result defined
                 Calling a different method, throws an exception
                 Calling the same method with different parameters, throws an exception
-                Specify the same method with different parameters, each returns the right value
+                Specify the same method with different parameters, each returns the right value - order of precedence
                 Specify different methods, each returns the right value
                 Specify withAnyParameters, returns the right value
                 Specify withAnyParameter, returns the right value
@@ -58,6 +44,8 @@ Implement
             Define an allows, then when, call a method that is not defined, fails the test
             Define an expects, then allows, call a method that is not defined, fails the test
             Define an allows, then expects, call a method that is not defined, fails the test
+
+        When and allows matches before Expected
 
         Test
             andThenAnyParameter / thenAnyParameter
