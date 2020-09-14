@@ -6,30 +6,76 @@ Documentation:
     Change the structure of the example tests so they don't match Martin Fowler's example.
     Add 'references'
 
+    Apply the licence copyright notice to every file
+    Split out the tests / rename
+
 Review:
     All the assertion texts - some appear to be wrong
 
 Implement
 
     Test:
-        Test using expectations
-        Test the behaviour of 'when' matching
-            include a method that isn't set up
+        Test the default behaviour (no methods defined)
+            Calling a method returns null
+
+        Test the behaviour of 'when'
+            Calling a method that matches, returns the result defined
+            Calling a different method, returns null
+            Calling the same method with different parameters, returns null
+            Specify the same method with different parameters, each returns the right value
+            Specify different methods, each returns the right value
+            Specify withAnyParameters, returns the right value
+            Specify withAnyParameter, returns the right value
+            Specify a parameter and withAnyParameter, returns the right value
+            Specify a parameter and withAnyParameter, but pass the wrong value for the specified one returns null
+
+        Test the behaviour of 'allows'
+            Calling a method that matches, returns the result defined
+            Calling a different method, throws an exception
+            Calling the same method with different parameters, throws an exception
+            Specify the same method with different parameters, each returns the right value
+            Specify different methods, each returns the right value
+            Specify withAnyParameters, returns the right value
+            Specify withAnyParameter, returns the right value
+            Specify a parameter and withAnyParameter, returns the right value
+            Specify a parameter and withAnyParameter, but pass the wrong value for the specified one throws an exception
+
+        Test the behaviour of 'expects'
+            Check which of these are already covered:
+                Calling a method that matches, returns the result defined
+                Calling a different method, throws an exception
+                Calling the same method with different parameters, throws an exception
+                Specify the same method with different parameters, each returns the right value
+                Specify different methods, each returns the right value
+                Specify withAnyParameters, returns the right value
+                Specify withAnyParameter, returns the right value
+                Specify a parameter and withAnyParameter, returns the right value
+                Specify a parameter and withAnyParameter, but pass the wrong value for the specified one throws an exception
+
+        Test the behaviour of combinations, with regards to 'allowsAnyCall'
+
+            Define a when, then expects, call a method that is not defined, fails the test
+            Define a when, then allows,  call a method that is not defined, fails the test
+            Define an expects, then when, call a method that is not defined, fails the test
+            Define an allows, then when, call a method that is not defined, fails the test
+            Define an expects, then allows, call a method that is not defined, fails the test
+            Define an allows, then expects, call a method that is not defined, fails the test
 
         Test
             andThenAnyParameter / thenAnyParameter
+
             Amoss_Expectations
             Amoss_Expectation
             Amoss_Expectation.Amoss_ExpectationParameter
 
         Setting 'returning' when the method has a void return
-        Not setting 'returning' when the method has a non void return
+            methodUnderMockWithNoReturn - when setup to return something
 
+        Not setting 'returning' when the method has a non void return
+            methodUnderMock - when setup not to return anything
+ 
         Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
         Test returns List, Set, Map
-
-        methodUnderMockWithNoReturn - when setup to return something
-        methodUnderMock - when setup not to return anything
 
     General:
 
