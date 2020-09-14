@@ -15,8 +15,6 @@ Review:
 Implement
 
     Test:
-        Test the default behaviour (no methods defined)
-            Calling a method returns null
 
         Test the behaviour of 'when'
             Calling a method that matches, returns the result defined

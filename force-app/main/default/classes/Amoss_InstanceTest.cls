@@ -3,14 +3,6 @@ public with sharing class Amoss_InstanceTest {
 
     class TestException extends Exception {}
 
-    // TODO
-    // full set of 'when' tests
-        // prove that when can be specified, and the values are returned based on it
-        //  include 'anyParameters' and 'anyParameter'
-        // prove that when can be specified and other calls will return null
-
-    // same as above, but for 'allows'
-
     //
     // Method definition tests
     //
@@ -1662,8 +1654,161 @@ public with sharing class Amoss_InstanceTest {
         System.assertEquals( expectedAssertion, mockAssertsController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
-    // allowAnyCall() combined with the following, when there is a match and there isn't a match
-    //  allows
-    // cover both allowsAnyCall( true ) and allowsAnyCall( false )
+    /**
+    * @method  allowAnyCall.true.allows.method.returning
+    * @case    when a different method is called
+    * @result  will not fail the test
+    */
+    @isTest
+    private static void allowAnyCall_true_allowsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
+        
+        Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
+        mockAssertsController
+            .allows()
+                .method( 'assertEquals' )
+            .also().allows()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAsserts );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .allowsAnyCall( true )
+            .allows()
+                .method( 'methodUnderMock' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classUnderMock.otherMethodUnderMock( 'this', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 0, mockAssertsController.countOf( 'assert'       ), 'allows.method, when allowAnyCalls is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert called)' );
+        System.assertEquals( 0, mockAssertsController.countOf( 'assertEquals' ), 'allows.method, when allowAnyCalls is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert equals called)' );
+    }
+
+    /**
+    * @method  allowAnyCall.false.allows.method.returning
+    * @case    when a different method is called
+    * @result  will fail the test
+    */
+    @isTest
+    private static void allowAnyCall_false_allowsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
+        
+        Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
+        mockAssertsController
+            .allows()
+                .method( 'assertEquals' )
+            .also().allows()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAsserts );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .allowsAnyCall( false )
+            .allows()
+                .method( 'methodUnderMock' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            try {
+                classUnderMock.otherMethodUnderMock( 'this', 1 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String expectedAssertion = 'Amoss_ClassUnderMock.otherMethodUnderMock was called more times than was expected';
+        System.assertEquals( false            , mockAssertsController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, mockAssertsController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method  allowAnyCall.true.allows.method.returning
+    * @case    when the method is called with different parameters
+    * @result  will not fail the test
+    */
+    @isTest
+    private static void allowAnyCall_true_allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
+        
+        Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
+        mockAssertsController
+            .allows()
+                .method( 'assertEquals' )
+            .also().allows()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAsserts );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .allowsAnyCall( true )
+            .allows()
+                .method( 'methodUnderMock' )
+                .withParameter( 'this' )
+                .andThenParameter( 1 )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classUnderMock.methodUnderMock( 'that', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 0, mockAssertsController.countOf( 'assert'       ), 'allows.method, when allowAnyCalls is true, and the allowed method is called with different parameters, will not fail the test (no assert called)' );
+        System.assertEquals( 0, mockAssertsController.countOf( 'assertEquals' ), 'allows.method, when allowAnyCalls is true, and the allowed method is called with different parameters, will not fail the test (no assert equals called)' );
+    }
+
+    /**
+    * @method  allowAnyCall.false.allows.method.returning
+    * @case    when the method is called with different parameters
+    * @result  will fail the test
+    */
+    @isTest
+    private static void allowAnyCall_false_allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+        
+        Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
+        mockAssertsController
+            .allows()
+                .method( 'assertEquals' )
+            .also().allows()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAsserts );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .allowsAnyCall( false )
+            .allows()
+                .method( 'methodUnderMock' )
+                .withParameter( 'this' )
+                .andThenParameter( 1 )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            try {
+                classUnderMock.methodUnderMock( 'that', 1 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was called more times than was expected';
+        System.assertEquals( false            , mockAssertsController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, mockAssertsController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
+    }
 }
