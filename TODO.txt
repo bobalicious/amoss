@@ -11,21 +11,10 @@ Documentation:
 
 Implement
 
-    Double check the try / catches in the tests - are they actually needed?
-
     Test:
 
-        Test the behaviour of 'expects'
-            Check which of these are already covered:
-                Calling a method that matches, returns the result defined
-                Calling a different method, throws an exception
-                Calling the same method with different parameters, throws an exception
-                Specify the same method with different parameters, each returns the right value - order of precedence
-                Specify different methods, each returns the right value
-                Specify withAnyParameters, returns the right value
-                Specify withAnyParameter, returns the right value
-                Specify a parameter and withAnyParameter, returns the right value
-                Specify a parameter and withAnyParameter, but pass the wrong value for the specified one throws an exception
+        Test the behaviour of 'verify'
+            Check - it may already be covered
 
         Test the behaviour of combinations, with regards to 'allowsAnyCall'
 
@@ -53,6 +42,8 @@ Implement
  
         Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
         Test returns List, Set, Map
+
+        Overloaded methods match properly on expectations and whens
 
     General:
 
@@ -99,6 +90,8 @@ Implement
         handledBy
             Can use standard Stub interface
             Can use a simplified Stub interface
+
+            Change the tests so that the assertEquals will fail when the things are not equal
 
     Mock - Test Recorder format
 

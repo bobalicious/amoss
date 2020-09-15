@@ -493,7 +493,6 @@ Design Principles:
 
 Required for 1.0 release:
 - Ability to inject a Test Double with a Salesfore Stub Provider, allowing for code driven responses to method calls
-- Error handling of configurations
 
 Possible future development:
 - Test Recorder style implementation of expectations

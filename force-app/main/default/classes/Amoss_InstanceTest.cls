@@ -420,6 +420,217 @@ public with sharing class Amoss_InstanceTest {
         System.assertEquals( 'returnForGenericMatch'   , returnFromGenericMatch   , 'allows.method.returning, when method is defined with multiple overlapping parameters, will return the first stated value that matches the parameters (3)' );
     }
 
+    /**
+    * @method expects.method.returning
+    * @case   when that method is called once
+    * @result will return the stated value
+    */
+    @isTest
+    private static void expectsMethodReturning_whenTheMethodIsCalledOnce_willReturnTheStatedValue() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromMock = classUnderMock.methodUnderMock( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromMock, 'expects.method.returning, and the method called once, will return the stated value, regardless of the parameters passed' );
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when a different method is called
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
+        
+        Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
+        mockAssertsController
+            .allows()
+                .method( 'assertEquals' )
+            .also().allows()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAsserts );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            try {
+                String returnFromMock = classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            } catch( TestException e ) {}
+        Test.stopTest();
+        
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was expected to be called';
+        System.assertEquals( 'methodUnderMock'     , mockAssertsController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with the expected method' );
+        System.assertEquals( 'otherMethodUnderMock', mockAssertsController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with the actual method called' );
+        System.assertEquals( expectedAssertion     , mockAssertsController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the method is called with different parameters
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+        
+        Amoss_Instance mockAssertsController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts mockAsserts = (Amoss_Asserts)mockAssertsController.generateDouble();
+        // TODO: when we can inject a handler, change this over so we can fail the test, and then use latestCallOf instead
+        mockAssertsController
+            .allows()
+                .method( 'assertEquals' )
+            .also().allows()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        classUnderMockController.setAsserts( mockAsserts );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .expects()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            try {
+                String returnFromMock = classUnderMock.otherMethodUnderMock( 'OtherActualParam1', 1 );
+            } catch( TestException e ) {}
+        Test.stopTest();
+        
+        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was called with the wrong parameter value in position 0';
+        System.assertEquals( 'ActualParam1'     , mockAssertsController.get().call(2).of( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
+        System.assertEquals( 'OtherActualParam1', mockAssertsController.get().call(2).of( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
+        System.assertEquals( expectedAssertion  , mockAssertsController.get().call(2).of( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when multiple methods are defined and called in the stated order
+    * @result will return the stated value for each method
+    */
+    @isTest
+    private static void expectsMethodReturning_whenMultipleMethodsAreDefinedAndCalledInOrder_willReturnTheStatedValues() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .expects()
+                .method( 'methodUnderMock' )
+                .returning( 'expectedReturn1' )
+            .also().allows()
+                .method( 'otherMethodUnderMock' )
+                .returning( 'expectedReturn2' );
+
+        Test.startTest();
+            String returnFromMock1 = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            String returnFromMock2 = classUnderMock.otherMethodUnderMock( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn1', returnFromMock1, 'expects.method.returning, when multiple methods are defined and each are called in order, will return the stated value for each method (1)' );
+        System.assertEquals( 'expectedReturn2', returnFromMock2, 'expects.method.returning, when multiple methods are defined and each are called in order, will return the stated value for each method (2)' );
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the same method is defined with the same parameters, and called in order
+    * @result will return the stated value for the first matching
+    */
+    @isTest
+    private static void expectsMethodReturning_whenMethodIsDefinedWithSameParametersAndCalledInOrder_willReturnTheResultsInOrder() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .expects()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .returning( 'firstReturn' )
+            .then().expects()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .returning( 'secondReturn' )
+            .then().expects()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .returning( 'thirdReturn' );
+
+        Test.startTest();
+            String returnFromFirstCall  = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            String returnFromSecondCall = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            String returnFromThirdCall  = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (1)' );
+        System.assertEquals( 'secondReturn', returnFromSecondCall, 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (2)' );
+        System.assertEquals( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (3)' );
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the same method is defined with the any parameters methods, and called in order
+    * @result will return the stated value for the first matching
+    */
+    @isTest
+    private static void expectsMethodReturning_whenMethodIsDefinedWithAnyParametersAndCalledInOrder_willReturnTheResultsInOrder() {
+        
+        Amoss_Instance classUnderMockController = new Amoss_Instance( Amoss_ClassUnderMock.class );
+        Amoss_ClassUnderMock classUnderMock = (Amoss_ClassUnderMock)classUnderMockController.generateDouble();
+
+        classUnderMockController
+            .expects()
+                .method( 'methodUnderMock' )
+                .withAnyParameters()
+                .returning( 'firstReturn' )
+            .then().expects()
+                .method( 'methodUnderMock' )
+                .withAnyParameter()
+                .andThenParameter( 1 )
+                .returning( 'secondReturn' )
+            .then().expects()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenAnyParameter()
+                .returning( 'thirdReturn' );
+
+        Test.startTest();
+            String returnFromFirstCall  = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            String returnFromSecondCall = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+            String returnFromThirdCall  = classUnderMock.methodUnderMock( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (1)' );
+        System.assertEquals( 'secondReturn', returnFromSecondCall, 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (2)' );
+        System.assertEquals( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (3)' );
+    }
+
     //
     // Test Spy behaviour tests
     //
