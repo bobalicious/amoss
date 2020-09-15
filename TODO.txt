@@ -4,10 +4,6 @@ Documentation:
 
     Review definitions from xUnit Patterns and ensure that the Amoss definitions match.
     Change the structure of the example tests so they don't match Martin Fowler's example.
-    Add 'references'
-
-    Apply the licence copyright notice to every file
-    Split out the tests / rename
 
 Implement
 
