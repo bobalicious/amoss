@@ -37,6 +37,20 @@ public with sharing class Amoss_Expectations {
         expectations.add( expectation );
     }
 
+
+    /**
+    * Checks if the given method and parameterValues combination matches the next expection.
+    *
+    * Returns false if no more expections exist.
+    *
+    * @param  String - The name of the method to match against
+    * @param  List<Object> - The parameter values to match against
+    * @return Boolean - States if the given method and parameterValues match the next expectation.
+    */
+    public Boolean matchesNext(  String method, List<Object> parameterValues ) {
+        return expectations.size() > 0 && expectations[0].matches( method, parameterValues );
+    }
+
     /**
     * Removes the first expectation in the queue and then returns it.  
     *
@@ -83,6 +97,8 @@ public with sharing class Amoss_Expectations {
     *
     * Returns the *first* expectation that does, or null if non do.
     *
+    * @param  String - The name of the method to match against
+    * @param  List<Object> - The parameter values to match against
     * @return Amoss_Expectation - The matching expectation
     */
     public Amoss_Expectation getMatchingExpectation( String mockedMethod, List<Object> parameters ) {

@@ -1,68 +1,59 @@
 Amoss - Apex Mocks, Spies and Stubs
 
-Development Ideals
+Documentation:
 
-In order for the project to succeed it must:
-    * Require as little code as possible to create Test Mocks and Spies, so that mocking does not get in the way of testing.
-    * Use natural language to express the configuration so tests are as clear as possible to read.
-    * Have an auto-complete considered class structure, so that IDEs give you as much guidence as possible when tests are being written.
-    * Issue assertion failures that are as clear as possible, so the meaning of the failure is easy to understand.
-
-Design Principles:
-
-    * The consumer should not need to reference any class other than the instantiation of the mock in the first place.
-        * This limits the amount of noise in the specification of a mock.  Class names (espcially namespaced ones) get in the way of the meaning of the code and so they should not be required.
-    * Designing Methods:
-        * Every method call should be expressive of what it does in plain english, particularly within the context of where it is used.
-        * Methods should only have one parameter, which is described by the context provided in the method name, so that it is always clear what is being passed in.
-        * Methods should be set up so they can be strung together to form sentences giving a full description of the work being done.
-        * For example:
-            * call( 1 ).of( 'theStubbedMethod' ).parameters()
-            rather than:
-            * getParameters( 'theStubbedMethod', 1 )
-
-    * Designing Classes:
-        * Classes should be defined with the primary focus of making it easier for a consumer to use the framework, as opposed to making it easier for the developer to build the framework.
-        * Particularly, where the context of the phrasing changes, a new object should be returned that provides an interface that is appropriate for that part of the phrasing.
-        * For example:
-            * when and expects on TestMock both return a TestExpectation.
-                * The TestExpectation defines the phrasing (essentially the interface) for defining the expectation, being
-                    * method
-                    * withParameter / withAnyParameters / withParameterAtPostion
-                    * returning / returns / willReturn / throws / throwing
-                * The following methods then define the end of that phrasing, and result in a TestMock being returned
-                    * then
-                    * also
-        * However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a TestMock
+    Review definitions from xUnit Patterns and ensure that the Amoss definitions match.
+    Change the structure of the example tests so they don't match Martin Fowler's example.
 
 Implement
 
     Test:
-        Test using expectations
-        Test the behaviour of 'when' matching
-            include a method that isn't set up
+
+        Mocking an interface
+
+        Test the behaviour of 'verify'
+            Check - it may already be covered
+
+        Test the behaviour of combinations, with regards to 'allowsAnyCall'
+
+            Define a when, then expects, call a method that is not defined, fails the test
+            Define a when, then allows,  call a method that is not defined, fails the test
+            Define an expects, then when, call a method that is not defined, fails the test
+            Define an allows, then when, call a method that is not defined, fails the test
+            Define an expects, then allows, call a method that is not defined, fails the test
+            Define an allows, then expects, call a method that is not defined, fails the test
+
+        When and allows matches before Expected
 
         Test
             andThenAnyParameter / thenAnyParameter
+
             Amoss_Expectations
             Amoss_Expectation
             Amoss_Expectation.Amoss_ExpectationParameter
 
         Setting 'returning' when the method has a void return
-        Not setting 'returning' when the method has a non void return
+            methodUnderMockWithNoReturn - when setup to return something
 
+        Not setting 'returning' when the method has a non void return
+            methodUnderMock - when setup not to return anything
+ 
         Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
         Test returns List, Set, Map
 
-        methodUnderMockWithNoReturn - when setup to return something
-        methodUnderMock - when setup not to return anything
+        Overloaded methods match properly on expectations and whens
 
     General:
+
+        Amoss_ClassUnderMock.otherMethodUnderMock was called more times than was expected isn't a great assertion message when the parameters are wrong
 
         Reference Fowler's article, or completely re-write ExampleTest
 
         Rename:
             Repository - Amoss
+
+        Should probably make a difference between 'also' and 'then'
+            'then' implies order, even on a 'when' or 'allows'
 
         Should CallLog, etc be changed to Amoss_CallLog, etc?  Or is it OK because they are inner classes?
 
@@ -73,12 +64,6 @@ Implement
         Only if it doesn't increase the assertion failure call stack - although that can probably be solved with exceptions.
 
         Should everything be moved into one class file with inner classes?
-        Assertions should all be moved into handleMethodCall, so that everything else can be properly tested
-
-        Move the assertions out into another class that is instantiated, so it can be mocked in tests
-
-        Think about 'withAnyParameters' a bit more
-            Need some error conditions, in case you try to set up something invalid.
 
         Think about 'only checking a single parameter'
             withParameterAtPosition
@@ -90,10 +75,10 @@ Implement
                         .withParameterAtPostion( 2, 'One We Care About' )
                         .returning( 'Something' );
 
-        Documentation
-        Developer Documentation
-
     Mock:
+
+        expectsNoCalls
+            set allowsAnyCall to false and clear the expectations
 
         Type checking prior to checking equality - otherwise you get an indecipherable error
             Looks like you would need to pass the type into the expectation
@@ -107,10 +92,11 @@ Implement
             Can use standard Stub interface
             Can use a simplified Stub interface
 
+            Change the tests so that the assertEquals will fail when the things are not equal
+
     Mock - Test Recorder format
 
         Can you simply add the Test Recorder format into the framework - for flexibility
-
 
     Spy:
 
@@ -120,25 +106,8 @@ Implement
             mockThing.get().countOf( 'method' )
             this would be in line with the parameter getters
 
-
         Checking on what you can call, when
         Consider splitting the CallChecker class down, so you end up with perfect auto-complete
-
-        Think about 'allowAnyCall'
-
-            Default to 'true' - so spy is easy to set up
-
-            allows
-                switches off allowAnyCall
-            when
-                does not switch off allowAnyCall
-            expects
-                switches off allowAnyCall
-
-            allowsAnyCall
-                switches on allowAnyCall, and does not allow it to be switched off again
-
-            Then remove a lot of setup code from TestMockTest that is no longer needed
 
     Assertions:
         Is greater than, etc
@@ -216,3 +185,11 @@ Example Tests:
         System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
         System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
+
+
+Other documentation notes:
+In addition, it hopes to address one of the shortcomings that traditionally blights Mock Object frameworks - that tests can very quickly become too brittle to maintain.  To do so, it allows a Test Double to operate as a Mock Object, a Test Spy and a simple Configurable Test Double all at the same time, and to allow for the specification of 'any parameter' to be passed in.  And all based on its (hopefully) natural English configuration.
+
+If you don't know what Mock Objects are for, and how they work, try reading Martin Fowler's short article here - https://martinfowler.com/articles/mocksArentStubs.html, from which his example is used over and over again in these docs.
+
+If that goes well, you might consider the section on Test Doubles in Gerard Meszaros's "xUnit Test Patterns".  All terminology in these documentations confirm to his patterns.

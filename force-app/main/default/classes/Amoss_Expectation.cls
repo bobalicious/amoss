@@ -283,7 +283,7 @@ public class Amoss_Expectation {
     *       .method( 'methodName' )
     *       .throwing( new DmlException( 'The exception' ) )
     *
-    * Has 'throws' as a synonym, and these methods are entirely interchangeable based on preference.
+    * Has 'throws'and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
     *
     * @param Object - The Exception to throw when this expectation is met.
     */
@@ -300,11 +300,27 @@ public class Amoss_Expectation {
     *       .method( 'methodName' )
     *       .throws( new DmlException( 'The exception' ) )
     *
-    * Has 'throwing' as a synonym, and these methods are entirely interchangeable based on preference.
+    * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
     *
     * @param Object - The Exception to throw when this expectation is met.
     */
     public Amoss_Expectation throws( Exception exceptionToThrow ) {
+        return this.throwing( exceptionToThrow );
+    }
+
+    /**
+    * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
+    *
+    * For example, to specify:
+    *   .when()
+    *       .method( 'methodName' )
+    *       .willThrow( new DmlException( 'The exception' ) )
+    *
+    * Has 'throwing' and 'throws' as synonyms, and these methods are entirely interchangeable based on preference.
+    *
+    * @param Object - The Exception to throw when this expectation is met.
+    */
+    public Amoss_Expectation willThrow( Exception exceptionToThrow ) {
         return this.throwing( exceptionToThrow );
     }
 
