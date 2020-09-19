@@ -1,0 +1,220 @@
+/**
+* This test class contains examples of the different ways Amoss may be used to test a particular method on the class
+* AmossExample_Order.
+*
+* It attempts to highlight the pros and cons of the different techniques that are possible with Amoss, as well
+* as providing concrete examples of the syntax and advised indentation patterns for use of the framework.
+*
+*/
+@isTest
+public with sharing class AmossExample_OrderTest {
+
+    // Because the 'Order' class's methods never look at the values of these parameters, we should never
+    // need to change them in our tests, no matter what mechanism we use.
+    //
+    // It is 'DeliveryProvider' that would change its behaviour based on these values, and we're driving that
+    // through the Test Doubles that we are creating.
+    //
+    final static String deliveryPostcode = 'AB1 2DE';
+    final static Date   deliveryDate     = Date.newInstance( 1987, 04, 10 );
+
+    /**
+     * An example of a simple 'Test Spy' style test.
+     *
+     * When the methods on the Test Double are called, they do not care what the parameters are - they simply respond with true.
+     *
+     * The behaviour is checked by 'spying' on the parameters that were passed after the event using explicit assertions.
+     * 
+     * This means that the test is only loosely tied to the implementation of the delivery provider.  If a new parameter
+     * is added to the end of the methods, the test will still run and pass.
+     * Although, if the shape of the parameters referenced in the assertions change, then the test will start to fail.
+     * 
+     * It is also loosely tied to the implementation.  If, for example, 'scheduleDelivery' was called before 'canDeliver', this
+     * test would still pass.  In some circumstances, this may be an advantage.  In this case it's a shortcoming.
+     *
+     * In addition, if other methods exist and are called against the DeliveryProvider, this will also allow the test to pass.
+     *
+     * Finally, it should be noted that this test doesn't check we loop over the list of providers and only call when the
+     * delivery can be fulfilled by the provider.
+     *
+     */
+    @isTest
+    public static void ifDeliveryCanBeMadeItIsBooked_simpleSingleTestSpy() {
+
+        // Configure a Test Double for a single Delivery Provider
+        //
+        Amoss_Instance deliveryProviderController = new Amoss_Instance( AmossExample_DeliveryProvider.class );
+        deliveryProviderController
+            .when()
+                .method( 'canDeliver' )
+                .willReturn( true )
+            .also().when()
+                .method( 'scheduleDelivery' )
+                .willReturn( true );
+
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+
+        Test.startTest();
+
+            AmossExample_Order order = new AmossExample_Order()
+                                            .setDeliveryDate( deliveryDate )
+                                            .setPostcode( deliveryPostcode );
+
+            Boolean scheduleDeliveryResponse = order.scheduleDelivery( new List<AmossExample_DeliveryProvider>{ deliveryProvider } );
+
+        Test.stopTest();
+
+        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+
+        //
+        // Check that the delivery provider was called with the parameters that we expected
+        //
+        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+
+        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 0 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 1 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
+    }
+
+    /**
+     * An example of a full blown 'Mock' style test.
+     *
+     * When the methods on the Test Double are called, the parameters are checked, if they match what is expected then the configured value is returned.
+     * Otherwise, an assertion fails and the test stops.
+     *
+     * The strict arameter checking means that the test is strongly tied to the implementation of the delivery provider.  If any of the parameters
+     * in the methods being mocked change, or new parameters are added, then the test will fail.
+     *
+     * The behaviour is checked by stating that methods are 'expected' to be called, then verifying that they are.
+     *
+     * The framework checks that the methods are called in the order that they are expected, strongly tying the test to the method's implementation.
+     * 
+     * In some circumstances, this may not be desired, however in this case it is an advantage.  We are checking that 'canDelivery'
+     * is called BEFORE 'scheduleDelivery' is.
+     *
+     * In addition, if other methods exist and are called against the DeliveryProvider, this will fail the test.  Anything that is not 'expected'
+     * is a failure.
+     *
+     * Finally, it should be noted that this test doesn't check we loop over the list of providers and only call when the
+     * delivery can be fulfilled by the provider.
+     *
+     */
+    @isTest
+    public static void ifDeliveryCanBeMadeItIsBooked_strictSingleMock() {
+
+        // Configure a Test Double for a single Delivery Provider
+        //
+        Amoss_Instance deliveryProviderController = new Amoss_Instance( AmossExample_DeliveryProvider.class );
+        deliveryProviderController
+            .expects()
+                .method( 'canDeliver' )
+                .withParameter( deliveryPostcode )
+                .andThenAnyParameter( deliveryDate )
+                .returning( true )
+            .then().expects()
+                .method( 'scheduleDelivery' )
+                .withParameter( deliveryPostcode )
+                .andThenAnyParameter( deliveryDate )
+                .returning( true );
+
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+
+        Test.startTest();
+
+            AmossExample_Order order = new AmossExample_Order()
+                                            .setDeliveryDate( deliveryDate )
+                                            .setPostcode( deliveryPostcode );
+
+            Boolean scheduleDeliveryResponse = order.scheduleDelivery( new List<AmossExample_DeliveryProvider>{ deliveryProvider } );
+
+        Test.stopTest();
+
+        // Check that the methods were all called against the mock, with the right parameters.
+        deliveryProviderController.verify();
+
+        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+
+    }    
+
+    /**
+     * An example of a simple 'Mock' style test, which utilises 'Spy' capabilities.
+     *
+     * This setup isn't particularly recommended, though may be of interest to see that it is possible.
+     *
+     * When the methods on the Test Double are called, they do not care what the parameters are - they simply respond with true.
+     *
+     * The lack of parameter checking means that the test is only loosely tied to the implementation of the delivery provider.  If a new parameter
+     * is added to the end of the methods, the test will still run and pass.
+     * Although, if the shape of the parameters referenced in the assertions change, then the test will start to fail.
+     *
+     * The behaviour is checked by stating that methods are 'expected' to be called, then verifying that they are.
+     *
+     * The framework checks that the methods are called in the order that they are expected, strongly tying the test to the method's implementation.
+     * 
+     * In some circumstances, this may not be desired, however in this case it is an advantage.  We are checking that 'canDelivery'
+     * is called BEFORE 'scheduleDelivery' is.
+     *
+     * In addition, if other methods exist and are called against the DeliveryProvider, this will fail the test.  Anything that is not 'expected'
+     * is a failure.
+     *
+     * Finally, it should be noted that this test doesn't check we loop over the list of providers and only call when the
+     * delivery can be fulfilled by the provider.
+     *
+     */
+    @isTest
+    public static void ifDeliveryCanBeMadeItIsBooked_simpleSingleMock() {
+
+        // Configure a Test Double for a single Delivery Provider
+        //
+        Amoss_Instance deliveryProviderController = new Amoss_Instance( AmossExample_DeliveryProvider.class );
+        deliveryProviderController
+            .expects()
+                .method( 'canDeliver' )
+                .returning( true )
+            .then().expects()
+                .method( 'scheduleDelivery' )
+                .returning( true );
+
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+
+        Test.startTest();
+
+            AmossExample_Order order = new AmossExample_Order()
+                                            .setDeliveryDate( deliveryDate )
+                                            .setPostcode( deliveryPostcode );
+
+            Boolean scheduleDeliveryResponse = order.scheduleDelivery( new List<AmossExample_DeliveryProvider>{ deliveryProvider } );
+
+        Test.stopTest();
+
+        // Check that the methods were all called against the mock.
+        //
+        // This is ultimately redundant in this case, as we use the Spy methods to check that
+        // the correct parameters are called.
+        deliveryProviderController.verify();
+
+        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+
+        //
+        // Check that the delivery provider was called with the parameters that we expected
+        //
+        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+
+        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 0 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 1 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
+    }
+
+    // Mock - Single mock, always says yes
+    // Strict Test Spy - Single, always says yes
+
+    // TestSpy - create two, first one that says no, second one says yes
+    //              check that the first does not have 'schedule' called against it
+    // Mock
+    // Strict Test Spy
+
+    // looping over
+    //   Use when without parameters for the canDeliver, setting allow other calls to false, then mock scheduleDelivery - check the call count for scheduleDelivery not called
+    //   Use allows without parameters, and add another with 'allowAnyCalls' to false for an additional one
+
+}

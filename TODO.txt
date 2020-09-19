@@ -9,6 +9,8 @@ Implement
 
     Test:
 
+        Mocking an interface
+
         Test the behaviour of 'verify'
             Check - it may already be covered
 
@@ -74,6 +76,9 @@ Implement
                         .returning( 'Something' );
 
     Mock:
+
+        expectsNoCalls
+            set allowsAnyCall to false and clear the expectations
 
         Type checking prior to checking equality - otherwise you get an indecipherable error
             Looks like you would need to pass the type into the expectation
