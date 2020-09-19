@@ -3,8 +3,7 @@ Amoss - Apex Mocks, Spies and Stubs
 Documentation:
 
     Review definitions from xUnit Patterns and ensure that the Amoss definitions match.
-    Change the structure of the example tests so they don't match Martin Fowler's example.
-
+    
 Implement
 
     Test:
@@ -47,15 +46,8 @@ Implement
 
         Amoss_ClassUnderMock.otherMethodUnderMock was called more times than was expected isn't a great assertion message when the parameters are wrong
 
-        Reference Fowler's article, or completely re-write ExampleTest
-
-        Rename:
-            Repository - Amoss
-
         Should probably make a difference between 'also' and 'then'
             'then' implies order, even on a 'when' or 'allows'
-
-        Should CallLog, etc be changed to Amoss_CallLog, etc?  Or is it OK because they are inner classes?
 
         What happens with methods that are not supposed to return something?
             Looks like it works, just need to write tests to prove it
