@@ -15,10 +15,14 @@ public with sharing class AmossExample_Order {
 
     public Boolean scheduleDelivery( List<AmossExample_DeliveryProvider> deliveryProviders ) {
 
-        for ( AmossExample_DeliveryProvider thisDeliveryProvider : deliveryProviders ) {
-            if ( thisDeliveryProvider.canDeliver( postcode, deliveryDate ) ) {
-                return thisDeliveryProvider.scheduleDelivery( postcode, deliveryDate );
+        try {
+            for ( AmossExample_DeliveryProvider thisDeliveryProvider : deliveryProviders ) {
+                if ( thisDeliveryProvider.canDeliver( postcode, deliveryDate ) ) {
+                    return thisDeliveryProvider.scheduleDelivery( postcode, deliveryDate );
+                }
             }
+        } catch( AmossExample_DeliveryProvider.DeliveryProviderException e ) {
+            // maybe we would log something here, or similar
         }
 
         return false;

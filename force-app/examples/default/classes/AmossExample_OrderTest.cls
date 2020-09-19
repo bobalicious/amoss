@@ -347,12 +347,110 @@ public with sharing class AmossExample_OrderTest {
         System.assertEquals( 0, shouldntBeCalledController.countOf( 'scheduleDelivery' ), 'scheduleDelivery, will not call canDeliver against a deliveryProvider further down the list than one that can provide the delivery' );
     }
 
-    // Multiple delivery providers
-    // Mock
-    // Strict Test Spy
+    /**
+     * An example of a 'Mock' style test with multiple Test Doubles.
+     *
+     * More than one Test Double can be created, although each requires its own Amoss_Instance to be created.
+     *
+     * We can test that the looping in this particular test method works by creating multiple doubles and expecting the appropriate methods
+     * to be called.
+     *
+     * Note that this test has significantly fewer assertions than the Test Spy version.
+     *
+     */
+    @isTest
+    public static void ifDeliveryCanBeMadeItIsBooked_multipleMocks() {
 
-    // looping over
-    //   Use when without parameters for the canDeliver, setting allow other calls to false, then mock scheduleDelivery - check the call count for scheduleDelivery not called
-    //   Use allows without parameters, and add another with 'allowAnyCalls' to false for an additional one
+        // Configure a Test Double that cannot deliver
+        //
+        Amoss_Instance cannotDeliverController = new Amoss_Instance( AmossExample_DeliveryProvider.class );
+        cannotDeliverController
+            .expects()
+                .method( 'canDeliver' )
+                .withParameter( deliveryPostcode )
+                .andThenParameter( deliveryDate )
+                .willReturn( false );
+        AmossExample_DeliveryProvider cannotDeliverProvider = (AmossExample_DeliveryProvider)cannotDeliverController.generateDouble();
 
+        // Configure a Test Double that can deliver
+        //
+        Amoss_Instance canDeliverController = new Amoss_Instance( AmossExample_DeliveryProvider.class );
+        canDeliverController
+            .when()
+                .method( 'canDeliver' )
+                .withParameter( deliveryPostcode )
+                .andThenParameter( deliveryDate )
+                .willReturn( true )
+            .also().when()
+                .method( 'scheduleDelivery' )
+                .withParameter( deliveryPostcode )
+                .andThenParameter( deliveryDate )
+                .willReturn( true );
+        AmossExample_DeliveryProvider canDeliverProvider = (AmossExample_DeliveryProvider)canDeliverController.generateDouble();
+
+        // Configure a Test Double that shouldn't be called
+        //
+        Amoss_Instance shouldntBeCalledController = new Amoss_Instance( AmossExample_DeliveryProvider.class );
+        shouldntBeCalledController
+            .allowsAnyCall( false );    // This switches off the behaviour that means that any call to a valid method is allowed.
+                                        // With the lack of any when, allows or expects defined, this means that any call to any method
+                                        // will result in a test failure
+        AmossExample_DeliveryProvider shouldntBeCalledProvider = (AmossExample_DeliveryProvider)shouldntBeCalledController.generateDouble();
+
+        Test.startTest();
+
+            AmossExample_Order order = new AmossExample_Order()
+                                            .setDeliveryDate( deliveryDate )
+                                            .setPostcode( deliveryPostcode );
+
+            Boolean scheduleDeliveryResponse = order.scheduleDelivery( new List<AmossExample_DeliveryProvider>{ cannotDeliverProvider, canDeliverProvider, shouldntBeCalledProvider } );
+
+        Test.stopTest();
+
+        // check that all the expected methods were called against all the mocks
+        cannotDeliverController.verify();
+        canDeliverController.verify();
+        shouldntBeCalledController.verify();
+
+        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+    }
+
+    /**
+     * An example of a Test Double that throws an exception.
+     *
+     * Note that any expects / allows or when can be configured to throw an exception.
+     *
+     * Of particular interest is that, as long as that exception is caught, the spy and verify methods
+     * can continue to be used as in any other test.  The state is still kept and is assertable.
+     *
+     */
+    @isTest
+    public static void ifDeliveryCanBeMadeItIsBooked_mockThatThrowsAnException() {
+
+        // Configure a Test Double that throws an Exception
+        //
+        Amoss_Instance deliveryProviderController = new Amoss_Instance( AmossExample_DeliveryProvider.class );
+        deliveryProviderController
+            .expects()
+                .method( 'canDeliver' )
+                .withParameter( deliveryPostcode )
+                .andThenParameter( deliveryDate )
+                .throws( new AmossExample_DeliveryProvider.DeliveryProviderException( 'This is the exception thrown' ) );
+
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+
+        Test.startTest();
+
+            AmossExample_Order order = new AmossExample_Order()
+                                            .setDeliveryDate( deliveryDate )
+                                            .setPostcode( deliveryPostcode );
+
+            Boolean scheduleDeliveryResponse = order.scheduleDelivery( new List<AmossExample_DeliveryProvider>{ deliveryProvider } );
+
+        Test.stopTest();
+
+        deliveryProviderController.verify();
+
+        System.assertEquals( false, scheduleDeliveryResponse, 'scheduleDelivery, when a delivery provider throws an exception, returns false' );
+    }    
 }
