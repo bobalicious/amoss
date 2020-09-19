@@ -27,8 +27,8 @@ Amoss can be used to build simple stub objects - AKA Configurable Test Doubles, 
 * Asking the resulting 'controller' to generate a mock for you.
 
 ```java
-    Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-    Warehouse warehouseDouble = warehouseController.generateDouble();
+    Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+    DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 ```
 
 The result is an object that can be used in place of the object being stubbed.
@@ -39,22 +39,22 @@ If a method has a return value, then `null` will be returned.
 
 You then use the Test Double as you would any other instance of the object.
 
-In this example, we're testing `fill` on the class `Order`.
+In this example, we're testing `scheduleDelivery` on the class `Order`.
 
-The method takes a `Warehouse` as a parameter, calls methods against it and then returns `true` when the stock is successfully reserved:
+The method takes a `DeliveryProvider` as a parameter, calls methods against it and then returns `true` when the delivery is successfully scheduled:
 
 ```java
 
 Test.startTest();
-    Order order = new Order( TALISKER, 50 );
-    Boolean filled = order.fill( warehouseDouble );
+    Order order = new Order().setDeliveryDate( deliveryDate ).setDeliveryPostcode( deliveryPostcode );
+    Boolean scheduled = order.scheduleDelivery( deliveryProviderDouble );
 Test.stopTest();
 
-System.assert( filled, 'fill, when called for an order that can be filled, will check the passed warehouse for stock and return true if the order can be filled' );
+System.assert( scheduled, 'scheduleDelivery, when called for an order that can be delivered, will check the passed provider if it can delivery and return true if the order can be' );
 
 ```
 
-What we need to do, is configure our Test Double version of `Warehouse` so that tells the order that there's stock available, and then allows the order to claim it.
+What we need to do, is configure our Test Double version of `DeliveryProvider` so that tells the order that it can deliver, and then allows the order to schedule it.
 
 ### Configuring return values
 
@@ -62,16 +62,16 @@ We can configure the Test Double, so that certain methods return certain values 
 
 ```java
 
-Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-warehouseController
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
     .when()
-        .method( 'hasInventory' )
+        .method( 'canDeliver' )
         .willReturn( true )
     .also().when()
-        .method( 'remove' )
+        .method( 'scheduleDelivery' )
         .willReturn( true );
 
-Warehouse warehouseDouble = warehouseController.generateDouble();
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -80,18 +80,18 @@ If we want our Test Double to be a little more strict about the parameters it re
 
 ```java
 
-Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-warehouseController
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
     .when()
-        .method( 'hasInventory' )
-        .withParameter( TALISKER )
-        .andThenParameter( 50 )
+        .method( 'canDeliver' )
+        .withParameter( deliveryPostcode )
+        .andThenParameter( deliveryDate )
         .willReturn( true )
     .also().when()
-        .method( 'hasInventory' )
+        .method( 'canDeliver' )
         .willReturn( false );
 
-Warehouse warehouseDouble = warehouseController.generateDouble();
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -100,15 +100,15 @@ If we want to be strict about some parameters, but don't care about others we ca
 
 ```java
 
-Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-warehouseController
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
     .when()
-        .method( 'hasInventory' )
-        .withParameter( TALISKER )
+        .method( 'canDeliver' )
+        .withParameter( deliveryPostcode )
         .andThenAnyParameter()
         .willReturn( true );
 
-Warehouse warehouseDouble = warehouseController.generateDouble();
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -121,11 +121,11 @@ The controller can then be used as a Test Spy, allowing us to find out what valu
 
 ```java
 
-System.assertEquals( TALISKER, warehouseController.latestCallOf( 'hasInventory' ).parameter( 0 )
-                    , 'filling, will call hasInventory against the warehouse, passing the product required, to find out if there is stock' );
+System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'canDeliver' ).parameter( 0 )
+                    , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the postcode required, to find out if it can deliver' );
 
-System.assertEquals( 50, warehouseController.call( 0 ).of( 'hasInventory' ).parameter( 1 )
-                    , 'filling, will call hasInventory against the warehouse, passing the number required, to find out if there is stock' );
+System.assertEquals( deliveryDate, deliveryProviderController.call( 0 ).of( 'canDeliver' ).parameter( 1 )
+                    , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the date required, to find out if it can deliver' );
 
 ```
 
@@ -137,24 +137,24 @@ A very similar configuraiton syntax can be used to define the Test Double as a s
 
 ```java
 
-Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-warehouseController
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
     .expects()
-        .method( 'hasInventory' )
-        .withParameter( TALISKER )
-        .andThenParameter( 50 )
+        .method( 'canDeliver' )
+        .withParameter( deliveryPostcode )
+        .andThenParameter( deliveryDate )
         .returning( true )
     .then().expects()
-        .method( 'remove' )
-        .withParameter( TALISKER )
-        .andThenParameter( 50 )
+        .method( 'scheduleDelivery' )
+        .withParameter( deliveryPostcode )
+        .andThenParameter( deliveryDate )
         .returning( true );
 
-Warehouse warehouseDouble = warehouseController.generateDouble();
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 
 ...
 
-warehouseController.verify();
+deliveryProviderController.verify();
 ```
 
 When done, the Mock will raise a failure if any method other than those specified are called, or if any method is called out of sequence.
@@ -167,28 +167,28 @@ A single object can be used as both a mock and a test spy at the same time:
 
 ```java
 
-Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-warehouseController
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
     .expects()
-        .method( 'hasInventory' )
-        .withParameter( TALISKER )
-        .andThenParameter( 50 )
+        .method( 'canDeliver' )
+        .withParameter( deliveryPostcode )
+        .andThenParameter( deliveryDate )
         .returning( true )
     .also().when()
-        .method( 'remove' )
-        .returning( true );
+        .method( 'scheduleDelivery' )
+        .willReturn( true );
 
-Warehouse warehouseDouble = warehouseController.generateDouble();
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 
 ...
 
-warehouseController.verify();
+deliveryProviderController.verify();
 
-System.assertEquals( TALISKER, warehouseController.latestCallOf( 'remove' ).parameter( 0 )
-                    , 'filling, will call remove against the warehouse, passing the product required, to remove the stock' );
+System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'scheduleDelivery' ).parameter( 0 )
+                    , 'scheduling a delivery, will call scheduleDelivery against the deliveryProvider, passing the postcode required' );
 ```
 
-This will then allow `remove` to be called at any time (and any number of times), but `hasInventory` must be called with the stated parameters, and must be called exactly once.
+This will then allow `scheduleDelivery` to be called at any time (and any number of times), but `canDeliver` must be called with the stated parameters, and must be called exactly once.
 
 ### Configuring a stricter Test Double that isn't a Mock Object
 
@@ -196,25 +196,25 @@ If you like the way Test Spies have clear assertions, but don't want just any me
 
 ```java
 
-Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-warehouseController
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
     .allows()
-        .method( 'hasInventory' )
-        .withParameter( TALISKER )
-        .andThenParameter( 50 )
+        .method( 'canDeliver' )
+        .withParameter( deliveryPostcode )
+        .andThenParameter( deliveryDate )
         .returning( true )
     .also().allows()
-        .method( 'remove' )
-        .withParameter( TALISKER )
-        .andThenParameter( 50 )
+        .method( 'scheduleDelivery' )
+        .withParameter( deliveryPostcode )
+        .andThenParameter( deliveryDate )
         .returning( true );
 
-Warehouse warehouseDouble = warehouseController.generateDouble();
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 
 ...
 ```
 
-This means that `hasInventory` and `remove` can be called in any order, and do not *have* to be called, but that *only* these two methods with these precise parameters can be called, and any other method called against the Test Double will result a test failure.
+This means that `canDeliver` and `scheduleDelivery` can be called in any order, and do not *have* to be called, but that *only* these two methods with these precise parameters can be called, and any other method called against the Test Double will result a test failure.
 
 ### Throwing exceptions
 
@@ -222,15 +222,15 @@ Test Doubles can also be told to throw exceptions, using `throwing`, `throws` or
 
 ```java
 
-Amoss_Instance warehouseController = new Amoss_Instance( Warehouse.class );
-warehouseController
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
     .when()
-        .method( 'hasInventory' )
-        .withParameter( TALISKER )
-        .andThenParameter( 50 )
-        .throws( new Warehouse.WarehouseOutOfStockException( 'Warehouse does not have stock' ) );
+        .method( 'canDeliver' )
+        .withParameter( deliveryPostcode )
+        .andThenParameter( deliveryDate )
+        .throws( new DeliveryProvider.DeliveryProviderUnableToDeliverException( 'DeliveryProvider does not have a delivery slot' ) );
 
-Warehouse warehouseDouble = warehouseController.generateDouble();
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 
 ...
 ```
