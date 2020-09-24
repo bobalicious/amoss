@@ -495,6 +495,8 @@ Possible future development:
 
 Thanks to Aidan Harding (https://twitter.com/AidanHarding), for kickstarting the whole process.  If it wasn't for his post on an experiment he did https://twitter.com/AidanHarding/status/1276512814421639168, this project probably wouldn't have started.
 
+You can find the repo with his experimental implementation here: https://github.com/aidan-harding/apex-stub-as-mock
+
 Also to Martin Fowler for the beauticully succinct article referenced in that tweet - https://martinfowler.com/articles/mocksArentStubs.html
 
 And Gerard Meszaros for his book "xUnit Test Patterns", from which many of the ideas of how Mocks, Spies and Test Doubles should work are taken.
