@@ -358,7 +358,7 @@ public class Amoss_Instance implements StubProvider {
         */
         public Object parameter( Integer parameterNumber ) {
             this.parameterNumber = parameterNumber;
-            return callLog.getAmoss_CallLogParameter( this.method, this.callNumber, this.parameterNumber );
+            return callLog.getCallLogParameter( this.method, this.callNumber, this.parameterNumber );
         }
 
         /**
@@ -373,7 +373,7 @@ public class Amoss_Instance implements StubProvider {
         * @param List<Object> - The parameters that were passed in when the stated method was called
         */
         public List<Object> parameters() {
-            return callLog.getAmoss_CallLogParameters( this.method, this.callNumber );
+            return callLog.getCallLogParameters( this.method, this.callNumber );
         }
     }
 
@@ -494,7 +494,7 @@ public class Amoss_Instance implements StubProvider {
         * @param String  - The method to retrieve the call log entry for.
         * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
         */
-        public Amoss_CallLogEntry getAmoss_CallLog( String method, Integer callNumber ) {
+        public Amoss_CallLogEntry getCallLog( String method, Integer callNumber ) {
 
             if ( ! callLogEntries.containsKey( method ) ) {
                 throw new Amoss_CallLogException( method + ' was never called' );
@@ -539,8 +539,8 @@ public class Amoss_Instance implements StubProvider {
         * @param  Integer - The position of the parameter in the call. Indexed from 0.
         * @return Object  - The requested parameter value.
         */
-        public Object getAmoss_CallLogParameter( String method, Integer callNumber, Integer parameterNumber ) {
-            return getAmoss_CallLog( method, callNumber ).getParameter( parameterNumber );
+        public Object getCallLogParameter( String method, Integer callNumber, Integer parameterNumber ) {
+            return getCallLog( method, callNumber ).getParameter( parameterNumber );
         }
 
         /**
@@ -552,8 +552,8 @@ public class Amoss_Instance implements StubProvider {
         * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
         * @return List<Object> - The requested parameter values.
         */
-        public List<Object> getAmoss_CallLogParameters( String method, Integer callNumber ) {
-            return getAmoss_CallLog( method, callNumber ).getParameters();
+        public List<Object> getCallLogParameters( String method, Integer callNumber ) {
+            return getCallLog( method, callNumber ).getParameters();
         }
     }
 
