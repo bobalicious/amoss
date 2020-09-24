@@ -14,10 +14,6 @@ Amoss provides a simple interface for implementing Mock, Test Spy and Stub objec
 
 It's intended to be very straightforward to use, and to result in code that's even more straightforward to read.
 
-** NOTE: will probably replace the example code so it's not the same as Martin Fowler's **
-
-** NOTE: may also flesh out the documenation on Mocks **
-
 ## How?
 
 ### Constructing and using a Test Double
