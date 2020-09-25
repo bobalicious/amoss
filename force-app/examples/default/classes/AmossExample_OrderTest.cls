@@ -29,6 +29,9 @@ SOFTWARE.
 * It attempts to highlight the pros and cons of the different techniques that are possible with Amoss, as well
 * as providing concrete examples of the syntax and advised indentation patterns for use of the framework.
 *
+* It is essentially forms part of the documentation, and should not be needed in a production
+* system.
+*
 */
 @isTest
 public with sharing class AmossExample_OrderTest {

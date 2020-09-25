@@ -27,7 +27,7 @@ SOFTWARE.
 *
 * Is instantiated with a class Type, then configured with combinations of 'expect', 'when' and 'allows'.
 *
-* Once configured, is used to 'generateTestDouble', which can then be used in place of the class being doubled.
+* Once configured, is used to 'generateDouble', which can then be used in place of the class being doubled.
 *
 * On completion, a call-log can be spied for parameter values, and mock the expected call stack can be
 * checked using 'verify'.
