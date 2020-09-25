@@ -22,6 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/**
+ *
+ * Amoss test class that exists purely so that Amoss_InstanceTest has a guaranteed class
+ * that it can create a Test Double for.
+ *
+ * If StubProvider supported the stubbing of internal classes, then this would be part of
+ * Amos_InstanceTest.  Until it does, it will need to stay here.
+ *
+ */
 @isTest
 public with sharing class Amoss_ClassUnderMock {
     public String methodUnderMock( String parameter1, Integer parameter2 ) {

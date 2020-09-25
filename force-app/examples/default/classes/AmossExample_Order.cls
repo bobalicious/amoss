@@ -21,6 +21,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+/**
+ *
+ * An Amoss example class.  There is no reason for this to form part of an installation
+ * of Amoss beyond the requirement to try out the provided example test class.
+ * It is essentially forms part of the documentation, and should not be needed in a production
+ * system.
+ *
+ */
 public with sharing class AmossExample_Order {
 
     String postcode;
