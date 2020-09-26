@@ -10,11 +10,6 @@ Implement
 
     Test:
 
-        Mocking an interface
-
-        Test the behaviour of 'verify'
-            Check - it may already be covered
-
         Test the behaviour of combinations, with regards to 'allowsAnyCall'
 
             Define a when, then expects, call a method that is not defined, fails the test
