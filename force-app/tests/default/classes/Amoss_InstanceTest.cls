@@ -48,6 +48,23 @@ public with sharing class Amoss_InstanceTest {
     }
 
     /**
+    * @case   for an interface, when no methods are defined, and a method is called
+    * @result will return null
+    */
+    @isTest
+    private static void forAnInterface_whenNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
+        
+        Amoss_Instance interfaceUnderMockController = new Amoss_Instance( Amoss_InterfaceUnderMock.class );
+        Amoss_InterfaceUnderMock interfaceUnderMock = (Amoss_InterfaceUnderMock)interfaceUnderMockController.generateDouble();
+
+        Test.startTest();
+            String returnFromMock = interfaceUnderMock.methodUnderMock( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromMock, 'when no methods are defined, and a method called, will return null' );
+    }
+
+    /**
     * @method when.method.willReturn
     * @case   when that method is called
     * @result will return the stated value
@@ -68,6 +85,29 @@ public with sharing class Amoss_InstanceTest {
         Test.stopTest();
         
         System.assertEquals( 'expectedReturn', returnFromMock, 'when.method.willReturn, and the method called, will return the stated value, regardless of the parameters passed' );
+    }
+
+    /**
+    * @method when.method.willReturn
+    * @case   for an interface, when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWillReturn_forAnInterface_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance interfaceUnderMockController = new Amoss_Instance( Amoss_InterfaceUnderMock.class );
+        Amoss_InterfaceUnderMock interfaceUnderMock = (Amoss_InterfaceUnderMock)interfaceUnderMockController.generateDouble();
+
+        interfaceUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromMock = interfaceUnderMock.methodUnderMock( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromMock, 'when.method.willReturn, for an interface, and the method called, will return the stated value, regardless of the parameters passed' );
     }
 
     /**
@@ -116,6 +156,31 @@ public with sharing class Amoss_InstanceTest {
         Test.stopTest();
         
         System.assertEquals( 'expectedReturn', returnFromMock, 'when.method.withParameter.willReturn, and the method called with the stated parameters, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.willReturn
+    * @case   for an interface, when that method is called with the stated parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterWillReturn_forAnInterface_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance interfaceUnderMockController = new Amoss_Instance( Amoss_InterfaceUnderMock.class );
+        Amoss_InterfaceUnderMock interfaceUnderMock = (Amoss_InterfaceUnderMock)interfaceUnderMockController.generateDouble();
+
+        interfaceUnderMockController
+            .when()
+                .method( 'methodUnderMock' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromMock = interfaceUnderMock.methodUnderMock( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromMock, 'when.method.withParameter.willReturn, for an interface, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
