@@ -28,6 +28,6 @@ SOFTWARE.
  * that it can create a Test Double for.
  *
  */
-public interface Amoss_InterfaceUnderMock {
-    String methodUnderMock( String parameter1, Integer parameter2 );
+public interface Amoss_InterfaceToDouble {
+    String methodUnderDouble( String parameter1, Integer parameter2 );
 }

@@ -3,7 +3,7 @@ Amoss - Apex Mocks, Spies and Stubs
 Documentation:
 
     Review definitions from xUnit Patterns and ensure that the Amoss definitions match.
-    
+
 Implement
 
     Instructions on installation - implement 'install to Salesforce' - Andy in the Cloud
@@ -29,10 +29,10 @@ Implement
             Amoss_Expectation.Amoss_ExpectationParameter
 
         Setting 'returning' when the method has a void return
-            methodUnderMockWithNoReturn - when setup to return something
+            methodUnderDoubleWithNoReturn - when setup to return something
 
         Not setting 'returning' when the method has a non void return
-            methodUnderMock - when setup not to return anything
+            methodUnderDouble - when setup not to return anything
  
         Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
         Test returns List, Set, Map
@@ -41,7 +41,7 @@ Implement
 
     General:
 
-        Amoss_ClassUnderMock.otherMethodUnderMock was called more times than was expected isn't a great assertion message when the parameters are wrong
+        Amoss_ClassToDouble.otherMethodUnderDouble was called more times than was expected isn't a great assertion message when the parameters are wrong
 
         What happens with methods that are not supposed to return something?
             Looks like it works, just need to write tests to prove it

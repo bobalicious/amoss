@@ -32,19 +32,25 @@ SOFTWARE.
  *
  */
 @isTest
-public with sharing class Amoss_ClassUnderMock {
-    public String methodUnderMock( String parameter1, Integer parameter2 ) {
+public with sharing class Amoss_ClassToDouble {
+
+    // Non-empty parameter constructor defined to prove that
+    // such classes can have a Test Double generated OK
+    public Amoss_ClassToDouble( String parameter1 ) {
+    }
+
+    public String methodUnderDouble( String parameter1, Integer parameter2 ) {
         return 'TheReturn';
     }
-    public void methodUnderMockWithNoReturn( String parameter1, Integer parameter2 ) {
+    public void methodUnderDoubleWithNoReturn( String parameter1, Integer parameter2 ) {
     }
-    public String methodWithNoParametersUnderMock() {
+    public String methodWithNoParametersUnderDouble() {
         return 'TheReturn';
     }
-    public String otherMethodUnderMock( String parameter1, Integer parameter2 ) {
+    public String otherMethodUnderDouble( String parameter1, Integer parameter2 ) {
         return 'TheReturn';
     }
-    public String sobjectMethodUnderMock( Contact contactParam ) {
+    public String sobjectmethodUnderDouble( Contact contactParam ) {
         return 'TheReturn';
     }
     public List<Object> methodWithListObject( List<Object> parameter1 ) {

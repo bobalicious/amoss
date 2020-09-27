@@ -455,7 +455,7 @@ Primarily these are:
   * Classes with only private constructors (e.g. Singletons)
   * Inner Classes
   * System Types
-  * Batchables.
+  * Batchables
 * Static and Private methods may not be stubbed / spied or mocked.
 * Member variables, getters and setters may not be stubbed / spied or mocked.
 * Iterators cannot be used as return types or parameter types.
