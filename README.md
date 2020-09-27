@@ -445,6 +445,23 @@ Start the specification of an additional method              | `then`, `also`
 Retrieving the parameters from a particular call of a method | `call`, `get().call`
 Retrieving the parameters from the latest call of a method   | `latestCallOf`, `call( -1 ).of`
 
+## Limitations
+
+Since the codebase uses that Salesforce provided StubProvider as its underlying mechanism for creating the Test Double, it suffers from the same fundamental limitations.
+
+Primarily these are:
+* The following cannot have Test Doubles generated:
+  * Sobjects
+  * Classes with only private constructors (e.g. Singletons)
+  * Inner Classes
+  * System Types
+  * Batchables.
+* Static and Private methods may not be stubbed / spied or mocked.
+* Member variables, getters and setters may not be stubbed / spied or mocked.
+* Iterators cannot be used as return types or parameter types.
+
+For more information, see here: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_StubProvider.htm
+
 ## Development Ideals
 
 For those who are looking to contribute to the project.

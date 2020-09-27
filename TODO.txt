@@ -6,7 +6,7 @@ Documentation:
     
 Implement
 
-    Instructions on installation?
+    Instructions on installation - implement 'install to Salesforce' - Andy in the Cloud
 
     Test:
 
@@ -43,49 +43,17 @@ Implement
 
         Amoss_ClassUnderMock.otherMethodUnderMock was called more times than was expected isn't a great assertion message when the parameters are wrong
 
-        Should probably make a difference between 'also' and 'then'
-            'then' implies order, even on a 'when' or 'allows'
-
         What happens with methods that are not supposed to return something?
             Looks like it works, just need to write tests to prove it
 
         Can we wrap some of the inner classes with public interfaces, so that the consumer only sees that layer.
         Only if it doesn't increase the assertion failure call stack - although that can probably be solved with exceptions.
 
-        Should everything be moved into one class file with inner classes?
-
-        Think about 'only checking a single parameter'
-            withParameterAtPosition
-
-            E.g.
-                templateGenerator
-                    .expects()
-                        .method( 'generate' )
-                        .withParameterAtPostion( 2, 'One We Care About' )
-                        .returning( 'Something' );
-
     Mock:
-
-        expectsNoCalls
-            set allowsAnyCall to false and clear the expectations
-
-        Type checking prior to checking equality - otherwise you get an indecipherable error
-            Looks like you would need to pass the type into the expectation
-            Or try / catch the assertion and report that it was probably a type error
 
         How to pass an 'expects parameter' when we're passing sObjects?
 
         Consider splitting the class down, to improve the auto-complete
-
-        handledBy
-            Can use standard Stub interface
-            Can use a simplified Stub interface
-
-            Change the tests so that the assertEquals will fail when the things are not equal
-
-    Mock - Test Recorder format
-
-        Can you simply add the Test Recorder format into the framework - for flexibility
 
     Spy:
 
@@ -132,53 +100,4 @@ Implement
             That's why we need a spy, and a 'handled by'
 
 Test:
-    The behaviours work with Sobjects
     The behaviours work with Object instantiations
-
-Example Tests:
-
-    Brittle version using Mock behaviours
-
-    Less brittle version, using Spy behaviours
-
-    @isTest
-    private static void expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
-        
-        TestMock mockAsserts = new TestMock( TestAsserts.class );
-        TestAsserts mockAssertsProxy = (TestAsserts)mockAsserts.proxy();
-        mockAsserts
-            .allows()
-                .method( 'assertEquals' )
-            .also().when()
-                .method( 'assert' )
-                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
-
-        TestMock classUnderMock = new TestMock( Amoss_ClassUnderMock.class );
-        classUnderMock.setTestAsserts( mockAssertsProxy );
-        Amoss_ClassUnderMock classUnderMockProxy = (Amoss_ClassUnderMock)classUnderMock.proxy();
-
-        classUnderMock
-            .expects()
-                .method( 'methodUnderMock' )
-                .returning( 'TheReturn' );
-
-        Test.startTest();
-            classUnderMockProxy.methodUnderMock( 'this', 1 );
-
-            try {
-                classUnderMockProxy.methodUnderMock( 'this', 1 );
-            } catch ( TestException e ) {}
-        Test.stopTest();
-
-        String expectedAssertion = 'Amoss_ClassUnderMock.methodUnderMock was called more times than was expected';
-        System.assertEquals( false            , mockAsserts.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, mockAsserts.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
-    }
-
-
-Other documentation notes:
-In addition, it hopes to address one of the shortcomings that traditionally blights Mock Object frameworks - that tests can very quickly become too brittle to maintain.  To do so, it allows a Test Double to operate as a Mock Object, a Test Spy and a simple Configurable Test Double all at the same time, and to allow for the specification of 'any parameter' to be passed in.  And all based on its (hopefully) natural English configuration.
-
-If you don't know what Mock Objects are for, and how they work, try reading Martin Fowler's short article here - https://martinfowler.com/articles/mocksArentStubs.html, from which his example is used over and over again in these docs.
-
-If that goes well, you might consider the section on Test Doubles in Gerard Meszaros's "xUnit Test Patterns".  All terminology in these documentations confirm to his patterns.
