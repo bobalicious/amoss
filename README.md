@@ -505,9 +505,6 @@ Design Principles:
 Required for 1.0 release:
 - Ability to inject a Test Double with a Salesfore Stub Provider, allowing for code driven responses to method calls
 
-Possible future development:
-- Test Recorder style implementation of expectations
-
 ## Acknowledgements / References
 
 Thanks to Aidan Harding (https://twitter.com/AidanHarding), for kickstarting the whole process.  If it wasn't for his post on an experiment he did https://twitter.com/AidanHarding/status/1276512814421639168, this project probably wouldn't have started.
