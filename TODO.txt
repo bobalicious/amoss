@@ -6,6 +6,11 @@ Documentation:
 
 Implement
 
+    Add Test into the names of the test files
+        E.g. Amoss_ClassToDouble becomes AmossTest_ClassToDouble
+        Makes it easier to know what you can remove, if you want to
+    Document what is included in the installation
+
     Instructions on installation - implement 'install to Salesforce' - Andy in the Cloud
 
     Test:
