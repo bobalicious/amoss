@@ -24,36 +24,27 @@ SOFTWARE.
 
 /**
  *
- * Amoss test class that exists purely so that Amoss_InstanceTest has a guaranteed class
- * that it can create a Test Double for.
+ * Amoss test class that exists purely so that AmossTest_InstanceTest has a guaranteed class
+ * with no public constructors that it can attempt to create a Test Double for.
+ *
+ * It follows a standard Singleton pattern, just to illustrate the kind of class that is limited
+ * by the implementation of StubProvider
  *
  * If StubProvider supported the stubbing of internal classes, then this would be part of
  * Amos_InstanceTest.  Until it does, it will need to stay here.
  *
  */
-@isTest
-public with sharing class Amoss_ClassUnderMock {
-    public String methodUnderMock( String parameter1, Integer parameter2 ) {
-        return 'TheReturn';
+ public with sharing class AmossTest_SingletonToDouble {
+
+    private static AmossTest_SingletonToDouble instance;
+
+    private AmossTest_SingletonToDouble() {
     }
-    public void methodUnderMockWithNoReturn( String parameter1, Integer parameter2 ) {
+
+    public static AmossTest_SingletonToDouble getInstance() {
+        if ( AmossTest_SingletonToDouble.instance == null ) {
+            AmossTest_SingletonToDouble.instance = new AmossTest_SingletonToDouble();
+        }
+        return AmossTest_SingletonToDouble.instance;
     }
-    public String methodWithNoParametersUnderMock() {
-        return 'TheReturn';
-    }
-    public String otherMethodUnderMock( String parameter1, Integer parameter2 ) {
-        return 'TheReturn';
-    }
-    public String sobjectMethodUnderMock( Contact contactParam ) {
-        return 'TheReturn';
-    }
-    public List<Object> methodWithListObject( List<Object> parameter1 ) {
-        return new List<Object>();
-    }
-    public Set<Object> methodWithSetObject( Set<Object> parameter1 ) {
-        return new Set<Object>();
-    }
-    public Map<String,Object> methodWithMapStringObject( Map<String,Object> parameter1 ) {
-        return new Map<String,Object>();
-    }    
 }

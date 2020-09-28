@@ -20,7 +20,7 @@ It's intended to be very straightforward to use, and to result in code that's ev
 
 Amoss can be used to build simple stub objects - AKA Configurable Test Doubles, by:
 * Constructing an `Amoss_Instance`, passing it the type of the class you want to 'stub out'.
-* Asking the resulting 'controller' to generate a mock for you.
+* Asking the resulting 'controller' to generate a Test Double for you.
 
 ```java
     Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
@@ -159,7 +159,7 @@ When done, the Mock will raise a failure if any method other than those specifie
 
 This can be very useful if the order and completeness of processing is absolutely vital.
 
-A single object can be used as both a mock and a test spy at the same time:
+A single object can be used as both a Mock and a Test Spy at the same time:
 
 ```java
 
@@ -290,7 +290,7 @@ Also typically used when the object being stubbed is not the focus of the test, 
 
 However, it is implied that it is important that *other* methods, those not specified, are *not* called.
 
-Is not particularly brittle to changes in the implementation of the class being mocked.  However, tests may start to break when the implementation under test changes and new methods are called against the object that is stubbed.
+Is not particularly brittle to changes in the implementation of the class being 'doubled'.  However, tests may start to break when the implementation under test changes and new methods are called against that object.
 
 #### Is characterised by the pattern: allows.method.with.returning
 
@@ -445,21 +445,38 @@ Start the specification of an additional method              | `then`, `also`
 Retrieving the parameters from a particular call of a method | `call`, `get().call`
 Retrieving the parameters from the latest call of a method   | `latestCallOf`, `call( -1 ).of`
 
+## Limitations
+
+Since the codebase uses that Salesforce provided StubProvider as its underlying mechanism for creating the Test Double, it suffers from the same fundamental limitations.
+
+Primarily these are:
+* The following cannot have Test Doubles generated:
+  * Sobjects
+  * Classes with only private constructors (e.g. Singletons)
+  * Inner Classes
+  * System Types
+  * Batchables
+* Static and Private methods may not be stubbed / spied or mocked.
+* Member variables, getters and setters may not be stubbed / spied or mocked.
+* Iterators cannot be used as return types or parameter types.
+
+For more information, see here: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_StubProvider.htm
+
 ## Development Ideals
 
 For those who are looking to contribute to the project.
 
 In order for the project to succeed it must:
 
-* Require as little code as possible to create Test Mocks and Spies, so that mocking does not get in the way of testing.
+* Require as little code as possible to create Test Mocks and Spies, so that creating the Test Double does not get in the way of testing.
 * Use natural language to express the configuration so tests are as clear as possible to read.
 * Have an auto-complete considered class structure, so that IDEs give you as much guidence as possible when tests are being written.
 * Issue assertion failures that are as clear as possible, so the meaning of the failure is easy to understand.
 
 Design Principles:
 
-* The consumer should not need to reference any class other than the instantiation of the mock in the first place.
-    * This limits the amount of noise in the specification of a mock.  Class names (espcially namespaced ones) get in the way of the meaning of the code and so they should not be required.
+* The consumer should not need to reference any class other than the instantiation of the Test Double in the first place.
+    * This limits the amount of noise in the specification of a Test Double.  Class names (espcially namespaced ones) get in the way of the meaning of the code and so they should not be required.
 * Designing Methods:
     * Every method call should be expressive of what it does in plain english, particularly within the context of where it is used.
     * Methods should only have one parameter, which is described by the context provided in the method name, so that it is always clear what is being passed in.
@@ -487,9 +504,6 @@ Design Principles:
 
 Required for 1.0 release:
 - Ability to inject a Test Double with a Salesfore Stub Provider, allowing for code driven responses to method calls
-
-Possible future development:
-- Test Recorder style implementation of expectations
 
 ## Acknowledgements / References
 
