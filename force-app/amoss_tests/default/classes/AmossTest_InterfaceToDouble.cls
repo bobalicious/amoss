@@ -24,10 +24,10 @@ SOFTWARE.
 
 /**
  *
- * Amoss test interface that exists purely so that Amoss_InstanceTest has a guaranteed interface
+ * Amoss test interface that exists purely so that AmossTest_InstanceTest has a guaranteed interface
  * that it can create a Test Double for.
  *
  */
-public interface Amoss_InterfaceToDouble {
+public interface AmossTest_InterfaceToDouble {
     String methodUnderDouble( String parameter1, Integer parameter2 );
 }

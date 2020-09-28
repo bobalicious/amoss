@@ -24,27 +24,42 @@ SOFTWARE.
 
 /**
  *
- * Amoss test class that exists purely so that Amoss_InstanceTest has a guaranteed class
- * with no public constructors that it can attempt to create a Test Double for.
- *
- * It follows a standard Singleton pattern, just to illustrate the kind of class that is limited
- * by the implementation of StubProvider
+ * Amoss test class that exists purely so that AmossTest_InstanceTest has a guaranteed class
+ * that it can create a Test Double for.
  *
  * If StubProvider supported the stubbing of internal classes, then this would be part of
  * Amos_InstanceTest.  Until it does, it will need to stay here.
  *
  */
- public with sharing class Amoss_SingletonToDouble {
+@isTest
+public with sharing class AmossTest_ClassToDouble {
 
-    private static Amoss_SingletonToDouble instance;
-
-    private Amoss_SingletonToDouble() {
+    // Non-empty parameter constructor defined to prove that
+    // such classes can have a Test Double generated OK
+    public AmossTest_ClassToDouble( String parameter1 ) {
     }
 
-    public static Amoss_SingletonToDouble getInstance() {
-        if ( Amoss_SingletonToDouble.instance == null ) {
-            Amoss_SingletonToDouble.instance = new Amoss_SingletonToDouble();
-        }
-        return Amoss_SingletonToDouble.instance;
+    public String methodUnderDouble( String parameter1, Integer parameter2 ) {
+        return 'TheReturn';
     }
+    public void methodUnderDoubleWithNoReturn( String parameter1, Integer parameter2 ) {
+    }
+    public String methodWithNoParametersUnderDouble() {
+        return 'TheReturn';
+    }
+    public String otherMethodUnderDouble( String parameter1, Integer parameter2 ) {
+        return 'TheReturn';
+    }
+    public String sobjectmethodUnderDouble( Contact contactParam ) {
+        return 'TheReturn';
+    }
+    public List<Object> methodWithListObject( List<Object> parameter1 ) {
+        return new List<Object>();
+    }
+    public Set<Object> methodWithSetObject( Set<Object> parameter1 ) {
+        return new Set<Object>();
+    }
+    public Map<String,Object> methodWithMapStringObject( Map<String,Object> parameter1 ) {
+        return new Map<String,Object>();
+    }    
 }
