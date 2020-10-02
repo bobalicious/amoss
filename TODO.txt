@@ -10,6 +10,19 @@ Implement
 
     Instructions on installation - implement 'install to Salesforce' - Andy in the Cloud
 
+    Implement
+        parameterNamed
+        parametersByName
+            The internal stuff is done - just the external interface is needed
+
+    Documentation on
+        parameterNamed
+        parametersByName
+
+    tests
+        parameterNamed
+        parametersByName
+
     Test:
 
         Test the behaviour of combinations, with regards to 'allowsAnyCall'

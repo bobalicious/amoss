@@ -224,7 +224,7 @@ public class Amoss_Instance implements StubProvider {
                                     List<String> parameterNames,
                                     List<Object> parameters ) {
 
-        callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameters ) );
+        callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
 
         if ( whens.hasExpectations() ) {
             Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameters );
@@ -388,7 +388,11 @@ public class Amoss_Instance implements StubProvider {
     private class Amoss_CallLogEntry {
 
         String       method;
-        List<Object> parameters;
+        List<Object> parameterValues;
+        List<String> parameterNames;
+        List<Object> parameterTypes;
+
+        Map<String,Object> parameterValuesByName;
 
         /**
         * Internal method that should not be called directly in tests.
@@ -414,8 +418,16 @@ public class Amoss_Instance implements StubProvider {
         *
         * Sets the parameters that were passed in on this method call.
         */
-        public Amoss_CallLogEntry setParameters( List<Object> parameters ) {
-            this.parameters = parameters;
+        public Amoss_CallLogEntry setParameters( List<Object> parameterTypes, List<String> parameterNames, List<Object> parameterValues ) {
+            this.parameterNames  = parameterNames;
+            this.parameterTypes  = parameterTypes;
+            this.parameterValues = parameterValues;
+            this.parameterValuesByName = new Map<String,Object>();
+
+            for ( Integer i; i<parameterNames.size(); i++ ) {
+                parameterValuesByName.put( parameterNames[i], parameterValues[i] );
+            }
+
             return this;
         }
 
@@ -427,20 +439,39 @@ public class Amoss_Instance implements StubProvider {
         * If the parameter does not exist then an exception is thrown.
         */
         public Object getParameter( Integer parameterNumber ) {
-            if ( parameters == null ) {
+            if ( parameterValues == null ) {
                 throw new Amoss_CallLogException( method + ' was not called' );
             }
-            if ( parameters.size() == 0 ) {
+            if ( parameterValues.isEmpty()  ) {
                 throw new Amoss_CallLogException( method + ' was not called with any parameters' );
             }
-
-            if ( parameters.size() < parameterNumber + 1 ) {
+            if ( parameterValues.size() < parameterNumber + 1 ) {
                 throw new Amoss_CallLogException( method + ' was not called with ' + ( parameterNumber + 1 ) + ' parameters' );
             }
             if ( parameterNumber < 0 ) {
                 throw new Amoss_CallLogException( 'Cannot request a negative parameter number (got ' + parameterNumber + ')' );
             }
-            return parameters[ parameterNumber ];
+            return parameterValues[ parameterNumber ];
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameter at the specified position that was passed in on this method call.
+        *
+        * If the parameter does not exist then an exception is thrown.
+        */
+        public Object getParameter( String parameterName ) {
+            if ( parameterValuesByName == null ) {
+                throw new Amoss_CallLogException( method + ' was not called' );
+            }
+            if ( parameterValuesByName.isEmpty() ) {
+                throw new Amoss_CallLogException( method + ' was not called with any parameters' );
+            }
+            if ( ! parameterValuesByName.containsKey( parameterName ) ) {
+                throw new Amoss_CallLogException( method + ' was not called with parameter ' + parameterName );
+            }
+            return parameterValuesByName.get( parameterName );
         }
 
         /**
@@ -451,11 +482,25 @@ public class Amoss_Instance implements StubProvider {
         * If the parameters do not exist then an exception is thrown.
         */
         public List<Object> getParameters() {
-            if ( parameters == null ) {
+            if ( parameterValues == null ) {
                 throw new Amoss_CallLogException( method + ' was not called' );
             }
-            return parameters;
+            return parameterValues;
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameters for this call, indexed by their name.
+        *
+        * If the parameters do not exist then an exception is thrown.
+        */
+        public Map<String,Object> getParametersByName() {
+            if ( parameterValuesByName == null ) {
+                throw new Amoss_CallLogException( method + ' was not called' );
+            }
+            return parameterValuesByName;
+        }        
     }
 
     /**
@@ -543,6 +588,21 @@ public class Amoss_Instance implements StubProvider {
             return getCallLog( method, callNumber ).getParameter( parameterNumber );
         }
 
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameter at the stated position that was passed into the stated method at the stated call number in the stack.
+        *
+        * @param  String  - The method to retrieve the parameters for.
+        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param  Integer - The position of the parameter in the call. Indexed from 0.
+        * @return Object  - The requested parameter value.
+        */
+        public Object getCallLogParameter( String method, Integer callNumber, String parameterName ) {
+            return getCallLog( method, callNumber ).getParameter( parameterName );
+        }
+
         /**
         * Internal method that should not be called directly in tests.
         *
@@ -555,6 +615,19 @@ public class Amoss_Instance implements StubProvider {
         public List<Object> getCallLogParameters( String method, Integer callNumber ) {
             return getCallLog( method, callNumber ).getParameters();
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameters that were passed into the stated method at the stated call number in the stack.
+        *
+        * @param  String  - The method to retrieve the parameters for.
+        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @return Map<String,Object> - The requested parameter values, indexed by their name.
+        */
+        public List<Object> getCallLogParametersByName( String method, Integer callNumber ) {
+            return getCallLog( method, callNumber ).getParametersByName();
+        }        
     }
 
     /**
