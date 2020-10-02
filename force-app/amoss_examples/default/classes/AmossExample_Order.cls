@@ -30,6 +30,7 @@ SOFTWARE.
  * system.
  *
  */
+@isTest
 public with sharing class AmossExample_Order {
 
     String postcode;

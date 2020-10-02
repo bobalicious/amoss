@@ -34,7 +34,8 @@ SOFTWARE.
  * Amos_InstanceTest.  Until it does, it will need to stay here.
  *
  */
- public with sharing class AmossTest_SingletonToDouble {
+@isTest
+public with sharing class AmossTest_SingletonToDouble {
 
     private static AmossTest_SingletonToDouble instance;
 
