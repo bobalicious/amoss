@@ -16,8 +16,13 @@ Implement
 
     Code documentation (search for TODOs)
 
+    Move all string contatonation over to string.format, and move ' over to " where used in a string
+
     Test:
-        expects / allows behaviour matches when named notation is used
+        look if there are more 'expects' behaviours to test with named parameters
+        do we need to test 'allows' behaviours with named parameters
+        withParameters, using a List
+        withParameters, using a Map
         callDescription changes based on the type of parameter matching
 
     Test:

@@ -225,7 +225,6 @@ public class Amoss_Instance implements StubProvider {
                                     List<Type>   parameterTypes,
                                     List<String> parameterNames,
                                     List<Object> parameters ) {
-
         callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
 
         if ( whens.hasExpectations() ) {
@@ -505,7 +504,7 @@ public class Amoss_Instance implements StubProvider {
                 throw new Amoss_CallLogException( method + ' was not called with any parameters' );
             }
             if ( ! parameterValuesByName.containsKey( parameterName ) ) {
-                throw new Amoss_CallLogException( method + ' was not called with parameter \'' + parameterName + '\'' );
+                throw new Amoss_CallLogException( method + ' was not called with parameter "' + parameterName + '"' );
             }
             return parameterValuesByName.get( parameterName );
         }
@@ -1239,7 +1238,18 @@ public class Amoss_Instance implements StubProvider {
             }
 
             if ( matchesWithNamedParameters() ) {
-                // TODO: implement this - test it first
+
+                for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
+
+                    String actualParameterName  = parameterNames[ parameterNumber ];
+                    Object actualParameterValue = parameterValues[ parameterNumber ];
+                    Amoss_ExpectationParameter expectationParameter = expectedNamedParameters.get( actualParameterName );
+
+                    if ( expectationParameter == null || expectationParameter.allowsAnyValue() ) {
+                        continue;
+                    }
+                    assertionMechanism.assertEquals( expectationParameter.getValue(), actualParameterValue, String.format( '{0}.{1} was called with the wrong parameter value for "{2}"', new List<String>{ className, expectedMethod, actualParameterName } ) );
+                }
             }
         }
 
@@ -1282,7 +1292,6 @@ public class Amoss_Instance implements StubProvider {
             }
 
             if ( matchesWithPositionalParameters() ) {
-
                 for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
                     if ( ! expectedPositionalParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ) ) {
                         return false;
@@ -1291,7 +1300,6 @@ public class Amoss_Instance implements StubProvider {
             }
 
             if ( matchesWithNamedParameters() ) {
-
                 for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
                     String actualParameterName  = parameterNames[ parameterNumber ];
                     Object actualParameterValue = parameterValues[ parameterNumber ];

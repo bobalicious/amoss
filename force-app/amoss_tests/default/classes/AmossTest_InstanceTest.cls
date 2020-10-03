@@ -882,7 +882,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.startTest();
             try {
-                String returnFromDouble = classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
             } catch( TestException e ) {}
         Test.stopTest();
         
@@ -890,6 +890,49 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 'ActualParam1'     , assertsDoubleController.get().call(2).of( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
         System.assertEquals( 'OtherActualParam1', assertsDoubleController.get().call(2).of( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
         System.assertEquals( expectedAssertion  , assertsDoubleController.get().call(2).of( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method expects.method.returning, named parameters
+    * @case   when the method is called with different parameters
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenUsingNamedParametersAndTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+        
+        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        // TODO: when we can inject a handler, change this over so we can fail the test, and then use latestCallOf instead
+        assertsDoubleController
+            .allows()
+                .method( 'assertEquals' )
+            .also().allows()
+                .method( 'assert' )
+                .withParameter( false )
+                .andThenAnyParameter()
+                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .andWithParameterNamed( 'parameter2' ).setTo( 1 )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+            } catch( TestException e ) {}
+        Test.stopTest();
+        
+        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value for "parameter1"';
+        System.assertEquals( 'ActualParam1'     , assertsDoubleController.get().call(1).of( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
+        System.assertEquals( 'OtherActualParam1', assertsDoubleController.get().call(1).of( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
+        System.assertEquals( expectedAssertion  , assertsDoubleController.get().call(1).of( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -923,7 +966,7 @@ public with sharing class AmossTest_InstanceTest {
     /**
     * @method expects.method.returning
     * @case   when the same method is defined with the same parameters, and called in order
-    * @result will return the stated value for the first matching
+    * @result will return the stated value in the call order they are specified
     */
     @isTest
     private static void expectsMethodReturning_whenMethodIsDefinedWithSameParametersAndCalledInOrder_willReturnTheResultsInOrder() {
@@ -960,9 +1003,85 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method expects.method.returning using named parameters
+    * @case   when the same method is defined with the same parameters, and called in order
+    * @result will return the stated value in the call order they are specified
+    */
+    @isTest
+    private static void expectsMethodReturning_usingNamedParameters_whenMethodIsDefinedWithSameParametersAndCalledInOrder_willReturnTheResultsInOrder() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
+                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .returning( 'firstReturn' )
+            .then().expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
+                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .returning( 'secondReturn' )
+            .then().expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
+                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .returning( 'thirdReturn' );
+
+        Test.startTest();
+            String returnFromFirstCall  = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+            String returnFromSecondCall = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+            String returnFromThirdCall  = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (1)' );
+        System.assertEquals( 'secondReturn', returnFromSecondCall, 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (2)' );
+        System.assertEquals( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (3)' );
+    }
+
+    /**
+    * @method expects.method.returning using named parameters, with some not specified
+    * @case   when the same method is defined with the same parameters, and called in order
+    * @result will return the stated value in the call order they are specified
+    */
+    @isTest
+    private static void expectsMethodReturning_usingNamedParametersWithSomeNotSpecified_whenMethodIsDefinedWithSameParametersAndCalledInOrder_willReturnTheResultsInOrder() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
+                .returning( 'firstReturn' )
+            .then().expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter2').setTo( 1 )
+                .returning( 'secondReturn' )
+            .then().expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter2').setTo( 1 )
+                .andWithParameterNamed( 'parameter1').setTo( 'ActualParam1' )
+                .returning( 'thirdReturn' );
+
+        Test.startTest();
+            String returnFromFirstCall  = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+            String returnFromSecondCall = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+            String returnFromThirdCall  = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (1)' );
+        System.assertEquals( 'secondReturn', returnFromSecondCall, 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (2)' );
+        System.assertEquals( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (3)' );
+    }
+
+    /**
     * @method expects.method.returning
     * @case   when the same method is defined with the any parameters methods, and called in order
-    * @result will return the stated value for the first matching
+    * @result will return the stated value in the call order they are specified
     */
     @isTest
     private static void expectsMethodReturning_whenMethodIsDefinedWithAnyParametersAndCalledInOrder_willReturnTheResultsInOrder() {
@@ -1649,7 +1768,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'call.of.parameter (String), when given a parameter name that does not exist, will throw an exception' );
-        Amoss_Asserts.assertContains( 'methodUnderDouble was not called with parameter \'doesNotExist\'', exceptionMessage, 'call.of.parameter (String), when given a parameter name that does not exist, will throw an exception with a useful message' );
+        Amoss_Asserts.assertContains( 'methodUnderDouble was not called with parameter "doesNotExist"', exceptionMessage, 'call.of.parameter (String), when given a parameter name that does not exist, will throw an exception with a useful message' );
     }
 
     /**
