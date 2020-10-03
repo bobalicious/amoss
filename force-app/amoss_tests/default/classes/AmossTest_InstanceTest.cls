@@ -159,6 +159,55 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.withParameterNamed.setTo.willReturn
+    * @case   when that method is called with the stated parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter2' ).setTo( 1 )
+                .andWithParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamedSetTo.willReturn, and the method called with the stated parameters, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.setTo.willReturn
+    * @case   when not all parameters set, but the method is called with the specified parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToWillReturn_whenNotAllSetAndTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamedSetTo.willReturn, not all parameters set, and the method called with the stated parameters, will return the stated value' );
+    }
+
+    /**
     * @method when.method.withParameter.willReturn
     * @case   for an interface, when that method is called with the stated parameters
     * @result will return the stated value
@@ -206,6 +255,30 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
         
         System.assertEquals( null, returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the different parameters, will return null' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.setTo.willReturn
+    * @case   when that method is called with different parameters
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .willReturn( 'willNotSeeThis' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.setTo.willReturn, and the method called with the different parameters, will return null' );
     }
 
     /**
@@ -273,6 +346,71 @@ public with sharing class AmossTest_InstanceTest {
     }    
 
     /**
+    * @method when.method.withParameter.willReturn multiple times, position first, then named
+    * @case   when the same method is defiend with the same parameters and it is called multiple times
+    * @result will always return the first value with parameters that match
+    */
+    @isTest
+    private static void whenMethodWithParameterWillReturnMultiplePositionFirstThenNamed_whenSameParamsUsed_willAlwaysReturnTheFirstMatch() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn1' )
+            .also().when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .andWithParameterNamed( 'parameter2' ) .setTo( 1 )
+                .willReturn( 'expectedReturn1' );
+
+        Test.startTest();
+            String returnFromDouble1 = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+            String returnFromDouble2 = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, position notation used first, then named notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
+        System.assertEquals( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, position notation used first, then named notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
+    }
+
+
+    /**
+    * @method when.method.withParameter.willReturn multiple times, named first, then position
+    * @case   when the same method is defiend with the same parameters and it is called multiple times
+    * @result will always return the first value with parameters that match
+    */
+    @isTest
+    private static void whenMethodWithParameterWillReturnMultipleNamedFirstThenPosition_whenSameParamsUsed_willAlwaysReturnTheFirstMatch() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .andWithParameterNamed( 'parameter2' ) .setTo( 1 )
+                .willReturn( 'expectedReturn1' )
+            .also().when()
+                .method( 'methodUnderDouble' )
+                .withParameter( 'ActualParam1' )
+                .andThenParameter( 1 )
+                .willReturn( 'expectedReturn1' );
+
+        Test.startTest();
+            String returnFromDouble1 = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+            String returnFromDouble2 = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, named notation used first, then position notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
+        System.assertEquals( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, named notation used first, then position notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
+    }
+
+    /**
     * @method when.method.withParameter.willReturn multiple times
     * @case   when different methods are defined with the same parameters
     * @result will return the stated value for each call, based on the method called
@@ -338,6 +476,145 @@ public with sharing class AmossTest_InstanceTest {
         
         System.assertEquals( 'expectedReturnFor1'           , returnFromDouble1, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (1)' );
         System.assertEquals( 'expectedReturnForAnythingElse', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (2)' );
+    }
+
+    /**
+    * @method when.method.withParameter.willReturn
+    * @case   when position and named notation are mixed, first position, then named
+    * @result will throw an exception
+    */
+    @isTest
+    private static void whenMethodWithAnyParameterWillReturn_whenNamedAndPositionNotationAreMixedFirstPosition_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        Test.startTest();
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+
+                classToDoubleController
+                    .when()
+                        .method( 'methodUnderDouble' )
+                        .withParameter( 'ActualParam1' )
+                        .andWithParameterNamed( 'parameter2' ).setTo( 1 )
+                        .willReturn( 'willNotSeeThis' );
+
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'when.method.withParameter.willReturn, when position and named notation are mixed, first position, then named, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition', exceptionMessage, 'when.method.withParameter.willReturn, when position and named notation are mixed, first position, then named, will throw an exception' );
+    }
+
+    /**
+    * @method when.method.withParameter.willReturn
+    * @case   when position and named notation are mixed, first named, then position
+    * @result will throw an exception
+    */
+    @isTest
+    private static void whenMethodWithAnyParameterWillReturn_whenNamedAndPositionNotationAreMixedFirstNamed_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        Test.startTest();
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+
+                classToDoubleController
+                    .when()
+                        .method( 'methodUnderDouble' )
+                        .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                        .andThenParameter( 1 )
+                        .willReturn( 'willNotSeeThis' );
+
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'when.method.withParameter.willReturn, when position and named notation are mixed, first position, then named, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition', exceptionMessage, 'when.method.withParameter.willReturn, when position and named notation are mixed, first named, then position, will throw an exception' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.willReturn
+    * @case   when setTo is called without withParameterNamed
+    * @result will throw an exception
+    */
+    @isTest
+    private static void whenMethodWithAnyParameteNamedWillReturn_whenSetToIsCalledWithouthWithParameterNamed_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        Test.startTest();
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+
+                classToDoubleController
+                    .when()
+                        .method( 'methodUnderDouble' )
+                        .setTo( 'ActualParam1' )
+                        .willReturn( 'willNotSeeThis' );
+
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'when.method.withParameterNamed.willReturn, when setTo is called without withParameterNamed, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot call setTo except immediately after withParameterNamed or andWithParameterNamed', exceptionMessage, 'when.method.withParameterNamed.willReturn, when setTo is called without withParameterNamed, will throw an exception explaining the problem' );
+    }
+
+
+    /**
+    * @method when.method.withParameterNamed.willReturn
+    * @case   when setTo is called multiple times against a single withParameterNamed
+    * @result will throw an exception
+    */
+    @isTest
+    private static void whenMethodWithAnyParameteNamedWillReturn_whenSetToIsCalledMultipleTimes_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        Test.startTest();
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+
+                classToDoubleController
+                    .when()
+                        .method( 'methodUnderDouble' )
+                        .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' ).setTo( 'ActualParam2' )
+                        .willReturn( 'willNotSeeThis' );
+
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'when.method.withParameterNamed.willReturn, when setTo is called multiple times against a single withParameterNamed, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot call setTo more than once against a single withParameterNamed or andWithParameterNamed', exceptionMessage, 'when.method.withParameterNamed.willReturn, when setTo is called multiple times against a single withParameterNamed, will throw an exception explaining the problem' );
     }
 
     /**

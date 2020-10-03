@@ -865,7 +865,6 @@ public class Amoss_Instance implements StubProvider {
             return this;
         }
 
-
         /**
         * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
         *
@@ -957,6 +956,25 @@ public class Amoss_Instance implements StubProvider {
         public Amoss_Expectation thenParameter( Object parameterValue ) {
             return withParameter( parameterValue );
         }
+
+        // TODO: document and implement
+        public Amoss_Expectation withParameterNamed( String parameterName ) {
+            return this;
+        }
+
+        // TODO: document and implement
+        public Amoss_Expectation andWithParameterNamed( String parameterName ) {
+            return withParameterNamed( parameterName );
+        }
+
+        // TODO: document and implement
+        public Amoss_Expectation setTo( Object parameterValue ) {
+            return this;
+        }
+        
+        
+
+
 
         /**
         * States the value that should be returned when this 'expectation' or 'when' is met. 
