@@ -293,6 +293,7 @@ public class Amoss_Instance implements StubProvider {
         String  method;
         Integer callNumber;
         Integer parameterNumber;
+        String  parameterName;
 
         Amoss_CallLog callLog;
 
@@ -358,7 +359,26 @@ public class Amoss_Instance implements StubProvider {
         */
         public Object parameter( Integer parameterNumber ) {
             this.parameterNumber = parameterNumber;
+            this.parameterName = null;
             return callLog.getCallLogParameter( this.method, this.callNumber, this.parameterNumber );
+        }
+
+        /**
+        * Requests the parameter with the stated name, for the 
+        * current method and call count context.
+        *
+        * Allows the object to be used as a Test Spy.
+        *
+        * Use in the formats:
+        *   call( 1 ).of( 'methodName' ).parameter( 'parameterName' )
+        *   latestCallOf( 'methodName' ).parameter( 'parameterName' )
+        *
+        * @param Object - The parameter that was passed in when the stated method was called
+        */
+        public Object parameter( String parameterName ) {
+            this.parameterName = parameterName;
+            this.parameterNumber = null;
+            return callLog.getCallLogParameter( this.method, this.callNumber, this.parameterName );
         }
 
         /**
@@ -375,6 +395,21 @@ public class Amoss_Instance implements StubProvider {
         public List<Object> parameters() {
             return callLog.getCallLogParameters( this.method, this.callNumber );
         }
+
+        /**
+        * Requests a map of the parameters for the current method and call count context, indexed by their name.
+        *
+        * Allows the object to be used as a Test Spy.
+        *
+        * Use in the formats:
+        *   call( 1 ).of( 'methodName' ).parametersByName()
+        *   latestCallOf( 'methodName' ).parametersByName()
+        *
+        * @param Map<String,Object> - The parameters that were passed in when the stated method was called
+        */
+        public Map<String,Object> parametersByName() {
+            return callLog.getCallLogParametersByName( this.method, this.callNumber );
+        }        
     }
 
     /**
@@ -422,12 +457,11 @@ public class Amoss_Instance implements StubProvider {
             this.parameterNames  = parameterNames;
             this.parameterTypes  = parameterTypes;
             this.parameterValues = parameterValues;
-            this.parameterValuesByName = new Map<String,Object>();
+            parameterValuesByName = new Map<String,Object>();
 
-            for ( Integer i; i<parameterNames.size(); i++ ) {
+            for ( Integer i=0; i<parameterNames.size(); i++ ) {
                 parameterValuesByName.put( parameterNames[i], parameterValues[i] );
             }
-
             return this;
         }
 
@@ -469,7 +503,7 @@ public class Amoss_Instance implements StubProvider {
                 throw new Amoss_CallLogException( method + ' was not called with any parameters' );
             }
             if ( ! parameterValuesByName.containsKey( parameterName ) ) {
-                throw new Amoss_CallLogException( method + ' was not called with parameter ' + parameterName );
+                throw new Amoss_CallLogException( method + ' was not called with parameter \'' + parameterName + '\'' );
             }
             return parameterValuesByName.get( parameterName );
         }
@@ -625,7 +659,7 @@ public class Amoss_Instance implements StubProvider {
         * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
         * @return Map<String,Object> - The requested parameter values, indexed by their name.
         */
-        public List<Object> getCallLogParametersByName( String method, Integer callNumber ) {
+        public Map<String,Object> getCallLogParametersByName( String method, Integer callNumber ) {
             return getCallLog( method, callNumber ).getParametersByName();
         }        
     }

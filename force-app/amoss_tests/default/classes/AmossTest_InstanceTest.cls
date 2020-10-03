@@ -1044,7 +1044,36 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method  call.of.parameter
+    * @method  call.of.parametersByName
+    * @case    when given the details of a method that was never called
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void callOfParametersByName_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+                Map<String,Object> passedParameters = classToDoubleController.call( 0 ).of( 'methodUnderDouble' ).parametersByName();
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'call.of.parametersByName, when given the details of a method that was never called, will throw an exception' );
+        Amoss_Asserts.assertContains( 'methodUnderDouble was never called', exceptionMessage, 'call.of.parametersByName, when given the details of method that was never called, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  call.of.parameter (Integer)
     * @case    when given the details of a method call that happened
     * @result  will return the stated parameter of that call
     */
@@ -1063,12 +1092,31 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method  call.of.parameter (String)
+    * @case    when given the details of a method call that happened
+    * @result  will return the stated parameter of that call
+    */
+    @isTest
+    private static void callOfParameterString_whenGivenACallThatHappened_willReturnTheStatedParameterOfThatCall() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            classToDouble.methodUnderDouble( 'ActualParam', 2 );
+            Object passedParameter = classToDoubleController.call( 0 ).of( 'methodUnderDouble' ).parameter( 'parameter1' );
+        Test.stopTest();
+        
+        System.assertEquals( 'ActualParam', passedParameter, 'call.of.parameter (String), when given the details of a method call that happened, will return the stated parameter of that call' );
+    }
+
+    /**
     * @method  call.of.parameter
     * @case    when given the details of a method call that happened amongst many
     * @result  will return the parameter of that call
     */
     @isTest
-    private static void callOfParameters_whenGivenACallThatHappenedAmongstMany_willReturnTheParameterOfThatCall() {
+    private static void callOfParameter_whenGivenACallThatHappenedAmongstMany_willReturnTheParameterOfThatCall() {
         
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
@@ -1085,7 +1133,33 @@ public with sharing class AmossTest_InstanceTest {
             Object passedParameter = classToDoubleController.call( 2 ).of( 'methodUnderDouble' ).parameter( 1 );
         Test.stopTest();
         
-        System.assertEquals( 3, passedParameter, 'call.of.parameter, when given the details of a method call that happened amongst many - index from 0, will return the parameters of that call' );
+        System.assertEquals( 3, passedParameter, 'call.of.parameter, when given the details of a method call that happened amongst many - index from 0, will return the stated parameter of that call' );
+    }
+
+    /**
+    * @method  call.of.parameter (String)
+    * @case    when given the details of a method call that happened amongst many
+    * @result  will return the parameter of that call
+    */
+    @isTest
+    private static void callOfParameterString_whenGivenACallThatHappenedAmongstMany_willReturnTheParameterOfThatCall() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
+            classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+            classToDouble.methodUnderDouble( 'ActualParam2', 2 );
+            classToDouble.otherMethodUnderDouble( 'OtherActualParam2', 2 );
+            classToDouble.methodUnderDouble( 'ActualParam3', 3 ); // this is the one we're going to retrieve
+            classToDouble.otherMethodUnderDouble( 'OtherActualParam2', 3 );
+            classToDouble.methodUnderDouble( 'ActualParam4', 4 );
+
+            Object passedParameter = classToDoubleController.call( 2 ).of( 'methodUnderDouble' ).parameter( 'parameter2' );
+        Test.stopTest();
+        
+        System.assertEquals( 3, passedParameter, 'call.of.parameter (String), when given the details of a method call that happened amongst many - index from 0, will return the stated parameter of that call' );
     }
 
     /**
@@ -1120,6 +1194,37 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method  call.of.parameter (String)
+    * @case    when given the details of a call number that did not happen
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void callOfParameterString_whenGivenACallNumberThatDidNotHappen_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+
+            classToDouble.methodUnderDouble( 'ActualParam', 2 );
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+                Object passedParameter = classToDoubleController.call( 1 ).of( 'methodUnderDouble' ).parameter( 'parameter1' );
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'call.of.parameter (String), when given the details of a call number that did not happen, will throw an exception' );
+        Amoss_Asserts.assertContains( 'methodUnderDouble was not called 2 times', exceptionMessage, 'call.of.parameter (String), when given the details of a call number that did not happen, will throw an exception with a useful message' );
+    }
+
+    /**
     * @method  call.of.parameter
     * @case    when given the details of a method that was never called
     * @result  will throw an exception
@@ -1146,6 +1251,35 @@ public with sharing class AmossTest_InstanceTest {
 
         System.assert( exceptionThrown, 'call.of.parameter, when given the details of a method that was never called, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was never called', exceptionMessage, 'call.of.parameter, when given the details of method that was never called, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  call.of.parameter (String)
+    * @case    when given the details of a method that was never called
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void callOfParameterString_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+                Object passedParameter = classToDoubleController.call( 0 ).of( 'methodUnderDouble' ).parameter( 'parameter1' );
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'call.of.parameter (String), when given the details of a method that was never called, will throw an exception' );
+        Amoss_Asserts.assertContains( 'methodUnderDouble was never called', exceptionMessage, 'call.of.parameter (String), when given the details of method that was never called, will throw an exception with a useful message' );
     }
 
     /**
@@ -1211,6 +1345,37 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method  call.of.parameter (String)
+    * @case    when given the parameter name that does not exist
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void callOfParameter_whenGivenAParameterNameThatDoesNotExist_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+
+            classToDouble.methodUnderDouble( 'ActualParam', 2 );
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+                Object passedParameter = classToDoubleController.call( 0 ).of( 'methodUnderDouble' ).parameter( 'doesNotExist' );
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'call.of.parameter (String), when given a parameter name that does not exist, will throw an exception' );
+        Amoss_Asserts.assertContains( 'methodUnderDouble was not called with parameter \'doesNotExist\'', exceptionMessage, 'call.of.parameter (String), when given a parameter name that does not exist, will throw an exception with a useful message' );
+    }
+
+    /**
     * @method  call.of.parameter
     * @case    when given the parameter number for a method that has no parameters
     * @result  will throw an exception
@@ -1239,6 +1404,37 @@ public with sharing class AmossTest_InstanceTest {
 
         System.assert( exceptionThrown, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodWithNoParametersUnderDouble was not called with any parameters', exceptionMessage, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  call.of.parameter (String)
+    * @case    when given the parameter name for a method that has no parameters
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void callOfParameterString_whenGivenAParameterForAMethodThatHasNoParameters_willThrowAnException() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+
+            classToDouble.methodWithNoParametersUnderDouble();
+
+            Boolean exceptionThrown = false;
+            String  exceptionMessage;
+
+            try {
+                Object passedParameter = classToDoubleController.call( 0 ).of( 'methodWithNoParametersUnderDouble' ).parameter( 'noParametersExist' );
+            } catch ( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        
+        Test.stopTest();
+
+        System.assert( exceptionThrown, 'call.of.parameter (String), when given a parameter name for a method that has no parameters, will throw an exception' );
+        Amoss_Asserts.assertContains( 'methodWithNoParametersUnderDouble was not called with any parameters', exceptionMessage, 'call.of.parameter (String), when given a parameter name for a method that has no parameters, will throw an exception with a useful message' );
     }
 
     /**
@@ -1287,7 +1483,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter
     */
     @isTest
-    private static void parameters_whenAParameterIsAListOfObjects_willReturnTheParameter() {
+    private static void parameter_whenAParameterIsAListOfObjects_willReturnTheParameter() {
         
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
@@ -1303,12 +1499,33 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method  parameter (String)
+    * @case    when a parameter is a list of objects
+    * @result  will return the parameter
+    */
+    @isTest
+    private static void parameterString_whenAParameterIsAListOfObjects_willReturnTheParameter() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
+
+            classToDouble.methodWithListObject( parameterPassed );
+            List<Object> parameterReturned = (List<Object>)classToDoubleController.call( 0 ).of( 'methodWithListObject' ).parameter( 'parameter1' );
+        Test.stopTest();
+        
+        System.assertEquals( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a list of objects, will return the parameter' );
+    }
+
+    /**
     * @method  parameter
     * @case    when a parameter is a set of objects
     * @result  will return the parameter
     */
     @isTest
-    private static void parameters_whenAParameterIsASetOfObjects_willReturnTheParameter() {
+    private static void parameter_whenAParameterIsASetOfObjects_willReturnTheParameter() {
         
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
@@ -1324,12 +1541,33 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method  parameter (String)
+    * @case    when a parameter is a set of objects
+    * @result  will return the parameter
+    */
+    @isTest
+    private static void parameterString_whenAParameterIsASetOfObjects_willReturnTheParameter() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
+
+            classToDouble.methodWithSetObject( parameterPassed );
+            Set<Object> parameterReturned = (Set<Object>)classToDoubleController.call( 0 ).of( 'methodWithSetObject' ).parameter( 'parameter1' );
+        Test.stopTest();
+        
+        System.assertEquals( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a set of objects, will return the parameter' );
+    }
+
+    /**
     * @method  parameter
     * @case    when a parameter is a map of objects
     * @result  will return the parameter
     */
     @isTest
-    private static void parameters_whenAParameterIsAMapOfObjects_willReturnTheParameter() {
+    private static void parameter_whenAParameterIsAMapOfObjects_willReturnTheParameter() {
         
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
@@ -1342,6 +1580,27 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a map of objects, will return the parameter' );
+    }
+
+    /**
+    * @method  parameter (String)
+    * @case    when a parameter is a map of objects
+    * @result  will return the parameter
+    */
+    @isTest
+    private static void parameterString_whenAParameterIsAMapOfObjects_willReturnTheParameter() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            Map<String,Object> parameterPassed = new Map<String,Object>{ 'one' => 1, 'two' => '2', 'three' => new Contact() };
+
+            classToDouble.methodWithMapStringObject( parameterPassed );
+            Map<String,Object> parameterReturned = (Map<String,Object>)classToDoubleController.call( 0 ).of( 'methodWithMapStringObject' ).parameter( 'parameter1' );
+        Test.stopTest();
+        
+        System.assertEquals( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a map of objects, will return the parameter' );
     }
 
     //
