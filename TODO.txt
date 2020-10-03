@@ -14,6 +14,12 @@ Implement
         parameter (passing the parameter name)
         parametersByName
 
+    Code documentation (search for TODOs)
+
+    Test:
+        expects / allows behaviour matches when named notation is used
+        callDescription changes based on the type of parameter matching
+
     Test:
 
         Test the behaviour of combinations, with regards to 'allowsAnyCall'

@@ -614,7 +614,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         System.assert( exceptionThrown, 'when.method.withParameterNamed.willReturn, when setTo is called multiple times against a single withParameterNamed, will throw an exception' );
-        Amoss_Asserts.assertContains( 'Cannot call setTo more than once against a single withParameterNamed or andWithParameterNamed', exceptionMessage, 'when.method.withParameterNamed.willReturn, when setTo is called multiple times against a single withParameterNamed, will throw an exception explaining the problem' );
+        Amoss_Asserts.assertContains( 'Cannot call setTo except immediately after withParameterNamed or andWithParameterNamed', exceptionMessage, 'when.method.withParameterNamed.willReturn, when setTo is called multiple times against a single withParameterNamed, will throw an exception explaining the problem' );
     }
 
     /**
