@@ -996,19 +996,58 @@ public class Amoss_Instance implements StubProvider {
 
         String currentParameterName;
 
-        // TODO: document and implement
+        /**
+        * Adds the stated parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'andWithParameterNamed' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The name of the parameter to add to the specification
+        */        
         public Amoss_Expectation withParameterNamed( String parameterName ) {
             setParameterMatchingTypeToNamed();
             currentParameterName = parameterName;
             return this;
         }
 
-        // TODO: document and implement
+        /**
+        * Adds the stated parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'withParameterNamed' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The name of the parameter to add to the specification
+        */  
         public Amoss_Expectation andWithParameterNamed( String parameterName ) {
             return withParameterNamed( parameterName );
         }
 
-        // TODO: document and implement
+        /**
+        * States the parameter value that is expected for the the currently specified parameter.
+        *
+        * Is used in combination with 'withParameterNamed' and 'andWithParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The name of the parameter to add to the specification
+        */
         public Amoss_Expectation setTo( Object parameterValue ) {
             if ( String.isEmpty( currentParameterName ) ) {
                 throw new Amoss_NamedParameterSequenceException( 'Cannot call setTo except immediately after withParameterNamed or andWithParameterNamed' );
@@ -1016,55 +1055,6 @@ public class Amoss_Instance implements StubProvider {
             expectedNamedParameters.put( currentParameterName, new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
             currentParameterName = null;
             return this;
-        }
-
-        // TODO: document
-        private void setParameterMatchingTypeToPositional() {
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.NAMED ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition' );
-            }
-            // TODO: test this behaviour
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.MATCH_ANY ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
-            }
-            withAnyParameters = false;
-            parameterMatchingType = ParameterMatchingTypeEnum.POSITIONAL;
-        }
-
-        // TODO: document
-        private void setParameterMatchingTypeToNamed() {
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition' );
-            }
-            // TODO: test this behaviour
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.MATCH_ANY ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
-            }
-            this.withAnyParameters = false;
-            parameterMatchingType = ParameterMatchingTypeEnum.NAMED;
-        }
-
-        // TODO: document
-        // TODO: test this behaviour
-        private void setParameterMatchingTypeToAny() {
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.NAMED || parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
-            }
-            withAnyParameters = true;
-            parameterMatchingType = ParameterMatchingTypeEnum.MATCH_ANY;
-        }
-
-        // TODO: document
-        private Boolean matchesWithAnyParameters() {
-            return withAnyParameters;
-        }
-
-        private Boolean matchesWithPositionalParameters() {
-            return parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL;
-        }
-
-        private Boolean matchesWithNamedParameters() {
-            return parameterMatchingType == ParameterMatchingTypeEnum.NAMED;
         }
 
         /**
@@ -1313,6 +1303,93 @@ public class Amoss_Instance implements StubProvider {
 
             return true;
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the current expection's parameter matching mechanism to 'Positional'
+        *
+        * Will throw an exception if it is incompatible with previous specifications.
+        */
+        private void setParameterMatchingTypeToPositional() {
+            if ( parameterMatchingType == ParameterMatchingTypeEnum.NAMED ) {
+                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition' );
+            }
+            // TODO: test this behaviour
+            if ( parameterMatchingType == ParameterMatchingTypeEnum.MATCH_ANY ) {
+                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
+            }
+            withAnyParameters = false;
+            parameterMatchingType = ParameterMatchingTypeEnum.POSITIONAL;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the current expection's parameter matching mechanism to 'Named'
+        *
+        * Will throw an exception if it is incompatible with previous specifications.
+        */
+        private void setParameterMatchingTypeToNamed() {
+            if ( parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL ) {
+                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition' );
+            }
+            // TODO: test this behaviour
+            if ( parameterMatchingType == ParameterMatchingTypeEnum.MATCH_ANY ) {
+                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
+            }
+            this.withAnyParameters = false;
+            parameterMatchingType = ParameterMatchingTypeEnum.NAMED;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the current expection's parameter matching mechanism to 'Any'
+        *
+        * Will throw an exception if it is incompatible with previous specifications.
+        */
+        // TODO: test this behaviour
+        private void setParameterMatchingTypeToAny() {
+            if ( parameterMatchingType == ParameterMatchingTypeEnum.NAMED || parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL ) {
+                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
+            }
+            withAnyParameters = true;
+            parameterMatchingType = ParameterMatchingTypeEnum.MATCH_ANY;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes if the current parameter matching mechanism is set to be 'any parameters'
+        *
+        * @return Boolean - States if this expectation is set to match with any parameters
+        */
+        private Boolean matchesWithAnyParameters() {
+            return withAnyParameters;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes if the current parameter matching mechanism is set to be 'postional parameters'
+        *
+        * @return Boolean - States if this expectation is set to match based on positional parameters
+        */
+        private Boolean matchesWithPositionalParameters() {
+            return parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes if the current parameter matching mechanism is set to be 'named parameters'
+        *
+        * @return Boolean - States if this expectation is set to match based on positional parameters
+        */
+        private Boolean matchesWithNamedParameters() {
+            return parameterMatchingType == ParameterMatchingTypeEnum.NAMED;
+        }        
     }
 
     /**
