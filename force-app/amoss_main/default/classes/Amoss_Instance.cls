@@ -82,13 +82,13 @@ public class Amoss_Instance implements StubProvider {
     *       .withParameter( 'parameterValue' )
     *       .returning( 'theValueItShouldReturn' )
     */
-    public Amoss_Expectation expects() {
+    public Amoss_MethodDefiner expects() {
         if ( ! allowsAnyCallExplicitlyDefined ) {
             allowsAnyCall = false;
         }
         Amoss_Expectation newExpectation = new Amoss_Expectation( this );
         this.expectations.add( newExpectation );
-        return newExpectation;
+        return new Amoss_MethodDefiner( newExpectation );
     }
 
     /**
@@ -106,10 +106,10 @@ public class Amoss_Instance implements StubProvider {
     *   .withParameter( 'parameterValue' )
     *   .willReturn( 'theValueItShouldReturn' )
     */
-    public Amoss_Expectation when() {
+    public Amoss_MethodDefiner when() {
         Amoss_Expectation newExpectation = new Amoss_Expectation( this );
         this.whens.add( newExpectation );
-        return newExpectation;
+        return new Amoss_MethodDefiner( newExpectation );
     }
 
     /**
@@ -127,7 +127,7 @@ public class Amoss_Instance implements StubProvider {
     *   .withParameter( 'parameterValue' )
     *   .willReturn( 'theValueItShouldReturn' )
     */
-    public Amoss_Expectation allows() {
+    public Amoss_MethodDefiner allows() {
         if ( ! allowsAnyCallExplicitlyDefined ) {
             allowsAnyCall = false;
         }
@@ -764,6 +764,130 @@ public class Amoss_Instance implements StubProvider {
 
     private enum ParameterMatchingTypeEnum { NAMED, POSITIONAL, MATCH_ANY }
 
+
+    // TODO: add the variations
+    // TODO: remove the redundant ones from Expection
+    public virtual class Amoss_ExpectationDefiner {
+        protected Amoss_Expectation expectation;
+
+        public Amoss_ExpectationDefiner( Amoss_Expectation expectation ) {
+            this.expectation = expectation;
+        }
+    }
+
+    public class Amoss_MethodDefiner extends Amoss_ExpectationDefiner {
+        public Amoss_MethodDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+        public Amoss_ParametersDefiner method( String method ) {
+            expectation.method( method );
+            return new Amoss_ParametersDefiner( expectation );
+        }
+    }
+
+    public virtual class Amoss_NextExpectationDefiner extends Amoss_ExpectationDefiner {
+        public Amoss_NextExpectationDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+        public Amoss_Instance then() {
+            return expectation.then();
+        }
+        public Amoss_Instance also() {
+            return expectation.also();
+        }
+    }
+
+    public virtual class Amoss_ReturnsDefiner extends Amoss_NextExpectationDefiner {
+        public Amoss_ReturnsDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+        public Amoss_NextExpectationDefiner returns( Object returnValue ) {
+            expectation.returns( returnValue );
+            return new Amoss_NextExpectationDefiner( expectation ); // actually needs a new one?
+        }
+        public Amoss_NextExpectationDefiner willReturn( Object returnValue ) {
+            return this.returns( returnValue );
+        }
+        public Amoss_NextExpectationDefiner returning( Object returnValue ) {
+            return this.returns( returnValue );
+        }
+        public Amoss_NextExpectationDefiner throws( Exception exceptionToThrow ) {
+            expectation.throws( exceptionToThrow );
+            return new Amoss_NextExpectationDefiner( expectation ); // actually needs a new one?
+        }
+        public Amoss_NextExpectationDefiner willThrow( Exception exceptionToThrow ) {
+            return this.throws( exceptionToThrow );
+        }
+        public Amoss_NextExpectationDefiner throwing( Exception exceptionToThrow ) {
+            return this.throws( exceptionToThrow );
+        }
+    }
+
+    public class Amoss_PositionalParametersDefiner extends Amoss_ReturnsDefiner {
+        public Amoss_PositionalParametersDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+        public Amoss_PositionalParametersDefiner andThenParameter( Object parameterValue ) {
+            expectation.andThenParameter( parameterValue );
+            return this;
+        }
+        public Amoss_PositionalParametersDefiner andThenAnyParameter() {
+            expectation.andThenAnyParameter();
+            return this;
+        }
+    }
+
+    public class Amoss_NamedParameterValueDefiner extends Amoss_ExpectationDefiner {
+        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+        public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
+            expectation.setTo( parameterValue );
+            return new Amoss_NamedParametersDefiner( expectation ); // needs to be a new expectation?
+        }
+    }
+
+    // TODO: rename to andParameterNamed
+    public class Amoss_NamedParametersDefiner extends Amoss_ReturnsDefiner {
+        public Amoss_NamedParametersDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+        public Amoss_NamedParameterValueDefiner andWithParameterNamed( String parameterName ) {
+            expectation.andWithParameterNamed( parameterName ); 
+            return new Amoss_NamedParameterValueDefiner( expectation );
+        }
+    }
+
+    public class Amoss_ParametersDefiner extends Amoss_ReturnsDefiner {
+        public Amoss_ParametersDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+        public Amoss_ReturnsDefiner withAnyParameters() {
+            expectation.withAnyParameters();
+            return new Amoss_ReturnsDefiner( expectation );
+        }
+        public Amoss_ReturnsDefiner withParameters( Object[] parameters ) {
+            expectation.withParameters( parameters );
+            return new Amoss_ReturnsDefiner( expectation );
+        }
+        public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
+            expectation.withParameters( parameters );
+            return new Amoss_ReturnsDefiner( expectation );
+        }
+        public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
+            expectation.withParameter( parameterValue );
+            return new Amoss_PositionalParametersDefiner( expectation );
+        }
+        public Amoss_PositionalParametersDefiner withAnyParameter() {
+            expectation.withAnyParameter();
+            return new Amoss_PositionalParametersDefiner( expectation );
+        }
+        public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
+            expectation.withParameterNamed( parameterName );
+            return new Amoss_NamedParameterValueDefiner( expectation );
+        }
+    }
+
     /**
     * Internal class that should not be referenced directly in a test
     *
@@ -792,6 +916,10 @@ public class Amoss_Instance implements StubProvider {
 
         public Amoss_Expectation( Amoss_Instance mockControl ) {
             this.mockControl = mockControl;
+        }
+
+        public Amoss_Instance getMockControl() {
+            return this.mockControl;
         }
 
         /**
