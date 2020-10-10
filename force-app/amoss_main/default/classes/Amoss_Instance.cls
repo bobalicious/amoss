@@ -37,7 +37,7 @@ SOFTWARE.
 *
 */
 @isTest
-public class Amoss_Instance implements StubProvider {
+public without sharing class Amoss_Instance implements StubProvider {
 
     class Amoss_CallLogException extends Exception {}
     class Amoss_ParameterMatchingTypeEnumException extends Exception {}
@@ -671,7 +671,7 @@ public class Amoss_Instance implements StubProvider {
     * Describes the definition of a mock object's 'expectations' or 'whens' within a test and allows the interrogation of that definition.
     *
     */
-    public with sharing class Amoss_Expectations {
+    private class Amoss_Expectations {
 
         private List<Amoss_Expectation> expectations = new List<Amoss_Expectation>();
 
@@ -765,7 +765,7 @@ public class Amoss_Instance implements StubProvider {
     private enum ParameterMatchingTypeEnum { NAMED, POSITIONAL, MATCH_ANY }
 
 
-    // TODO: add the variations
+    // TODO: consider removing the synonyms
     // TODO: remove the redundant ones from Expection
     public virtual class Amoss_ExpectationDefiner {
         protected Amoss_Expectation expectation;
@@ -779,6 +779,18 @@ public class Amoss_Instance implements StubProvider {
         public Amoss_MethodDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
+
+        /**
+        * Allows the definition of the method that this 'expectation' or 'when' is for
+        *
+        * For example:
+        *   .expects()
+        *       .method( 'methodName' )
+        *       .withParameter( 'parameterValue' )
+        *       .returning( 'theValueItShouldReturn' )
+        *
+        * @param String - The method that this expectation is for
+        */        
         public Amoss_ParametersDefiner method( String method ) {
             expectation.method( method );
             return new Amoss_ParametersDefiner( expectation );
@@ -789,11 +801,33 @@ public class Amoss_Instance implements StubProvider {
         public Amoss_NextExpectationDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
+
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance
+        *
+        * For example:
+        * .then().expects()
+        *       .method( 'methodName' )
+        *       .withParameter( 'parameterValue' )
+        *       .returning( 'theValueItShouldReturn' )
+        */
         public Amoss_Instance then() {
-            return expectation.then();
+            return expectation.getMockControl();
         }
+
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance.
+        *
+        * Is a synonym for 'then'.
+        *
+        * For example:
+        * .also().when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'parameterValue' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
         public Amoss_Instance also() {
-            return expectation.also();
+            return then();
         }
     }
 
@@ -801,23 +835,101 @@ public class Amoss_Instance implements StubProvider {
         public Amoss_ReturnsDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
+
+        /**
+        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .returns( 'theValueItShouldReturn' )
+        *
+        * Has 'returning' and 'willReturn' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The value to return when this expectation is met.
+        */
         public Amoss_NextExpectationDefiner returns( Object returnValue ) {
             expectation.returns( returnValue );
-            return new Amoss_NextExpectationDefiner( expectation ); // actually needs a new one?
+            return new Amoss_NextExpectationDefiner( expectation );
         }
+
+        /**
+        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'returning' and 'returns' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The value to return when this expectation is met.
+        */
         public Amoss_NextExpectationDefiner willReturn( Object returnValue ) {
             return this.returns( returnValue );
         }
+
+        /**
+        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'methodName' )
+        *       .returning( 'theValueItShouldReturn' )
+        *
+        * Has 'returns' and 'willReturn' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The value to return when this expectation is met.
+        */
         public Amoss_NextExpectationDefiner returning( Object returnValue ) {
             return this.returns( returnValue );
         }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .throws( new DmlException( 'The exception' ) )
+        *
+        * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The Exception to throw when this expectation is met.
+        */
         public Amoss_NextExpectationDefiner throws( Exception exceptionToThrow ) {
             expectation.throws( exceptionToThrow );
-            return new Amoss_NextExpectationDefiner( expectation ); // actually needs a new one?
+            return new Amoss_NextExpectationDefiner( expectation );
         }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .willThrow( new DmlException( 'The exception' ) )
+        *
+        * Has 'throwing' and 'throws' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The Exception to throw when this expectation is met.
+        */
         public Amoss_NextExpectationDefiner willThrow( Exception exceptionToThrow ) {
             return this.throws( exceptionToThrow );
         }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'methodName' )
+        *       .throwing( new DmlException( 'The exception' ) )
+        *
+        * Has 'throws'and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The Exception to throw when this expectation is met.
+        */
         public Amoss_NextExpectationDefiner throwing( Exception exceptionToThrow ) {
             return this.throws( exceptionToThrow );
         }
@@ -827,34 +939,150 @@ public class Amoss_Instance implements StubProvider {
         public Amoss_PositionalParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
+
+        /**
+        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'Parameter1' )
+        *       .andThenParameter( 4 )
+        *       .andThenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'thenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The parameter value to add to the list of expected ones
+        */
         public Amoss_PositionalParametersDefiner andThenParameter( Object parameterValue ) {
-            expectation.andThenParameter( parameterValue );
+            expectation.withParameter( parameterValue ); // change to 'addParameterValue'
             return this;
         }
+
+        /**
+        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'Parameter1' )
+        *       .thenParameter( 4 )
+        *       .thenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'andThenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The parameter value to add to the list of expected ones
+        */
+        public Amoss_PositionalParametersDefiner thenParameter( Object parameterValue ) {
+            return andThenParameter( parameterValue );
+        }        
+
+        /**
+        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'Parameter1' )
+        *       .thenAnyParameter()
+        *       .thenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'andThenAnyParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        */
+        public Amoss_PositionalParametersDefiner thenAnyParameter() {
+            expectation.withAnyParameter(); // change to 'addAnyParameter'
+            return this;
+        }
+
+        /**
+        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'Parameter1' )
+        *       .andThenAnyParameter()
+        *       .andThenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'thenAnyParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        */
         public Amoss_PositionalParametersDefiner andThenAnyParameter() {
-            expectation.andThenAnyParameter();
-            return this;
-        }
+            return thenAnyParameter();
+        }        
     }
 
     public class Amoss_NamedParameterValueDefiner extends Amoss_ExpectationDefiner {
         public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
+
+        /**
+        * States the parameter value that is expected for the the currently specified parameter.
+        *
+        * Is used in combination with 'withParameterNamed' and 'andWithParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
             expectation.setTo( parameterValue );
             return new Amoss_NamedParametersDefiner( expectation ); // needs to be a new expectation?
         }
     }
 
-    // TODO: rename to andParameterNamed
     public class Amoss_NamedParametersDefiner extends Amoss_ReturnsDefiner {
         public Amoss_NamedParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
+
+        /**
+        * Adds the stated parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'withParameterNamed' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The name of the parameter to add to the specification
+        */
+        // TODO: rename to andParameterNamed
         public Amoss_NamedParameterValueDefiner andWithParameterNamed( String parameterName ) {
-            expectation.andWithParameterNamed( parameterName ); 
+            expectation.withParameterNamed( parameterName ); 
             return new Amoss_NamedParameterValueDefiner( expectation );
+        }
+
+        /**
+        * Adds the stated parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'withParameterNamed' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The name of the parameter to add to the specification
+        */
+        public Amoss_NamedParameterValueDefiner andParameterNamed( String parameterName ) {
+            return andWithParameterNamed( parameterName );
         }
     }
 
@@ -862,26 +1090,115 @@ public class Amoss_Instance implements StubProvider {
         public Amoss_ParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
+
+        /**
+        * States that this 'expection' or 'when' is valid for any combination of parameters.
+        *
+        * Is optional, as omitting parameter definitions will result in any parameter being valid.
+        *
+        * Generally used for stubbing methods that are not the primary focus of a given test.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withAnyParameter()
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        */
         public Amoss_ReturnsDefiner withAnyParameters() {
             expectation.withAnyParameters();
             return new Amoss_ReturnsDefiner( expectation );
         }
+
+        /**
+        * States that this 'expection' or 'when' is valid for this given list of parameters.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameters( Object[]{ 'Parameter1' 4, false })
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object[] - The list of parameter values that are expected
+        */
+        // TODO: test
         public Amoss_ReturnsDefiner withParameters( Object[] parameters ) {
             expectation.withParameters( parameters );
             return new Amoss_ReturnsDefiner( expectation );
         }
+
+        /**
+        * States that this 'expection' or 'when' is valid for this given map of parameters, indexed by the parameter name.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameters( new Map<String,Object>{
+        *                        'parameterName1' => 'The Parameter Value',
+        *                        'parameterName2' => 15,
+        *                       })
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Map<String,Object> - The map of parameter values that are expected
+        */
+        // TODO: test
         public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
             expectation.withParameters( parameters );
             return new Amoss_ReturnsDefiner( expectation );
         }
+
+        /**
+        * Sets the expected value of the first parameter in the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'Parameter1' )
+        *       .thenParameter( 4 )
+        *       .thenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Once called, allows 'thenParameter' and similar to be called (positional syntax), to add further parameters
+        *
+        * @param Object - The parameter value to add to the list of expected ones
+        */
         public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
-            expectation.withParameter( parameterValue );
+            expectation.withParameter( parameterValue ); // TODO: change to setNextParameterValueTo
             return new Amoss_PositionalParametersDefiner( expectation );
         }
+
+        /**
+        * Sets the expected value of the first parameter in the list of parameters to be 'any value' for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withAnyParameter()
+        *       .thenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Once called, allows 'thenParameter' and similar to be called (positional parameter syntax), to add further parameters.
+        *
+        */
         public Amoss_PositionalParametersDefiner withAnyParameter() {
-            expectation.withAnyParameter();
+            expectation.withAnyParameter(); // TODO: change to setNextParameterValueToAny
             return new Amoss_PositionalParametersDefiner( expectation );
         }
+
+        /**
+        * Sets the name of an expected parameter, to be followed by 'setTo' in order to specify the value.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Once used, defines the parameter specifications as using 'named parameter' syntax, and 'andWithParameterNamed' can be called to add further parameters.
+        *
+        * @param String - The name of the parameter to add to the specification
+        */   
         public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
             expectation.withParameterNamed( parameterName );
             return new Amoss_NamedParameterValueDefiner( expectation );
@@ -892,6 +1209,8 @@ public class Amoss_Instance implements StubProvider {
     * Internal class that should not be referenced directly in a test
     *
     * Describes the definition and behaviour of an 'expectation' or 'when' that is defined within a test.
+    *
+    * Is configured using 'Expectation Definers'
     *
     */
     public class Amoss_Expectation {
@@ -923,15 +1242,10 @@ public class Amoss_Instance implements StubProvider {
         }
 
         /**
-        * Allows the definition of the method that this 'expectation' or 'when' is for
-        *
-        * For example:
-        *   .expects()
-        *       .method( 'methodName' )
-        *       .withParameter( 'parameterValue' )
-        *       .returning( 'theValueItShouldReturn' )
+        * Internal method that assigns the methods that this expectation is for.
         *
         * @param String - The method that this expectation is for
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
         public Amoss_Expectation method( String method ) {
             this.expectedMethod = method;
@@ -939,38 +1253,23 @@ public class Amoss_Instance implements StubProvider {
         }
 
         /**
-        * States that this 'expection' or 'when' is valid for any combination of parameters.
+        * Internal method that states that this expectation will allow parameters to be any value
         *
-        * Is optional, as omitting parameter definitions will result in any parameter being valid.
-        *
-        * Generally used for stubbing methods that are not the primary focus of a given test.
-        *
-        * For example:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withAnyParameter()
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
+        // TODO: remove and make 'setParameterMatchingTypeToAny' public
         public Amoss_Expectation withAnyParameters() {
             setParameterMatchingTypeToAny();
             return this;
         }
 
         /**
-        * States that this 'expection' or 'when' is valid for this given list of parameters.
-        *
-        * For example:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameters( Object[]{ 'Parameter1' 4, false })
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Although unusual, can be followed by an andThenParameter call.
+        * Internal method that specifies the expected parameters as a list
         *
         * @param Object[] - The list of parameter values that are expected
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
-        // TODO: test
+        // TODO: remove and use inside the Definer instead?
         public Amoss_Expectation withParameters( Object[] parameterValues ) { // to encourage the shorter syntax
             this.expectedPositionalParameters = new List<Amoss_ExpectationParameter>();
             for ( Object thisParameterValue : parameterValues ) {
@@ -980,25 +1279,14 @@ public class Amoss_Instance implements StubProvider {
             return this;
         }
 
-        // implement a named Map version of withAn
         /**
-        * States that this 'expection' or 'when' is valid for this given list of parameters.
+        * Internal method that specifies the expected parameters as a map, indexed by the parameter name
         *
-        * For example:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameters( new Map<String,Object>{
-        *                        'parameterName1' => 'The Parameter Value',
-        *                        'parameterName2' => 15,
-        *                       })
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Although unusual, can be followed by an andThenParameter call.
-        *
-        * @param Object[] - The list of parameter values that are expected
+        * @param Map<String,Object> - The map of parameter values that are expected, indexed by name
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
-        // TODO: test
-        public Amoss_Expectation withParameters( Map<String,Object> parameters ) { // to encourage the shorter syntax
+        // TODO: remove and use inside the Definer instead?
+        public Amoss_Expectation withParameters( Map<String,Object> parameters ) {
             this.expectedNamedParameters = new Map<String,Amoss_ExpectationParameter>();
             for ( String thisParameterName : parameters.keySet() ) {
                 withParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
@@ -1007,22 +1295,13 @@ public class Amoss_Instance implements StubProvider {
             return this;
         }
 
-
         /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .andThenParameter( 4 )
-        *       .andThenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'andThenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+        * Internal method that adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
         *
         * @param Object - The parameter value to add to the list of expected ones
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
+        // TODO: rename to addParameterValue
         public Amoss_Expectation withParameter( Object parameterValue ) {
             setParameterMatchingTypeToPositional();
             this.expectedPositionalParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
@@ -1030,114 +1309,26 @@ public class Amoss_Instance implements StubProvider {
         }
 
         /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withAnyParameter()
-        *       .thenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'andThenAnyParameter' and 'thenAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
+        * Internal method that adds an 'any parameter value' to the list of parameters that are valid for this 'expection' or 'when'.
+        * 
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
+        // TODO: rename to addAnyParmeterValue
         public Amoss_Expectation withAnyParameter() {
             setParameterMatchingTypeToPositional();
             this.expectedPositionalParameters.add( new Amoss_ExpectationParameter().anyValue() );
             return this;
         }
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .thenAnyParameter()
-        *       .thenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'andThenAnyParameter' and 'withAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        */
-        public Amoss_Expectation thenAnyParameter() {
-            return withAnyParameter();
-        }
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .andThenAnyParameter()
-        *       .andThenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'thenAnyParameter' and 'withAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        */
-        public Amoss_Expectation andThenAnyParameter() {
-            return withAnyParameter();
-        }    
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .andThenParameter( 4 )
-        *       .andThenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'withParameter' and 'thenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The parameter value to add to the list of expected ones
-        */
-        public Amoss_Expectation andThenParameter( Object parameterValue ) {
-            return withParameter( parameterValue );
-        }
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .thenParameter( 4 )
-        *       .thenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'withParameter' and 'andThenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The parameter value to add to the list of expected ones
-        */
-        public Amoss_Expectation thenParameter( Object parameterValue ) {
-            return withParameter( parameterValue );
-        }
-
+  
         String currentParameterName;
 
         /**
-        * Adds the stated parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        * Internal method that sets the name of the current parameter being specified (named notation)
         *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
-        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'andWithParameterNamed' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The name of the parameter to add to the specification
-        */        
+        * @param String - The name of the parameter to add to the specification
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */ 
+        // TODO: combine this and setTo into a single call against the expectation       
         public Amoss_Expectation withParameterNamed( String parameterName ) {
             setParameterMatchingTypeToNamed();
             currentParameterName = parameterName;
@@ -1145,37 +1336,12 @@ public class Amoss_Instance implements StubProvider {
         }
 
         /**
-        * Adds the stated parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        * Internal method that sets the expected value of the currently specified parameter
         *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
-        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'withParameterNamed' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The name of the parameter to add to the specification
-        */  
-        public Amoss_Expectation andWithParameterNamed( String parameterName ) {
-            return withParameterNamed( parameterName );
-        }
-
-        /**
-        * States the parameter value that is expected for the the currently specified parameter.
-        *
-        * Is used in combination with 'withParameterNamed' and 'andWithParameterNamed'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
-        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * @param Object - The name of the parameter to add to the specification
+        * @param Object - The value of the parameter to add to the specification
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
+        // TODO: combine this and withParameterNamed into a single call against the expectation - removes the exception and the 'currentParameterName' from here    
         public Amoss_Expectation setTo( Object parameterValue ) {
             if ( String.isEmpty( currentParameterName ) ) {
                 throw new Amoss_NamedParameterSequenceException( 'Cannot call setTo except immediately after withParameterNamed or andWithParameterNamed' );
@@ -1186,129 +1352,25 @@ public class Amoss_Instance implements StubProvider {
         }
 
         /**
-        * States the value that should be returned when this 'expectation' or 'when' is met. 
-        *
-        * For example, to specify:
-        *   .expects()
-        *       .method( 'methodName' )
-        *       .returning( 'theValueItShouldReturn' )
-        *
-        * Has 'returns' and 'willReturn' as synonyms, and these methods are entirely interchangeable based on preference.
+        * Internal method that sets the value to return when this expectation is met
         *
         * @param Object - The value to return when this expectation is met.
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
-        public Amoss_Expectation returning( Object returnValue ) {
+        public Amoss_Expectation returns( Object returnValue ) {
             this.returnValue = returnValue;
             return this;
         }
 
         /**
-        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        * Internal method that sets the exception to throw when this expectation is met
         *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .returns( 'theValueItShouldReturn' )
-        *
-        * Has 'returning' and 'willReturn' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The value to return when this expectation is met.
-        */
-        public Amoss_Expectation returns( Object returnValue ) {
-            return returning( returnValue );
-        }
-
-        /**
-        * States the value that should be returned when this 'expectation' or 'when' is met. 
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'returning' and 'returns' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The value to return when this expectation is met.
-        */
-        public Amoss_Expectation willReturn( Object returnValue ) {
-            return returning( returnValue );
-        }
-
-        /**
-        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
-        *
-        * For example, to specify:
-        *   .expects()
-        *       .method( 'methodName' )
-        *       .throwing( new DmlException( 'The exception' ) )
-        *
-        * Has 'throws'and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The Exception to throw when this expectation is met.
-        */
-        public Amoss_Expectation throwing( Exception exceptionToThrow ) {
-            this.exceptionToThrow = exceptionToThrow;
-            return this;
-        }
-
-        /**
-        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .throws( new DmlException( 'The exception' ) )
-        *
-        * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The Exception to throw when this expectation is met.
+        * @param Object - The exception to throw when this expectation is met.
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
         public Amoss_Expectation throws( Exception exceptionToThrow ) {
-            return this.throwing( exceptionToThrow );
-        }
-
-        /**
-        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .willThrow( new DmlException( 'The exception' ) )
-        *
-        * Has 'throwing' and 'throws' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The Exception to throw when this expectation is met.
-        */
-        public Amoss_Expectation willThrow( Exception exceptionToThrow ) {
-            return this.throwing( exceptionToThrow );
-        }
-
-        /**
-        * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance
-        *
-        * For example:
-        * .then().expects()
-        *       .method( 'methodName' )
-        *       .withParameter( 'parameterValue' )
-        *       .returning( 'theValueItShouldReturn' )
-        */
-        public Amoss_Instance then() {
-            return this.mockControl;
-        }
-
-        /**
-        * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance.
-        *
-        * Is a synonym for 'then'.
-        *
-        * For example:
-        * .also().when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'parameterValue' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        */
-        public Amoss_Instance also() {
-            return then();
+            this.exceptionToThrow = exceptionToThrow;
+            return this;
         }
 
         /**
