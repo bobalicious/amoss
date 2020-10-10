@@ -1,5 +1,21 @@
 Amoss - Apex Mocks, Spies and Stubs
 
+To finish the named parameters implementation:
+
+    Test: 
+        withParameters (both versions)
+        Consider adding a lot more tests - check what doesn't fail...
+    
+    Document:
+        Specifying named parameters
+        Consider a class diagram
+    
+    Re-structure:
+        Implement a parameter matcher class structure
+
+    Implement:
+        Change in how the call description is built when named parameters are in use
+
 Documentation:
 
     Review definitions from xUnit Patterns and ensure that the Amoss definitions match.

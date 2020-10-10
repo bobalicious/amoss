@@ -1003,14 +1003,9 @@ public without sharing class Amoss_Instance implements StubProvider {
 
         String parameterName;
 
-        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation ) {
+        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation, String parameterName ) {
             super( expectation );
-        }
-
-        // TODO: document
-        public Amoss_NamedParameterValueDefiner setParameterName( String parameterName ) {
             this.parameterName = parameterName;
-            return this;
         }
 
         /**
@@ -1057,7 +1052,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The name of the parameter to add to the specification
         */
         public Amoss_NamedParameterValueDefiner andParameterNamed( String parameterName ) {
-            return new Amoss_NamedParameterValueDefiner( expectation ).setParameterName( parameterName );
+            return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
         }
     }
 
@@ -1186,7 +1181,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param String - The name of the parameter to add to the specification
         */   
         public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
-            return new Amoss_NamedParameterValueDefiner( expectation ).setParameterName( parameterName );
+            return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
         }
     }
 
