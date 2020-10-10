@@ -257,17 +257,6 @@ public without sharing class Amoss_Instance implements StubProvider {
     public String getClassName() {
         return String.valueOf( this.classType );
     }
-
-    /**
-    * Internal method that should not be called directly in tests.
-    * 
-    * Get the assertion mechanism for this mock object implementation
-    *
-    * @return  Amoss_Asserts - The assertionMechanism object
-    */
-    public Amoss_Asserts getAsserts() {
-        return this.assertionMechanism;
-    }
     
     /**
     * Internal method that should not be called directly in tests.
