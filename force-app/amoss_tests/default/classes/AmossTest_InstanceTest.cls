@@ -173,7 +173,7 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter2' ).setTo( 1 )
-                .andWithParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .andParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
                 .willReturn( 'expectedReturn' );
 
         Test.startTest();
@@ -365,7 +365,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().when()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2' ) .setTo( 1 )
+                .andParameterNamed( 'parameter2' ) .setTo( 1 )
                 .willReturn( 'expectedReturn1' );
 
         Test.startTest();
@@ -393,7 +393,7 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2' ) .setTo( 1 )
+                .andParameterNamed( 'parameter2' ) .setTo( 1 )
                 .willReturn( 'expectedReturn1' )
             .also().when()
                 .method( 'methodUnderDouble' )
@@ -781,7 +781,7 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2' ).setTo( 1 )
+                .andParameterNamed( 'parameter2' ).setTo( 1 )
                 .returning( 'expectedReturn' );
 
         Test.startTest();
@@ -878,17 +878,17 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .andParameterNamed( 'parameter2').setTo( 1 )
                 .returning( 'firstReturn' )
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .andParameterNamed( 'parameter2').setTo( 1 )
                 .returning( 'secondReturn' )
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .andParameterNamed( 'parameter2').setTo( 1 )
                 .returning( 'thirdReturn' );
 
         Test.startTest();
@@ -925,7 +925,7 @@ public with sharing class AmossTest_InstanceTest {
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter2').setTo( 1 )
-                .andWithParameterNamed( 'parameter1').setTo( 'ActualParam1' )
+                .andParameterNamed( 'parameter1').setTo( 'ActualParam1' )
                 .returning( 'thirdReturn' );
 
         Test.startTest();

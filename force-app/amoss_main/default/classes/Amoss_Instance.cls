@@ -762,11 +762,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
-    private enum ParameterMatchingTypeEnum { NAMED, POSITIONAL, MATCH_ANY }
-
-
     // TODO: consider removing the synonyms
     // TODO: remove the redundant ones from Expection
+    /**
+     * The base class for all Expectation Definers - being the classes that embody the grammar for specifying expectations
+     */
     public virtual class Amoss_ExpectationDefiner {
         protected Amoss_Expectation expectation;
 
@@ -775,6 +775,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
+    /**
+     * The main entry point of the grammar - the specifiecation of a method
+     */
     public class Amoss_MethodDefiner extends Amoss_ExpectationDefiner {
         public Amoss_MethodDefiner( Amoss_Expectation expectation ) {
             super( expectation );
@@ -797,6 +800,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
+    /**
+     * The linking point of the grammar - stating that another expectation is to be configured
+     * Effectively ends this instance of the configuration and hands control back to the 
+     * Amoss_Instance, which can start a new expectation
+     */
     public virtual class Amoss_NextExpectationDefiner extends Amoss_ExpectationDefiner {
         public Amoss_NextExpectationDefiner( Amoss_Expectation expectation ) {
             super( expectation );
@@ -831,6 +839,13 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
+    /**
+     * The part of the grammar that allows the specification of the return behaviour.
+     *
+     * Allows returns or the throwing of exceptions to be specified.
+     *
+     * Extends Next Expectation, as a method does not have to return anything.
+     */
     public virtual class Amoss_ReturnsDefiner extends Amoss_NextExpectationDefiner {
         public Amoss_ReturnsDefiner( Amoss_Expectation expectation ) {
             super( expectation );
@@ -935,6 +950,10 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
+    /**
+     * The part of the grammar that allows the specification of parameters based on their
+     * position.  I.E. expected parameters are defined in order.
+     */
     public class Amoss_PositionalParametersDefiner extends Amoss_ReturnsDefiner {
         public Amoss_PositionalParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
@@ -1017,54 +1036,53 @@ public without sharing class Amoss_Instance implements StubProvider {
         }        
     }
 
+    /**
+     * The part of the grammar that allows the specification of the value of a named parameter.
+     * The name must have already been specified.
+     *
+     * At this point in the syntax, the only valid thing to do is define the parameter value.
+     */
     public class Amoss_NamedParameterValueDefiner extends Amoss_ExpectationDefiner {
+
+        String parameterName;
+
         public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
+        }
+
+        // TODO: document
+        public Amoss_NamedParameterValueDefiner setParameterName( String parameterName ) {
+            this.parameterName = parameterName;
+            return this;
         }
 
         /**
         * States the parameter value that is expected for the the currently specified parameter.
         *
-        * Is used in combination with 'withParameterNamed' and 'andWithParameterNamed'.
+        * Is used in combination with 'withParameterNamed'.
         *
         * For example, to specify:
         *   .when()
         *       .method( 'methodName' )
         *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
-        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .andParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
-            expectation.setTo( parameterValue );
+            expectation.setNamedParameterValue( parameterName, parameterValue );
             return new Amoss_NamedParametersDefiner( expectation ); // needs to be a new expectation?
         }
     }
 
+    /**
+     * The part of the grammar that allows the specification of parameters based on their
+     * names.  I.E. expected parameters are defined in a name and value pairing.
+     */
     public class Amoss_NamedParametersDefiner extends Amoss_ReturnsDefiner {
         public Amoss_NamedParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
-        }
-
-        /**
-        * Adds the stated parameter to the list of parameters that are valid for this 'expection' or 'when'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
-        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'withParameterNamed' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The name of the parameter to add to the specification
-        */
-        // TODO: rename to andParameterNamed
-        public Amoss_NamedParameterValueDefiner andWithParameterNamed( String parameterName ) {
-            expectation.withParameterNamed( parameterName ); 
-            return new Amoss_NamedParameterValueDefiner( expectation );
         }
 
         /**
@@ -1082,10 +1100,16 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The name of the parameter to add to the specification
         */
         public Amoss_NamedParameterValueDefiner andParameterNamed( String parameterName ) {
-            return andWithParameterNamed( parameterName );
+            return new Amoss_NamedParameterValueDefiner( expectation ).setParameterName( parameterName );
         }
     }
 
+    /**
+     * The part of the grammar that allows the first specification of a parameter.
+     *
+     * The choice of parameter specification method at this point defines the syntax that will
+     * be used for the remainder of the specification - Any, Positional or Named.
+     */
     public class Amoss_ParametersDefiner extends Amoss_ReturnsDefiner {
         public Amoss_ParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
@@ -1192,18 +1216,19 @@ public without sharing class Amoss_Instance implements StubProvider {
         *   .when()
         *       .method( 'methodName' )
         *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
-        *       .andWithParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .andParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * Once used, defines the parameter specifications as using 'named parameter' syntax, and 'andWithParameterNamed' can be called to add further parameters.
+        * Once used, defines the parameter specifications as using 'named parameter' syntax, and 'andParameterNamed' can be called to add further parameters.
         *
         * @param String - The name of the parameter to add to the specification
         */   
         public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
-            expectation.withParameterNamed( parameterName );
-            return new Amoss_NamedParameterValueDefiner( expectation );
+            return new Amoss_NamedParameterValueDefiner( expectation ).setParameterName( parameterName );
         }
     }
+
+    private enum ParameterMatchingTypeEnum { NAMED, POSITIONAL, MATCH_ANY }
 
     /**
     * Internal class that should not be referenced directly in a test
@@ -1289,7 +1314,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         public Amoss_Expectation withParameters( Map<String,Object> parameters ) {
             this.expectedNamedParameters = new Map<String,Amoss_ExpectationParameter>();
             for ( String thisParameterName : parameters.keySet() ) {
-                withParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
+                setNamedParameterValue( thisParameterName, parameters.get( thisParameterName ) );
             }
 
             return this;
@@ -1328,26 +1353,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param String - The name of the parameter to add to the specification
         * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */ 
-        // TODO: combine this and setTo into a single call against the expectation       
-        public Amoss_Expectation withParameterNamed( String parameterName ) {
+        public Amoss_Expectation setNamedParameterValue( String parameterName, Object parameterValue ) {
             setParameterMatchingTypeToNamed();
-            currentParameterName = parameterName;
-            return this;
-        }
-
-        /**
-        * Internal method that sets the expected value of the currently specified parameter
-        *
-        * @param Object - The value of the parameter to add to the specification
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        // TODO: combine this and withParameterNamed into a single call against the expectation - removes the exception and the 'currentParameterName' from here    
-        public Amoss_Expectation setTo( Object parameterValue ) {
-            if ( String.isEmpty( currentParameterName ) ) {
-                throw new Amoss_NamedParameterSequenceException( 'Cannot call setTo except immediately after withParameterNamed or andWithParameterNamed' );
-            }
-            expectedNamedParameters.put( currentParameterName, new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
-            currentParameterName = null;
+            expectedNamedParameters.put( parameterName, new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
             return this;
         }
 
