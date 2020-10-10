@@ -39,7 +39,7 @@ Implement
         When and allows matches before Expected
 
         Test
-            andThenAnyParameter / thenAnyParameter
+            thenAnyParameter / thenAnyParameter
 
             Amoss_Expectations
             Amoss_Expectation
@@ -96,8 +96,8 @@ Implement
                 .expects()
                 .method( 'generate' )
                 .withParameter( 'Opportunity' )
-                .andThenParameter( 'Opportunity_Products_Offered' )
-                .andThenParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
+                .thenParameter( 'Opportunity_Products_Offered' )
+                .thenParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
                 .returning( new Map<Id,String>{ opportunityLineItemList[0].OpportunityId => 'The generated Template' } ); // and here too
 
             Maybe:
@@ -106,7 +106,7 @@ Implement
                 .expects()
                 .method( 'generate' )
                 .withParameter( 'Opportunity' )
-                .andThenParameter( 'Opportunity_Products_Offered' )
+                .thenParameter( 'Opportunity_Products_Offered' )
                 .andAnyParameter()
                 .handledBy( new TemplateGeneratorMockHandler() );
 

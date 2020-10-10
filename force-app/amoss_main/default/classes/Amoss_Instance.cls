@@ -762,8 +762,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
-    // TODO: consider removing the synonyms
-    // TODO: remove the redundant ones from Expection
     /**
      * The base class for all Expectation Definers - being the classes that embody the grammar for specifying expectations
      */
@@ -966,36 +964,15 @@ public without sharing class Amoss_Instance implements StubProvider {
         *   .when()
         *       .method( 'methodName' )
         *       .withParameter( 'Parameter1' )
-        *       .andThenParameter( 4 )
-        *       .andThenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'thenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The parameter value to add to the list of expected ones
-        */
-        public Amoss_PositionalParametersDefiner andThenParameter( Object parameterValue ) {
-            expectation.withParameter( parameterValue ); // change to 'addParameterValue'
-            return this;
-        }
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
         *       .thenParameter( 4 )
         *       .thenParameter( false )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * Has 'andThenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner thenParameter( Object parameterValue ) {
-            return andThenParameter( parameterValue );
+            expectation.addParameterValue( parameterValue );
+            return this;
         }        
 
         /**
@@ -1009,31 +986,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         *       .thenParameter( false )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * Has 'andThenAnyParameter' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
         */
         public Amoss_PositionalParametersDefiner thenAnyParameter() {
-            expectation.withAnyParameter(); // change to 'addAnyParameter'
+            expectation.addAnyParameterValue();
             return this;
-        }
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .andThenAnyParameter()
-        *       .andThenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'thenAnyParameter' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        */
-        public Amoss_PositionalParametersDefiner andThenAnyParameter() {
-            return thenAnyParameter();
-        }        
+        }      
     }
 
     /**
@@ -1130,7 +1087,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         */
         public Amoss_ReturnsDefiner withAnyParameters() {
-            expectation.withAnyParameters();
+            expectation.setParameterMatchingTypeToAny();
             return new Amoss_ReturnsDefiner( expectation );
         }
 
@@ -1146,8 +1103,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object[] - The list of parameter values that are expected
         */
         // TODO: test
-        public Amoss_ReturnsDefiner withParameters( Object[] parameters ) {
-            expectation.withParameters( parameters );
+        public Amoss_ReturnsDefiner withParameters( Object[] parameterValues ) {
+
+            for ( Object thisParameterValue : parameterValues ) {
+                expectation.addParameterValue( thisParameterValue );
+            }
             return new Amoss_ReturnsDefiner( expectation );
         }
 
@@ -1167,7 +1127,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         // TODO: test
         public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
-            expectation.withParameters( parameters );
+            for ( String thisParameterName : parameters.keySet() ) {
+                expectation.setNamedParameterValue( thisParameterName, parameters.get( thisParameterName ) );
+            }
             return new Amoss_ReturnsDefiner( expectation );
         }
 
@@ -1187,7 +1149,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
-            expectation.withParameter( parameterValue ); // TODO: change to setNextParameterValueTo
+            expectation.addParameterValue( parameterValue );
             return new Amoss_PositionalParametersDefiner( expectation );
         }
 
@@ -1205,7 +1167,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         */
         public Amoss_PositionalParametersDefiner withAnyParameter() {
-            expectation.withAnyParameter(); // TODO: change to setNextParameterValueToAny
+            expectation.addAnyParameterValue();
             return new Amoss_PositionalParametersDefiner( expectation );
         }
 
@@ -1278,56 +1240,12 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
 
         /**
-        * Internal method that states that this expectation will allow parameters to be any value
-        *
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        // TODO: remove and make 'setParameterMatchingTypeToAny' public
-        public Amoss_Expectation withAnyParameters() {
-            setParameterMatchingTypeToAny();
-            return this;
-        }
-
-        /**
-        * Internal method that specifies the expected parameters as a list
-        *
-        * @param Object[] - The list of parameter values that are expected
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        // TODO: remove and use inside the Definer instead?
-        public Amoss_Expectation withParameters( Object[] parameterValues ) { // to encourage the shorter syntax
-            this.expectedPositionalParameters = new List<Amoss_ExpectationParameter>();
-            for ( Object thisParameterValue : parameterValues ) {
-                withParameter( thisParameterValue );
-            }
-
-            return this;
-        }
-
-        /**
-        * Internal method that specifies the expected parameters as a map, indexed by the parameter name
-        *
-        * @param Map<String,Object> - The map of parameter values that are expected, indexed by name
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        // TODO: remove and use inside the Definer instead?
-        public Amoss_Expectation withParameters( Map<String,Object> parameters ) {
-            this.expectedNamedParameters = new Map<String,Amoss_ExpectationParameter>();
-            for ( String thisParameterName : parameters.keySet() ) {
-                setNamedParameterValue( thisParameterName, parameters.get( thisParameterName ) );
-            }
-
-            return this;
-        }
-
-        /**
         * Internal method that adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
         *
         * @param Object - The parameter value to add to the list of expected ones
         * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
-        // TODO: rename to addParameterValue
-        public Amoss_Expectation withParameter( Object parameterValue ) {
+        public Amoss_Expectation addParameterValue( Object parameterValue ) {
             setParameterMatchingTypeToPositional();
             this.expectedPositionalParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
             return this;
@@ -1338,14 +1256,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         * 
         * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
-        // TODO: rename to addAnyParmeterValue
-        public Amoss_Expectation withAnyParameter() {
+        public Amoss_Expectation addAnyParameterValue() {
             setParameterMatchingTypeToPositional();
             this.expectedPositionalParameters.add( new Amoss_ExpectationParameter().anyValue() );
             return this;
         }
-  
-        String currentParameterName;
 
         /**
         * Internal method that sets the name of the current parameter being specified (named notation)
@@ -1509,11 +1424,12 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * Will throw an exception if it is incompatible with previous specifications.
         */
+        // TODO: split this out into distinct classes - ExpectationParameterMatcher
+        // first specification will set the matcher - everything then gets passed into that
         private void setParameterMatchingTypeToPositional() {
             if ( parameterMatchingType == ParameterMatchingTypeEnum.NAMED ) {
                 throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition' );
             }
-            // TODO: test this behaviour
             if ( parameterMatchingType == ParameterMatchingTypeEnum.MATCH_ANY ) {
                 throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
             }
@@ -1532,7 +1448,6 @@ public without sharing class Amoss_Instance implements StubProvider {
             if ( parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL ) {
                 throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition' );
             }
-            // TODO: test this behaviour
             if ( parameterMatchingType == ParameterMatchingTypeEnum.MATCH_ANY ) {
                 throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
             }
@@ -1547,8 +1462,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * Will throw an exception if it is incompatible with previous specifications.
         */
-        // TODO: test this behaviour
-        private void setParameterMatchingTypeToAny() {
+        public void setParameterMatchingTypeToAny() {
             if ( parameterMatchingType == ParameterMatchingTypeEnum.NAMED || parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL ) {
                 throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
             }

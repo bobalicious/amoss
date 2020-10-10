@@ -136,12 +136,12 @@ public with sharing class AmossExample_OrderTest {
             .expects()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .returning( true )
             .then().expects()
                 .method( 'scheduleDelivery' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .returning( true );
 
         AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
@@ -264,12 +264,12 @@ public with sharing class AmossExample_OrderTest {
             .allows()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .returning( true )
             .then().allows()
                 .method( 'scheduleDelivery' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .returning( true );
 
         AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
@@ -395,7 +395,7 @@ public with sharing class AmossExample_OrderTest {
             .expects()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .willReturn( false );
         AmossExample_DeliveryProvider cannotDeliverProvider = (AmossExample_DeliveryProvider)cannotDeliverController.generateDouble();
 
@@ -406,12 +406,12 @@ public with sharing class AmossExample_OrderTest {
             .when()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .willReturn( true )
             .also().when()
                 .method( 'scheduleDelivery' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .willReturn( true );
         AmossExample_DeliveryProvider canDeliverProvider = (AmossExample_DeliveryProvider)canDeliverController.generateDouble();
 
@@ -461,7 +461,7 @@ public with sharing class AmossExample_OrderTest {
             .expects()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .throws( new AmossExample_DeliveryProvider.DeliveryProviderException( 'This is the exception thrown' ) );
 
         AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
