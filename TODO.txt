@@ -3,18 +3,10 @@ Amoss - Apex Mocks, Spies and Stubs
 To finish the named parameters implementation:
 
     Test: 
-        withParameters (both versions)
-
-        setting parameters by name
-        checking parameters by name - getParametersByName
-        getParameter (both versions) when the method has not been called
         Consider adding a lot more tests - check what doesn't fail...
     
         Call description when using named parameters
         Call description when an 'any' parameter has been used
-
-        throws / throwing / willThrow
-        returns / returning / willReturn
 
     Document:
         Specifying named parameters
