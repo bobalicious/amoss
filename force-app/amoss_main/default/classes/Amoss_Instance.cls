@@ -1086,7 +1086,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * @param Object[] - The list of parameter values that are expected
         */
-        // TODO: test
         public Amoss_ReturnsDefiner withParameters( Object[] parameterValues ) {
 
             for ( Object thisParameterValue : parameterValues ) {
@@ -1109,7 +1108,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * @param Map<String,Object> - The map of parameter values that are expected
         */
-        // TODO: test
         public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
             for ( String thisParameterName : parameters.keySet() ) {
                 expectation.setNamedParameterValue( thisParameterName, parameters.get( thisParameterName ) );
