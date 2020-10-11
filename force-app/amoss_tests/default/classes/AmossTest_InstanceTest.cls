@@ -88,6 +88,148 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.returns
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodReturns_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .returns( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.returns, and the method called, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.returning
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodReturning_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.returning, and the method called, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.throws
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodThrows_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .throws( new DmlException( 'The defined exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+        
+        System.assertEquals( true, exceptionThrown, 'when.method.throw, and the method called, will throw the stated exception' );
+        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.throw, and the method called, will throw the stated exception' );
+    }
+
+    /**
+    * @method when.method.throwing
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodThrowing_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .throwing( new DmlException( 'The defined exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+        
+        System.assertEquals( true, exceptionThrown, 'when.method.throwing, and the method called, will throw the stated exception' );
+        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.throwing, and the method called, will throw the stated exception' );
+    }
+
+    /**
+    * @method when.method.willThrow
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWillThrow_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .willThrow( new DmlException( 'The defined exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+        
+        System.assertEquals( true, exceptionThrown, 'when.method.willThrow, and the method called, will throw the stated exception' );
+        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.willThrow, and the method called, will throw the stated exception' );
+    }
+
+    /**
     * @method when.method.willReturn
     * @case   for an interface, when that method is called
     * @result will return the stated value
