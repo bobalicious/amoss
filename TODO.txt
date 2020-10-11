@@ -5,8 +5,8 @@ To finish the named parameters implementation:
     Test: 
         Consider adding a lot more tests - check what doesn't fail...
     
-        Call description when using named parameters
-        Call description when an 'any' parameter has been used
+        verify - remaining...
+            Call description when an 'any' parameter has been used
 
     Document:
         Specifying named parameters

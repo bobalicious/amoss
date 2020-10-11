@@ -1347,13 +1347,29 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public String getCallDescription() {
 
-            // TODO: change how the call description is built, based on the type of parameter matching
+            String callDescription = this.expectedMethod;
 
-            List<String> stringParameters = new List<String>();
-            for( Object thisParameter : expectedPositionalParameters ) {
-                stringParameters.add( String.valueOf( thisParameter ) );
+            if ( matchesWithPositionalParameters() ) {
+                List<String> stringParameters = new List<String>();
+                for( Object thisParameter : expectedPositionalParameters ) {
+                    stringParameters.add( String.valueOf( thisParameter ) );
+                }
+                callDescription += '(' + String.join( stringParameters, ', ' ) + ')';
             }
-            return this.expectedMethod + '(' + String.join( stringParameters, ',' ) + ')';
+
+            if ( matchesWithNamedParameters() ) {
+                List<String> stringParameters = new List<String>();
+                for( String thisParameterName : expectedNamedParameters.keySet() ) {
+                    stringParameters.add( thisParameterName + ' => ' + String.valueOf( expectedNamedParameters.get( thisParameterName ) ) );
+                }
+                callDescription += '(' + String.join( stringParameters, ', ' ) + ')';
+            }
+
+            if ( matchesWithAnyParameters() ) {
+                callDescription += '(any)';
+            }
+
+            return callDescription;
         }
 
         /**
