@@ -88,6 +88,148 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.returns
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodReturns_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .returns( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.returns, and the method called, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.returning
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodReturning_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.returning, and the method called, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.throws
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodThrows_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .throws( new DmlException( 'The defined exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+        
+        System.assertEquals( true, exceptionThrown, 'when.method.throw, and the method called, will throw the stated exception' );
+        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.throw, and the method called, will throw the stated exception' );
+    }
+
+    /**
+    * @method when.method.throwing
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodThrowing_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .throwing( new DmlException( 'The defined exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+        
+        System.assertEquals( true, exceptionThrown, 'when.method.throwing, and the method called, will throw the stated exception' );
+        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.throwing, and the method called, will throw the stated exception' );
+    }
+
+    /**
+    * @method when.method.willThrow
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWillThrow_whenTheMethodIsCalled_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .willThrow( new DmlException( 'The defined exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+        
+        System.assertEquals( true, exceptionThrown, 'when.method.willThrow, and the method called, will throw the stated exception' );
+        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.willThrow, and the method called, will throw the stated exception' );
+    }
+
+    /**
     * @method when.method.willReturn
     * @case   for an interface, when that method is called
     * @result will return the stated value
@@ -148,7 +290,7 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn' );
 
         Test.startTest();
@@ -156,6 +298,32 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
         
         System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the stated parameters, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameters.willReturn
+    * @case   when that method is called with the stated parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParametersWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameters( 
+                    new List<Object>{ 'ActualParam1', 1 }
+                )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -173,7 +341,7 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter2' ).setTo( 1 )
-                .andWithParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .andParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
                 .willReturn( 'expectedReturn' );
 
         Test.startTest();
@@ -208,6 +376,58 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.withParameters.willReturn (named version)
+    * @case   when that method is called with the stated parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParametersNamedWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameters( 
+                    new Map<String,Object>{ 'parameter1' => 'ActualParam1', 'parameter2' => 1 }
+                )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, named version, and the method called with the stated parameters, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameters.willReturn (named version)
+    * @case   when not all parameters set, but the method is called with the specified parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParametersNamedWillReturn_whenNotAllSpecifiedAndTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameters( 
+                    new Map<String,Object>{ 'parameter2' => 1 }
+                )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, named version, when not all parameters are specified and the method called with the stated parameters, will return the stated value' );
+    }
+
+    /**
     * @method when.method.withParameter.willReturn
     * @case   for an interface, when that method is called with the stated parameters
     * @result will return the stated value
@@ -222,7 +442,7 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn' );
 
         Test.startTest();
@@ -247,7 +467,7 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'willNotSeeThis' );
 
         Test.startTest();
@@ -255,6 +475,32 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
         
         System.assertEquals( null, returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the different parameters, will return null' );
+    }
+
+    /**
+    * @method when.method.withParameters.willReturn
+    * @case   when that method is called with different parameters
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParametersWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameters(
+                    new List<Object>{'ActualParam1', 1 }
+                )
+                .willReturn( 'willNotSeeThis' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameters.willReturn, and the method called with the different parameters, will return null' );
     }
 
     /**
@@ -282,6 +528,35 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.withParameters.setTo.willReturn (named)
+    * @case   when that method is called with different parameters
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParametersNamedSetToWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameters(
+                    new Map<String,Object>{
+                        'parameter1' => 'ActualParam1',
+                        'parameter2' => 1
+                    }
+                )
+                .willReturn( 'willNotSeeThis' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameters.setTo.willReturn (named), and the method called with the different parameters, will return null' );
+    }
+
+    /**
     * @method when.method.withParameter.willReturn multiple times
     * @case   when that method is called with the stated parameters
     * @result will return the stated value for each call
@@ -296,12 +571,12 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn1' )
             .also().when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam2' )
-                .andThenParameter( 2 )
+                .thenParameter( 2 )
                 .willReturn( 'expectedReturn2' );
 
         Test.startTest();
@@ -328,12 +603,12 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn1' )
             .also().when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn1' );
 
         Test.startTest();
@@ -360,12 +635,12 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn1' )
             .also().when()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2' ) .setTo( 1 )
+                .andParameterNamed( 'parameter2' ) .setTo( 1 )
                 .willReturn( 'expectedReturn1' );
 
         Test.startTest();
@@ -393,12 +668,12 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2' ) .setTo( 1 )
+                .andParameterNamed( 'parameter2' ) .setTo( 1 )
                 .willReturn( 'expectedReturn1' )
             .also().when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn1' );
 
         Test.startTest();
@@ -425,12 +700,12 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn1' )
             .also().when()
                 .method( 'otherMethodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturn2' );
 
         Test.startTest();
@@ -457,12 +732,12 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'willNotSeeThis' )
             .also().when()
                 .method( 'methodUnderDouble' )
                 .withAnyParameter()
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'expectedReturnFor1' )
             .also().when()
                 .method( 'methodUnderDouble' )
@@ -476,145 +751,6 @@ public with sharing class AmossTest_InstanceTest {
         
         System.assertEquals( 'expectedReturnFor1'           , returnFromDouble1, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (1)' );
         System.assertEquals( 'expectedReturnForAnythingElse', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (2)' );
-    }
-
-    /**
-    * @method when.method.withParameter.willReturn
-    * @case   when position and named notation are mixed, first position, then named
-    * @result will throw an exception
-    */
-    @isTest
-    private static void whenMethodWithAnyParameterWillReturn_whenNamedAndPositionNotationAreMixedFirstPosition_willThrowAnException() {
-        
-        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-
-        Test.startTest();
-
-            Boolean exceptionThrown = false;
-            String  exceptionMessage;
-
-            try {
-
-                classToDoubleController
-                    .when()
-                        .method( 'methodUnderDouble' )
-                        .withParameter( 'ActualParam1' )
-                        .andWithParameterNamed( 'parameter2' ).setTo( 1 )
-                        .willReturn( 'willNotSeeThis' );
-
-            } catch ( Exception e ) {
-                exceptionThrown = true;
-                exceptionMessage = e.getMessage();
-            }
-        
-        Test.stopTest();
-
-        System.assert( exceptionThrown, 'when.method.withParameter.willReturn, when position and named notation are mixed, first position, then named, will throw an exception' );
-        Amoss_Asserts.assertContains( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition', exceptionMessage, 'when.method.withParameter.willReturn, when position and named notation are mixed, first position, then named, will throw an exception' );
-    }
-
-    /**
-    * @method when.method.withParameter.willReturn
-    * @case   when position and named notation are mixed, first named, then position
-    * @result will throw an exception
-    */
-    @isTest
-    private static void whenMethodWithAnyParameterWillReturn_whenNamedAndPositionNotationAreMixedFirstNamed_willThrowAnException() {
-        
-        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-
-        Test.startTest();
-
-            Boolean exceptionThrown = false;
-            String  exceptionMessage;
-
-            try {
-
-                classToDoubleController
-                    .when()
-                        .method( 'methodUnderDouble' )
-                        .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
-                        .andThenParameter( 1 )
-                        .willReturn( 'willNotSeeThis' );
-
-            } catch ( Exception e ) {
-                exceptionThrown = true;
-                exceptionMessage = e.getMessage();
-            }
-        
-        Test.stopTest();
-
-        System.assert( exceptionThrown, 'when.method.withParameter.willReturn, when position and named notation are mixed, first position, then named, will throw an exception' );
-        Amoss_Asserts.assertContains( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition', exceptionMessage, 'when.method.withParameter.willReturn, when position and named notation are mixed, first named, then position, will throw an exception' );
-    }
-
-    /**
-    * @method when.method.withParameterNamed.willReturn
-    * @case   when setTo is called without withParameterNamed
-    * @result will throw an exception
-    */
-    @isTest
-    private static void whenMethodWithAnyParameteNamedWillReturn_whenSetToIsCalledWithouthWithParameterNamed_willThrowAnException() {
-        
-        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-
-        Test.startTest();
-
-            Boolean exceptionThrown = false;
-            String  exceptionMessage;
-
-            try {
-
-                classToDoubleController
-                    .when()
-                        .method( 'methodUnderDouble' )
-                        .setTo( 'ActualParam1' )
-                        .willReturn( 'willNotSeeThis' );
-
-            } catch ( Exception e ) {
-                exceptionThrown = true;
-                exceptionMessage = e.getMessage();
-            }
-        
-        Test.stopTest();
-
-        System.assert( exceptionThrown, 'when.method.withParameterNamed.willReturn, when setTo is called without withParameterNamed, will throw an exception' );
-        Amoss_Asserts.assertContains( 'Cannot call setTo except immediately after withParameterNamed or andWithParameterNamed', exceptionMessage, 'when.method.withParameterNamed.willReturn, when setTo is called without withParameterNamed, will throw an exception explaining the problem' );
-    }
-
-
-    /**
-    * @method when.method.withParameterNamed.willReturn
-    * @case   when setTo is called multiple times against a single withParameterNamed
-    * @result will throw an exception
-    */
-    @isTest
-    private static void whenMethodWithAnyParameteNamedWillReturn_whenSetToIsCalledMultipleTimes_willThrowAnException() {
-        
-        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-
-        Test.startTest();
-
-            Boolean exceptionThrown = false;
-            String  exceptionMessage;
-
-            try {
-
-                classToDoubleController
-                    .when()
-                        .method( 'methodUnderDouble' )
-                        .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' ).setTo( 'ActualParam2' )
-                        .willReturn( 'willNotSeeThis' );
-
-            } catch ( Exception e ) {
-                exceptionThrown = true;
-                exceptionMessage = e.getMessage();
-            }
-        
-        Test.stopTest();
-
-        System.assert( exceptionThrown, 'when.method.withParameterNamed.willReturn, when setTo is called multiple times against a single withParameterNamed, will throw an exception' );
-        Amoss_Asserts.assertContains( 'Cannot call setTo except immediately after withParameterNamed or andWithParameterNamed', exceptionMessage, 'when.method.withParameterNamed.willReturn, when setTo is called multiple times against a single withParameterNamed, will throw an exception explaining the problem' );
     }
 
     /**
@@ -656,7 +792,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -695,7 +831,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -706,7 +842,7 @@ public with sharing class AmossTest_InstanceTest {
             .allows()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'expectedReturn' );
 
         Test.startTest();
@@ -763,12 +899,12 @@ public with sharing class AmossTest_InstanceTest {
             .allows()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'returnForExactMatch' )
             .also().allows()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .returning( 'returnForFirstParamMatch' )
             .also().allows()
                 .method( 'methodUnderDouble' )
@@ -825,7 +961,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -866,7 +1002,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -877,7 +1013,7 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'expectedReturn' );
 
         Test.startTest();
@@ -909,7 +1045,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -920,7 +1056,7 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2' ).setTo( 1 )
+                .andParameterNamed( 'parameter2' ).setTo( 1 )
                 .returning( 'expectedReturn' );
 
         Test.startTest();
@@ -978,17 +1114,17 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'firstReturn' )
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'secondReturn' )
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'thirdReturn' );
 
         Test.startTest();
@@ -1017,17 +1153,17 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .andParameterNamed( 'parameter2').setTo( 1 )
                 .returning( 'firstReturn' )
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .andParameterNamed( 'parameter2').setTo( 1 )
                 .returning( 'secondReturn' )
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter1').setTo( 'ActualParam1' )
-                .andWithParameterNamed( 'parameter2').setTo( 1 )
+                .andParameterNamed( 'parameter2').setTo( 1 )
                 .returning( 'thirdReturn' );
 
         Test.startTest();
@@ -1064,7 +1200,7 @@ public with sharing class AmossTest_InstanceTest {
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameterNamed( 'parameter2').setTo( 1 )
-                .andWithParameterNamed( 'parameter1').setTo( 'ActualParam1' )
+                .andParameterNamed( 'parameter1').setTo( 'ActualParam1' )
                 .returning( 'thirdReturn' );
 
         Test.startTest();
@@ -1097,12 +1233,12 @@ public with sharing class AmossTest_InstanceTest {
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withAnyParameter()
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'secondReturn' )
             .then().expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'ActualParam1' )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .returning( 'thirdReturn' );
 
         Test.startTest();
@@ -1853,6 +1989,68 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method  get.call.of.parameters
+    * @case    when given the details of a method call with no parameters that happened
+    * @result  will return an empty parameters list
+    */
+    @isTest
+    private static void getCallOfParameters_whenGivenACallThatHappenedWithNoParameters_willReturnAnEmptyParametersList() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            classToDouble.methodWithNoParametersUnderDouble();
+            List<Object> passedParameters = classToDoubleController.get().call( 0 ).of( 'methodWithNoParametersUnderDouble' ).parameters();
+        Test.stopTest();
+        
+        System.assertEquals( new List<Object>(), passedParameters, 'get.call.of.parameters, when given the details of a method call with no parameters that happened, will return an empty list of parameters' );
+    }
+
+    /**
+    * @method  get.call.of.parametersByName
+    * @case    when given the details of a method call that happened
+    * @result  will return the parameters of that call
+    */
+    @isTest
+    private static void getCallOfParametersByName_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            classToDouble.methodUnderDouble( 'ActualParam', 2 );
+            Map<String,Object> passedParameters = classToDoubleController.get().call( 0 ).of( 'methodUnderDouble' ).parametersByName();
+        Test.stopTest();
+        
+        Map<String,Object> expectedParameters = new Map<String,Object>{
+            'parameter1' => 'ActualParam',
+            'parameter2' => 2
+        };
+
+        System.assertEquals( expectedParameters, passedParameters, 'get.call.of.parametersByName, when given the details of a method call that happened, will return the parameters of that call indexed by name' );
+    }
+
+    /**
+    * @method  get.call.of.parametersByName
+    * @case    when given the details of a method call with no parameters that happened
+    * @result  will return an empty parameters list
+    */
+    @isTest
+    private static void getCallOfParametersByName_whenGivenACallThatHappenedWithNoParameters_willReturnAnEmptyParametersList() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            classToDouble.methodWithNoParametersUnderDouble();
+            Map<String,Object> passedParameters = classToDoubleController.get().call( 0 ).of( 'methodWithNoParametersUnderDouble' ).parametersByName();
+        Test.stopTest();
+        
+        System.assertEquals( new Map<String,Object>(), passedParameters, 'get.call.of.parameters, when given the details of a method call with no parameters that happened, will return an empty map of parameters' );
+    }
+
+    /**
     * @method  get.latestCallOf.parameters
     * @case    when given the details of the last method call that happened
     * @result  will return the parameters of that call
@@ -2040,7 +2238,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2114,9 +2312,153 @@ public with sharing class AmossTest_InstanceTest {
         
         String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
 
-        System.assertEquals( ''                             , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( 'methodUnderDoubleWithNoReturn()', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        System.assertEquals( ''                                    , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( 'methodUnderDoubleWithNoReturn( any )', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion                     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method  expects.method, multiple times
+    * @case    when the methods are not called, and verify is
+    * @result  will fail
+    */
+    @isTest
+    private static void expectsMethodMultipleTimes_whenTheMethodsAreNotCalledAndVerifyIs_willFail() {
+        
+        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        assertsDoubleController
+            .allows()
+                .method( 'assertEquals' );
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDoubleWithNoReturn' )
+            .then().expects()
+                .method( 'methodUnderDouble' )
+            .then().expects()
+                .method( 'methodUnderDouble' );
+
+        Test.startTest();
+            classToDoubleController.verify();
+        Test.stopTest();
+        
+        String expectedMethodDescription = 'methodUnderDoubleWithNoReturn( any ), methodUnderDouble( any ), methodUnderDouble( any )';
+        String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
+
+        System.assertEquals( ''                       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( expectedMethodDescription, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method  expects.method.withParameter
+    * @case    when the method is not called, and verify is
+    * @result  will fail and describe the parameters
+    */
+    @isTest
+    private static void expectsMethodWithParameter_whenTheMethodIsNotCalledAndVerifyIs_willFailDescribingTheParameters() {
+        
+        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        assertsDoubleController
+            .allows()
+                .method( 'assertEquals' );
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameter( 'ParamValue1' )
+                .thenParameter( 2 );
+
+        Test.startTest();
+            classToDoubleController.verify();
+        Test.stopTest();
+        
+        String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
+
+        System.assertEquals( ''                                   , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( 'methodUnderDouble( ParamValue1, 2 )', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion                    , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method  expects.method.withParameter
+    * @case    when the method is not called, and verify is, and an 'any' parameter is defined
+    * @result  will fail and describe the parameters
+    */
+    @isTest
+    private static void expectsMethodWithParameter_whenTheMethodWithAnyParamDefinedIsNotCalledAndVerifyIs_willFailDescribingTheParameters() {
+        
+        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        assertsDoubleController
+            .allows()
+                .method( 'assertEquals' );
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameter( 'ParamValue1' )
+                .thenAnyParameter();
+
+        Test.startTest();
+            classToDoubleController.verify();
+        Test.stopTest();
+        
+        String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
+
+        System.assertEquals( ''                                     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( 'methodUnderDouble( ParamValue1, any )', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion                      , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method  expects.method.withParameterNamed
+    * @case    when the method is not called, and verify is
+    * @result  will fail and describe the parameters
+    */
+    @isTest
+    private static void expectsMethodWithParameterNamed_whenTheMethodIsNotCalledAndVerifyIs_willFailDescribingTheParameters() {
+        
+        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        assertsDoubleController
+            .allows()
+                .method( 'assertEquals' );
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ParamValue1' )
+                .andParameterNamed( 'parameter2' ).setTo( 2 );
+
+        Test.startTest();
+            classToDoubleController.verify();
+        Test.stopTest();
+        
+        String expectedCallDescription = 'methodUnderDouble( parameter1 => ParamValue1, parameter2 => 2 )';
+        String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
+
+        System.assertEquals( ''                     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( expectedCallDescription, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion      , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -2158,7 +2500,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2235,9 +2577,9 @@ public with sharing class AmossTest_InstanceTest {
         
         String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
 
-        System.assertEquals( ''                 , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( 'methodUnderDouble()', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion  , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        System.assertEquals( ''                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( 'methodUnderDouble( any )', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -2280,7 +2622,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2360,13 +2702,13 @@ public with sharing class AmossTest_InstanceTest {
         
         String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
 
-        System.assertEquals( ''                 , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( 'methodUnderDouble()', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion  , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        System.assertEquals( ''                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( 'methodUnderDouble( any )', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
-    * @method  expects.method.withParameter.andThenParameter.returning
+    * @method  expects.method.withParameter.thenParameter.returning
     * @case    when the method is called with matching parameters
     * @result  will not fail, and will return the stated result
     */
@@ -2380,18 +2722,18 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'TheReturn' );
 
         Test.startTest();
             String actualReturn = classToDouble.methodUnderDouble( 'this', 1 );
         Test.stopTest();
         
-        System.assertEquals( 'TheReturn', actualReturn, 'expects.method.withParameter.andThenParameter.returning, when the method is called with matching parameters, will not fail, and will return the stated result' );
+        System.assertEquals( 'TheReturn', actualReturn, 'expects.method.withParameter.thenParameter.returning, when the method is called with matching parameters, will not fail, and will return the stated result' );
     }
 
     /**
-    * @method  expects.method.withParameter.andThenParameter.returning
+    * @method  expects.method.withParameter.thenParameter.returning
     * @case    when the method is called with non-matching parameters
     * @result  will fail the test
     */
@@ -2404,8 +2746,8 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'assertEquals' )
                 .withParameter( 'this' )
-                .andThenParameter( 'not-this' )
-                .andThenAnyParameter()
+                .thenParameter( 'not-this' )
+                .thenAnyParameter()
                 .throws( new TestException( 'Mismatching assertion would normally halt the test, so we will too' ) )
             .also().allows()
                 .method( 'assertEquals' )
@@ -2419,7 +2761,7 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'TheReturn' );
 
         Test.startTest();
@@ -2429,15 +2771,15 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
         
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value in position 0';
-        System.assertEquals( 'this'           , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'not-this'       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.andThenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( 'this'           , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
+        System.assertEquals( 'not-this'       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
+        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
     }    
 
-    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
-    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and does not match, fails
+    // expects.method.withParameter.thenParameter.returns - when the method call includes nulls and matches, passes
+    // expects.method.withParameter.thenParameter.returns - when the method call includes nulls and does not match, fails
 
-    // expects.method.withParameter.andThenParameter.returns - when the method call includes nulls and matches, passes
+    // expects.method.withParameter.thenParameter.returns - when the method call includes nulls and matches, passes
 
     // expects.method.then.expects.method - when both methods are called in order, passes
     // expects.method.then.expects.method - when both methods called, but out of order, fails
@@ -2466,7 +2808,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2523,7 +2865,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2563,7 +2905,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2605,7 +2947,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2645,7 +2987,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2687,7 +3029,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2699,7 +3041,7 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'TheReturn' );
 
         Test.startTest();
@@ -2729,7 +3071,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2741,7 +3083,7 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'TheReturn' );
 
         Test.startTest();
@@ -2773,7 +3115,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2785,7 +3127,7 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'TheReturn' );
 
         Test.startTest();
@@ -2794,8 +3136,8 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
         
-        System.assertEquals( ''                       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowAnyCalls is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( 'methodUnderDouble(this,1)', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowAnyCalls is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with a non empty actual remaining call stack - and fail the test' );
+        System.assertEquals( ''                            , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowAnyCalls is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        System.assertEquals( 'methodUnderDouble( this, 1 )', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowAnyCalls is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with a non empty actual remaining call stack - and fail the test' );
     }
 
     /**
@@ -2812,8 +3154,8 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'assertEquals' )
                 .withParameter( 'this' )
-                .andThenParameter( 'not-this' )
-                .andThenAnyParameter()
+                .thenParameter( 'not-this' )
+                .thenAnyParameter()
                 .throws( new TestException( 'Mismatching assertion would normally halt the test, so we will too' ) )
             .also().allows()
                 .method( 'assertEquals' )
@@ -2828,7 +3170,7 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'TheReturn' );
 
         Test.startTest();
@@ -2838,9 +3180,9 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value in position 0';
-        System.assertEquals( 'this'           , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.andThenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'not-this'       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.andThenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.andThenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( 'this'           , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
+        System.assertEquals( 'not-this'       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
+        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -2859,7 +3201,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2898,7 +3240,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2938,7 +3280,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2950,7 +3292,7 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'TheReturn' );
 
         Test.startTest();
@@ -2979,7 +3321,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -2991,7 +3333,7 @@ public with sharing class AmossTest_InstanceTest {
             .when()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .willReturn( 'TheReturn' );
 
         Test.startTest();
@@ -3021,7 +3363,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -3058,7 +3400,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -3098,7 +3440,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -3110,7 +3452,7 @@ public with sharing class AmossTest_InstanceTest {
             .allows()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'TheReturn' );
 
         Test.startTest();
@@ -3137,7 +3479,7 @@ public with sharing class AmossTest_InstanceTest {
             .also().allows()
                 .method( 'assert' )
                 .withParameter( false )
-                .andThenAnyParameter()
+                .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
@@ -3149,7 +3491,7 @@ public with sharing class AmossTest_InstanceTest {
             .allows()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
-                .andThenParameter( 1 )
+                .thenParameter( 1 )
                 .returning( 'TheReturn' );
 
         Test.startTest();

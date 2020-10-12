@@ -72,7 +72,7 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 ...
 ```
 
-If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter` and `andThenParameter`:
+If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter` and `thenParameter`:
 
 ```java
 
@@ -81,7 +81,7 @@ deliveryProviderController
     .when()
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .thenParameter( deliveryDate )
         .willReturn( true )
     .also().when()
         .method( 'canDeliver' )
@@ -92,7 +92,7 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 ...
 ```
 
-If we want to be strict about some parameters, but don't care about others we can also be flexible about the contents of particular parameters, using `withAnyParameter`, and `andThenAnyParameter`:
+If we want to be strict about some parameters, but don't care about others we can also be flexible about the contents of particular parameters, using `withAnyParameter`, and `thenAnyParameter`:
 
 ```java
 
@@ -101,7 +101,7 @@ deliveryProviderController
     .when()
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
-        .andThenAnyParameter()
+        .thenAnyParameter()
         .willReturn( true );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -138,12 +138,12 @@ deliveryProviderController
     .expects()
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .thenParameter( deliveryDate )
         .returning( true )
     .then().expects()
         .method( 'scheduleDelivery' )
         .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .thenParameter( deliveryDate )
         .returning( true );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -168,7 +168,7 @@ deliveryProviderController
     .expects()
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .thenParameter( deliveryDate )
         .returning( true )
     .also().when()
         .method( 'scheduleDelivery' )
@@ -197,12 +197,12 @@ deliveryProviderController
     .allows()
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .thenParameter( deliveryDate )
         .returning( true )
     .also().allows()
         .method( 'scheduleDelivery' )
         .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .thenParameter( deliveryDate )
         .returning( true );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -223,7 +223,7 @@ deliveryProviderController
     .when()
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .thenParameter( deliveryDate )
         .throws( new DeliveryProvider.DeliveryProviderUnableToDeliverException( 'DeliveryProvider does not have a delivery slot' ) );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -433,15 +433,15 @@ Mock Object         | Focus of the test, order of execution is important        
 
 ## Synonyms
 
-Most of the functions have synonyms, allowing you to choose the phrasing that is most readable for your team.
+Some of the functions have synonyms, allowing you to choose the phrasing that is most readable for your team.
 
 Purpose                                                      | Synonyms
 ------------------------------------------------------------ | ---------------------------------
-Specifying individual parameters                             | `withParameter`, `thenParameter`, `andThenParameter`
-Stating that any single parameter is allowed                 | `withAnyParameter`, `thenAnyParameter`, `andThenAnyParameter`
+Specifying individual parameters                             | `withParameter`, `thenParameter` (I.E. start with withParameter, otherwise use thenParameter)
+Stating that any single parameter is allowed                 | `withAnyParameter`, `thenAnyParameter` (I.E. start with withAnyParameter, otherwise use thenAnyParameter)
 Stating the return value of a method                         | `returning`, `returns`, `willReturn`
 Stating that a method throws an exception                    | `throwing`, `throws`, `willThrow`
-Start the specification of an additional method              | `then`, `also`
+Start the specification of an additional method              | `then`, `also` (Generally use 'then' with 'expects', 'also' with 'when' and 'allows' )
 Retrieving the parameters from a particular call of a method | `call`, `get().call`
 Retrieving the parameters from the latest call of a method   | `latestCallOf`, `call( -1 ).of`
 
