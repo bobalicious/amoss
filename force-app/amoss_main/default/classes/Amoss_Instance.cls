@@ -36,7 +36,6 @@ SOFTWARE.
 * 'StubProvider' interface (which this class implements), and has the same limitations as that functionality.
 *
 */
-@isTest
 public without sharing class Amoss_Instance implements StubProvider {
 
     class Amoss_CallLogException extends Exception {}
@@ -726,7 +725,7 @@ public without sharing class Amoss_Instance implements StubProvider {
             for ( Amoss_Expectation thisExpectation : expectations ) {
                 remainingCallDescriptions.add( thisExpectation.getCallDescription() );
             }
-            return String.join( remainingCallDescriptions, ',' );
+            return String.join( remainingCallDescriptions, ', ' );
         }
 
         /**
@@ -782,7 +781,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param String - The method that this expectation is for
         */        
         public Amoss_ParametersDefiner method( String method ) {
-            expectation.method( method );
+            expectation.setMethod( method );
             return new Amoss_ParametersDefiner( expectation );
         }
     }
@@ -960,7 +959,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner thenParameter( Object parameterValue ) {
-            expectation.addParameterValue( parameterValue );
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterValue( parameterValue );
             return this;
         }        
 
@@ -977,7 +976,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         */
         public Amoss_PositionalParametersDefiner thenAnyParameter() {
-            expectation.addAnyParameterValue();
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addAnyParameterValue();
             return this;
         }      
     }
@@ -1012,8 +1011,8 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
-            expectation.setNamedParameterValue( parameterName, parameterValue );
-            return new Amoss_NamedParametersDefiner( expectation ); // needs to be a new expectation?
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, parameterValue );
+            return new Amoss_NamedParametersDefiner( expectation );
         }
     }
 
@@ -1071,7 +1070,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         */
         public Amoss_ReturnsDefiner withAnyParameters() {
-            expectation.setParameterMatchingTypeToAny();
+            expectation.setExpectationParameters( new Amoss_ExpectationAnyParameters() );
             return new Amoss_ReturnsDefiner( expectation );
         }
 
@@ -1088,9 +1087,14 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public Amoss_ReturnsDefiner withParameters( Object[] parameterValues ) {
 
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+
             for ( Object thisParameterValue : parameterValues ) {
-                expectation.addParameterValue( thisParameterValue );
+                expectedParameters.addParameterValue( thisParameterValue );
             }
+
+            expectation.setExpectationParameters( expectedParameters );
+
             return new Amoss_ReturnsDefiner( expectation );
         }
 
@@ -1109,9 +1113,14 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Map<String,Object> - The map of parameter values that are expected
         */
         public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
+
+            Amoss_ExpectationNamedParameters expectedParameters = new Amoss_ExpectationNamedParameters();
+
             for ( String thisParameterName : parameters.keySet() ) {
-                expectation.setNamedParameterValue( thisParameterName, parameters.get( thisParameterName ) );
+                expectedParameters.setParameter( thisParameterName, parameters.get( thisParameterName ) );
             }
+            expectation.setExpectationParameters( expectedParameters );
+
             return new Amoss_ReturnsDefiner( expectation );
         }
 
@@ -1131,7 +1140,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
-            expectation.addParameterValue( parameterValue );
+
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+            expectedParameters.addParameterValue( parameterValue );
+            expectation.setExpectationParameters( expectedParameters );
+
             return new Amoss_PositionalParametersDefiner( expectation );
         }
 
@@ -1149,7 +1162,10 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         */
         public Amoss_PositionalParametersDefiner withAnyParameter() {
-            expectation.addAnyParameterValue();
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+            expectedParameters.addAnyParameterValue();
+            expectation.setExpectationParameters( expectedParameters );
+
             return new Amoss_PositionalParametersDefiner( expectation );
         }
 
@@ -1168,11 +1184,12 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param String - The name of the parameter to add to the specification
         */   
         public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
+            Amoss_ExpectationNamedParameters expectedParameters = new Amoss_ExpectationNamedParameters();
+            expectation.setExpectationParameters( expectedParameters );
+
             return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
         }
     }
-
-    private enum ParameterMatchingTypeEnum { NAMED, POSITIONAL, MATCH_ANY }
 
     /**
     * Internal class that should not be referenced directly in a test
@@ -1185,14 +1202,10 @@ public without sharing class Amoss_Instance implements StubProvider {
     public class Amoss_Expectation {
 
         private String expectedMethod;
-        private Boolean withAnyParameters = true;
         private Object returnValue;
         private Exception exceptionToThrow;
 
-        // TODO: should this somehow be a different class for the different types of matching
-        ParameterMatchingTypeEnum parameterMatchingType;
-        private List<Amoss_ExpectationParameter>       expectedPositionalParameters = new List<Amoss_ExpectationParameter>();
-        private Map<String,Amoss_ExpectationParameter> expectedNamedParameters      = new Map<String,Amoss_ExpectationParameter>();
+        private Amoss_ExpectationParameters expectedParameters = new Amoss_ExpectationAnyParameters();
 
         private Amoss_Instance mockControl;
 
@@ -1211,48 +1224,34 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
 
         /**
+        * Internal method that sets the expectation parameter object for this expectation.
+        * In essence, defines the behaviour of the parameter matching.
+        *
+        * @param Amoss_ExpectationParameters - The expectation parameters object to use
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_Expectation setExpectationParameters( Amoss_ExpectationParameters expectationParameters ) {
+            this.expectedParameters = expectationParameters;
+            return this;
+        }
+
+        /**
+        * Internal method that retrieves the expectation parameter object for this expectation.
+        *
+        * @return Amoss_ExpectationParameters - The expectation parameters object that is in use
+        */
+        public Amoss_ExpectationParameters getExpectationParameters() {
+            return expectedParameters;
+        }
+
+        /**
         * Internal method that assigns the methods that this expectation is for.
         *
         * @param String - The method that this expectation is for
         * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
-        public Amoss_Expectation method( String method ) {
+        public Amoss_Expectation setMethod( String method ) {
             this.expectedMethod = method;
-            return this;
-        }
-
-        /**
-        * Internal method that adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
-        *
-        * @param Object - The parameter value to add to the list of expected ones
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        public Amoss_Expectation addParameterValue( Object parameterValue ) {
-            setParameterMatchingTypeToPositional();
-            this.expectedPositionalParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
-            return this;
-        }
-
-        /**
-        * Internal method that adds an 'any parameter value' to the list of parameters that are valid for this 'expection' or 'when'.
-        * 
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        public Amoss_Expectation addAnyParameterValue() {
-            setParameterMatchingTypeToPositional();
-            this.expectedPositionalParameters.add( new Amoss_ExpectationParameter().anyValue() );
-            return this;
-        }
-
-        /**
-        * Internal method that sets the name of the current parameter being specified (named notation)
-        *
-        * @param String - The name of the parameter to add to the specification
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */ 
-        public Amoss_Expectation setNamedParameterValue( String parameterName, Object parameterValue ) {
-            setParameterMatchingTypeToNamed();
-            expectedNamedParameters.put( parameterName, new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
             return this;
         }
 
@@ -1303,39 +1302,8 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param List<Object> - The parameters to check this expectation against.
         */
         public void verify( Amoss_Asserts assertionMechanism, String method, List<String> parameterNames, List<Object> parameterValues ) {
-
             assertionMechanism.assertEquals( expectedMethod, method, String.format( '{0}.{1} was expected to be called', new List<String>{ className, expectedMethod } ) );
-
-            if ( matchesWithAnyParameters() ) {
-                return;
-            }
-
-            if ( matchesWithPositionalParameters() ) {
-                assertionMechanism.assertEquals( expectedPositionalParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, expectedMethod } ) );
-
-                for ( Integer parameterNumber = 0; parameterNumber < expectedPositionalParameters.size(); parameterNumber++ ) {
-
-                    if ( expectedPositionalParameters[ parameterNumber ].allowsAnyValue() ) {
-                        continue;
-                    }
-                    assertionMechanism.assertEquals( expectedPositionalParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, expectedMethod, String.valueOf( parameterNumber ) } ) );
-                }
-            }
-
-            if ( matchesWithNamedParameters() ) {
-
-                for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
-
-                    String actualParameterName  = parameterNames[ parameterNumber ];
-                    Object actualParameterValue = parameterValues[ parameterNumber ];
-                    Amoss_ExpectationParameter expectationParameter = expectedNamedParameters.get( actualParameterName );
-
-                    if ( expectationParameter == null || expectationParameter.allowsAnyValue() ) {
-                        continue;
-                    }
-                    assertionMechanism.assertEquals( expectationParameter.getValue(), actualParameterValue, String.format( '{0}.{1} was called with the wrong parameter value for "{2}"', new List<String>{ className, expectedMethod, actualParameterName } ) );
-                }
-            }
+            expectedParameters.verify(assertionMechanism, className, method, parameterNames, parameterValues );
         }
 
         /**
@@ -1346,30 +1314,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @return String - A description of the current expection's call.
         */
         public String getCallDescription() {
-
             String callDescription = this.expectedMethod;
-
-            if ( matchesWithPositionalParameters() ) {
-                List<String> stringParameters = new List<String>();
-                for( Object thisParameter : expectedPositionalParameters ) {
-                    stringParameters.add( String.valueOf( thisParameter ) );
-                }
-                callDescription += '(' + String.join( stringParameters, ', ' ) + ')';
-            }
-
-            if ( matchesWithNamedParameters() ) {
-                List<String> stringParameters = new List<String>();
-                for( String thisParameterName : expectedNamedParameters.keySet() ) {
-                    stringParameters.add( thisParameterName + ' => ' + String.valueOf( expectedNamedParameters.get( thisParameterName ) ) );
-                }
-                callDescription += '(' + String.join( stringParameters, ', ' ) + ')';
-            }
-
-            if ( matchesWithAnyParameters() ) {
-                callDescription += '(any)';
-            }
-
-            return callDescription;
+            String parametersDescription = expectedParameters.getParametersDescription();
+            return this.expectedMethod + '( ' + parametersDescription + ' )';
         }
 
         /**
@@ -1383,123 +1330,235 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @return Boolean - States if this expectation matches that passed passed in.
         */
         public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
-
             if ( method != this.expectedMethod ) {
                 return false;
             }
+            return expectedParameters.matches( method, parameterNames, parameterValues );
+        }  
+    }
 
-            if ( matchesWithAnyParameters() ) {
-                return true;
-            }
+    /**
+    * Internal interface that allows for the specification of parameters that an Expectation should have
+    *
+    * An implementing class should provide a mechanism to get a String description, verify passed parameters are as stated (reporting via assertions)
+    * and checking passed parameters are as stated (returning a Boolean)
+    */
+    private interface Amoss_ExpectationParameters {
+        String getParametersDescription();
+        void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues );
+        Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues );
+    }
 
-            if ( matchesWithPositionalParameters() ) {
-                for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
-                    if ( ! expectedPositionalParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ) ) {
-                        return false;
-                    }
-                }
-            }
+    /**
+    * Internal class that allows for the specification that an Expectation can have any parameters
+    *
+    * Always assumes that any parameters will match (since 'any' should)
+    */
+    private with sharing class Amoss_ExpectationAnyParameters implements Amoss_ExpectationParameters {
 
-            if ( matchesWithNamedParameters() ) {
-                for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
-                    String actualParameterName  = parameterNames[ parameterNumber ];
-                    Object actualParameterValue = parameterValues[ parameterNumber ];
+        /**
+        * Internal method that returns a String description of the parameter values that are expected.
+        *
+        * Always returns 'any'
+        *
+        * @return String - The description of the expected parameter values
+        */
+        public String getParametersDescription() {
+            return 'any';
+        }
 
-                    Amoss_ExpectationParameter expectationParameter = expectedNamedParameters.get( actualParameterName );
-                    if ( expectationParameter != null && ! expectationParameter.matches( parameterValues[ parameterNumber ] ) ) {
-                        return false;
-                    }
-                }
-            }
+        /**
+        * Internal method that checks if the passed parameters match those that are configured, reporting via Assertions.
+        *
+        * Does nothing.
+        *
+        * @param Amoss_Asserts - The assertion mechanism to report via
+        * @param String - The method that is being called, and therefore checked
+        * @param List<String> - The names of the parameters being passed, and thereforce checked
+        * @param List<Object> - The values of the parameters being passed, and thereforce checked
+        */
+        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+            return;
+        }
 
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if the stated call and parameters matches the current expectation's definition.
+        *
+        * @param String - The method to check this expectation against.
+        * @param List<Object> - The names of the parameters to check this expectation against.
+        * @param List<Object> - The parameters to check this expectation against.
+        * @return Boolean - States if this expectation matches that passed passed in.
+        */
+        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
             return true;
         }
+    }
+
+    /**
+    * Internal interface that allows for the specification of parameters that an Expectation should have using 'positional' notation.
+    * That is, they are specified in order.
+    */
+    private with sharing class Amoss_ExpectationPositionalParameters implements Amoss_ExpectationParameters {
+
+        private List<Amoss_ExpectationParameter> expectedParameters = new List<Amoss_ExpectationParameter>();
 
         /**
-        * Internal method that should not be called directly in tests.
+        * Internal method that adds a parameter to the list of parameters that are valid for this Expectation.
         *
-        * Sets the current expection's parameter matching mechanism to 'Positional'
-        *
-        * Will throw an exception if it is incompatible with previous specifications.
+        * @param Object - The parameter value to add to the list of expected ones
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
-        // TODO: split this out into distinct classes - ExpectationParameterMatcher
-        // first specification will set the matcher - everything then gets passed into that
-        private void setParameterMatchingTypeToPositional() {
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.NAMED ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition' );
+        public Amoss_ExpectationParameters addParameterValue( Object parameterValue ) {
+            expectedParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
+            return this;
+        }
+
+        /**
+        * Internal method that adds an 'any parameter value' to the list of parameters that are valid for this Expectation.
+        * 
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameters addAnyParameterValue() {
+            expectedParameters.add( new Amoss_ExpectationParameter().anyValue() );
+            return this;
+        }
+
+        /**
+        * Internal method that returns a String description of the parameter values that are expected, as a comma seperated list.
+        *
+        * @return String - The description of the expected parameter values
+        */
+        public String getParametersDescription() {
+            List<String> stringParameters = new List<String>();
+            for( Object thisParameter : expectedParameters ) {
+                stringParameters.add( String.valueOf( thisParameter ) );
             }
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.MATCH_ANY ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
+            return String.join( stringParameters, ', ' );
+        }    
+
+        /**
+        * Internal method that checks if the passed parameters match those that are configured, reporting via Assertions.
+        *
+        * @param Amoss_Asserts - The assertion mechanism to report via
+        * @param String - The method that is being called, and therefore checked
+        * @param List<String> - The names of the parameters being passed, and thereforce checked
+        * @param List<Object> - The values of the parameters being passed, and thereforce checked
+        */
+        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+
+            assertionMechanism.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, method } ) );
+
+            for ( Integer parameterNumber = 0; parameterNumber < expectedParameters.size(); parameterNumber++ ) {
+
+                // TODO: could push this verify into the Expectation Parameter - could introduce Expectation Any Parameter - it's good to get rid of ifs
+                if ( expectedParameters[ parameterNumber ].allowsAnyValue() ) {
+                    continue;
+                }
+                assertionMechanism.assertEquals( expectedParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, method, String.valueOf( parameterNumber ) } ) );
             }
-            withAnyParameters = false;
-            parameterMatchingType = ParameterMatchingTypeEnum.POSITIONAL;
         }
 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Sets the current expection's parameter matching mechanism to 'Named'
+        * Checks if the stated call and parameters matches the current expectation's definition.
         *
-        * Will throw an exception if it is incompatible with previous specifications.
+        * @param String - The method to check this expectation against.
+        * @param List<Object> - The names of the parameters to check this expectation against.
+        * @param List<Object> - The parameters to check this expectation against.
+        * @return Boolean - States if this expectation matches that passed passed in.
         */
-        private void setParameterMatchingTypeToNamed() {
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot mix positional (withParameter) with named (withParameterNamed) specifications in a single method definition' );
+        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
+            for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
+                if ( ! expectedParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ) ) {
+                    return false;
+                }
             }
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.MATCH_ANY ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
+            return true;
+        }    
+    }
+
+    /**
+    * Internal interface that allows for the specification of parameters that an Expectation should have using 'positional' notation.
+    * That is, they are specified using their names
+    */
+    private with sharing class Amoss_ExpectationNamedParameters implements Amoss_ExpectationParameters {
+
+        private Map<String,Amoss_ExpectationParameter> expectedParameters = new Map<String,Amoss_ExpectationParameter>();
+
+        /**
+        * Internal method that sets the expected parameter with the given name, to have the given value.
+        *
+        * @param String - The name of the parameter to add to the specification
+        * @param Object - The value of the parameter to add to the specification
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameters setParameter( String parameterName, Object parameterValue ) {
+            expectedParameters.put( parameterName, new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
+            return this;
+        }
+
+        /**
+        * Internal method that returns a String description of the parameter values that are expected, rendered in a similar
+        * format to a Map.
+        *
+        * @return String - The description of the expected parameter values
+        */
+        public String getParametersDescription() {
+            List<String> stringParameters = new List<String>();
+            for( String thisParameterName : expectedParameters.keySet() ) {
+                stringParameters.add( thisParameterName + ' => ' + String.valueOf( expectedParameters.get( thisParameterName ) ) );
             }
-            this.withAnyParameters = false;
-            parameterMatchingType = ParameterMatchingTypeEnum.NAMED;
+            return String.join( stringParameters, ', ' );
         }
 
         /**
-        * Internal method that should not be called directly in tests.
+        * Internal method that checks if the passed parameters match those that are configured, reporting via Assertions.
         *
-        * Sets the current expection's parameter matching mechanism to 'Any'
-        *
-        * Will throw an exception if it is incompatible with previous specifications.
+        * @param Amoss_Asserts - The assertion mechanism to report via
+        * @param String - The method that is being called, and therefore checked
+        * @param List<String> - The names of the parameters being passed, and thereforce checked
+        * @param List<Object> - The values of the parameters being passed, and thereforce checked
         */
-        public void setParameterMatchingTypeToAny() {
-            if ( parameterMatchingType == ParameterMatchingTypeEnum.NAMED || parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL ) {
-                throw new Amoss_ParameterMatchingTypeEnumException( 'Cannot specify specific parameter values when withAnyParameter has been specified for a method definition' );
+        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+
+            for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
+
+                String actualParameterName  = parameterNames[ parameterNumber ];
+                Object actualParameterValue = parameterValues[ parameterNumber ];
+                Amoss_ExpectationParameter expectationParameter = expectedParameters.get( actualParameterName );
+
+                if ( expectationParameter == null || expectationParameter.allowsAnyValue() ) {
+                    continue;
+                }
+                assertionMechanism.assertEquals( expectationParameter.getValue(), actualParameterValue, String.format( '{0}.{1} was called with the wrong parameter value for "{2}"', new List<String>{ className, method, actualParameterName } ) );
             }
-            withAnyParameters = true;
-            parameterMatchingType = ParameterMatchingTypeEnum.MATCH_ANY;
         }
 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Describes if the current parameter matching mechanism is set to be 'any parameters'
+        * Checks if the stated call and parameters matches the current expectation's definition.
         *
-        * @return Boolean - States if this expectation is set to match with any parameters
+        * @param String - The method to check this expectation against.
+        * @param List<Object> - The names of the parameters to check this expectation against.
+        * @param List<Object> - The parameters to check this expectation against.
+        * @return Boolean - States if this expectation matches that passed passed in.
         */
-        private Boolean matchesWithAnyParameters() {
-            return withAnyParameters;
-        }
+        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
+            for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
+                String actualParameterName  = parameterNames[ parameterNumber ];
+                Object actualParameterValue = parameterValues[ parameterNumber ];
 
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes if the current parameter matching mechanism is set to be 'postional parameters'
-        *
-        * @return Boolean - States if this expectation is set to match based on positional parameters
-        */
-        private Boolean matchesWithPositionalParameters() {
-            return parameterMatchingType == ParameterMatchingTypeEnum.POSITIONAL;
+                Amoss_ExpectationParameter expectationParameter = expectedParameters.get( actualParameterName );
+                if ( expectationParameter != null && ! expectationParameter.matches( parameterValues[ parameterNumber ] ) ) {
+                    return false;
+                }
+            }
+            return true;
         }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes if the current parameter matching mechanism is set to be 'named parameters'
-        *
-        * @return Boolean - States if this expectation is set to match based on positional parameters
-        */
-        private Boolean matchesWithNamedParameters() {
-            return parameterMatchingType == ParameterMatchingTypeEnum.NAMED;
-        }        
     }
 
     /**

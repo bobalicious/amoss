@@ -12,10 +12,6 @@ To finish the named parameters implementation:
         Specifying named parameters
         Consider a class diagram
     
-    Re-structure:
-        Only once all the tests listed above are done
-        Implement a parameter matcher class structure
-
     Implement:
         Change in how the call description is built when named parameters are in use
 
