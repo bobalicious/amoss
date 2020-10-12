@@ -5,15 +5,9 @@ To finish the named parameters implementation:
     Test: 
         Consider adding a lot more tests - check what doesn't fail...
     
-        verify - remaining...
-            Call description when an 'any' parameter has been used
-
     Document:
         Specifying named parameters
         Consider a class diagram
-    
-    Implement:
-        Change in how the call description is built when named parameters are in use
 
 Documentation:
 
@@ -24,10 +18,6 @@ Implement
     Document what is included in the installation
 
     Instructions on installation - implement 'install to Salesforce' - Andy in the Cloud
-
-    Documentation on
-        parameter (passing the parameter name)
-        parametersByName
 
     Code documentation (search for TODOs)
 
