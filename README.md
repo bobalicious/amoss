@@ -19,7 +19,7 @@ It's intended to be very straightforward to use, and to result in code that's ev
 ### Constructing and using a Test Double
 
 Amoss can be used to build simple stub objects - AKA Configurable Test Doubles, by:
-* Constructing an `Amoss_Instance`, passing it the type of the class you want to 'stub out'.
+* Constructing an `Amoss_Instance`, passing it the type of the class you want to make a double of.
 * Asking the resulting 'controller' to generate a Test Double for you.
 
 ```java
@@ -72,7 +72,11 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 ...
 ```
 
-If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter` and `thenParameter`:
+Now, whenever either `canDeliver` or `scheduleDelivery` are called against our double, `true` will be returned.  This is regardless of what parameters have been passed in.
+
+#### Respoding based on parameters
+
+If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter`, `thenParameter`:
 
 ```java
 
@@ -82,6 +86,26 @@ deliveryProviderController
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
         .thenParameter( deliveryDate )
+        .willReturn( true )
+    .also().when()
+        .method( 'canDeliver' )
+        .willReturn( false );
+
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+
+...
+```
+
+We can also use a 'named parameter' notation, by using the methods `withParameterNamed` and `setTo`:
+
+```java
+
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
+    .when()
+        .method( 'canDeliver' )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .willReturn( true )
     .also().when()
         .method( 'canDeliver' )
@@ -109,6 +133,25 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 ...
 ```
 
+Or, when using 'named notation', we can simply omit them from our list:
+
+```java
+
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
+    .when()
+        .method( 'canDeliver' )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode ) // since we don't mention 'deliveryDate', it can be any value
+        .willReturn( true )
+    .also().when()
+        .method( 'canDeliver' )
+        .willReturn( false );
+
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+
+...
+```
+
 This is very useful for making sure that our tests only configure the Test Doubles to care about the parameters that are important for the tests we are running, making them less brittle.
 
 ### Using the Test Double as a Spy
@@ -125,6 +168,18 @@ System.assertEquals( deliveryDate, deliveryProviderController.call( 0 ).of( 'can
 
 ```
 
+Much like when we set the expected parameters, we can also name the parameters:
+
+```java
+
+System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'canDeliver' ).parameter( 'postcode' )
+                    , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the postcode required, to find out if it can deliver' );
+
+System.assertEquals( deliveryDate, deliveryProviderController.call( 0 ).of( 'canDeliver' ).parameter( 'deliveryDate' )
+                    , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the date required, to find out if it can deliver' );
+
+```
+
 This allows us to check that the correct parameters are passed into methods when there are no visible effects of those parameters, and to do so in a way that follows the standard format of a unit test.
 
 ### Using the Test Double as a Mock Object
@@ -137,12 +192,12 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .expects()
         .method( 'canDeliver' )
-        .withParameter( deliveryPostcode )
-        .thenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
     .then().expects()
         .method( 'scheduleDelivery' )
-        .withParameter( deliveryPostcode )
+        .withParameter( deliveryPostcode )  // once again, either syntax is fine
         .thenParameter( deliveryDate )
         .returning( true );
 
@@ -167,8 +222,8 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .expects()
         .method( 'canDeliver' )
-        .withParameter( deliveryPostcode )
-        .thenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
     .also().when()
         .method( 'scheduleDelivery' )
@@ -180,7 +235,7 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 
 deliveryProviderController.verify();
 
-System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'scheduleDelivery' ).parameter( 0 )
+System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )
                     , 'scheduling a delivery, will call scheduleDelivery against the deliveryProvider, passing the postcode required' );
 ```
 
@@ -196,13 +251,13 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .allows()
         .method( 'canDeliver' )
-        .withParameter( deliveryPostcode )
-        .thenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
     .also().allows()
         .method( 'scheduleDelivery' )
-        .withParameter( deliveryPostcode )
-        .thenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -222,8 +277,8 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .when()
         .method( 'canDeliver' )
-        .withParameter( deliveryPostcode )
-        .thenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .throws( new DeliveryProvider.DeliveryProviderUnableToDeliverException( 'DeliveryProvider does not have a delivery slot' ) );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -260,7 +315,7 @@ It is of particular note that when implemented using 'withAnyParameter' (or with
 testDoubleController
     .when()
         .method( 'methodName1' )
-        .withAnyParameters()
+        .withAnyParameters()    // this is actually redundant, as the default behaviour is 'withAnyParameters'
         .willReturn( true )
     .also().when()
         .method( 'methodName2' )
@@ -343,11 +398,11 @@ spiedUponObjectController
 // followed by
 
 System.assertEquals( 'expectedParameterValue1',
-                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 0 ),
+                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 'parameter1' ),
                         'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
 
 System.assertEquals( 'expectedParameterValue2',
-                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 0 ),
+                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 'parameter2' ),
                         'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
 
 ```
@@ -381,11 +436,11 @@ spiedUponObjectController
 // followed by
 
 System.assertEquals( 'expectedParameterValue1',
-                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 0 ),
+                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 'parameter1' ),
                         'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
 
 System.assertEquals( 'expectedParameterValue2',
-                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 0 ),
+                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 'parameter2' ),
                         'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
 
 ```
