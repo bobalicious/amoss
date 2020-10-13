@@ -19,7 +19,7 @@ It's intended to be very straightforward to use, and to result in code that's ev
 ### Constructing and using a Test Double
 
 Amoss can be used to build simple stub objects - AKA Configurable Test Doubles, by:
-* Constructing an `Amoss_Instance`, passing it the type of the class you want to 'stub out'.
+* Constructing an `Amoss_Instance`, passing it the type of the class you want to make a double of.
 * Asking the resulting 'controller' to generate a Test Double for you.
 
 ```java
@@ -72,7 +72,11 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 ...
 ```
 
-If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter` and `andThenParameter`:
+Now, whenever either `canDeliver` or `scheduleDelivery` are called against our double, `true` will be returned.  This is regardless of what parameters have been passed in.
+
+#### Respoding based on parameters
+
+If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter`, `thenParameter`:
 
 ```java
 
@@ -81,7 +85,7 @@ deliveryProviderController
     .when()
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .thenParameter( deliveryDate )
         .willReturn( true )
     .also().when()
         .method( 'canDeliver' )
@@ -92,7 +96,27 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 ...
 ```
 
-If we want to be strict about some parameters, but don't care about others we can also be flexible about the contents of particular parameters, using `withAnyParameter`, and `andThenAnyParameter`:
+We can also use a 'named parameter' notation, by using the methods `withParameterNamed` and `setTo`:
+
+```java
+
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
+    .when()
+        .method( 'canDeliver' )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
+        .willReturn( true )
+    .also().when()
+        .method( 'canDeliver' )
+        .willReturn( false );
+
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+
+...
+```
+
+If we want to be strict about some parameters, but don't care about others we can also be flexible about the contents of particular parameters, using `withAnyParameter`, and `thenAnyParameter`:
 
 ```java
 
@@ -101,8 +125,27 @@ deliveryProviderController
     .when()
         .method( 'canDeliver' )
         .withParameter( deliveryPostcode )
-        .andThenAnyParameter()
+        .thenAnyParameter()
         .willReturn( true );
+
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+
+...
+```
+
+Or, when using 'named notation', we can simply omit them from our list:
+
+```java
+
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
+    .when()
+        .method( 'canDeliver' )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode ) // since we don't mention 'deliveryDate', it can be any value
+        .willReturn( true )
+    .also().when()
+        .method( 'canDeliver' )
+        .willReturn( false );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
 
@@ -125,6 +168,18 @@ System.assertEquals( deliveryDate, deliveryProviderController.call( 0 ).of( 'can
 
 ```
 
+Much like when we set the expected parameters, we can also name the parameters:
+
+```java
+
+System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'canDeliver' ).parameter( 'postcode' )
+                    , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the postcode required, to find out if it can deliver' );
+
+System.assertEquals( deliveryDate, deliveryProviderController.call( 0 ).of( 'canDeliver' ).parameter( 'deliveryDate' )
+                    , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the date required, to find out if it can deliver' );
+
+```
+
 This allows us to check that the correct parameters are passed into methods when there are no visible effects of those parameters, and to do so in a way that follows the standard format of a unit test.
 
 ### Using the Test Double as a Mock Object
@@ -137,13 +192,13 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .expects()
         .method( 'canDeliver' )
-        .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
     .then().expects()
         .method( 'scheduleDelivery' )
-        .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .withParameter( deliveryPostcode )  // once again, either syntax is fine
+        .thenParameter( deliveryDate )
         .returning( true );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -167,8 +222,8 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .expects()
         .method( 'canDeliver' )
-        .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
     .also().when()
         .method( 'scheduleDelivery' )
@@ -180,7 +235,7 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 
 deliveryProviderController.verify();
 
-System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'scheduleDelivery' ).parameter( 0 )
+System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )
                     , 'scheduling a delivery, will call scheduleDelivery against the deliveryProvider, passing the postcode required' );
 ```
 
@@ -196,13 +251,13 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .allows()
         .method( 'canDeliver' )
-        .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
     .also().allows()
         .method( 'scheduleDelivery' )
-        .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -222,8 +277,8 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .when()
         .method( 'canDeliver' )
-        .withParameter( deliveryPostcode )
-        .andThenParameter( deliveryDate )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .throws( new DeliveryProvider.DeliveryProviderUnableToDeliverException( 'DeliveryProvider does not have a delivery slot' ) );
 
 DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
@@ -239,13 +294,13 @@ The decision will be based on a balance of two main factors:
 * Ensuring that you produce a meaningful test of the behaviour, whilst
 * Limiting the scope of test changes that are required when the implementation of the classes that are being stubbed or tested change.
 
-The following aims to describe when to each of the constructs, roughly referencing the types of Test Doubles that are described in Gerard Meszaros's book "xUnit Test Patterns".
+The following aims to describe when to each of the constructs, roughly referencing the types of "Test Doubles" that are described in Gerard Meszaros's book "xUnit Test Patterns".
 
-### Test Double
+### Test Stub
 
 Is the least brittle of the constructs, allowing any method to be called, potentially with any parameters.  In most cases, some return values for some methods will be specified.
 
-Typically used to 'stub out' an object that is not the focus of the test.
+Typically used to replace ('stub out') an object that is not the focus of the test, but on which the test relies, often in order to direct the object under test into a specificaly required behaviour.
 
 That is, the object provides some functionality that means that the test can run, but it is not the calling of methods on this object that define the behaviour that is being tested.
 
@@ -260,7 +315,7 @@ It is of particular note that when implemented using 'withAnyParameter' (or with
 testDoubleController
     .when()
         .method( 'methodName1' )
-        .withAnyParameters()
+        .withAnyParameters()    // this is actually redundant, as the default behaviour is 'withAnyParameters'
         .willReturn( true )
     .also().when()
         .method( 'methodName2' )
@@ -282,15 +337,15 @@ If return values do not need to be specified, may be as simple as:
 * Generally not affected by changes the implementation of the method under test that affect the order of processing in, or number of method calls made by the method under test.
 * Is affected by changes in the implementation of the method under test where the change results in different values being returned by the methods being stubbed.
 
-### Strict Test Double
+### Strict Test Stub
 
-Similar to a Test Double, although is defined in such a way that *only* the methods that are configured are allowed to be called.
+Similar to a Test Stub, although is defined in such a way that *only* the methods that are configured are allowed to be called.
 
 Also typically used when the object being stubbed is not the focus of the test, and potentially the parameter values being passed in are not of importance.
 
 However, it is implied that it is important that *other* methods, those not specified, are *not* called.
 
-Is not particularly brittle to changes in the implementation of the class being 'doubled'.  However, tests may start to break when the implementation under test changes and new methods are called against that object.
+Is not particularly brittle to changes in the implementation of the class being 'stubbed'.  However, tests may start to break when the implementation under test changes and new methods are called against that object.
 
 #### Is characterised by the pattern: allows.method.with.returning
 
@@ -318,9 +373,9 @@ testDoubleController
 
 ### Test Spy
 
-Is specified intially in the same way as a Test Double, though after the method under test is executed, the controller is then interrogated to determine the value of parameters.
+Is specified intially in the same way as a Test Stub, though after the method under test is executed, the controller is then interrogated to determine the value of parameters.
 
-Typically used to 'stub out' an object that *is* the focus of the test.
+Typically used to create a Test Double of an object that *is* the focus of the test.
 
 That is, the test is checking that the method under test calls particular methods on the given Test Double passing parameters with certain values that are predictable.
 
@@ -343,11 +398,11 @@ spiedUponObjectController
 // followed by
 
 System.assertEquals( 'expectedParameterValue1',
-                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 0 ),
+                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 'parameter1' ),
                         'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
 
 System.assertEquals( 'expectedParameterValue2',
-                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 0 ),
+                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 'parameter2' ),
                         'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
 
 ```
@@ -356,7 +411,7 @@ System.assertEquals( 'expectedParameterValue2',
 
 Similar to a Test Spy, although is defined in such a way that *only* the methods that are configured are allowed to be called.
 
-As with the Test Spy, is used to 'stub out' an object that *is* the focus of the test.
+As with the Test Spy, is used to create a Test Double an object that *is* the focus of the test.
 
 That is, the test is checking that the method under test calls particular methods on the given Test Double passing parameters with certain values that are predictable.
 
@@ -381,11 +436,11 @@ spiedUponObjectController
 // followed by
 
 System.assertEquals( 'expectedParameterValue1',
-                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 0 ),
+                        spiedUponObjectController.latestCallOf( 'method1' ).parameter( 'parameter1' ),
                         'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
 
 System.assertEquals( 'expectedParameterValue2',
-                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 0 ),
+                        spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 'parameter2' ),
                         'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
 
 ```
@@ -396,7 +451,7 @@ Similar to a Test Spy, although is defined in such a way that *only* the methods
 
 If any specified method is called out of order, or with the wrong parameters, it will fail the test.
 
-Is therefore used to 'stub out' an object when the order of execution of different methods is important to the success of the test.
+Is therefore used to 'mock' an object when the order of execution of different methods is important to the success of the test.
 
 It is also implied that it is important that *other* methods, those not specified, are *not* called.
 
@@ -425,25 +480,26 @@ mockObjectController.verify();
 
 Type                | Use Cases | Brittle? | Construct Pattern
 ------------------- | --------- | -------- | ------------------------
-Test Double         | Ancillary objects, parameters passed are not the main focus of the test             | Least brittle | when.method.with.willReturn
-Strict Test Double  | Ancillary objects, parameters passed are not the main focus of the test             | Brittle to addition of new calls on object being stubbed | allows.method.with.returning
+Test Stub           | Ancillary objects, parameters passed are not the main focus of the test             | Least brittle | when.method.with.willReturn
+Strict Test Stub    | Ancillary objects, parameters passed are not the main focus of the test             | Brittle to addition of new calls on object being stubbed | allows.method.with.returning
 Test Spy            | Focus of the test, order of execution is not important, prefer the assertion syntax | Is brittle to the interface of the object being stubbed, less brittle to the implementation of the method under test | when.method.with.willReturn, call.of.parameter
 Strict Test Spy     | Focus of the test, order of execution is not important, prefer the assertion syntax | Is brittle to the interface of the object being stubbed and addition of new calls on object being stubbed, a little more brittle to the implementation of the method under test | allows.method.with.returns, call.of.parameter
 Mock Object         | Focus of the test, order of execution is important                                  | Most brittle construct, brittle to the implementation of the method under test | expect.method.with.returning, verify
 
 ## Synonyms
 
-Most of the functions have synonyms, allowing you to choose the phrasing that is most readable for your team.
+Some of the functions have synonyms, allowing you to choose the phrasing that is most readable for your team.
 
-Purpose                                                      | Synonyms
------------------------------------------------------------- | ---------------------------------
-Specifying individual parameters                             | `withParameter`, `thenParameter`, `andThenParameter`
-Stating that any single parameter is allowed                 | `withAnyParameter`, `thenAnyParameter`, `andThenAnyParameter`
-Stating the return value of a method                         | `returning`, `returns`, `willReturn`
-Stating that a method throws an exception                    | `throwing`, `throws`, `willThrow`
-Start the specification of an additional method              | `then`, `also`
-Retrieving the parameters from a particular call of a method | `call`, `get().call`
-Retrieving the parameters from the latest call of a method   | `latestCallOf`, `call( -1 ).of`
+Purpose                                                            | Synonyms
+------------------------------------------------------------------ | ---------------------------------
+Specifying individual parameters (positional notation)             | `withParameter`, `thenParameter` (I.E. start with withParameter, otherwise use thenParameter)
+Stating that any single parameter is allowed (positional notation) | `withAnyParameter`, `thenAnyParameter` (I.E. start with withAnyParameter, otherwise use thenAnyParameter)
+Specifying individual parameters (named notation)                  | `withParameterNamed`, `andParameterNamed` (I.E. start with withParameterNamed, otherwise use andParameterNamed)
+Stating the return value of a method                               | `returning`, `returns`, `willReturn`
+Stating that a method throws an exception                          | `throwing`, `throws`, `willThrow`
+Start the specification of an additional method                    | `then`, `also` (Generally use 'then' with 'expects', 'also' with 'when' and 'allows' )
+Retrieving the parameters from a particular call of a method       | `call`, `get().call`
+Retrieving the parameters from the latest call of a method         | `latestCallOf`, `call( -1 ).of`
 
 ## Limitations
 

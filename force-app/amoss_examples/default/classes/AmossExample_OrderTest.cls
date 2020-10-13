@@ -96,11 +96,11 @@ public with sharing class AmossExample_OrderTest {
         //
         // Check that the delivery provider was called with the parameters that we expected
         //
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
 
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 0 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 1 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
+        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
     }
 
     /**
@@ -135,13 +135,13 @@ public with sharing class AmossExample_OrderTest {
         deliveryProviderController
             .expects()
                 .method( 'canDeliver' )
-                .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+                .andParameterNamed( 'deliverDate' ).setTo( deliveryDate )
                 .returning( true )
             .then().expects()
                 .method( 'scheduleDelivery' )
-                .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+                .andParameterNamed( 'deliverDate' ).setTo( deliveryDate )
                 .returning( true );
 
         AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
@@ -224,11 +224,11 @@ public with sharing class AmossExample_OrderTest {
         //
         // Check that the delivery provider was called with the parameters that we expected
         //
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
 
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 0 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 1 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
+        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
     }
 
     /**
@@ -264,12 +264,12 @@ public with sharing class AmossExample_OrderTest {
             .allows()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .returning( true )
             .then().allows()
                 .method( 'scheduleDelivery' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .returning( true );
 
         AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
@@ -287,7 +287,7 @@ public with sharing class AmossExample_OrderTest {
         System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
 
         //
-        // Check that the delivery provider was called with the parameters that we expected
+        // Check that the delivery provider was called with the parameters that we expected (this time using positional notation to retrieve the values)
         //
         System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
         System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
@@ -353,19 +353,19 @@ public with sharing class AmossExample_OrderTest {
         //
         // Check that the delivery providers was called with the parameters that we expected
         //
-        System.assertEquals( deliveryPostcode, cannotDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , cannotDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+        System.assertEquals( deliveryPostcode, cannotDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , cannotDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
 
         System.assertEquals( 0, cannotDeliverController.countOf( 'scheduleDelivery' ), 'scheduleDelivery, will not call scheduleDelivery against a deliveryProvider that cannot deliver' );
 
         //
         // Check that the delivery providers was called with the parameters that we expected
         //
-        System.assertEquals( deliveryPostcode, canDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , canDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery provider , passing the delivery date' );
+        System.assertEquals( deliveryPostcode, canDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        System.assertEquals( deliveryDate    , canDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery provider , passing the delivery date' );
 
-        System.assertEquals( deliveryPostcode, canDeliverController.get().latestCallOf( 'scheduleDelivery' ).parameter( 0 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against the first delivery provider that can perform the delivery, passing the postcode' );
-        System.assertEquals( deliveryDate    , canDeliverController.get().latestCallOf( 'scheduleDelivery' ).parameter( 1 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against the first delivery provider that can perform the delivery, passing the delivery date' );
+        System.assertEquals( deliveryPostcode, canDeliverController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against the first delivery provider that can perform the delivery, passing the postcode' );
+        System.assertEquals( deliveryDate    , canDeliverController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against the first delivery provider that can perform the delivery, passing the delivery date' );
 
         //
         // Check that the delivery providers was called with the parameters that we expected
@@ -395,7 +395,7 @@ public with sharing class AmossExample_OrderTest {
             .expects()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .willReturn( false );
         AmossExample_DeliveryProvider cannotDeliverProvider = (AmossExample_DeliveryProvider)cannotDeliverController.generateDouble();
 
@@ -406,12 +406,12 @@ public with sharing class AmossExample_OrderTest {
             .when()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .willReturn( true )
             .also().when()
                 .method( 'scheduleDelivery' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .willReturn( true );
         AmossExample_DeliveryProvider canDeliverProvider = (AmossExample_DeliveryProvider)canDeliverController.generateDouble();
 
@@ -461,7 +461,7 @@ public with sharing class AmossExample_OrderTest {
             .expects()
                 .method( 'canDeliver' )
                 .withParameter( deliveryPostcode )
-                .andThenParameter( deliveryDate )
+                .thenParameter( deliveryDate )
                 .throws( new AmossExample_DeliveryProvider.DeliveryProviderException( 'This is the exception thrown' ) );
 
         AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();

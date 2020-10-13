@@ -1,5 +1,14 @@
 Amoss - Apex Mocks, Spies and Stubs
 
+To finish the named parameters implementation:
+
+    Test: 
+        Consider adding a lot more tests - check what doesn't fail...
+    
+    Document:
+        Specifying named parameters
+        Consider a class diagram
+
 Documentation:
 
     Review definitions from xUnit Patterns and ensure that the Amoss definitions match.
@@ -9,6 +18,17 @@ Implement
     Document what is included in the installation
 
     Instructions on installation - implement 'install to Salesforce' - Andy in the Cloud
+
+    Code documentation (search for TODOs)
+
+    Move all string contatonation over to string.format, and move ' over to " where used in a string
+
+    Test:
+        look if there are more 'expects' behaviours to test with named parameters
+        do we need to test 'allows' behaviours with named parameters
+        withParameters, using a List
+        withParameters, using a Map
+        callDescription changes based on the type of parameter matching
 
     Test:
 
@@ -24,7 +44,7 @@ Implement
         When and allows matches before Expected
 
         Test
-            andThenAnyParameter / thenAnyParameter
+            thenAnyParameter / thenAnyParameter
 
             Amoss_Expectations
             Amoss_Expectation
@@ -81,8 +101,8 @@ Implement
                 .expects()
                 .method( 'generate' )
                 .withParameter( 'Opportunity' )
-                .andThenParameter( 'Opportunity_Products_Offered' )
-                .andThenParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
+                .thenParameter( 'Opportunity_Products_Offered' )
+                .thenParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
                 .returning( new Map<Id,String>{ opportunityLineItemList[0].OpportunityId => 'The generated Template' } ); // and here too
 
             Maybe:
@@ -91,7 +111,7 @@ Implement
                 .expects()
                 .method( 'generate' )
                 .withParameter( 'Opportunity' )
-                .andThenParameter( 'Opportunity_Products_Offered' )
+                .thenParameter( 'Opportunity_Products_Offered' )
                 .andAnyParameter()
                 .handledBy( new TemplateGeneratorMockHandler() );
 

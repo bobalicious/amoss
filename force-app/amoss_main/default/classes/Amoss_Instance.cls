@@ -36,10 +36,11 @@ SOFTWARE.
 * 'StubProvider' interface (which this class implements), and has the same limitations as that functionality.
 *
 */
-@isTest
-public class Amoss_Instance implements StubProvider {
+public without sharing class Amoss_Instance implements StubProvider {
 
     class Amoss_CallLogException extends Exception {}
+    class Amoss_ParameterMatchingTypeEnumException extends Exception {}
+    class Amoss_NamedParameterSequenceException extends Exception {}
 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
@@ -80,13 +81,13 @@ public class Amoss_Instance implements StubProvider {
     *       .withParameter( 'parameterValue' )
     *       .returning( 'theValueItShouldReturn' )
     */
-    public Amoss_Expectation expects() {
+    public Amoss_MethodDefiner expects() {
         if ( ! allowsAnyCallExplicitlyDefined ) {
             allowsAnyCall = false;
         }
         Amoss_Expectation newExpectation = new Amoss_Expectation( this );
         this.expectations.add( newExpectation );
-        return newExpectation;
+        return new Amoss_MethodDefiner( newExpectation );
     }
 
     /**
@@ -104,10 +105,10 @@ public class Amoss_Instance implements StubProvider {
     *   .withParameter( 'parameterValue' )
     *   .willReturn( 'theValueItShouldReturn' )
     */
-    public Amoss_Expectation when() {
+    public Amoss_MethodDefiner when() {
         Amoss_Expectation newExpectation = new Amoss_Expectation( this );
         this.whens.add( newExpectation );
-        return newExpectation;
+        return new Amoss_MethodDefiner( newExpectation );
     }
 
     /**
@@ -125,7 +126,7 @@ public class Amoss_Instance implements StubProvider {
     *   .withParameter( 'parameterValue' )
     *   .willReturn( 'theValueItShouldReturn' )
     */
-    public Amoss_Expectation allows() {
+    public Amoss_MethodDefiner allows() {
         if ( ! allowsAnyCallExplicitlyDefined ) {
             allowsAnyCall = false;
         }
@@ -223,11 +224,10 @@ public class Amoss_Instance implements StubProvider {
                                     List<Type>   parameterTypes,
                                     List<String> parameterNames,
                                     List<Object> parameters ) {
-
-        callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameters ) );
+        callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
 
         if ( whens.hasExpectations() ) {
-            Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameters );
+            Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameterNames, parameters );
             if ( whenExpectation != null ) {
                 return whenExpectation.getReturnValue();
             }
@@ -239,9 +239,9 @@ public class Amoss_Instance implements StubProvider {
             assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
         }
 
-        if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameters ) ) {
+        if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameterNames, parameters ) ) {
             Amoss_Expectation thisExpectation = expectations.unshift();
-            thisExpectation.verify( assertionMechanism, mockedMethod, parameters );
+            thisExpectation.verify( assertionMechanism, mockedMethod, parameterNames, parameters );
             return thisExpectation.getReturnValue();
         }
         
@@ -255,17 +255,6 @@ public class Amoss_Instance implements StubProvider {
     */
     public String getClassName() {
         return String.valueOf( this.classType );
-    }
-
-    /**
-    * Internal method that should not be called directly in tests.
-    * 
-    * Get the assertion mechanism for this mock object implementation
-    *
-    * @return  Amoss_Asserts - The assertionMechanism object
-    */
-    public Amoss_Asserts getAsserts() {
-        return this.assertionMechanism;
     }
     
     /**
@@ -293,6 +282,7 @@ public class Amoss_Instance implements StubProvider {
         String  method;
         Integer callNumber;
         Integer parameterNumber;
+        String  parameterName;
 
         Amoss_CallLog callLog;
 
@@ -358,7 +348,26 @@ public class Amoss_Instance implements StubProvider {
         */
         public Object parameter( Integer parameterNumber ) {
             this.parameterNumber = parameterNumber;
+            this.parameterName = null;
             return callLog.getCallLogParameter( this.method, this.callNumber, this.parameterNumber );
+        }
+
+        /**
+        * Requests the parameter with the stated name, for the 
+        * current method and call count context.
+        *
+        * Allows the object to be used as a Test Spy.
+        *
+        * Use in the formats:
+        *   call( 1 ).of( 'methodName' ).parameter( 'parameterName' )
+        *   latestCallOf( 'methodName' ).parameter( 'parameterName' )
+        *
+        * @param Object - The parameter that was passed in when the stated method was called
+        */
+        public Object parameter( String parameterName ) {
+            this.parameterName = parameterName;
+            this.parameterNumber = null;
+            return callLog.getCallLogParameter( this.method, this.callNumber, this.parameterName );
         }
 
         /**
@@ -375,6 +384,21 @@ public class Amoss_Instance implements StubProvider {
         public List<Object> parameters() {
             return callLog.getCallLogParameters( this.method, this.callNumber );
         }
+
+        /**
+        * Requests a map of the parameters for the current method and call count context, indexed by their name.
+        *
+        * Allows the object to be used as a Test Spy.
+        *
+        * Use in the formats:
+        *   call( 1 ).of( 'methodName' ).parametersByName()
+        *   latestCallOf( 'methodName' ).parametersByName()
+        *
+        * @param Map<String,Object> - The parameters that were passed in when the stated method was called
+        */
+        public Map<String,Object> parametersByName() {
+            return callLog.getCallLogParametersByName( this.method, this.callNumber );
+        }        
     }
 
     /**
@@ -388,7 +412,11 @@ public class Amoss_Instance implements StubProvider {
     private class Amoss_CallLogEntry {
 
         String       method;
-        List<Object> parameters;
+        List<Object> parameterValues;
+        List<String> parameterNames;
+        List<Object> parameterTypes;
+
+        Map<String,Object> parameterValuesByName;
 
         /**
         * Internal method that should not be called directly in tests.
@@ -414,8 +442,15 @@ public class Amoss_Instance implements StubProvider {
         *
         * Sets the parameters that were passed in on this method call.
         */
-        public Amoss_CallLogEntry setParameters( List<Object> parameters ) {
-            this.parameters = parameters;
+        public Amoss_CallLogEntry setParameters( List<Object> parameterTypes, List<String> parameterNames, List<Object> parameterValues ) {
+            this.parameterNames  = parameterNames;
+            this.parameterTypes  = parameterTypes;
+            this.parameterValues = parameterValues;
+            parameterValuesByName = new Map<String,Object>();
+
+            for ( Integer i=0; i<parameterNames.size(); i++ ) {
+                parameterValuesByName.put( parameterNames[i], parameterValues[i] );
+            }
             return this;
         }
 
@@ -427,20 +462,39 @@ public class Amoss_Instance implements StubProvider {
         * If the parameter does not exist then an exception is thrown.
         */
         public Object getParameter( Integer parameterNumber ) {
-            if ( parameters == null ) {
+            if ( parameterValues == null ) {
                 throw new Amoss_CallLogException( method + ' was not called' );
             }
-            if ( parameters.size() == 0 ) {
+            if ( parameterValues.isEmpty()  ) {
                 throw new Amoss_CallLogException( method + ' was not called with any parameters' );
             }
-
-            if ( parameters.size() < parameterNumber + 1 ) {
+            if ( parameterValues.size() < parameterNumber + 1 ) {
                 throw new Amoss_CallLogException( method + ' was not called with ' + ( parameterNumber + 1 ) + ' parameters' );
             }
             if ( parameterNumber < 0 ) {
                 throw new Amoss_CallLogException( 'Cannot request a negative parameter number (got ' + parameterNumber + ')' );
             }
-            return parameters[ parameterNumber ];
+            return parameterValues[ parameterNumber ];
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameter at the specified position that was passed in on this method call.
+        *
+        * If the parameter does not exist then an exception is thrown.
+        */
+        public Object getParameter( String parameterName ) {
+            if ( parameterValuesByName == null ) {
+                throw new Amoss_CallLogException( method + ' was not called' );
+            }
+            if ( parameterValuesByName.isEmpty() ) {
+                throw new Amoss_CallLogException( method + ' was not called with any parameters' );
+            }
+            if ( ! parameterValuesByName.containsKey( parameterName ) ) {
+                throw new Amoss_CallLogException( method + ' was not called with parameter "' + parameterName + '"' );
+            }
+            return parameterValuesByName.get( parameterName );
         }
 
         /**
@@ -451,11 +505,25 @@ public class Amoss_Instance implements StubProvider {
         * If the parameters do not exist then an exception is thrown.
         */
         public List<Object> getParameters() {
-            if ( parameters == null ) {
+            if ( parameterValues == null ) {
                 throw new Amoss_CallLogException( method + ' was not called' );
             }
-            return parameters;
+            return parameterValues;
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameters for this call, indexed by their name.
+        *
+        * If the parameters do not exist then an exception is thrown.
+        */
+        public Map<String,Object> getParametersByName() {
+            if ( parameterValuesByName == null ) {
+                throw new Amoss_CallLogException( method + ' was not called' );
+            }
+            return parameterValuesByName;
+        }        
     }
 
     /**
@@ -543,6 +611,21 @@ public class Amoss_Instance implements StubProvider {
             return getCallLog( method, callNumber ).getParameter( parameterNumber );
         }
 
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameter at the stated position that was passed into the stated method at the stated call number in the stack.
+        *
+        * @param  String  - The method to retrieve the parameters for.
+        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param  Integer - The position of the parameter in the call. Indexed from 0.
+        * @return Object  - The requested parameter value.
+        */
+        public Object getCallLogParameter( String method, Integer callNumber, String parameterName ) {
+            return getCallLog( method, callNumber ).getParameter( parameterName );
+        }
+
         /**
         * Internal method that should not be called directly in tests.
         *
@@ -555,6 +638,19 @@ public class Amoss_Instance implements StubProvider {
         public List<Object> getCallLogParameters( String method, Integer callNumber ) {
             return getCallLog( method, callNumber ).getParameters();
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Gets the parameters that were passed into the stated method at the stated call number in the stack.
+        *
+        * @param  String  - The method to retrieve the parameters for.
+        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @return Map<String,Object> - The requested parameter values, indexed by their name.
+        */
+        public Map<String,Object> getCallLogParametersByName( String method, Integer callNumber ) {
+            return getCallLog( method, callNumber ).getParametersByName();
+        }        
     }
 
     /**
@@ -563,7 +659,7 @@ public class Amoss_Instance implements StubProvider {
     * Describes the definition of a mock object's 'expectations' or 'whens' within a test and allows the interrogation of that definition.
     *
     */
-    public with sharing class Amoss_Expectations {
+    private class Amoss_Expectations {
 
         private List<Amoss_Expectation> expectations = new List<Amoss_Expectation>();
 
@@ -584,11 +680,12 @@ public class Amoss_Instance implements StubProvider {
         * Returns false if no more expections exist.
         *
         * @param  String - The name of the method to match against
+        * @param  List<String> - The parameter names to match against
         * @param  List<Object> - The parameter values to match against
         * @return Boolean - States if the given method and parameterValues match the next expectation.
         */
-        public Boolean matchesNext(  String method, List<Object> parameterValues ) {
-            return expectations.size() > 0 && expectations[0].matches( method, parameterValues );
+        public Boolean matchesNext(  String method, List<String> parameterNames, List<Object> parameterValues ) {
+            return expectations.size() > 0 && expectations[0].matches( method, parameterNames, parameterValues );
         }
 
         /**
@@ -628,7 +725,7 @@ public class Amoss_Instance implements StubProvider {
             for ( Amoss_Expectation thisExpectation : expectations ) {
                 remainingCallDescriptions.add( thisExpectation.getCallDescription() );
             }
-            return String.join( remainingCallDescriptions, ',' );
+            return String.join( remainingCallDescriptions, ', ' );
         }
 
         /**
@@ -638,13 +735,14 @@ public class Amoss_Instance implements StubProvider {
         * Returns the *first* expectation that does, or null if non do.
         *
         * @param  String - The name of the method to match against
+        * @param  List<String> - The parameter names to match against
         * @param  List<Object> - The parameter values to match against
         * @return Amoss_Expectation - The matching expectation
         */
-        public Amoss_Expectation getMatchingExpectation( String mockedMethod, List<Object> parameters ) {
+        public Amoss_Expectation getMatchingExpectation( String mockedMethod, List<String> parameterNames, List<Object> parameters ) {
 
             for ( Amoss_Expectation thisExpectation : expectations ) {
-                if ( thisExpectation.matches( mockedMethod, parameters ) ) {
+                if ( thisExpectation.matches( mockedMethod, parameterNames, parameters ) ) {
                     return thisExpectation;
                 }
             }
@@ -653,29 +751,22 @@ public class Amoss_Instance implements StubProvider {
     }
 
     /**
-    * Internal class that should not be referenced directly in a test
-    *
-    * Describes the definition and behaviour of an 'expectation' or 'when' that is defined within a test.
-    *
-    */
-    public class Amoss_Expectation {
+     * The base class for all Expectation Definers - being the classes that embody the grammar for specifying expectations
+     */
+    public virtual class Amoss_ExpectationDefiner {
+        protected Amoss_Expectation expectation;
 
-        private String expectedMethod;
-        private Boolean withAnyParameters = true;
-        private List<Amoss_ExpectationParameter> expectedParameters = new List<Amoss_ExpectationParameter>();
-        private Object returnValue;
-        private Exception exceptionToThrow;
-
-        private Amoss_Instance mockControl;
-
-        private String className {
-            get {
-                return mockControl.getClassName();
-            }
+        public Amoss_ExpectationDefiner( Amoss_Expectation expectation ) {
+            this.expectation = expectation;
         }
+    }
 
-        public Amoss_Expectation( Amoss_Instance mockControl ) {
-            this.mockControl = mockControl;
+    /**
+     * The main entry point of the grammar - the specifiecation of a method
+     */
+    public class Amoss_MethodDefiner extends Amoss_ExpectationDefiner {
+        public Amoss_MethodDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
         }
 
         /**
@@ -688,10 +779,280 @@ public class Amoss_Instance implements StubProvider {
         *       .returning( 'theValueItShouldReturn' )
         *
         * @param String - The method that this expectation is for
+        */        
+        public Amoss_ParametersDefiner method( String method ) {
+            expectation.setMethod( method );
+            return new Amoss_ParametersDefiner( expectation );
+        }
+    }
+
+    /**
+     * The linking point of the grammar - stating that another expectation is to be configured
+     * Effectively ends this instance of the configuration and hands control back to the 
+     * Amoss_Instance, which can start a new expectation
+     */
+    public virtual class Amoss_NextExpectationDefiner extends Amoss_ExpectationDefiner {
+        public Amoss_NextExpectationDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance
+        *
+        * For example:
+        * .then().expects()
+        *       .method( 'methodName' )
+        *       .withParameter( 'parameterValue' )
+        *       .returning( 'theValueItShouldReturn' )
         */
-        public Amoss_Expectation method( String method ) {
-            this.expectedMethod = method;
+        public Amoss_Instance then() {
+            return expectation.getMockControl();
+        }
+
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance.
+        *
+        * Is a synonym for 'then'.
+        *
+        * For example:
+        * .also().when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'parameterValue' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_Instance also() {
+            return then();
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the specification of the return behaviour.
+     *
+     * Allows returns or the throwing of exceptions to be specified.
+     *
+     * Extends Next Expectation, as a method does not have to return anything.
+     */
+    public virtual class Amoss_ReturnsDefiner extends Amoss_NextExpectationDefiner {
+        public Amoss_ReturnsDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        /**
+        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .returns( 'theValueItShouldReturn' )
+        *
+        * Has 'returning' and 'willReturn' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The value to return when this expectation is met.
+        */
+        public Amoss_NextExpectationDefiner returns( Object returnValue ) {
+            expectation.returns( returnValue );
+            return new Amoss_NextExpectationDefiner( expectation );
+        }
+
+        /**
+        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'returning' and 'returns' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The value to return when this expectation is met.
+        */
+        public Amoss_NextExpectationDefiner willReturn( Object returnValue ) {
+            return this.returns( returnValue );
+        }
+
+        /**
+        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'methodName' )
+        *       .returning( 'theValueItShouldReturn' )
+        *
+        * Has 'returns' and 'willReturn' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The value to return when this expectation is met.
+        */
+        public Amoss_NextExpectationDefiner returning( Object returnValue ) {
+            return this.returns( returnValue );
+        }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .throws( new DmlException( 'The exception' ) )
+        *
+        * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The Exception to throw when this expectation is met.
+        */
+        public Amoss_NextExpectationDefiner throws( Exception exceptionToThrow ) {
+            expectation.throws( exceptionToThrow );
+            return new Amoss_NextExpectationDefiner( expectation );
+        }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .willThrow( new DmlException( 'The exception' ) )
+        *
+        * Has 'throwing' and 'throws' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The Exception to throw when this expectation is met.
+        */
+        public Amoss_NextExpectationDefiner willThrow( Exception exceptionToThrow ) {
+            return this.throws( exceptionToThrow );
+        }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'methodName' )
+        *       .throwing( new DmlException( 'The exception' ) )
+        *
+        * Has 'throws'and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The Exception to throw when this expectation is met.
+        */
+        public Amoss_NextExpectationDefiner throwing( Exception exceptionToThrow ) {
+            return this.throws( exceptionToThrow );
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the specification of parameters based on their
+     * position.  I.E. expected parameters are defined in order.
+     */
+    public class Amoss_PositionalParametersDefiner extends Amoss_ReturnsDefiner {
+        public Amoss_PositionalParametersDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        /**
+        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'Parameter1' )
+        *       .thenParameter( 4 )
+        *       .thenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The parameter value to add to the list of expected ones
+        */
+        public Amoss_PositionalParametersDefiner thenParameter( Object parameterValue ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterValue( parameterValue );
             return this;
+        }        
+
+        /**
+        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter( 'Parameter1' )
+        *       .thenAnyParameter()
+        *       .thenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        */
+        public Amoss_PositionalParametersDefiner thenAnyParameter() {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addAnyParameterValue();
+            return this;
+        }      
+    }
+
+    /**
+     * The part of the grammar that allows the specification of the value of a named parameter.
+     * The name must have already been specified.
+     *
+     * At this point in the syntax, the only valid thing to do is define the parameter value.
+     */
+    public class Amoss_NamedParameterValueDefiner extends Amoss_ExpectationDefiner {
+
+        String parameterName;
+
+        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation, String parameterName ) {
+            super( expectation );
+            this.parameterName = parameterName;
+        }
+
+        /**
+        * States the parameter value that is expected for the the currently specified parameter.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, parameterValue );
+            return new Amoss_NamedParametersDefiner( expectation );
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the specification of parameters based on their
+     * names.  I.E. expected parameters are defined in a name and value pairing.
+     */
+    public class Amoss_NamedParametersDefiner extends Amoss_ReturnsDefiner {
+        public Amoss_NamedParametersDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        /**
+        * Adds the stated parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Has 'withParameterNamed' as a synonym, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Object - The name of the parameter to add to the specification
+        */
+        public Amoss_NamedParameterValueDefiner andParameterNamed( String parameterName ) {
+            return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the first specification of a parameter.
+     *
+     * The choice of parameter specification method at this point defines the syntax that will
+     * be used for the remainder of the specification - Any, Positional or Named.
+     */
+    public class Amoss_ParametersDefiner extends Amoss_ReturnsDefiner {
+        public Amoss_ParametersDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
         }
 
         /**
@@ -708,9 +1069,9 @@ public class Amoss_Instance implements StubProvider {
         *       .willReturn( 'theValueItShouldReturn' )
         *
         */
-        public Amoss_Expectation withAnyParameters() {
-            this.withAnyParameters = true;
-            return this;
+        public Amoss_ReturnsDefiner withAnyParameters() {
+            expectation.setExpectationParameters( new Amoss_ExpectationAnyParameters() );
+            return new Amoss_ReturnsDefiner( expectation );
         }
 
         /**
@@ -722,118 +1083,49 @@ public class Amoss_Instance implements StubProvider {
         *       .withParameters( Object[]{ 'Parameter1' 4, false })
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * Although unusual, can be followed by an andThenParameter call.
-        *
         * @param Object[] - The list of parameter values that are expected
         */
-        public Amoss_Expectation withParameters( Object[] parameterValues ) { // to encourage the shorter syntax
-            this.withAnyParameters = false;
+        public Amoss_ReturnsDefiner withParameters( Object[] parameterValues ) {
 
-            this.expectedParameters = new List<Amoss_ExpectationParameter>();
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+
             for ( Object thisParameterValue : parameterValues ) {
-                this.expectedParameters.add( new Amoss_ExpectationParameter().setValue( thisParameterValue ) );
+                expectedParameters.addParameterValue( thisParameterValue );
             }
 
-            return this;
+            expectation.setExpectationParameters( expectedParameters );
+
+            return new Amoss_ReturnsDefiner( expectation );
         }
 
         /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        * States that this 'expection' or 'when' is valid for this given map of parameters, indexed by the parameter name.
         *
-        * For example, to specify:
+        * For example:
         *   .when()
         *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .andThenParameter( 4 )
-        *       .andThenParameter( false )
+        *       .withParameters( new Map<String,Object>{
+        *                        'parameterName1' => 'The Parameter Value',
+        *                        'parameterName2' => 15,
+        *                       })
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * Has 'andThenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The parameter value to add to the list of expected ones
+        * @param Map<String,Object> - The map of parameter values that are expected
         */
-        public Amoss_Expectation withParameter( Object parameterValue ) {
-            this.withAnyParameters = false;
-            this.expectedParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
-            return this;
-        }
+        public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
 
+            Amoss_ExpectationNamedParameters expectedParameters = new Amoss_ExpectationNamedParameters();
 
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withAnyParameter()
-        *       .thenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'andThenAnyParameter' and 'thenAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        */
-        public Amoss_Expectation withAnyParameter() {
-            this.expectedParameters.add( new Amoss_ExpectationParameter().anyValue() );
-            return this;
+            for ( String thisParameterName : parameters.keySet() ) {
+                expectedParameters.setParameter( thisParameterName, parameters.get( thisParameterName ) );
+            }
+            expectation.setExpectationParameters( expectedParameters );
+
+            return new Amoss_ReturnsDefiner( expectation );
         }
 
         /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .thenAnyParameter()
-        *       .thenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'andThenAnyParameter' and 'withAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        */
-        public Amoss_Expectation thenAnyParameter() {
-            return withAnyParameter();
-        }
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .andThenAnyParameter()
-        *       .andThenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'thenAnyParameter' and 'withAnyParameter' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        */
-        public Amoss_Expectation andThenAnyParameter() {
-            return withAnyParameter();
-        }    
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'Parameter1' )
-        *       .andThenParameter( 4 )
-        *       .andThenParameter( false )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'withParameter' and 'thenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The parameter value to add to the list of expected ones
-        */
-        public Amoss_Expectation andThenParameter( Object parameterValue ) {
-            return withParameter( parameterValue );
-        }
-
-        /**
-        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        * Sets the expected value of the first parameter in the list of parameters that are valid for this 'expection' or 'when'.
         *
         * For example, to specify:
         *   .when()
@@ -843,138 +1135,146 @@ public class Amoss_Instance implements StubProvider {
         *       .thenParameter( false )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * Has 'withParameter' and 'andThenParameter' as a synonym, and these methods are entirely interchangeable based on preference.
+        * Once called, allows 'thenParameter' and similar to be called (positional syntax), to add further parameters
         *
         * @param Object - The parameter value to add to the list of expected ones
         */
-        public Amoss_Expectation thenParameter( Object parameterValue ) {
-            return withParameter( parameterValue );
+        public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
+
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+            expectedParameters.addParameterValue( parameterValue );
+            expectation.setExpectationParameters( expectedParameters );
+
+            return new Amoss_PositionalParametersDefiner( expectation );
         }
 
         /**
-        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        * Sets the expected value of the first parameter in the list of parameters to be 'any value' for this 'expection' or 'when'.
         *
         * For example, to specify:
-        *   .expects()
+        *   .when()
         *       .method( 'methodName' )
-        *       .returning( 'theValueItShouldReturn' )
+        *       .withAnyParameter()
+        *       .thenParameter( false )
+        *       .willReturn( 'theValueItShouldReturn' )
         *
-        * Has 'returns' and 'willReturn' as synonyms, and these methods are entirely interchangeable based on preference.
+        * Once called, allows 'thenParameter' and similar to be called (positional parameter syntax), to add further parameters.
+        *
+        */
+        public Amoss_PositionalParametersDefiner withAnyParameter() {
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+            expectedParameters.addAnyParameterValue();
+            expectation.setExpectationParameters( expectedParameters );
+
+            return new Amoss_PositionalParametersDefiner( expectation );
+        }
+
+        /**
+        * Sets the name of an expected parameter, to be followed by 'setTo' in order to specify the value.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Once used, defines the parameter specifications as using 'named parameter' syntax, and 'andParameterNamed' can be called to add further parameters.
+        *
+        * @param String - The name of the parameter to add to the specification
+        */   
+        public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
+            Amoss_ExpectationNamedParameters expectedParameters = new Amoss_ExpectationNamedParameters();
+            expectation.setExpectationParameters( expectedParameters );
+
+            return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the definition and behaviour of an 'expectation' or 'when' that is defined within a test.
+    *
+    * Is configured using 'Expectation Definers'
+    *
+    */
+    public class Amoss_Expectation {
+
+        private String expectedMethod;
+        private Object returnValue;
+        private Exception exceptionToThrow;
+
+        private Amoss_ExpectationParameters expectedParameters = new Amoss_ExpectationAnyParameters();
+
+        private Amoss_Instance mockControl;
+
+        private String className {
+            get {
+                return mockControl.getClassName();
+            }
+        }
+
+        public Amoss_Expectation( Amoss_Instance mockControl ) {
+            this.mockControl = mockControl;
+        }
+
+        public Amoss_Instance getMockControl() {
+            return this.mockControl;
+        }
+
+        /**
+        * Internal method that sets the expectation parameter object for this expectation.
+        * In essence, defines the behaviour of the parameter matching.
+        *
+        * @param Amoss_ExpectationParameters - The expectation parameters object to use
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_Expectation setExpectationParameters( Amoss_ExpectationParameters expectationParameters ) {
+            this.expectedParameters = expectationParameters;
+            return this;
+        }
+
+        /**
+        * Internal method that retrieves the expectation parameter object for this expectation.
+        *
+        * @return Amoss_ExpectationParameters - The expectation parameters object that is in use
+        */
+        public Amoss_ExpectationParameters getExpectationParameters() {
+            return expectedParameters;
+        }
+
+        /**
+        * Internal method that assigns the methods that this expectation is for.
+        *
+        * @param String - The method that this expectation is for
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_Expectation setMethod( String method ) {
+            this.expectedMethod = method;
+            return this;
+        }
+
+        /**
+        * Internal method that sets the value to return when this expectation is met
         *
         * @param Object - The value to return when this expectation is met.
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
-        public Amoss_Expectation returning( Object returnValue ) {
+        public Amoss_Expectation returns( Object returnValue ) {
             this.returnValue = returnValue;
             return this;
         }
 
         /**
-        * States the value that should be returned when this 'expectation' or 'when' is met. 
+        * Internal method that sets the exception to throw when this expectation is met
         *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .returns( 'theValueItShouldReturn' )
-        *
-        * Has 'returning' and 'willReturn' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The value to return when this expectation is met.
-        */
-        public Amoss_Expectation returns( Object returnValue ) {
-            return returning( returnValue );
-        }
-
-        /**
-        * States the value that should be returned when this 'expectation' or 'when' is met. 
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * Has 'returning' and 'returns' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The value to return when this expectation is met.
-        */
-        public Amoss_Expectation willReturn( Object returnValue ) {
-            return returning( returnValue );
-        }
-
-        /**
-        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
-        *
-        * For example, to specify:
-        *   .expects()
-        *       .method( 'methodName' )
-        *       .throwing( new DmlException( 'The exception' ) )
-        *
-        * Has 'throws'and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The Exception to throw when this expectation is met.
-        */
-        public Amoss_Expectation throwing( Exception exceptionToThrow ) {
-            this.exceptionToThrow = exceptionToThrow;
-            return this;
-        }
-
-        /**
-        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .throws( new DmlException( 'The exception' ) )
-        *
-        * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The Exception to throw when this expectation is met.
+        * @param Object - The exception to throw when this expectation is met.
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
         public Amoss_Expectation throws( Exception exceptionToThrow ) {
-            return this.throwing( exceptionToThrow );
-        }
-
-        /**
-        * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .willThrow( new DmlException( 'The exception' ) )
-        *
-        * Has 'throwing' and 'throws' as synonyms, and these methods are entirely interchangeable based on preference.
-        *
-        * @param Object - The Exception to throw when this expectation is met.
-        */
-        public Amoss_Expectation willThrow( Exception exceptionToThrow ) {
-            return this.throwing( exceptionToThrow );
-        }
-
-        /**
-        * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance
-        *
-        * For example:
-        * .then().expects()
-        *       .method( 'methodName' )
-        *       .withParameter( 'parameterValue' )
-        *       .returning( 'theValueItShouldReturn' )
-        */
-        public Amoss_Instance then() {
-            return this.mockControl;
-        }
-
-        /**
-        * Allows another 'expectation' or 'when' to be defined against the Amoss_Instance.
-        *
-        * Is a synonym for 'then'.
-        *
-        * For example:
-        * .also().when()
-        *       .method( 'methodName' )
-        *       .withParameter( 'parameterValue' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        */
-        public Amoss_Instance also() {
-            return then();
+            this.exceptionToThrow = exceptionToThrow;
+            return this;
         }
 
         /**
@@ -996,26 +1296,14 @@ public class Amoss_Instance implements StubProvider {
         *
         * Verifies that the given method and parameter values matches the current expectation, giving a clear description of what is wrong if the verification fails.
         *
+        * @param Amoss_Asserts - The assertion mechanism that should be used for issuing assertions
         * @param String - The method to check this expectation against.
+        * @param List<String> - The parameter namess to check this expectation against.
         * @param List<Object> - The parameters to check this expectation against.
         */
-        public void verify( Amoss_Asserts assertionMechanism, String method, List<Object> parameterValues ) {
-
+        public void verify( Amoss_Asserts assertionMechanism, String method, List<String> parameterNames, List<Object> parameterValues ) {
             assertionMechanism.assertEquals( expectedMethod, method, String.format( '{0}.{1} was expected to be called', new List<String>{ className, expectedMethod } ) );
-
-            if ( withAnyParameters ) {
-                return;
-            }
-
-            assertionMechanism.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, expectedMethod } ) );
-
-            for ( Integer parameterNumber = 0; parameterNumber < expectedParameters.size(); parameterNumber++ ) {
-
-                if ( expectedParameters[ parameterNumber ].allowsAnyValue() ) {
-                    continue;
-                }
-                assertionMechanism.assertEquals( expectedParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, expectedMethod, String.valueOf( parameterNumber ) } ) );
-            }
+            expectedParameters.verify(assertionMechanism, className, method, parameterNames, parameterValues );
         }
 
         /**
@@ -1026,11 +1314,9 @@ public class Amoss_Instance implements StubProvider {
         * @return String - A description of the current expection's call.
         */
         public String getCallDescription() {
-            List<String> stringParameters = new List<String>();
-            for( Object thisParameter : expectedParameters ) {
-                stringParameters.add( String.valueOf( thisParameter ) );
-            }
-            return this.expectedMethod + '(' + String.join( stringParameters, ',' ) + ')';
+            String callDescription = this.expectedMethod;
+            String parametersDescription = expectedParameters.getParametersDescription();
+            return this.expectedMethod + '( ' + parametersDescription + ' )';
         }
 
         /**
@@ -1039,25 +1325,238 @@ public class Amoss_Instance implements StubProvider {
         * Checks if the stated call and parameters matches the current expectation's definition.
         *
         * @param String - The method to check this expectation against.
+        * @param List<Object> - The names of the parameters to check this expectation against.
         * @param List<Object> - The parameters to check this expectation against.
         * @return Boolean - States if this expectation matches that passed passed in.
         */
-        public Boolean matches( String method, List<Object> parameterValues ) {
-
+        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
             if ( method != this.expectedMethod ) {
                 return false;
             }
+            return expectedParameters.matches( method, parameterNames, parameterValues );
+        }  
+    }
 
-            if ( withAnyParameters ) {
-                return true;
+    /**
+    * Internal interface that allows for the specification of parameters that an Expectation should have
+    *
+    * An implementing class should provide a mechanism to get a String description, verify passed parameters are as stated (reporting via assertions)
+    * and checking passed parameters are as stated (returning a Boolean)
+    */
+    private interface Amoss_ExpectationParameters {
+        String getParametersDescription();
+        void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues );
+        Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues );
+    }
+
+    /**
+    * Internal class that allows for the specification that an Expectation can have any parameters
+    *
+    * Always assumes that any parameters will match (since 'any' should)
+    */
+    private with sharing class Amoss_ExpectationAnyParameters implements Amoss_ExpectationParameters {
+
+        /**
+        * Internal method that returns a String description of the parameter values that are expected.
+        *
+        * Always returns 'any'
+        *
+        * @return String - The description of the expected parameter values
+        */
+        public String getParametersDescription() {
+            return 'any';
+        }
+
+        /**
+        * Internal method that checks if the passed parameters match those that are configured, reporting via Assertions.
+        *
+        * Does nothing.
+        *
+        * @param Amoss_Asserts - The assertion mechanism to report via
+        * @param String - The method that is being called, and therefore checked
+        * @param List<String> - The names of the parameters being passed, and thereforce checked
+        * @param List<Object> - The values of the parameters being passed, and thereforce checked
+        */
+        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+            return;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if the stated call and parameters matches the current expectation's definition.
+        *
+        * @param String - The method to check this expectation against.
+        * @param List<Object> - The names of the parameters to check this expectation against.
+        * @param List<Object> - The parameters to check this expectation against.
+        * @return Boolean - States if this expectation matches that passed passed in.
+        */
+        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
+            return true;
+        }
+    }
+
+    /**
+    * Internal interface that allows for the specification of parameters that an Expectation should have using 'positional' notation.
+    * That is, they are specified in order.
+    */
+    private with sharing class Amoss_ExpectationPositionalParameters implements Amoss_ExpectationParameters {
+
+        private List<Amoss_ExpectationParameter> expectedParameters = new List<Amoss_ExpectationParameter>();
+
+        /**
+        * Internal method that adds a parameter to the list of parameters that are valid for this Expectation.
+        *
+        * @param Object - The parameter value to add to the list of expected ones
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameters addParameterValue( Object parameterValue ) {
+            expectedParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
+            return this;
+        }
+
+        /**
+        * Internal method that adds an 'any parameter value' to the list of parameters that are valid for this Expectation.
+        * 
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameters addAnyParameterValue() {
+            expectedParameters.add( new Amoss_ExpectationParameter().anyValue() );
+            return this;
+        }
+
+        /**
+        * Internal method that returns a String description of the parameter values that are expected, as a comma seperated list.
+        *
+        * @return String - The description of the expected parameter values
+        */
+        public String getParametersDescription() {
+            List<String> stringParameters = new List<String>();
+            for( Object thisParameter : expectedParameters ) {
+                stringParameters.add( String.valueOf( thisParameter ) );
             }
+            return String.join( stringParameters, ', ' );
+        }    
 
+        /**
+        * Internal method that checks if the passed parameters match those that are configured, reporting via Assertions.
+        *
+        * @param Amoss_Asserts - The assertion mechanism to report via
+        * @param String - The method that is being called, and therefore checked
+        * @param List<String> - The names of the parameters being passed, and thereforce checked
+        * @param List<Object> - The values of the parameters being passed, and thereforce checked
+        */
+        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+
+            assertionMechanism.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, method } ) );
+
+            for ( Integer parameterNumber = 0; parameterNumber < expectedParameters.size(); parameterNumber++ ) {
+
+                // TODO: could push this verify into the Expectation Parameter - could introduce Expectation Any Parameter - it's good to get rid of ifs
+                if ( expectedParameters[ parameterNumber ].allowsAnyValue() ) {
+                    continue;
+                }
+                assertionMechanism.assertEquals( expectedParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, method, String.valueOf( parameterNumber ) } ) );
+            }
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if the stated call and parameters matches the current expectation's definition.
+        *
+        * @param String - The method to check this expectation against.
+        * @param List<Object> - The names of the parameters to check this expectation against.
+        * @param List<Object> - The parameters to check this expectation against.
+        * @return Boolean - States if this expectation matches that passed passed in.
+        */
+        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
             for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
                 if ( ! expectedParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ) ) {
                     return false;
                 }
             }
+            return true;
+        }    
+    }
 
+    /**
+    * Internal interface that allows for the specification of parameters that an Expectation should have using 'positional' notation.
+    * That is, they are specified using their names
+    */
+    private with sharing class Amoss_ExpectationNamedParameters implements Amoss_ExpectationParameters {
+
+        private Map<String,Amoss_ExpectationParameter> expectedParameters = new Map<String,Amoss_ExpectationParameter>();
+
+        /**
+        * Internal method that sets the expected parameter with the given name, to have the given value.
+        *
+        * @param String - The name of the parameter to add to the specification
+        * @param Object - The value of the parameter to add to the specification
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameters setParameter( String parameterName, Object parameterValue ) {
+            expectedParameters.put( parameterName, new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
+            return this;
+        }
+
+        /**
+        * Internal method that returns a String description of the parameter values that are expected, rendered in a similar
+        * format to a Map.
+        *
+        * @return String - The description of the expected parameter values
+        */
+        public String getParametersDescription() {
+            List<String> stringParameters = new List<String>();
+            for( String thisParameterName : expectedParameters.keySet() ) {
+                stringParameters.add( thisParameterName + ' => ' + String.valueOf( expectedParameters.get( thisParameterName ) ) );
+            }
+            return String.join( stringParameters, ', ' );
+        }
+
+        /**
+        * Internal method that checks if the passed parameters match those that are configured, reporting via Assertions.
+        *
+        * @param Amoss_Asserts - The assertion mechanism to report via
+        * @param String - The method that is being called, and therefore checked
+        * @param List<String> - The names of the parameters being passed, and thereforce checked
+        * @param List<Object> - The values of the parameters being passed, and thereforce checked
+        */
+        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+
+            for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
+
+                String actualParameterName  = parameterNames[ parameterNumber ];
+                Object actualParameterValue = parameterValues[ parameterNumber ];
+                Amoss_ExpectationParameter expectationParameter = expectedParameters.get( actualParameterName );
+
+                if ( expectationParameter == null || expectationParameter.allowsAnyValue() ) {
+                    continue;
+                }
+                assertionMechanism.assertEquals( expectationParameter.getValue(), actualParameterValue, String.format( '{0}.{1} was called with the wrong parameter value for "{2}"', new List<String>{ className, method, actualParameterName } ) );
+            }
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if the stated call and parameters matches the current expectation's definition.
+        *
+        * @param String - The method to check this expectation against.
+        * @param List<Object> - The names of the parameters to check this expectation against.
+        * @param List<Object> - The parameters to check this expectation against.
+        * @return Boolean - States if this expectation matches that passed passed in.
+        */
+        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
+            for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
+                String actualParameterName  = parameterNames[ parameterNumber ];
+                Object actualParameterValue = parameterValues[ parameterNumber ];
+
+                Amoss_ExpectationParameter expectationParameter = expectedParameters.get( actualParameterName );
+                if ( expectationParameter != null && ! expectationParameter.matches( parameterValues[ parameterNumber ] ) ) {
+                    return false;
+                }
+            }
             return true;
         }
     }
