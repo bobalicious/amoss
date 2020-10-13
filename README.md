@@ -74,7 +74,7 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 
 Now, whenever either `canDeliver` or `scheduleDelivery` are called against our double, `true` will be returned.  This is regardless of what parameters have been passed in.
 
-#### Respoding based on parameters
+#### Responding based on parameters
 
 If we want our Test Double to be a little more strict about the parameters it recieves, we can also specify that methods should return particular values *only when certain parameters are passed* by using methods like `withParameter`, `thenParameter`:
 
