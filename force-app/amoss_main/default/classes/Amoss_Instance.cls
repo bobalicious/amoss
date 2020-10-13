@@ -850,7 +850,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value to return when this expectation is met.
         */
         public Amoss_NextExpectationDefiner returns( Object returnValue ) {
-            expectation.returns( returnValue );
+            expectation.setExpectionReturns( new Amoss_ExpectationValueReturn().setReturnValue( returnValue ) );
             return new Amoss_NextExpectationDefiner( expectation );
         }
 
@@ -899,7 +899,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The Exception to throw when this expectation is met.
         */
         public Amoss_NextExpectationDefiner throws( Exception exceptionToThrow ) {
-            expectation.throws( exceptionToThrow );
+            expectation.setExpectionReturns( new Amoss_ExpectionExceptionThrower().setExceptionToThrow( exceptionToThrow ) );
             return new Amoss_NextExpectationDefiner( expectation );
         }
 
@@ -1191,6 +1191,8 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
+
+
     /**
     * Internal class that should not be referenced directly in a test
     *
@@ -1202,10 +1204,9 @@ public without sharing class Amoss_Instance implements StubProvider {
     public class Amoss_Expectation {
 
         private String expectedMethod;
-        private Object returnValue;
-        private Exception exceptionToThrow;
 
-        private Amoss_ExpectationParameters expectedParameters = new Amoss_ExpectationAnyParameters();
+        private Amoss_ExpectationParameters      expectedParameters = new Amoss_ExpectationAnyParameters();
+        private Amoss_ExpectationReturnMechanism returnMechanism    = new Amoss_Instance.Amoss_ExpectationValueReturn();
 
         private Amoss_Instance mockControl;
 
@@ -1245,6 +1246,18 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
 
         /**
+        * Internal method that sets the expectation parameter object for this expectation.
+        * In essence, defines the behaviour of the parameter matching.
+        *
+        * @param Amoss_ExpectationReturnMechanism - The expectation return mechanism object to use
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_Expectation setExpectionReturns( Amoss_ExpectationReturnMechanism returnMechanism ) {
+            this.returnMechanism = returnMechanism;
+            return this;
+        }
+
+        /**
         * Internal method that assigns the methods that this expectation is for.
         *
         * @param String - The method that this expectation is for
@@ -1256,28 +1269,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
 
         /**
-        * Internal method that sets the value to return when this expectation is met
-        *
-        * @param Object - The value to return when this expectation is met.
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        public Amoss_Expectation returns( Object returnValue ) {
-            this.returnValue = returnValue;
-            return this;
-        }
-
-        /**
-        * Internal method that sets the exception to throw when this expectation is met
-        *
-        * @param Object - The exception to throw when this expectation is met.
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        public Amoss_Expectation throws( Exception exceptionToThrow ) {
-            this.exceptionToThrow = exceptionToThrow;
-            return this;
-        }
-
-        /**
         * Internal method that should not be called directly in tests.
         *
         * Returns the value that this expection is defined to.  If stated that it should throw an exception, will do so.
@@ -1285,10 +1276,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @return Object - The value that this expectation is configured to return
         */
         public Object getReturnValue() {
-            if ( this.exceptionToThrow != null ) {
-                throw this.exceptionToThrow;
-            }
-            return this.returnValue;
+            return returnMechanism.getReturn();
         }
 
         /**
@@ -1338,6 +1326,70 @@ public without sharing class Amoss_Instance implements StubProvider {
     }
 
     /**
+    * Internal interface that allows for the specification of the return behaviour that an Expectation should have
+    *
+    * An implementing class should provide a mechanism to return a value, or perform an action (e.g. throw an exception)
+    * when a return should have been made
+    */
+    private interface Amoss_ExpectationReturnMechanism {
+        Object getReturn();
+    }
+
+    /**
+    * Internal class that allows for the specification that an Expectation will return a value
+    */
+    private class Amoss_ExpectationValueReturn implements Amoss_ExpectationReturnMechanism {
+
+        private Object returnValue;
+
+        /**
+        * Internal method that sets the value for this return mechanism
+        *
+        * @param Object - The return value that this mechanism should return
+        * @return Amoss_ExpectationValueReturn - This object, allowing for a fluent interface
+        */
+        public Amoss_ExpectationValueReturn setReturnValue( Object returnValue ) {
+            this.returnValue = returnValue;
+            return this;
+        }
+
+        /**
+        * Internal method that returns the specified value of this return mechanism
+        *
+        * @return Object - The return value that was specified
+        */
+        public Object getReturn() {
+            return returnValue;
+        }
+    }
+
+    /**
+    * Internal class that allows for the specification that an Expectation will throw an exception
+    */
+    private class Amoss_ExpectionExceptionThrower implements Amoss_ExpectationReturnMechanism {
+
+        private Exception exceptionToThrow;
+
+        /**
+        * Internal method that sets the exception for this return mechanism to throw
+        *
+        * @param Object - The exception that this mechanism should throw
+        * @return Amoss_ExpectationValueReturn - This object, allowing for a fluent interface
+        */
+        public Amoss_ExpectionExceptionThrower setExceptionToThrow( Exception exceptionToThrow ) {
+            this.exceptionToThrow = exceptionToThrow;
+            return this;
+        }
+
+        /**
+        * Internal method that throws the configured exception
+        */
+        public Object getReturn() {
+            throw exceptionToThrow;
+        }
+    }
+
+    /**
     * Internal interface that allows for the specification of parameters that an Expectation should have
     *
     * An implementing class should provide a mechanism to get a String description, verify passed parameters are as stated (reporting via assertions)
@@ -1354,7 +1406,7 @@ public without sharing class Amoss_Instance implements StubProvider {
     *
     * Always assumes that any parameters will match (since 'any' should)
     */
-    private with sharing class Amoss_ExpectationAnyParameters implements Amoss_ExpectationParameters {
+    private class Amoss_ExpectationAnyParameters implements Amoss_ExpectationParameters {
 
         /**
         * Internal method that returns a String description of the parameter values that are expected.
@@ -1400,7 +1452,7 @@ public without sharing class Amoss_Instance implements StubProvider {
     * Internal interface that allows for the specification of parameters that an Expectation should have using 'positional' notation.
     * That is, they are specified in order.
     */
-    private with sharing class Amoss_ExpectationPositionalParameters implements Amoss_ExpectationParameters {
+    private class Amoss_ExpectationPositionalParameters implements Amoss_ExpectationParameters {
 
         private List<Amoss_ExpectationParameter> expectedParameters = new List<Amoss_ExpectationParameter>();
 
@@ -1484,7 +1536,7 @@ public without sharing class Amoss_Instance implements StubProvider {
     * Internal interface that allows for the specification of parameters that an Expectation should have using 'positional' notation.
     * That is, they are specified using their names
     */
-    private with sharing class Amoss_ExpectationNamedParameters implements Amoss_ExpectationParameters {
+    private class Amoss_ExpectationNamedParameters implements Amoss_ExpectationParameters {
 
         private Map<String,Amoss_ExpectationParameter> expectedParameters = new Map<String,Amoss_ExpectationParameter>();
 
