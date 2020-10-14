@@ -222,7 +222,7 @@ class ExampleMethodHandler implements StubProvider {
 @isTest
 private static void methodBeingTested_whenGivenSomething_doesSomething() {
     
-    Amoss_MethodHandler methodHander = new ExampleMethodHandler();
+    StubProvider methodHander = new ExampleMethodHandler();
 
     Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
 
