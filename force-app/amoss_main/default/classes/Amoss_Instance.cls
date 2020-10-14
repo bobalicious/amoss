@@ -946,9 +946,24 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param StubProvider - The handler to use when returning from the doubled method
         */
         public Amoss_NextExpectationDefiner handledBy( StubProvider returnHandler ) {
-            expectation.setExpectionReturns( new Amoss_ExpectationHandledReturn().setReturnHandler( returnHandler ) );
+            expectation.setExpectionReturns( new Amoss_ExpectationStubProviderHandledReturn().setReturnHandler( returnHandler ) );
             return new Amoss_NextExpectationDefiner( expectation );
         }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the method will be handled by the provided Amoss_MethodHandler
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .handleBy( new Amoss_MethodHandlerImplementation() )
+        *
+        * @param Amoss_MethodHandler - The handler to use when returning from the doubled method
+        */
+        public Amoss_NextExpectationDefiner handledBy( Amoss_MethodHandler returnHandler ) {
+            expectation.setExpectionReturns( new Amoss_ExpectationAmossHandlerHandledReturn().setReturnHandler( returnHandler ) );
+            return new Amoss_NextExpectationDefiner( expectation );
+        }        
     }
 
     /**
@@ -1412,27 +1427,54 @@ public without sharing class Amoss_Instance implements StubProvider {
     /**
     * Internal class that allows for the specification that an Expectation's return will be handled by a StubProvider
     */
-    private class Amoss_ExpectationHandledReturn implements Amoss_ExpectationReturnMechanism {
+    private class Amoss_ExpectationStubProviderHandledReturn implements Amoss_ExpectationReturnMechanism {
 
         private StubProvider returnHandler;
 
         /**
-        * Internal method that sets the exception for this return mechanism to throw
+        * Internal method that sets the handler for this return mechanism to use
         *
         * @param StubProvider - The return handler that this mechanism should use
-        * @return Amoss_ExpectationValueReturn - This object, allowing for a fluent interface
+        * @return Amoss_ExpectationStubProviderHandledReturn - This object, allowing for a fluent interface
         */
-        public Amoss_ExpectationHandledReturn setReturnHandler( StubProvider returnHandler ) {
+        public Amoss_ExpectationStubProviderHandledReturn setReturnHandler( StubProvider returnHandler ) {
             this.returnHandler = returnHandler;
             return this;
         }
 
         /**
-        * Internal method that throws the configured exception
+        * Internal method that calls the exception handler
         */
         public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,
                                  List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
             return returnHandler.handleMethodCall( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
+        }
+    }
+
+    /**
+    * Internal class that allows for the specification that an Expectation's return will be handled by an Amoss_MethodHandler
+    */
+    private class Amoss_ExpectationAmossHandlerHandledReturn implements Amoss_ExpectationReturnMechanism {
+
+        private Amoss_MethodHandler returnHandler;
+
+        /**
+        * Internal method that sets the handler for this return mechanism to use
+        *
+        * @param Amoss_MethodHandler - The return handler that this mechanism should use
+        * @return Amoss_ExpectationAmossHandlerHandledReturn - This object, allowing for a fluent interface
+        */
+        public Amoss_ExpectationAmossHandlerHandledReturn setReturnHandler( Amoss_MethodHandler returnHandler ) {
+            this.returnHandler = returnHandler;
+            return this;
+        }
+
+        /**
+        * Internal method that calls the exception handler
+        */
+        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,
+                                 List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
+            return returnHandler.handleMethodCall( parameters );
         }
     }
 
