@@ -36,6 +36,7 @@ SOFTWARE.
 * 'StubProvider' interface (which this class implements), and has the same limitations as that functionality.
 *
 */
+@isTest
 public without sharing class Amoss_Instance implements StubProvider {
 
     class Amoss_CallLogException extends Exception {}
