@@ -134,6 +134,82 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.handledBy, StubProvider
+    * @case   when that method is called
+    * @result will call handleMethodCall on the specified object and return the reult
+    */
+    @isTest
+    private static void whenMethodHandledByStubProvider_whenTheMethodIsCalled_willCallTheHandlerAndReturnTheResult() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        StubProvider methodHandler = new MethodHandlerUsingStubProvider();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .handledBy( methodHandler );
+
+        String expectedReturn = 'methodUnderDouble:String|(String, Integer)|(parameter1, parameter2)|(OtherActualParam1, 1)';
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( expectedReturn, returnFromDouble, 'when.method.handledBy, when given a StubProvider, and the method called, will call handleMethodCall on the given object and return the result' );
+    }
+
+    // This cannot be mocked - ironically because of the limitations of StubProvider
+    class MethodHandlerUsingStubProvider implements StubProvider {
+        public Object handleMethodCall( Object       mockedObject,
+                                        String       mockedMethod,
+                                        Type         returnType,
+                                        List<Type>   parameterTypes,
+                                        List<String> parameterNames,
+                                        List<Object> parameters ) {
+            return mockedMethod + ':' + returnType + '|'+ String.valueOf( parameterTypes ) +'|'+ String.valueOf( parameterNames ) +'|'+ String.valueOf( parameters );
+        }
+    }
+
+    /**
+    * @method when.method.handledBy, Amoss_MethodHandler
+    * @case   when that method is called
+    * @result will call handleMethodCall on the specified object and return the reult
+    */
+    @isTest
+    private static void whenMethodHandledByAmossMethodHandler_whenTheMethodIsCalled_willCallTheHandlerAndReturnTheResult() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        // Generate a mock object version of an Amoss_MethodHandler to test handledBy with
+        Amoss_Instance methodHandlerController = new Amoss_Instance( Amoss_MethodHandler.class );
+        methodHandlerController
+            .expects()
+                .method( 'handleMethodCall' )
+                .withParameterNamed( 'parameters' ).setTo( new List<Object>{ 'OtherActualParam1', 1 } )
+                .returns( 'expectedReturn' );
+            
+        Amoss_MethodHandler methodHandler = (Amoss_MethodHandler)methodHandlerController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .handledBy( methodHandler );
+
+        String expectedReturn = '(OtherActualParam1, 1)';
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+        
+        methodHandlerController.verify();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.handledBy, when given an Amoss_Instance.Amoss_MethodHandler, and the method called, will call handleMethodCall on the given object and return the result' );
+    }
+
+    /**
     * @method when.method.throws
     * @case   when that method is called
     * @result will return the stated value

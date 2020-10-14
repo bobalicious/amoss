@@ -11,7 +11,8 @@ To finish the named parameters implementation:
 
 Documentation:
 
-    Review definitions from xUnit Patterns and ensure that the Amoss definitions match.
+    Positional vs Named parameters?
+    Full interface definition?
 
 Implement
 
