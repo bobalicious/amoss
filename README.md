@@ -631,14 +631,10 @@ Design Principles:
     * Classes should be defined with the primary focus of making it easier for a consumer to use the framework, as opposed to making it easier for the developer to build the framework.
     * Particularly, where the context of the phrasing changes, a new object should be returned that provides an interface that is appropriate for that part of the phrasing.
     * For example:
-        * when and expects on `Amoss_Instance` both return an `Amoss_Expectation`.
-            * The `Amoss_Expectation` defines the phrasing (essentially the interface) for defining the expectation, being
-                * method
-                * withParameter / withAnyParameters / withParameterAtPostion
-                * returning / returns / willReturn / throws / throwing
-            * The following methods then define the end of that phrasing, and result in an `Amoss_Instance` being returned
-                * then
-                * also
+        * when, allows and expects on `Amoss_Instance` all return a `Amoss_MethodDefiner`.
+            * The `Amoss_MethodDefiner` defines the initial phrasing (essentially the interface) for method for the expectation, being `method`
+            * It then returns an 'Amoss_ParametersDefiner', which defines the entry point of the parameter phrasing, and so on.
+            * The following methods (which are available on most 'Definers' then state the end of that phrasing, and result in an `Amoss_Instance` being returned.  This then re-starts the whole process.
     * However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a `Amoss_Instance`
 
 ## Roadmap
