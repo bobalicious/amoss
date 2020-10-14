@@ -170,7 +170,7 @@ This method can take one of two types of parameter:
 
 For example, you are testing a method that uses a method on another object (`ClassBeingDoubled.getContactId`) to get the Id from a Contact.  This method has a single parameter - the Contact.
 
-You may implement this using an implemntation of Amoss_MethodHandler and using that in your Test Double's definition:
+You may implement this be defining an implementation of Amoss_MethodHandler and using that in your Test Double's definition:
 
 ```java
 class ExampleMethodHandler implements Amoss_MethodHandler {
@@ -196,11 +196,11 @@ private static void methodBeingTested_whenGivenSomething_doesSomething() {
     ...
 ```
 
-Notice that you can still use the `withParameter` methods in order to specify the situations in which the handler will be called, as well as any of the other capabilities that are defined later.
+Notice that you can still use `withParameter` and the related methods in order to specify the situations in which the handler will be called, as well as any of the other capabilities that are defined later.
 
 ##### Example using StubProvider
 
-Alternatively, you may define the same class, but using a the `StubProvider` interface.
+Alternatively, you may define the handler class using the `StubProvider` interface.
 
 E.g.
 
