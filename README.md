@@ -4,7 +4,7 @@ Apex Mock Objects, Spies and Stubs - A Simple Mocking framework for Apex (Salesf
 
 ## Disclaimer
 
-This is an BETA state project and should be used with caution.  Whilst the intention is that this code is stable and bug free, this may not be the case.  There is no intention to change the interface of this framework, although that cannot be guaranteed.
+This is a BETA state project and should be used with caution.  Whilst the intention is that this code is stable and bug free, this may not be the case.  There is no intention to change the interface of this framework, although that cannot be guaranteed.
 
 ## Why use Amoss?
 
