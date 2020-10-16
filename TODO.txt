@@ -6,15 +6,15 @@ To finish the named parameters implementation:
         Consider adding a lot more tests - check what doesn't fail...
     
     Document:
-        Specifying named parameters
         Consider a class diagram
 
 Documentation:
 
-    Positional vs Named parameters?
     Full interface definition?
 
 Implement
+
+    Change how the mock asserts works in the test - should use handledBy
 
     Document what is included in the installation
 
@@ -44,13 +44,6 @@ Implement
 
         When and allows matches before Expected
 
-        Test
-            thenAnyParameter / thenAnyParameter
-
-            Amoss_Expectations
-            Amoss_Expectation
-            Amoss_Expectation.Amoss_ExpectationParameter
-
         Setting 'returning' when the method has a void return
             methodUnderDoubleWithNoReturn - when setup to return something
 
@@ -76,8 +69,6 @@ Implement
 
         How to pass an 'expects parameter' when we're passing sObjects?
 
-        Consider splitting the class down, to improve the auto-complete
-
     Spy:
 
         Currently supports
@@ -91,36 +82,3 @@ Implement
 
     Assertions:
         Is greater than, etc
-
-    Current Limitations:
-
-        Need to be able to test:
-
-            TestMock templateGeneratorController = new Amoss_Instance( TemplateGenerator.class );
-
-            templateGeneratorController
-                .expects()
-                .method( 'generate' )
-                .withParameter( 'Opportunity' )
-                .thenParameter( 'Opportunity_Products_Offered' )
-                .thenParameter( new Set<Id>{ opportunityLineItemList[0].OpportunityId } ) // only, this isn't set yet
-                .returning( new Map<Id,String>{ opportunityLineItemList[0].OpportunityId => 'The generated Template' } ); // and here too
-
-            Maybe:
-
-            templateGeneratorController
-                .expects()
-                .method( 'generate' )
-                .withParameter( 'Opportunity' )
-                .thenParameter( 'Opportunity_Products_Offered' )
-                .andAnyParameter()
-                .handledBy( new TemplateGeneratorMockHandler() );
-
-            ....
-
-            System.assertEquals( templateGeneratorController.called( 'generate' ).number( 1 ).parameter( 3 ) )
-
-            That's why we need a spy, and a 'handled by'
-
-Test:
-    The behaviours work with Object instantiations
