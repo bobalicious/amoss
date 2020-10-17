@@ -983,6 +983,58 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method expectsNoCalls
+    * @case   when a method is called
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsNoCalls_whenAMethodIsCalled_willFailTheTest() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expectsNoCalls();
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+        
+        System.assertEquals( '' , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with an empty string as expected' );
+
+        String expectedMethodCall = 'methodUnderDouble( OtherActualParam1, 1 )';
+        System.assertEquals( expectedMethodCall, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with the method called as actual' );
+
+        String expectedAssertion = 'AmossTest_ClassToDouble did not expect any methods to be called';
+        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+        /**
+    * @method expectsNoCalls.verify
+    * @case   when no method is called
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsNoCalls_whenAMethodIsNotCalled_willPassTheTest() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expectsNoCalls();
+
+        Test.startTest();
+            classToDoubleController.verify();
+        Test.stopTest();
+    }
+
+    /**
     * @method expects.method.returning
     * @case   when that method is called once
     * @result will return the stated value

@@ -152,6 +152,16 @@ public without sharing class Amoss_Instance implements StubProvider {
         return this;
     }
 
+    // TODO: implement - should not be allowed when something is set, should not allow anything to be set either
+    // TODO: document
+    // TODO: test
+    public Amoss_Instance expectsNoCalls() {
+        this.allowsAnyCall = false;
+        return this;
+    }
+    // TODO: should this be expects().noCalls()
+    // TODO: also implement .method( 'thing' ).notToBeCalled()
+
     /**
     * Checks that all configured 'expectations' have been met, failing the test if they have not.
     *
