@@ -39,10 +39,8 @@ SOFTWARE.
 @isTest
 public without sharing class Amoss_Instance implements StubProvider {
 
-    class Amoss_CallLogException extends Exception {}
-    class Amoss_ParameterMatchingTypeEnumException extends Exception {}
-    class Amoss_NamedParameterSequenceException extends Exception {}
-    class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
+    public class Amoss_CallLogException extends Exception {}
+    public class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
@@ -184,6 +182,10 @@ public without sharing class Amoss_Instance implements StubProvider {
 
         if ( !expectations.isEmpty() || !whens.isEmpty() ) {
             throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double expectsNoCalls when expectations or whens have been defined' );
+        }
+
+        if ( allowsAnyCallExplicitlyDefined && allowsAnyCall ) {
+            throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double expectsNoCalls when allowsAnyCall has been set to true' );
         }
 
         this.expectsNoCalls = true;

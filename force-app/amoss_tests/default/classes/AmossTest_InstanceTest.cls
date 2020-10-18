@@ -212,10 +212,10 @@ public with sharing class AmossTest_InstanceTest {
     /**
     * @method when.method.throws
     * @case   when that method is called
-    * @result will return the stated value
+    * @result will throw the stated exception
     */
     @isTest
-    private static void whenMethodThrows_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void whenMethodThrows_whenTheMethodIsCalled_willThrowTheStatedException() {
         
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
@@ -231,7 +231,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.startTest();
             try {
                 String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
-            } catch( Exception e ) {
+            } catch( DmlException e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
             }
@@ -244,10 +244,10 @@ public with sharing class AmossTest_InstanceTest {
     /**
     * @method when.method.throwing
     * @case   when that method is called
-    * @result will return the stated value
+    * @result will throw the stated exception
     */
     @isTest
-    private static void whenMethodThrowing_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void whenMethodThrowing_whenTheMethodIsCalled_willThrowTheStatedException() {
         
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
@@ -263,7 +263,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.startTest();
             try {
                 String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
-            } catch( Exception e ) {
+            } catch( DmlException e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
             }
@@ -276,10 +276,10 @@ public with sharing class AmossTest_InstanceTest {
     /**
     * @method when.method.willThrow
     * @case   when that method is called
-    * @result will return the stated value
+    * @result will throw the stated exception
     */
     @isTest
-    private static void whenMethodWillThrow_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void whenMethodWillThrow_whenTheMethodIsCalled_willThrowTheStatedException() {
         
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
@@ -295,7 +295,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.startTest();
             try {
                 String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
-            } catch( Exception e ) {
+            } catch( DmlException e ) {
                 exceptionThrown = true;
                 exceptionMessage = e.getMessage();
             }
@@ -3444,6 +3444,220 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
         System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
+
+    /**
+    * @method  expectsNoCalls
+    * @case    when already configured with an expects
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void expectsNoCalls_whenAlreadyConfiguredWithExpects_willThrowAnException() {
+        
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+        try {
+
+            Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+            classToDoubleController
+                .expects()
+                    .method( 'methodUnderDouble' )
+                .also()
+                    .expectsNoCalls();
+
+        } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+    
+        System.assert( exceptionThrown, 'expectsNoCalls, when already configured with an expects, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot state the double expectsNoCalls when expectations or whens have been defined', exceptionMessage, 'expectsNoCalls, when already configured with an expects, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  expectsNoCalls
+    * @case    when already configured with an allows
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void expectsNoCalls_whenAlreadyConfiguredWithAllows_willThrowAnException() {
+        
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+        try {
+
+            Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+            classToDoubleController
+                .allows()
+                    .method( 'methodUnderDouble' )
+                .also()
+                    .expectsNoCalls();
+
+        } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+    
+        System.assert( exceptionThrown, 'expectsNoCalls, when already configured with an allows, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot state the double expectsNoCalls when expectations or whens have been defined', exceptionMessage, 'expectsNoCalls, when already configured with an allows, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  expectsNoCalls
+    * @case    when already configured with a when
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void expectsNoCalls_whenAlreadyConfiguredWithWhen_willThrowAnException() {
+        
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+        try {
+
+            Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+            classToDoubleController
+                .when()
+                    .method( 'methodUnderDouble' )
+                .also()
+                    .expectsNoCalls();
+
+        } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+    
+        System.assert( exceptionThrown, 'expectsNoCalls, when already configured with a when, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot state the double expectsNoCalls when expectations or whens have been defined', exceptionMessage, 'expectsNoCalls, when already configured with a when, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  expectsNoCalls
+    * @case    when already configured with allowsAnyCall
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void expectsNoCalls_whenAlreadyConfiguredWithAllowsAnyCall_willThrowAnException() {
+        
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+        try {
+
+            Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+            classToDoubleController
+                .allowsAnyCall( true )
+                .expectsNoCalls();
+
+        } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+    
+        System.assert( exceptionThrown, 'expectsNoCalls, when already configured with allows any call, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot state the double expectsNoCalls when allowsAnyCall has been set to true', exceptionMessage, 'expectsNoCalls, when already configured with allows any call, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  expects
+    * @case    when already configured as expectsNoCalls
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void expects_whenAlreadyConfiguredAsExpectsNoCalls_willThrowAnException() {
+        
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+        try {
+
+            Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+            classToDoubleController
+                .expectsNoCalls()
+                .expects();
+
+        } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+    
+        System.assert( exceptionThrown, 'expects, when already configured as expectsNoCalls, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot state the double expects a call when it has been stated that it expectsNoCalls', exceptionMessage, 'expects, when already configured as expectsNoCalls, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  allows
+    * @case    when already configured as expectsNoCalls
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void allows_whenAlreadyConfiguredAsExpectsNoCalls_willThrowAnException() {
+        
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+        try {
+
+            Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+            classToDoubleController
+                .expectsNoCalls()
+                .allows();
+
+        } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+    
+        System.assert( exceptionThrown, 'allows, when already configured as expectsNoCalls, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot state the double allows a call when it has been stated that it expectsNoCalls', exceptionMessage, 'allows, when already configured as expectsNoCalls, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  when
+    * @case    when already configured as expectsNoCalls
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void when_whenAlreadyConfiguredAsExpectsNoCalls_willThrowAnException() {
+        
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+        try {
+
+            Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+            classToDoubleController
+                .expectsNoCalls()
+                .when();
+
+        } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+    
+        System.assert( exceptionThrown, 'when, when already configured as expectsNoCalls, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot state the when on a double when it has been stated that it expectsNoCalls', exceptionMessage, 'when, when already configured as expectsNoCalls, will throw an exception with a useful message' );
+    }
+
+    /**
+    * @method  allowsAnyCall
+    * @case    when already configured as expectsNoCalls
+    * @result  will throw an exception
+    */
+    @isTest
+    private static void allowsAnyCall_whenAlreadyConfiguredAsExpectsNoCalls_willThrowAnException() {
+        
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+        try {
+
+            Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+            classToDoubleController
+                .expectsNoCalls()
+                .allowsAnyCall( true );
+
+        } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
+            exceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+    
+        System.assert( exceptionThrown, 'allowsAnyCall, when already configured as expectsNoCalls, will throw an exception' );
+        Amoss_Asserts.assertContains( 'Cannot state the double allowsAnyCall when it has been stated that it expectsNoCalls', exceptionMessage, 'allowsAnyCall, when already configured as expectsNoCalls, will throw an exception with a useful message' );
+    }    
 
     //
     // Limitation tests - If any of these tests begin to fail, then an important limitation
