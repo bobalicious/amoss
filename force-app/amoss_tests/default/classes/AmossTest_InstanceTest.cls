@@ -1008,7 +1008,7 @@ public with sharing class AmossTest_InstanceTest {
         
         System.assertEquals( '' , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with an empty string as expected' );
 
-        String expectedMethodCall = 'methodUnderDouble( OtherActualParam1, 1 )';
+        String expectedMethodCall = 'methodUnderDouble(OtherActualParam1, 1)';
         System.assertEquals( expectedMethodCall, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with the method called as actual' );
 
         String expectedAssertion = 'AmossTest_ClassToDouble did not expect any methods to be called';
