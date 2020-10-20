@@ -308,12 +308,18 @@ public without sharing class Amoss_Instance implements StubProvider {
     /**
     * Internal method that should not be called directly in tests.
     * 
-    * Set the assertion mechanism for this mock object implementation
+    * Set the assertion mechanism for this mock object implementation.
+    * Exists to that the assertion mechanism can be mocked when unit
+    * testing the framework itself.
+    *
+    * Is private and testVisible in the hope that auto-complete will not
+    * pick the method up in normal usage.
     *
     * @param   Amoss_Asserts - The assertionMechanism
     * @return  Amoss_Instance - Itself, allowing for a fluent interface
     */
-    public Amoss_Instance setAsserts( Amoss_Asserts assertionMechanism ) {
+    @testVisible
+    private Amoss_Instance setAsserts( Amoss_Asserts assertionMechanism ) {
         this.assertionMechanism = assertionMechanism;
         return this;
     }
