@@ -39,9 +39,8 @@ SOFTWARE.
 @isTest
 public without sharing class Amoss_Instance implements StubProvider {
 
-    class Amoss_CallLogException extends Exception {}
-    class Amoss_ParameterMatchingTypeEnumException extends Exception {}
-    class Amoss_NamedParameterSequenceException extends Exception {}
+    public class Amoss_CallLogException extends Exception {}
+    public class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
@@ -53,6 +52,7 @@ public without sharing class Amoss_Instance implements StubProvider {
 
     private Boolean allowsAnyCall                  = true;
     private Boolean allowsAnyCallExplicitlyDefined = false;
+    private Boolean expectsNoCalls                 = false;
     
     public Amoss_Instance( Type classType ) {
         this.classType = classType;
@@ -83,6 +83,11 @@ public without sharing class Amoss_Instance implements StubProvider {
     *       .returning( 'theValueItShouldReturn' )
     */
     public Amoss_MethodDefiner expects() {
+
+        if ( expectsNoCalls ) {
+            throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double expects a call when it has been stated that it expectsNoCalls' );
+        }
+
         if ( ! allowsAnyCallExplicitlyDefined ) {
             allowsAnyCall = false;
         }
@@ -107,6 +112,11 @@ public without sharing class Amoss_Instance implements StubProvider {
     *   .willReturn( 'theValueItShouldReturn' )
     */
     public Amoss_MethodDefiner when() {
+
+        if ( expectsNoCalls ) {
+            throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the when on a double when it has been stated that it expectsNoCalls' );
+        }
+
         Amoss_Expectation newExpectation = new Amoss_Expectation( this );
         this.whens.add( newExpectation );
         return new Amoss_MethodDefiner( newExpectation );
@@ -128,6 +138,11 @@ public without sharing class Amoss_Instance implements StubProvider {
     *   .willReturn( 'theValueItShouldReturn' )
     */
     public Amoss_MethodDefiner allows() {
+
+        if ( expectsNoCalls ) {
+            throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double allows a call when it has been stated that it expectsNoCalls' );
+        }
+
         if ( ! allowsAnyCallExplicitlyDefined ) {
             allowsAnyCall = false;
         }
@@ -147,8 +162,33 @@ public without sharing class Amoss_Instance implements StubProvider {
     *     .willReturn( 'theValueItShouldReturn' )
     */
     public Amoss_Instance allowsAnyCall( Boolean allowsAnyCall ) {
+
+        if ( expectsNoCalls ) {
+            throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double allowsAnyCall when it has been stated that it expectsNoCalls' );
+        }
+
         this.allowsAnyCallExplicitlyDefined = true;
         this.allowsAnyCall = allowsAnyCall;
+        return this;
+    }
+
+    /**
+    * States that this double does not expect any calls against it, and that when a call is made, the test should fail.
+    *
+    * Example usage:
+    *   expectsNoCalls()
+    */
+    public Amoss_Instance expectsNoCalls() {
+
+        if ( !expectations.isEmpty() || !whens.isEmpty() ) {
+            throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double expectsNoCalls when expectations or whens have been defined' );
+        }
+
+        if ( allowsAnyCallExplicitlyDefined && allowsAnyCall ) {
+            throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double expectsNoCalls when allowsAnyCall has been set to true' );
+        }
+
+        this.expectsNoCalls = true;
         return this;
     }
 
@@ -225,7 +265,14 @@ public without sharing class Amoss_Instance implements StubProvider {
                                     List<Type>   parameterTypes,
                                     List<String> parameterNames,
                                     List<Object> parameters ) {
+
+        String callDescription = new Amoss_CallDescriber().getCallDescription( mockedMethod, parameters );
+
         callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
+
+        if ( expectsNoCalls ) {
+            assertionMechanism.assertEquals( '', callDescription, String.format( '{0} did not expect any methods to be called', new List<String>{ getClassName() } ) );
+        }
 
         if ( whens.hasExpectations() ) {
             Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameterNames, parameters );
@@ -1785,6 +1832,28 @@ public without sharing class Amoss_Instance implements StubProvider {
                 return true;
             }
             return this.value == value;
+        }
+    }
+
+    /**
+    * Internal class that should not be refenced in tests.
+    *
+    * Can produce a text description of a method call
+    */
+    private class Amoss_CallDescriber {
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Given a method name, and a list of parameters, will return a string representation of it
+        */
+        public String getCallDescription( String method, List<Object> parameters ) {
+
+            List<String> stringParameters = new List<String>();
+            for ( Object thisParameter : parameters ) {
+                stringParameters.add( String.valueOf( thisParameter ) );
+            }
+            return String.format( '{0}({1})', new List<String>{ method, String.join( stringParameters, ', ' ) } );
         }
     }
 }

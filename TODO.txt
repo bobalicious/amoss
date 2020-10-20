@@ -1,11 +1,12 @@
 Amoss - Apex Mocks, Spies and Stubs
 
-To finish the named parameters implementation:
+To finish the expectsNoCalls
 
     Test: 
         Consider adding a lot more tests - check what doesn't fail...
     
     Document:
+        Document the existence
         Consider a class diagram
 
 Documentation:
@@ -14,7 +15,6 @@ Documentation:
 
 Implement
 
-    Change how the mock asserts works in the test - should use handledBy
 
     Document what is included in the installation
 
