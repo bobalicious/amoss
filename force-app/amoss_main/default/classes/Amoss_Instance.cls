@@ -266,7 +266,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                                     List<String> parameterNames,
                                     List<Object> parameters ) {
 
-        String callDescription = getCallDescription( mockedMethod, parameters );
+        String callDescription = new Amoss_CallDescriber().getCallDescription( mockedMethod, parameters );
 
         callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
 
@@ -294,21 +294,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
         
         return null;
-    }
-
-    /**
-    * Internal method that should not be called directly in tests.
-    *
-    * Given a method name, and a list of parameters, will return a string representation of it
-    */
-    // TODO: probably should be used by the other getCallDescription
-    private String getCallDescription( String method, List<Object> parameters ) {
-
-        List<String> stringParameters = new List<String>();
-        for ( Object thisParameter : parameters ) {
-            stringParameters.add( String.valueOf( thisParameter ) );
-        }
-        return String.format( '{0}({1})', new List<String>{ method, String.join( stringParameters, ', ' ) } );
     }
 
     /**
@@ -1847,6 +1832,28 @@ public without sharing class Amoss_Instance implements StubProvider {
                 return true;
             }
             return this.value == value;
+        }
+    }
+
+    /**
+    * Internal class that should not be refenced in tests.
+    *
+    * Can produce a text description of a method call
+    */
+    private class Amoss_CallDescriber {
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Given a method name, and a list of parameters, will return a string representation of it
+        */
+        public String getCallDescription( String method, List<Object> parameters ) {
+
+            List<String> stringParameters = new List<String>();
+            for ( Object thisParameter : parameters ) {
+                stringParameters.add( String.valueOf( thisParameter ) );
+            }
+            return String.format( '{0}({1})', new List<String>{ method, String.join( stringParameters, ', ' ) } );
         }
     }
 }

@@ -152,91 +152,6 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 
 This is very useful for making sure that our tests only configure the Test Doubles to care about the parameters that are important for the tests we are running, making them less brittle.
 
-#### Using Method Handlers
-
-In some situations it is not enough to define a response statically in this way.
-
-For example, you may require a response that is based on the values of a passed in parameter in a more dynamic way - like the Id of an Sobject that is passed in.
-
-Also, you want to take advantage of some of the parameter checking and verify mechanisms of the framework for existing tests that currently use the standard Salesforce `StubProvider`.
-
-For those situations, you can use `handledBy` in order to specify an object that will handle the call, perform processing and generate a return.
-
-This method can take one of two types of parameter:
-* `StubProvider` - Providing the full capabilities of the StubProvider interface means that you can re-use any pre-existing test code, as well as write new classes that utilise the full set of parameters (`methodName`, `parameterTypes`, etc), if so required.
-* `Amoss_MethodHandler` - A much simpler version of a `StubProvider`-like interface means that you can create handler methods that are focused entirely on the parameter values of the called method.
-
-##### Example using Amoss_MethodHandler
-
-For example, you are testing a method that uses a method on another object (`ClassBeingDoubled.getContactId`) to get the Id from a Contact.  This method has a single parameter - the Contact.
-
-You may implement this be defining an implementation of Amoss_MethodHandler and using that in your Test Double's definition:
-
-```java
-class ExampleMethodHandler implements Amoss_MethodHandler {
-    public Object handleMethodCall( List<Object> parameters ) {
-        Contact passedContact = (Contact)parameters[0];
-        return passedContact.Id;
-    }
-}
-
-@isTest
-private static void methodBeingTested_whenGivenSomething_doesSomething() {
-    
-    Amoss_MethodHandler methodHander = new ExampleMethodHandler();
-
-    Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
-
-    objectBeingDoubledController
-        .when()
-            .method( 'getContactId' )
-            .withAnyParameter()
-            .handledBy( methodHander );
-
-    ...
-```
-
-Notice that you can still use `withParameter` and the related methods in order to specify the situations in which the handler will be called, as well as any of the other capabilities that are defined later.
-
-##### Example using StubProvider
-
-Alternatively, you may define the handler class using the `StubProvider` interface.
-
-E.g.
-
-```java
-class ExampleMethodHandler implements StubProvider {
-
-    public Object handleMethodCall( Object       mockedObject,
-                                    String       mockedMethod,
-                                    Type         returnType,
-                                    List<Type>   parameterTypes,
-                                    List<String> parameterNames,
-                                    List<Object> parameters ) {
-
-        Contact passedContact = (Contact)parameters[0];
-        return passedContact.Id;
-    }
-}
-
-@isTest
-private static void methodBeingTested_whenGivenSomething_doesSomething() {
-    
-    StubProvider methodHander = new ExampleMethodHandler();
-
-    Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
-
-    objectBeingDoubledController
-        .when()
-            .method( 'getContactId' )
-            .withAnyParameter()
-            .handledBy( methodHander );
-
-    ...
-```
-
-That is, `handledBy` is overloaded, and can take either definition type.  The behaviours being identical to each other.
-
 ### Using the Test Double as a Spy
 
 The controller can then be used as a Test Spy, allowing us to find out what values where passed into methods by using `latestCallOf` and `call` and `get().call()`:
@@ -350,6 +265,93 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 
 This means that `canDeliver` and `scheduleDelivery` can be called in any order, and do not *have* to be called, but that *only* these two methods with these precise parameters can be called, and any other method called against the Test Double will result a test failure.
 
+## Other Behaviours
+
+### Using Method Handlers
+
+In some situations it is not enough to define a response statically in this way.
+
+For example, you may require a response that is based on the values of a passed in parameter in a more dynamic way - like the Id of an Sobject that is passed in.
+
+Also, you want to take advantage of some of the parameter checking and verify mechanisms of the framework for existing tests that currently use the standard Salesforce `StubProvider`.
+
+For those situations, you can use `handledBy` in order to specify an object that will handle the call, perform processing and generate a return.
+
+This method can take one of two types of parameter:
+* `StubProvider` - Providing the full capabilities of the StubProvider interface means that you can re-use any pre-existing test code, as well as write new classes that utilise the full set of parameters (`methodName`, `parameterTypes`, etc), if so required.
+* `Amoss_MethodHandler` - A much simpler version of a `StubProvider`-like interface means that you can create handler methods that are focused entirely on the parameter values of the called method.
+
+#### Example using Amoss_MethodHandler
+
+For example, you are testing a method that uses a method on another object (`ClassBeingDoubled.getContactId`) to get the Id from a Contact.  This method has a single parameter - the Contact.
+
+You may implement this be defining an implementation of Amoss_MethodHandler and using that in your Test Double's definition:
+
+```java
+class ExampleMethodHandler implements Amoss_MethodHandler {
+    public Object handleMethodCall( List<Object> parameters ) {
+        Contact passedContact = (Contact)parameters[0];
+        return passedContact.Id;
+    }
+}
+
+@isTest
+private static void methodBeingTested_whenGivenSomething_doesSomething() {
+    
+    Amoss_MethodHandler methodHander = new ExampleMethodHandler();
+
+    Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
+
+    objectBeingDoubledController
+        .when()
+            .method( 'getContactId' )
+            .withAnyParameter()
+            .handledBy( methodHander );
+
+    ...
+```
+
+Notice that you can still use `withParameter` and the related methods in order to specify the situations in which the handler will be called, as well as any of the other `expects`, `allows` and spy capabilities.
+
+#### Example using StubProvider
+
+Alternatively, you may define the handler class using the `StubProvider` interface.
+
+E.g.
+
+```java
+class ExampleMethodHandler implements StubProvider {
+
+    public Object handleMethodCall( Object       mockedObject,
+                                    String       mockedMethod,
+                                    Type         returnType,
+                                    List<Type>   parameterTypes,
+                                    List<String> parameterNames,
+                                    List<Object> parameters ) {
+
+        Contact passedContact = (Contact)parameters[0];
+        return passedContact.Id;
+    }
+}
+
+@isTest
+private static void methodBeingTested_whenGivenSomething_doesSomething() {
+    
+    StubProvider methodHander = new ExampleMethodHandler();
+
+    Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
+
+    objectBeingDoubledController
+        .when()
+            .method( 'getContactId' )
+            .withAnyParameter()
+            .handledBy( methodHander );
+
+    ...
+```
+
+That is, `handledBy` is overloaded, and can take either definition type.  The behaviours being identical to each other.
+
 ### Throwing exceptions
 
 Test Doubles can also be told to throw exceptions, using `throwing`, `throws` or `willThrow`:
@@ -368,6 +370,27 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 
 ...
 ```
+
+### Don't allow any calls
+
+In some situations you may want to create a Mock Object that ensures that no calls are made against it.
+
+For that, you can use `expectsNoCalls`.
+
+This method cannot be used in conjunction with any other method definition (`expects`, `allows`, `when`), or the statement that the double `allowsAnyCalls`.  If an attempt is made to do so, an exception is thrown.
+
+```java
+
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
+    .expectsNoCalls();
+
+DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+
+...
+```
+
+It is valid to call `verify` against the controller at the end of the test, but this will always pass since the expected call stack will always be empty.
 
 ## What? When?
 
