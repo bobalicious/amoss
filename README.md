@@ -12,6 +12,11 @@ Amoss provides a simple interface for implementing Mock, Test Spy and Stub objec
 
 It's intended to be very straightforward to use, and to result in code that's even more straightforward to read.
 
+<a href="https://githubsfdeploy.herokuapp.com">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">
+</a>
+
 ## How?
 
 ### Constructing and using a Test Double
