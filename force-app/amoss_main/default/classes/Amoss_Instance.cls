@@ -281,10 +281,12 @@ public without sharing class Amoss_Instance implements StubProvider {
             }
         }
 
-        // We could assertEquals( ! expectations.isEmpty() ), but I do it this way so that the test for this method is clearer
-
         if ( allowsAnyCall == false && expectations.isEmpty() ) {
-            assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+            if ( !whens.isEmpty() ) {
+                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected, and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
+            } else {
+                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+            }
         }
 
         if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameterNames, parameters ) ) {
@@ -1377,7 +1379,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( Amoss_Asserts assertionMechanism, String method, List<String> parameterNames, List<Object> parameterValues ) {
             assertionMechanism.assertEquals( expectedMethod, method, String.format( '{0}.{1} was expected to be called', new List<String>{ className, expectedMethod } ) );
-            expectedParameters.verify(assertionMechanism, className, method, parameterNames, parameterValues );
+            expectedParameters.verify( assertionMechanism, className, method, parameterNames, parameterValues );
         }
 
         /**

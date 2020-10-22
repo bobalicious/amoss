@@ -878,9 +878,9 @@ public with sharing class AmossTest_InstanceTest {
             } catch( TestException e ) {}
         Test.stopTest();
         
-        String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method.returning, when a different method is called, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method.returning, when a different method is called, will fail by calling assert with an assertion message that clearly describes the issue' );
+        String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method.returning, when a different method is called, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method.returning, when a different method is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -911,9 +911,9 @@ public with sharing class AmossTest_InstanceTest {
             } catch( TestException e ) {}
         Test.stopTest();
         
-        String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method.returning, when the method is called with different parameters, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method.returning, when the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
+        String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method.returning, when the method is called with different parameters, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method.returning, when the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -3247,9 +3247,9 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with an assertion message that clearly describes the issue' );
+        String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -3314,9 +3314,9 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
+        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -3375,9 +3375,9 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with an assertion message that clearly describes the issue' );
+        String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -3440,9 +3440,9 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
+        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
