@@ -12,7 +12,22 @@ Amoss provides a simple interface for implementing Mock, Test Spy and Stub objec
 
 It's intended to be very straightforward to use, and to result in code that's even more straightforward to read.
 
-## How?
+### Installating it
+
+<a href="https://githubsfdeploy.herokuapp.com">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">
+</a>
+
+This will install 3 sets of classes:
+* `Amoss_`
+  * The only parts that are necessary - the framework itself.
+* `AmossTest_`
+  * The tests for the framework, and their supporting files.  Required if you want to enhance Amoss, not so useful otherwise, but worth keeping if you can, just in case.  All `Amoss_` classes are defined as `@isTest`, meaning they do not count towards code coverage or Apex lines of codes.
+* `AmossExample_`
+  * Example classes and tests, showing simple use cases for Amoss in a runnable format.  There is no reason to keep these in your code-base once you've read and understand them.
+
+## How do I use it?
 
 ### Constructing and using a Test Double
 
