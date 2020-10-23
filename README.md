@@ -21,7 +21,7 @@ It's intended to be very straightforward to use, and to result in code that's ev
 
 This will install 3 sets of classes:
 * `Amoss_`
-  * The only parts that are necessary - the framework itself
+  * The only parts that are necessary - the framework itself.
 * `AmossTest_`
   * The tests for the framework, and their supporting files.  Required if you want to enhance Amoss, not so useful otherwise, but worth keeping if you can, just in case.  All `Amoss_` classes are defined as `@isTest`, meaning they do not count towards code coverage or Apex lines of codes.
 * `AmossExample_`
