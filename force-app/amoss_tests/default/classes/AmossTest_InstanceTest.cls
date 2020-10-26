@@ -1124,6 +1124,132 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method expects.method.returning
+    * @case   when an overloaded method is called with the stated parameters
+    * @result will not the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithTheStatedParameters_willNotFailTheTest() {
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'overloadedMethodUnderDouble' )
+                .withParameter( 'ActualParam1' )
+                .thenParameter( 1 )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.overloadedMethodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when an overloaded method is called with different parameters
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithDifferentParameters_willFailTheTest() {
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'overloadedMethodUnderDouble' )
+                .withParameter( 'ActualParam1' )
+                .thenParameter( 1 )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.overloadedMethodUnderDouble( 'ActualParam1', '1' );
+            } catch( TestException e ) {}
+        Test.stopTest();
+        
+        String expectedAssertion = 'AmossTest_ClassToDouble.overloadedMethodUnderDouble was called with the wrong parameter value in position 1';
+        System.assertEquals( 1                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
+        System.assertEquals( '1'              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
+        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method expects.method.returning (positional)
+    * @case   when an overloaded method is specified without all parameters
+    * @result will match any appropriate version
+    */
+    @isTest
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsSpecifiedWithoutAllParametersInPositional_willMatchAnyApppriateVersion() {
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'overloadedMethodUnderDouble' )
+                .withParameter( 'ActualParam1' )
+                .thenAnyParameter()
+                .returning( 'expectedReturn' )
+            .then().expects()
+                .method( 'overloadedMethodUnderDouble' )
+                .withParameter( 'ActualParam1' )
+                .thenAnyParameter()
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            classToDouble.overloadedMethodUnderDouble( 'ActualParam1', '1' );
+            classToDouble.overloadedMethodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.returning (named)
+    * @case   when an overloaded method is specified without all parameters
+    * @result will match any appropriate version
+    */
+    @isTest
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsSpecifiedWithoutAllParametersInNamed_willMatchAnyApppriateVersion() {
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'overloadedMethodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .returning( 'expectedReturn' )
+            .then().expects()
+                .method( 'overloadedMethodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            classToDouble.overloadedMethodUnderDouble( 'ActualParam1', '1' );
+            classToDouble.overloadedMethodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
     * @method expects.method.returning, named parameters
     * @case   when the method is called with different parameters
     * @result will fail the test
@@ -3780,7 +3906,7 @@ public with sharing class AmossTest_InstanceTest {
     class MockAssertEqualsHandler implements Amoss_MethodHandler {
         public Object handleMethodCall( List<Object> parameters ) {
             if ( parameters[0] != parameters[1] ) {
-                throw new TestException( 'Unequal expected and actual in an assertion would normally halt the test, so we will too - ' + String.valueOf( parameters[0] ) + ' != ' + String.valueOf( parameters[1] ) );
+                throw new TestException( 'Unequal expected and actual in an assertion would normally halt the test, so we will too - ' + String.valueOf( parameters[0] ) + ' != ' + String.valueOf( parameters[1] ) + ', for: '  + String.valueOf( parameters[2] ) );
             }
             return null;
         }
