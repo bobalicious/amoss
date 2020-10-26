@@ -4,7 +4,7 @@ Apex Mock Objects, Spies and Stubs - A Simple Mocking framework for Apex (Salesf
 
 ## Disclaimer
 
-This is a BETA state project and should be used with caution.  Whilst the intention is that this code is stable and bug free, this may not be the case.  There is no intention to change the interface of this framework, although that cannot be guaranteed.
+This is a BETA state project and should be used with caution.  Whilst the intention is that this code is stable and bug free, this may not be the case.  There is no intention to change the existing interface of this framework, although that cannot be guaranteed.
 
 ## Why use Amoss?
 
@@ -14,12 +14,20 @@ It's intended to be very straightforward to use, and to result in code that's ev
 
 ### Installating it
 
+If you are familar with using SFDX, the ant migration tool or using a local IDE, I recommend that you clone this repository, copy the Amoss files you require, and install them using your normal mechanism.
+
+However, if you are not confident, you *can* use the following button.
+
 <a href="https://githubsfdeploy.herokuapp.com">
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">
 </a>
 
-This will install 3 sets of classes:
+Be aware that this will grant a third pary Heroku app access to your org.  I have no reason to believe that 'Andy in the Cloud'  (https://andyinthecloud.com/about/) will do anything malicious with that access, though you should always be aware that there are risks when you grant access to an org, and using such an app is entirely at your own risk.
+
+#### What do I get?
+
+Amoss consists of 3 sets of classes:
 * `Amoss_`
   * The only parts that are necessary - the framework itself.
 * `AmossTest_`
