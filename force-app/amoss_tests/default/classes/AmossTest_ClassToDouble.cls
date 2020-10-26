@@ -42,6 +42,12 @@ public with sharing class AmossTest_ClassToDouble {
     public String methodUnderDouble( String parameter1, Integer parameter2 ) {
         return 'TheReturn';
     }
+    public String overloadedMethodUnderDouble( String parameter1, String parameter2 ) {
+        return 'TheReturn';
+    }
+    public String overloadedMethodUnderDouble( String parameter1, Integer parameter2 ) {
+        return 'TheReturn';
+    }
     public void methodUnderDoubleWithNoReturn( String parameter1, Integer parameter2 ) {
     }
     public String methodWithNoParametersUnderDouble() {
