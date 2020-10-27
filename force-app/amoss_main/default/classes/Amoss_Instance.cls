@@ -1653,7 +1653,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                 if ( expectedParameters[ parameterNumber ].allowsAnyValue() ) {
                     continue;
                 }
-                assertionMechanism.assertEquals( expectedParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2}', new List<String>{ className, method, String.valueOf( parameterNumber ) } ) );
+                assertionMechanism.assertEquals( expectedParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2} (if it is an object, it may be a different instance)', new List<String>{ className, method, String.valueOf( parameterNumber ) } ) );
             }
         }
 
@@ -1730,7 +1730,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                 if ( expectationParameter == null || expectationParameter.allowsAnyValue() ) {
                     continue;
                 }
-                assertionMechanism.assertEquals( expectationParameter.getValue(), actualParameterValue, String.format( '{0}.{1} was called with the wrong parameter value for "{2}"', new List<String>{ className, method, actualParameterName } ) );
+                assertionMechanism.assertEquals( expectationParameter.getValue(), actualParameterValue, String.format( '{0}.{1} was called with the wrong parameter value for "{2}" (if it is an object, it may be a different instance)', new List<String>{ className, method, actualParameterName } ) );
             }
         }
 
