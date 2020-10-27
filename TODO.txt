@@ -6,19 +6,15 @@ Documentation:
     Consider a class diagram for developers?
     Language syntax diagram?
 
-    2 Sobjects with the same properties are regarded as being the same objects
-    2 Objects with the same properties are NOT regarded as being the same objects
-
-
 Implement
 
-    Could recognise when objects are a different instance before failing in order to give a better assertion failure message
+    Structure for expectation parameter checkers
+
+    Should recognise when objects are a different instance before failing in order to give a better assertion failure message
 
     Document what is included in the installation.
 
-    Code documentation (search for TODOs)
-
-    Move all string contatonation over to string.format, and move ' over to " where used in a string
+    Move all string contatonation over to string.format, and move ' over to " where used in a string?
 
     Test:
 
@@ -53,16 +49,13 @@ Implement
         Test returns List, Set, Map
 
     General:
-
         What happens with methods that are not supposed to return something?
             Looks like it works, just need to write tests to prove it
 
     Mock:
-
         How to pass an 'expects parameter' when we're passing sObjects?
 
     Spy:
-
         Currently supports
             mockThing.countOf( 'method' )
         why not 
