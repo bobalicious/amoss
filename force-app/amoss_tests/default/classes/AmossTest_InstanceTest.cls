@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 @isTest
 public with sharing class AmossTest_InstanceTest {
 
@@ -376,6 +375,32 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
+
+    /**
+    * @method when.method.withParameter.setTo.willReturn
+    * @case   when that method is called with the stated parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterSetToWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().setTo( 'ActualParam1' )
+                .thenParameter().setTo( 1 )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the stated parameters, will return the stated value' );
+    }
+
     /**
     * @method when.method.withParameters.willReturn
     * @case   when that method is called with the stated parameters
@@ -577,6 +602,31 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
         
         System.assertEquals( null, returnFromDouble, 'when.method.withParameters.willReturn, and the method called with the different parameters, will return null' );
+    }
+
+    /**
+    * @method when.method.withParameter.setTo.willReturn
+    * @case   when that method is called with different parameters
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParameterSetToWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().setTo( 'ActualParam1' )
+                .thenParameter().setTo( 1 )
+                .willReturn( 'willNotSeeThis' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the different parameters, will return null' );
     }
 
     /**

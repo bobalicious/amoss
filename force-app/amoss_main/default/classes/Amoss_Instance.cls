@@ -1050,6 +1050,23 @@ public without sharing class Amoss_Instance implements StubProvider {
         }        
 
         /**
+        * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().setTo( 'Parameter1' )
+        *       .thenParameter().setTo( 4 )
+        *       .thenParameter().setTo( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The parameter value to add to the list of expected ones
+        */
+        public Amoss_PositionalParameterValueDefiner thenParameter() {
+            return new Amoss_PositionalParameterValueDefiner( expectation );
+        }  
+
+        /**
         * Adds a parameter to the list of parameters that are valid for this 'expection' or 'when', it being allowed to have any value.
         *
         * For example, to specify:
@@ -1099,6 +1116,36 @@ public without sharing class Amoss_Instance implements StubProvider {
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, parameterValue );
             return new Amoss_NamedParametersDefiner( expectation );
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the specification of the value of a positional parameter.
+     *
+     * At this point in the syntax, the only valid thing to do is define the parameter value.
+     */
+    public class Amoss_PositionalParameterValueDefiner extends Amoss_ExpectationDefiner {
+
+        public Amoss_PositionalParameterValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+        /**
+        * States the parameter value that is expected for the the currently specified parameter.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().setTo( 'Parameter1' )
+        *       .andParameter().setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
+            ((Amoss_Instance.Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterValue( parameterValue );
+            return new Amoss_PositionalParametersDefiner( expectation );
         }
     }
 
@@ -1234,6 +1281,29 @@ public without sharing class Amoss_Instance implements StubProvider {
             return new Amoss_PositionalParametersDefiner( expectation );
         }
 
+
+        /**
+        * Sets the expected value of the first parameter in the list of parameters that are valid for this 'expection' or 'when'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().setTo( 'Parameter1' )
+        *       .thenParameter().setTo( 4 )
+        *       .thenParameter().setTo( false )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * Once called, allows 'thenParameter' and similar to be called (positional syntax), to add further parameters
+        *
+        * @param Object - The parameter value to add to the list of expected ones
+        */
+        public Amoss_PositionalParameterValueDefiner withParameter() {
+
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+            expectation.setExpectationParameters( expectedParameters );
+            return new Amoss_PositionalParameterValueDefiner( expectation );
+        }
+
         /**
         * Sets the expected value of the first parameter in the list of parameters to be 'any value' for this 'expection' or 'when'.
         *
@@ -1276,8 +1346,6 @@ public without sharing class Amoss_Instance implements StubProvider {
             return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
         }
     }
-
-
 
     /**
     * Internal class that should not be referenced directly in a test
