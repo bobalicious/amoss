@@ -56,7 +56,10 @@ public with sharing class AmossTest_ClassToDouble {
     public String otherMethodUnderDouble( String parameter1, Integer parameter2 ) {
         return 'TheReturn';
     }
-    public String sobjectmethodUnderDouble( Contact contactParam ) {
+    public String sobjectMethodUnderDouble( Contact contactParam ) {
+        return 'TheReturn';
+    }
+    public String objectMethodUnderDouble( Object objectParam ) {
         return 'TheReturn';
     }
     public List<Object> methodWithListObject( List<Object> parameter1 ) {
@@ -67,5 +70,12 @@ public with sharing class AmossTest_ClassToDouble {
     }
     public Map<String,Object> methodWithMapStringObject( Map<String,Object> parameter1 ) {
         return new Map<String,Object>();
-    }    
+    }
+
+    public class PassableObject {
+        String property;
+        public PassableObject( String property ) {
+            this.property = property;
+        }
+    }
 }

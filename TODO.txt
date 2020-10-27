@@ -6,13 +6,15 @@ Documentation:
     Consider a class diagram for developers?
     Language syntax diagram?
 
+    2 Sobjects with the same properties are regarded as being the same objects
+    2 Objects with the same properties are NOT regarded as being the same objects
+
+
 Implement
 
+    Could recognise when objects are a different instance before failing in order to give a better assertion failure message
+
     Document what is included in the installation.
-
-    Add 'install into' button
-
-    Instructions on installation - implement 'install to Salesforce' - Andy in the Cloud
 
     Code documentation (search for TODOs)
 
@@ -50,8 +52,6 @@ Implement
         Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
         Test returns List, Set, Map
 
-        Overloaded methods match properly on expectations and whens
-
     General:
 
         What happens with methods that are not supposed to return something?
@@ -68,6 +68,3 @@ Implement
         why not 
             mockThing.get().countOf( 'method' )
             this would be in line with the parameter getters
-
-    Assertions:
-        Is greater than, etc

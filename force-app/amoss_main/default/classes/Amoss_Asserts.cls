@@ -68,11 +68,11 @@ public with sharing class Amoss_Asserts {
      * of an assertion message for clarity when the assertion fails.
      *
      * @param String - The string to search for (expected)
-     * @param String - The string to search within (actual)
+     * @param Object - The string to search within (actual)
      * @param String - The assertion message
      */
-    public static void assertContains( String expectedString, String actualString, String assertionMessage ) {
-        System.assert( actualString.contains( expectedString ), assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
+    public static void assertContains( String expectedString, Object actualString, String assertionMessage ) {
+        System.assert( ((String)actualString).contains( expectedString ), assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
     }
 
     /**
