@@ -8,7 +8,15 @@ Documentation:
 
 Implement
 
+    // Implement a builder for the parameter objects - too much shared code between the 'with' and the 'then' versions
+
     Structure for expectation parameter checkers
+    Complete the rework to remove the simple
+        'setParameterValue' and 'addParameterValue' methods on Expectation so they directly construct the parameters themselves.
+
+    Using a builder should mean that we don't need two different 'setTo' methods - the builders should take care of that.
+
+    Can then implement an Sobject version of the ExpectationParameter object (ExpectationSobjectParameter)
 
     Should recognise when objects are a different instance before failing in order to give a better assertion failure message
 

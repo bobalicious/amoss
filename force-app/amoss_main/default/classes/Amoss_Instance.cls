@@ -1045,7 +1045,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner thenParameter( Object parameterValue ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterValue( parameterValue );
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
             return this;
         }        
 
@@ -1114,9 +1114,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
-            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, parameterValue );
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, new Amoss_ExpectationParameter().setValue( parameterValue ) );
             return new Amoss_NamedParametersDefiner( expectation );
-        }
+        }     
     }
 
     /**
@@ -1129,6 +1129,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         public Amoss_PositionalParameterValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
+
         /**
         * States the parameter value that is expected for the the currently specified parameter.
         *
@@ -1144,9 +1145,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
-            ((Amoss_Instance.Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterValue( parameterValue );
+            ((Amoss_Instance.Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( new Amoss_ExpectationParameter().setValue( parameterValue ) );
             return new Amoss_PositionalParametersDefiner( expectation );
-        }
+        }      
     }
 
     /**
@@ -1218,6 +1219,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * @param Object[] - The list of parameter values that are expected
         */
+        // TODO: rework
         public Amoss_ReturnsDefiner withParameters( Object[] parameterValues ) {
 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
@@ -1245,6 +1247,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * @param Map<String,Object> - The map of parameter values that are expected
         */
+        // TODO: rework
         public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
 
             Amoss_ExpectationNamedParameters expectedParameters = new Amoss_ExpectationNamedParameters();
@@ -1275,7 +1278,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
-            expectedParameters.addParameterValue( parameterValue );
+            expectedParameters.addParameter( new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
             expectation.setExpectationParameters( expectedParameters );
 
             return new Amoss_PositionalParametersDefiner( expectation );
@@ -1318,6 +1321,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         */
         public Amoss_PositionalParametersDefiner withAnyParameter() {
+            // TODO: rework
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
             expectedParameters.addAnyParameterValue();
             expectation.setExpectationParameters( expectedParameters );
@@ -1672,9 +1676,21 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that adds a parameter to the list of parameters that are valid for this Expectation.
         *
-        * @param Object - The parameter value to add to the list of expected ones
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        * @param Amoss_ExpectationParameter - The parameter to add to the list of expected ones
+        * @return Amoss_ExpectationParameters - Itself, allowing for a fluent interface
         */
+        Amoss_ExpectationPositionalParameters addParameter( Amoss_ExpectationParameter parameter ) {
+            expectedParameters.add( parameter );
+            return this;
+        }
+
+        /**
+        * Internal method that adds a parameter to the list of parameters that are valid for this Expectation.
+        *
+        * @param Object - The parameter value to add to the list of expected ones
+        * @return Amoss_ExpectationParameters - Itself, allowing for a fluent interface
+        */
+        // TODO: remove
         public Amoss_ExpectationParameters addParameterValue( Object parameterValue ) {
             expectedParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
             return this;
@@ -1685,6 +1701,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * 
         * @return Amoss_Expectation - Itself, allowing for a fluent interface
         */
+        // TODO: remove
         public Amoss_ExpectationParameters addAnyParameterValue() {
             expectedParameters.add( new Amoss_ExpectationParameter().anyValue() );
             return this;
@@ -1753,13 +1770,27 @@ public without sharing class Amoss_Instance implements StubProvider {
 
         private Map<String,Amoss_ExpectationParameter> expectedParameters = new Map<String,Amoss_ExpectationParameter>();
 
+
+        /**
+        * Internal method that sets the expected parameter with the given name, to have the given parameter.
+        *
+        * @param String - The name of the parameter to add to the specification
+        * @param Amoss_ExpectationParameter - The representation of the parameter to add to the specification
+        * @return Amoss_ExpectationNamedParameters - Itself, allowing for a fluent interface
+        */
+        Amoss_ExpectationNamedParameters setParameter( String parameterName, Amoss_ExpectationParameter parameter ) {
+            expectedParameters.put( parameterName, parameter );
+            return this;
+        }
+
         /**
         * Internal method that sets the expected parameter with the given name, to have the given value.
         *
         * @param String - The name of the parameter to add to the specification
         * @param Object - The value of the parameter to add to the specification
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        * @return Amoss_ExpectationNamedParameters - Itself, allowing for a fluent interface
         */
+        // TODO: remove
         public Amoss_ExpectationParameters setParameter( String parameterName, Object parameterValue ) {
             expectedParameters.put( parameterName, new Amoss_Instance.Amoss_ExpectationParameter().setValue( parameterValue ) );
             return this;
