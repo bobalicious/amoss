@@ -1080,7 +1080,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         */
         public Amoss_PositionalParametersDefiner thenAnyParameter() {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addAnyParameterValue();
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( new Amoss_ExpectationParameterBuilder().buildParameter( ParameterSpecialType.ANY_VALUE ) );
             return this;
         }      
     }
@@ -1146,7 +1146,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
-            ((Amoss_Instance.Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( new Amoss_ExpectationParameterBuilder().buildParameter( parameterValue ) );
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( new Amoss_ExpectationParameterBuilder().buildParameter( parameterValue ) );
             return new Amoss_PositionalParametersDefiner( expectation );
         }      
     }
@@ -1220,13 +1220,14 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * @param Object[] - The list of parameter values that are expected
         */
-        // TODO: rework
         public Amoss_ReturnsDefiner withParameters( Object[] parameterValues ) {
+
+            Amoss_ExpectationParameterBuilder parameterBuilder = new Amoss_ExpectationParameterBuilder();
 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
 
             for ( Object thisParameterValue : parameterValues ) {
-                expectedParameters.addParameterValue( thisParameterValue );
+                expectedParameters.addParameter( parameterBuilder.buildParameter( thisParameterValue ) );
             }
 
             expectation.setExpectationParameters( expectedParameters );
@@ -1323,10 +1324,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         */
         public Amoss_PositionalParametersDefiner withAnyParameter() {
-            // TODO: rework
+
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
-            expectedParameters.addAnyParameterValue();
             expectation.setExpectationParameters( expectedParameters );
+
+            expectedParameters.addParameter( new Amoss_ExpectationParameterBuilder().buildParameter( ParameterSpecialType.ANY_VALUE ) );
 
             return new Amoss_PositionalParametersDefiner( expectation );
         }
@@ -1366,7 +1368,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         private String expectedMethod;
 
         private Amoss_ExpectationParameters      expectedParameters = new Amoss_ExpectationAnyParameters();
-        private Amoss_ExpectationReturnMechanism returnMechanism    = new Amoss_Instance.Amoss_ExpectationValueReturn();
+        private Amoss_ExpectationReturnMechanism returnMechanism    = new Amoss_ExpectationValueReturn();
 
         private Amoss_Instance mockControl;
 
@@ -1687,29 +1689,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
 
         /**
-        * Internal method that adds a parameter to the list of parameters that are valid for this Expectation.
-        *
-        * @param Object - The parameter value to add to the list of expected ones
-        * @return Amoss_ExpectationParameters - Itself, allowing for a fluent interface
-        */
-        // TODO: remove
-        public Amoss_ExpectationParameters addParameterValue( Object parameterValue ) {
-            expectedParameters.add( new Amoss_ExpectationParameter().setValue( parameterValue ) );
-            return this;
-        }
-
-        /**
-        * Internal method that adds an 'any parameter value' to the list of parameters that are valid for this Expectation.
-        * 
-        * @return Amoss_Expectation - Itself, allowing for a fluent interface
-        */
-        // TODO: remove
-        public Amoss_ExpectationParameters addAnyParameterValue() {
-            expectedParameters.add( new Amoss_ExpectationParameter().anyValue() );
-            return this;
-        }
-
-        /**
         * Internal method that returns a String description of the parameter values that are expected, as a comma seperated list.
         *
         * @return String - The description of the expected parameter values
@@ -1735,12 +1714,7 @@ public without sharing class Amoss_Instance implements StubProvider {
             assertionMechanism.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, method } ) );
 
             for ( Integer parameterNumber = 0; parameterNumber < expectedParameters.size(); parameterNumber++ ) {
-
-                // TODO: could push this verify into the Expectation Parameter - could introduce Expectation Any Parameter - it's good to get rid of ifs
-                if ( expectedParameters[ parameterNumber ].allowsAnyValue() ) {
-                    continue;
-                }
-                assertionMechanism.assertEquals( expectedParameters[ parameterNumber ].getValue(), parameterValues[ parameterNumber ], String.format( '{0}.{1} was called with the wrong parameter value in position {2} (if it is an object, it may be a different instance)', new List<String>{ className, method, String.valueOf( parameterNumber ) } ) );
+                assertionMechanism.assert( expectedParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ), String.format( '{0}.{1} was called with the wrong parameter value in position {2}.\nExpected: {3}\nActual: {4}\n(if it is an object, it may be a different instance)', new List<String>{ className, method, String.valueOf( parameterNumber ), String.valueOf( expectedParameters[ parameterNumber ] ), String.valueOf( parameterValues[ parameterNumber ] ) } ) );
             }
         }
 
@@ -1771,7 +1745,6 @@ public without sharing class Amoss_Instance implements StubProvider {
     private class Amoss_ExpectationNamedParameters implements Amoss_ExpectationParameters {
 
         private Map<String,Amoss_ExpectationParameter> expectedParameters = new Map<String,Amoss_ExpectationParameter>();
-
 
         /**
         * Internal method that sets the expected parameter with the given name, to have the given parameter.
@@ -1815,10 +1788,9 @@ public without sharing class Amoss_Instance implements StubProvider {
                 Object actualParameterValue = parameterValues[ parameterNumber ];
                 Amoss_ExpectationParameter expectationParameter = expectedParameters.get( actualParameterName );
 
-                if ( expectationParameter == null || expectationParameter.allowsAnyValue() ) {
-                    continue;
+                if ( expectationParameter != null ) {
+                    assertionMechanism.assert( expectationParameter.matches( actualParameterValue ), String.format( '{0}.{1} was called with the wrong parameter value for "{2}".\nExpected: {3}\nActual: {4}\n(if it is an object, it may be a different instance)', new List<String>{ className, method, actualParameterName, String.valueOf( expectationParameter ), String.valueOf( actualParameterValue ) } ) );
                 }
-                assertionMechanism.assertEquals( expectationParameter.getValue(), actualParameterValue, String.format( '{0}.{1} was called with the wrong parameter value for "{2}" (if it is an object, it may be a different instance)', new List<String>{ className, method, actualParameterName } ) );
             }
         }
 
@@ -1846,13 +1818,19 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
+    interface Amoss_ExpectationParameter {
+        String toString();
+        Boolean matches( Object value );
+    }
+
+
     /**
     * Internal class that should not be referenced directly in a test
     *
     * Describes the specification of a Parameter that is expected to be passed into a mocked method call
     *
     */
-    class Amoss_ExpectationParameter {
+    class Amoss_ExpectationSimpleParameter implements Amoss_ExpectationParameter {
 
         Boolean anyValue = false;
         Object  value;
@@ -1953,12 +1931,25 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
+
+    public enum ParameterSpecialType { ANY_VALUE }
     // TODO: document
     // TODO: change references to this - should not be reconstructed all the time
     private class Amoss_ExpectationParameterBuilder {
+
         public Amoss_ExpectationParameter buildParameter( Object parameter ) {
-            return new Amoss_ExpectationParameter().setValue( parameter );
+            return new Amoss_ExpectationSimpleParameter().setValue( parameter );
+        }
+
+        public Amoss_ExpectationParameter buildParameter( ParameterSpecialType parameterType ) {
+
+            Amoss_ExpectationSimpleParameter parameter = new Amoss_ExpectationSimpleParameter();
+            switch on parameterType {
+                when ANY_VALUE {
+                    parameter.anyValue();            
+                }
+            }
+            return parameter;
         }
     }
-
 }

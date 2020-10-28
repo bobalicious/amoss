@@ -1166,11 +1166,8 @@ public with sharing class AmossTest_InstanceTest {
                 String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
             } catch( TestException e ) {}
         Test.stopTest();
-        
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value in position 0';
-        System.assertEquals( 'ActualParam1'     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'OtherActualParam1', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'ActualParam1', 'OtherActualParam1', 'expects.method.returning, when the method is called with different parameters' );
     }
 
     /**
@@ -1235,15 +1232,72 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
         
-        String expectedAssertion = 'AmossTest_ClassToDouble.objectMethodUnderDouble was called with the wrong parameter value in position 0';
-        System.assert( testFailed, 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the expected parameter value' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.objectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an object and the method is called with a different instance' );
+    }
 
-        System.assertEquals( objectExpected   , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the expected parameter value' );
-        System.assertEquals( objectPassed     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the actual parameter value' );
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with an sobject, and that instance is passed
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectAndPassed_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
 
-        System.assertNotEquals( objectPassed  , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the expected parameter value - effectively checking assert behaviour states the objects do not match' );
-        System.assertNotEquals( objectExpected, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the actual parameter value - effectively checking assert behaviour states the objects do not match' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectPassed = new Contact( LastName = 'TheContact' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter( objectPassed )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with an sobject, and a differenct instance is passed with same properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassed_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.objectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject and the method is called with a different instance' );
     }
 
     /**
@@ -1300,10 +1354,7 @@ public with sharing class AmossTest_InstanceTest {
             } catch( TestException e ) {}
         Test.stopTest();
         
-        String expectedAssertion = 'AmossTest_ClassToDouble.overloadedMethodUnderDouble was called with the wrong parameter value in position 1';
-        System.assertEquals( 1                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
-        System.assertEquals( '1'              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.overloadedMethodUnderDouble', 1, 1, '1', 'expects.method.returning, when an overloaded method is called with different parameters' );
     }
 
     /**
@@ -1399,11 +1450,8 @@ public with sharing class AmossTest_InstanceTest {
                 String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
             } catch( TestException e ) {}
         Test.stopTest();
-        
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value for "parameter1"';
-        System.assertEquals( 'ActualParam1'     , assertsDoubleController.get().LatestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'OtherActualParam1', assertsDoubleController.get().LatestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion  , assertsDoubleController.get().LatestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+
+        checkForWrongParameterNamedAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 'parameter1', 'ActualParam1', 'OtherActualParam1', 'expects.method.returning, when the method defined using named parameters and is called with different parameters' );
     }
 
     /**
@@ -3053,18 +3101,8 @@ public with sharing class AmossTest_InstanceTest {
     @isTest
     private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalledWithNonMatchingParameters_willFailTheTest() {
         
-        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
-        assertsDoubleController
-            .when()
-                .method( 'assertEquals' )
-                .withParameter( 'this' )
-                .thenParameter( 'not-this' )
-                .thenAnyParameter()
-                .throws( new TestException( 'Mismatching assertion would normally halt the test, so we will too' ) )
-            .also().allows()
-                .method( 'assertEquals' )
-                .withAnyParameters();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
@@ -3083,10 +3121,7 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
         
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value in position 0';
-        System.assertEquals( 'this'           , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'not-this'       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'this', 'not-this', 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters' );
     }    
 
     //
@@ -3389,18 +3424,8 @@ public with sharing class AmossTest_InstanceTest {
     @isTest
     private static void allowAnyCall_false_expectsMethodReturning_whenTheMethodIsOnlyCalledWithDifferentParameters_willFailTheTest() {
         
-        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
-        assertsDoubleController
-            .when()
-                .method( 'assertEquals' )
-                .withParameter( 'this' )
-                .thenParameter( 'not-this' )
-                .thenAnyParameter()
-                .throws( new TestException( 'Mismatching assertion would normally halt the test, so we will too' ) )
-            .also().allows()
-                .method( 'assertEquals' )
-                .withAnyParameters();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
@@ -3420,10 +3445,7 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value in position 0';
-        System.assertEquals( 'this'           , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'not-this'       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'this', 'not-this', 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters' );
     }
 
     /**
@@ -4008,6 +4030,10 @@ public with sharing class AmossTest_InstanceTest {
                 .handledBy( new MockAssertEqualsHandler() )
             .also().allows()
                 .method( 'assert' )
+                .withParameter( true )
+                .thenAnyParameter()
+            .also().allows()
+                .method( 'assert' )
                 .withParameter( false )
                 .thenAnyParameter()
                 .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
@@ -4022,4 +4048,28 @@ public with sharing class AmossTest_InstanceTest {
             return null;
         }
     }
+
+    private static void checkForWrongParameterInPositionAssertion( Amoss_Instance assertsDoubleController, String method, Integer parameterPosition, Object expected, Object actual, String message ) {
+
+        String expectedAssertion = method + ' was called with the wrong parameter value in position ' + String.valueOf( parameterPosition );
+
+        String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), message + ', will fail, by calling assert with false' );
+
+        Amoss_Asserts.assertContains( expectedAssertion, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly describes the issue' );
+        Amoss_Asserts.assertContains( 'Expected: ' + expected, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the expected parameter value' );
+        Amoss_Asserts.assertContains( 'Actual: '   + actual  , actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the actual parameter value' );
+    }
+
+    private static void checkForWrongParameterNamedAssertion( Amoss_Instance assertsDoubleController, String method, String parameterName, Object expected, Object actual, String message ) {
+
+        String expectedAssertion = method + ' was called with the wrong parameter value for "' + String.valueOf( parameterName ) + '"';
+
+        String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), message + ', will fail, by calling assert with false' );
+
+        Amoss_Asserts.assertContains( expectedAssertion, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly describes the issue' );
+        Amoss_Asserts.assertContains( 'Expected: ' + expected, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the expected parameter value' );
+        Amoss_Asserts.assertContains( 'Actual: '   + actual  , actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the actual parameter value' );
+    }    
 }
