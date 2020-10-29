@@ -1297,7 +1297,7 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.objectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject and the method is called with a different instance' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject and the method is called with a different instance' );
     }
 
     /**

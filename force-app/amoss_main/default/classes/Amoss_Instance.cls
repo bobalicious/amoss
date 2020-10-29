@@ -53,7 +53,9 @@ public without sharing class Amoss_Instance implements StubProvider {
     private Boolean allowsAnyCall                  = true;
     private Boolean allowsAnyCallExplicitlyDefined = false;
     private Boolean expectsNoCalls                 = false;
-    
+
+    public enum ParameterSpecialType { ANY_VALUE }
+
     public Amoss_Instance( Type classType ) {
         this.classType = classType;
     }
@@ -302,6 +304,8 @@ public without sharing class Amoss_Instance implements StubProvider {
     * Internal method that should not be called directly in tests.
     *
     * Provides the name of the class that this mock is mimicing.
+    *
+    * @return - String - The name of the class
     */
     public String getClassName() {
         return String.valueOf( this.classType );
@@ -478,6 +482,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         * Internal method that should not be called directly in tests.
         *
         * Sets the name of the method that this stack represents.
+        *
+        * @param  String - The method name.
+        * @return Amoss_CallLogEntry - Itself, allowing for a fluent interface
         */
         public Amoss_CallLogEntry setMethod( String method ) {
             this.method = method;
@@ -488,6 +495,8 @@ public without sharing class Amoss_Instance implements StubProvider {
         * Internal method that should not be called directly in tests.
         *
         * Gets the name of the method that this stack represents.
+        *
+        * @return String - The name of the method
         */
         public String getMethod() {
             return this.method;
@@ -497,6 +506,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         * Internal method that should not be called directly in tests.
         *
         * Sets the parameters that were passed in on this method call.
+        *
+        * @param  List<Object> - The types of the parameters that were passed
+        * @param  List<String> - The names of the parameters that were passed
+        * @param  List<Object> - The values of the parameters that were passed
+        * @return Amoss_CallLogEntry - Itself, allowing for a fluent interface
         */
         public Amoss_CallLogEntry setParameters( List<Object> parameterTypes, List<String> parameterNames, List<Object> parameterValues ) {
             this.parameterNames  = parameterNames;
@@ -516,6 +530,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         * Gets the parameter at the specified position that was passed in on this method call.
         *
         * If the parameter does not exist then an exception is thrown.
+        *
+        * @param  Integer - The number of the parameter that should be returned
+        * @return Object  - The parameter value that was passed in the stated position
         */
         public Object getParameter( Integer parameterNumber ) {
             if ( parameterValues == null ) {
@@ -536,9 +553,12 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Gets the parameter at the specified position that was passed in on this method call.
+        * Gets the parameter with the specified name that was passed in on this method call.
         *
         * If the parameter does not exist then an exception is thrown.
+        *
+        * @param  Integer - The name of the parameter that should be returned
+        * @return Object  - The parameter value that was passed with the stated name
         */
         public Object getParameter( String parameterName ) {
             if ( parameterValuesByName == null ) {
@@ -559,6 +579,8 @@ public without sharing class Amoss_Instance implements StubProvider {
         * Gets the parameters for this call.
         *
         * If the parameters do not exist then an exception is thrown.
+        *
+        * @return List<Object> - The parameter values that were passed.
         */
         public List<Object> getParameters() {
             if ( parameterValues == null ) {
@@ -573,6 +595,8 @@ public without sharing class Amoss_Instance implements StubProvider {
         * Gets the parameters for this call, indexed by their name.
         *
         * If the parameters do not exist then an exception is thrown.
+        *
+        * @return Map<String,Object> - The parameter values that were passed, indexed by their name.
         */
         public Map<String,Object> getParametersByName() {
             if ( parameterValuesByName == null ) {
@@ -1823,29 +1847,43 @@ public without sharing class Amoss_Instance implements StubProvider {
         Boolean matches( Object value );
     }
 
-
     /**
     * Internal class that should not be referenced directly in a test
     *
-    * Describes the specification of a Parameter that is expected to be passed into a mocked method call
+    * Describes the specification of 'any' parameter value that is expected to be passed into a mocked method call
     *
     */
-    class Amoss_ExpectationSimpleParameter implements Amoss_ExpectationParameter {
-
-        Boolean anyValue = false;
-        Object  value;
+    class Amoss_ExpectationAnyParameter implements Amoss_ExpectationParameter {
 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * States that this parameter can be set to any value and will match when being checked against an actual call
-        *
-        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        * @return String - String description of the expected value.
         */
-        public Amoss_ExpectationParameter anyValue() {
-            anyValue = true;
-            return this;
+        public override String toString() {
+            return 'any';
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes if this parameter matches the value that is passed into it.
+        *
+        * @return Boolean - Does the passed parameter match this object's expected parameter.
+        */
+        public Boolean matches( Object value ) {
+            return true;
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of a Simple Parameter that is expected to be passed into a mocked method call
+    */
+    class Amoss_ExpectationSimpleParameter implements Amoss_ExpectationParameter {
+
+        Object value;
 
         /**
         * Internal method that should not be called directly in tests.
@@ -1863,34 +1901,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Gets the value that this parameter is expected to be.
-        *
-        * @return Object - The value that this parameter is expected to be.
-        */
-        public Object getValue() {
-            return this.value;
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes whether this parameter is allowed to be any value (true), or must be a specific value (false)
-        *
-        * @return Boolean - Is this parameter allowed to be any value?
-        */
-        public Boolean allowsAnyValue() {
-            return anyValue;
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
         * @return String - String description of the expected value.
         */
         public override String toString() {
-            if ( anyValue ) {
-                return 'any';
-            }
             return String.valueOf( this.value );
         }
 
@@ -1902,10 +1915,52 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @return Boolean - Does the passed parameter match this object's expected parameter.
         */
         public Boolean matches( Object value ) {
-            if ( anyValue ) {
-                return true;
-            }
             return this.value == value;
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of an SObject Parameter that is expected to be passed into a mocked method call
+    */
+    class Amoss_ExpectationSobjectParameter implements Amoss_ExpectationParameter {
+
+        Sobject value;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the value that this parameter is expectd to be
+        *
+        * @param  Object - The value that this parameter is expected to be (actually an Sobject)
+        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameter setValue( Object value ) {
+            this.value = (Sobject)value;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * @return String - String description of the expected value.
+        */
+        public override String toString() {
+            return String.valueOf( this.value );
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes if this parameter matches the value that is passed into it.
+        *
+        * For SObjects, only matches if the value is the same instance as the one passed in (actually an Sobject).
+        *
+        * @return Boolean - Does the passed parameter match this object's expected parameter.
+        */
+        public Boolean matches( Object value ) {
+            return this.value === (Sobject)value;
         }
     }
 
@@ -1931,25 +1986,63 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
-
-    public enum ParameterSpecialType { ANY_VALUE }
-    // TODO: document
-    // TODO: change references to this - should not be reconstructed all the time
+    /**
+    * Internal class that should not be refenced in tests.
+    *
+    * Constructs instances of Amoss_ExpectationParameter.
+    */
     private class Amoss_ExpectationParameterBuilder {
 
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of Amoss_ExpectationParameter based on the passed Object.
+        *
+        * @param  Object - The parameter value that is expected for the Amoss_ExpectationParameter
+        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter
+        */
         public Amoss_ExpectationParameter buildParameter( Object parameter ) {
+
+            // Not ideal, but since we don't want to implement multiple versions of
+            // setTo in the grammer, every call to buildParameter resolves to the Object (this)
+            // version.
+            // As we only want to distinguish between a couple of types, this seems the
+            // simplest way.
+            if ( parameter instanceOf Sobject ) {
+                return buildParameter( (Sobject)parameter );
+            }
+
             return new Amoss_ExpectationSimpleParameter().setValue( parameter );
         }
 
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ExpectationSobjectParameter
+        *
+        * @param  Object - The Sobject parameter value that is expected for the Amoss_ExpectationParameter
+        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationSobjectParameter)
+        */
+        public Amoss_ExpectationParameter buildParameter( Sobject parameter ) {
+            return new Amoss_ExpectationSobjectParameter().setValue( parameter );
+        }
+
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ExpectationSobjectParameter, based on the passed in ParameterSpecialType.
+        *
+        * @param  Object - The Special Type of Expectation Parameter object to construct
+        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this passed in special type.
+        */
         public Amoss_ExpectationParameter buildParameter( ParameterSpecialType parameterType ) {
 
-            Amoss_ExpectationSimpleParameter parameter = new Amoss_ExpectationSimpleParameter();
             switch on parameterType {
                 when ANY_VALUE {
-                    parameter.anyValue();            
+                    return new Amoss_ExpectationAnyParameter();
                 }
             }
-            return parameter;
+            return new Amoss_ExpectationSimpleParameter();
         }
     }
 }
