@@ -792,10 +792,10 @@ public with sharing class AmossTest_InstanceTest {
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
         classToDoubleController
-            .expects()
+            .when()
                 .method( 'sobjectMethodUnderDouble' )
                 .withParameter( objectExpected )
-                .returning( 'NotExpectedReturn' );
+                .willReturn( 'NotExpectedReturn' );
 
         Contact objectPassed = new Contact( LastName = 'TheObject' );
         Test.startTest();
@@ -4159,7 +4159,7 @@ public with sharing class AmossTest_InstanceTest {
                 .method( 'assert' )
                 .withParameter( false )
                 .thenAnyParameter()
-                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+                .handledBy( new MockAssertHandler() );
         return assertsDoubleController;
     }
 
@@ -4167,6 +4167,15 @@ public with sharing class AmossTest_InstanceTest {
         public Object handleMethodCall( List<Object> parameters ) {
             if ( parameters[0] != parameters[1] ) {
                 throw new TestException( 'Unequal expected and actual in an assertion would normally halt the test, so we will too - ' + String.valueOf( parameters[0] ) + ' != ' + String.valueOf( parameters[1] ) + ', for: '  + String.valueOf( parameters[2] ) );
+            }
+            return null;
+        }
+    }
+
+    class MockAssertHandler implements Amoss_MethodHandler {
+        public Object handleMethodCall( List<Object> parameters ) {
+            if ( parameters[0] == false ) {
+                throw new TestException( 'False assertion would normally halt the test, so we will too, for: '  + String.valueOf( parameters[1] ) );
             }
             return null;
         }
