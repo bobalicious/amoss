@@ -2,30 +2,30 @@ Amoss - Apex Mocks, Spies and Stubs
 
 Documentation:
 
+    Document the differences between the matching for:
+        Primitives
+        Objects / Sobjects
+
     Full interface definition?
     Consider a class diagram for developers?
     Language syntax diagram?
 
 Implement
 
-    Amoss_ExpectationParameterBuilder - change references to it, so that it isn't reconstructed all the time
+    Test the 'when' behvaiours so that we know that they are consistent with the 'expects'
+        Object
+        SObject
+
+    Move 'verify' behaviour into the ExpectationParameter objects
+        * They should throw an exception with the issue, including full text (including Expected and Actual, where appropriate - consider a message builder?)
+        * Look how far up the verify exception should propogate before the assertion failure is made - make it as high as possible for clarity in the report to the user.
 
     Have a look:
-        Can you implement Amoss_ExpectationObjectParameter?
-    
-    Adjust
-        Amoss_ExpectationSobjectParameter
-        and
-        Amoss_ExpectationObjectParameter / Amoss_ExpectationSimpleParameter
-
-        Can they detect a different instance and report that back to the verify method?
-            Potentially they can issue the assertion?  Or throw an exception that the verify method includes in the assertion message (to reduce the assertion stack)
+        Can you implement Amoss_ExpectationObjectParameter - do you need to?
 
     Consider
         Just have a look - how would the new syntax drop into this?
         What happens with List / Map / Set?
-
-    Document what is included in the installation.
 
     Move all string contatonation over to string.format, and move ' over to " where used in a string?
 
@@ -64,9 +64,6 @@ Implement
     General:
         What happens with methods that are not supposed to return something?
             Looks like it works, just need to write tests to prove it
-
-    Mock:
-        How to pass an 'expects parameter' when we're passing sObjects?
 
     Spy:
         Currently supports
