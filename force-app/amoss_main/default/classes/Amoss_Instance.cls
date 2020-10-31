@@ -270,35 +270,39 @@ public without sharing class Amoss_Instance implements StubProvider {
                                     List<String> parameterNames,
                                     List<Object> parameters ) {
 
-        String callDescription = new Amoss_CallDescriber().getCallDescription( mockedMethod, parameters );
+        try {
 
-        callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
+            String callDescription = new Amoss_CallDescriber().getCallDescription( mockedMethod, parameters );
 
-        if ( expectsNoCalls ) {
-            assertionMechanism.assertEquals( '', callDescription, String.format( '{0} did not expect any methods to be called', new List<String>{ getClassName() } ) );
-        }
+            callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
 
-        if ( whens.hasExpectations() ) {
-            Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameterNames, parameters );
-            if ( whenExpectation != null ) {
-                return whenExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
+            if ( expectsNoCalls ) {
+                assertionMechanism.assertEquals( '', callDescription, String.format( '{0} did not expect any methods to be called', new List<String>{ getClassName() } ) );
             }
-        }
 
-        if ( allowsAnyCall == false && expectations.isEmpty() ) {
-            if ( !whens.isEmpty() ) {
-                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected, and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
-            } else {
-                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+            if ( whens.hasExpectations() ) {
+                Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameterNames, parameters );
+                if ( whenExpectation != null ) {
+                    return whenExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
+                }
             }
-        }
 
-        if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameterNames, parameters ) ) {
-            Amoss_Expectation thisExpectation = expectations.unshift();
-            thisExpectation.verify( assertionMechanism, mockedMethod, parameterNames, parameters );
-            return thisExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
-        }
-        
+            if ( allowsAnyCall == false && expectations.isEmpty() ) {
+                if ( !whens.isEmpty() ) {
+                    assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected, and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
+                } else {
+                    assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+                }
+            }
+
+            if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameterNames, parameters ) ) {
+                Amoss_Expectation thisExpectation = expectations.unshift();
+                thisExpectation.verify( assertionMechanism, mockedMethod, parameterNames, parameters );
+                return thisExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
+            }
+        } catch ( Amoss_AssertionFailureException assertionFailure ) {
+            assertionFailure.issueAsserton( assertionMechanism );
+        }        
         return null;
     }
 
@@ -1733,10 +1737,19 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
 
-            assertionMechanism.assertEquals( expectedParameters.size(), parameterValues.size(), String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, method } ) );
+            if ( expectedParameters.size() != parameterValues.size() ) {
+                throw new Amoss_AssertionFailureException()
+                            .setExpected( expectedParameters.size() )
+                            .setActual( parameterValues.size() )
+                            .setAssertionMessage( String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, method } ) );
+            }
 
             for ( Integer parameterNumber = 0; parameterNumber < expectedParameters.size(); parameterNumber++ ) {
-                assertionMechanism.assert( expectedParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ), String.format( '{0}.{1} was called with the wrong parameter value in position {2}.\nExpected: {3}\nActual: {4}\n(if it is an object, it may be a different instance)', new List<String>{ className, method, String.valueOf( parameterNumber ), String.valueOf( expectedParameters[ parameterNumber ] ), String.valueOf( parameterValues[ parameterNumber ] ) } ) );
+                try {
+                    expectedParameters[ parameterNumber ].verify( parameterValues[ parameterNumber ] );
+                } catch ( Amoss_AssertionFailureException e ) {
+                    throw e.addContextToMessage( String.format( '{0}.{1} had a problem with the parameter value in position {2}: \'{0}\'', new List<String>{ className, method, String.valueOf( parameterNumber ) } ) );
+                }
             }
         }
 
@@ -1811,7 +1824,12 @@ public without sharing class Amoss_Instance implements StubProvider {
                 Amoss_ExpectationParameter expectationParameter = expectedParameters.get( actualParameterName );
 
                 if ( expectationParameter != null ) {
-                    assertionMechanism.assert( expectationParameter.matches( actualParameterValue ), String.format( '{0}.{1} was called with the wrong parameter value for "{2}".\nExpected: {3}\nActual: {4}\n(if it is an object, it may be a different instance)', new List<String>{ className, method, actualParameterName, String.valueOf( expectationParameter ), String.valueOf( actualParameterValue ) } ) );
+                    try {
+                        expectationParameter.verify( actualParameterValue );
+                    } catch ( Amoss_AssertionFailureException e ) {
+                        throw e.addContextToMessage( String.format( '{0}.{1} had a problem with the parameter value for "{2}": \'{0}\'', new List<String>{ className, method, actualParameterName } ) );
+                    }
+//                    assertionMechanism.assert( expectationParameter.matches( actualParameterValue ), String.format( '{0}.{1} was called with the wrong parameter value for "{2}".\nExpected: {3}\nActual: {4}\n(if it is an object, it may be a different instance)', new List<String>{ className, method, actualParameterName, String.valueOf( expectationParameter ), String.valueOf( actualParameterValue ) } ) );
                 }
             }
         }
@@ -1843,6 +1861,7 @@ public without sharing class Amoss_Instance implements StubProvider {
     interface Amoss_ExpectationParameter {
         String toString();
         Boolean matches( Object value );
+        void verify( Object value );
     }
 
     /**
@@ -1867,10 +1886,21 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * Describes if this parameter matches the value that is passed into it.
         *
+        * @param Object - The value to check
         * @return Boolean - Does the passed parameter match this object's expected parameter.
         */
         public Boolean matches( Object value ) {
             return true;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
         }
     }
 
@@ -1915,6 +1945,22 @@ public without sharing class Amoss_Instance implements StubProvider {
         public Boolean matches( Object value ) {
             return this.value == value;
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+            if ( !matches( actualValue ) ) {
+                throw new Amoss_AssertionFailureException()
+                            .setExpected( this.value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'The value is not what was expected - If it is an object, it may be the wrong instance' );
+            }
+        }        
     }
 
     /**
@@ -1960,6 +2006,29 @@ public without sharing class Amoss_Instance implements StubProvider {
         public Boolean matches( Object value ) {
             return this.value === (Sobject)value;
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+            if ( actualValue !== this.value ) {
+                if ( actualValue == this.value ) {
+                    throw new Amoss_AssertionFailureException()
+                                .setExpected( this.value )
+                                .setActual( actualValue )
+                                .setAssertionMessage( 'The value is the same, but not the same instance as was expected' );
+                } else {
+                    throw new Amoss_AssertionFailureException()
+                                .setExpected( this.value )
+                                .setActual( actualValue )
+                                .setAssertionMessage( 'The value is not what was expected' );
+                }
+            }
+        }        
     }
 
     /**
@@ -2043,4 +2112,72 @@ public without sharing class Amoss_Instance implements StubProvider {
             return new Amoss_ExpectationSimpleParameter();
         }
     }
+
+    public class Amoss_AssertionFailureException extends Exception {
+
+        private Object expected;
+        private Object actual;
+        private String message;
+        private Amoss_AssertionFailureException sourceFailureException;
+
+        /**
+        * Set the expected for this exception
+        *
+        * @date    2020-10-31
+        * @author  makepositive
+        * @param   Object - The expected value
+        * @return  Amoss_AssertionFailureException - Itself, allowing for a fluent interface
+        */
+        public Amoss_AssertionFailureException setExpected( Object expected ) {
+            this.expected = expected;
+            return this;
+        }
+        
+        /**
+        * Set the actual for this exception
+        *
+        * @date    2020-10-31
+        * @author  makepositive
+        * @param   Object - The actual value
+        * @return  Amoss_AssertionFailureException - Itself, allowing for a fluent interface
+        */
+        public Amoss_AssertionFailureException setActual( Object actual ) {
+            this.actual = actual;
+            return this;
+        }
+
+        /**
+        * Set the message for failed assertion that this exception represents
+        *
+        * @date    2020-10-31
+        * @author  makepositive
+        * @param   String - The assertion message for this exception.
+        */
+        public Amoss_AssertionFailureException setAssertionMessage( String message ) {
+            this.message = message;
+            return this;
+        }
+
+        /**
+        * Adds more context to the current message on this exception.
+        *
+        * @date    2020-10-31
+        * @author  makepositive
+        * @param   String - The context to add to the message, being a string containing {0}, the place the original message should exist
+        */
+        public Amoss_AssertionFailureException addContextToMessage( String context ) {
+            this.message = String.format( context, new List<String>{ this.message } );
+            return this;
+        }
+
+        /**
+        * Issue an assertion failure based on the current configuration
+        *
+        * @date    2020-10-31
+        * @author  makepositive
+        */
+        public void issueAsserton( Amoss_Asserts assertionMechanism ) {
+            assertionMechanism.assert( false, String.format( '{0}.\nExpected: {1}\nActual: {2}', new List<String>{ message, String.valueOf( expected ), String.valueOf( actual ) } ) );
+        }
+    }    
 }

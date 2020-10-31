@@ -12,9 +12,7 @@ Documentation:
 
 Implement
 
-    Test the 'when' behvaiours so that we know that they are consistent with the 'expects'
-        Object
-        SObject
+    Test overloaded behaviour that results in: "was called with an unexpected number of parameters"
 
     Move 'verify' behaviour into the ExpectationParameter objects
         * They should throw an exception with the issue, including full text (including Expected and Actual, where appropriate - consider a message builder?)
