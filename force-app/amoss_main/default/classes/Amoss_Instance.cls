@@ -1481,7 +1481,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( Amoss_Asserts assertionMechanism, String method, List<String> parameterNames, List<Object> parameterValues ) {
             assertionMechanism.assertEquals( expectedMethod, method, String.format( '{0}.{1} was expected to be called', new List<String>{ className, expectedMethod } ) );
-            expectedParameters.verify( assertionMechanism, className, method, parameterNames, parameterValues );
+            expectedParameters.verify( className, method, parameterNames, parameterValues );
         }
 
         /**
@@ -1644,7 +1644,7 @@ public without sharing class Amoss_Instance implements StubProvider {
     */
     private interface Amoss_ExpectationParameters {
         String getParametersDescription();
-        void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues );
+        void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues );
         Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues );
     }
 
@@ -1671,12 +1671,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * Does nothing.
         *
-        * @param Amoss_Asserts - The assertion mechanism to report via
         * @param String - The method that is being called, and therefore checked
         * @param List<String> - The names of the parameters being passed, and thereforce checked
         * @param List<Object> - The values of the parameters being passed, and thereforce checked
         */
-        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+        public void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
             return;
         }
 
@@ -1730,12 +1729,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that checks if the passed parameters match those that are configured, reporting via Assertions.
         *
-        * @param Amoss_Asserts - The assertion mechanism to report via
         * @param String - The method that is being called, and therefore checked
         * @param List<String> - The names of the parameters being passed, and thereforce checked
         * @param List<Object> - The values of the parameters being passed, and thereforce checked
         */
-        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+        public void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
 
             if ( expectedParameters.size() != parameterValues.size() ) {
                 throw new Amoss_AssertionFailureException()
@@ -1764,10 +1762,10 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @return Boolean - States if this expectation matches that passed passed in.
         */
         public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
-            for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
-                if ( ! expectedParameters[ parameterNumber ].matches( parameterValues[ parameterNumber ] ) ) {
-                    return false;
-                }
+            try {
+                verify( 'class', method, parameterNames, parameterValues );
+            } catch ( Exception e ) {
+                return false;
             }
             return true;
         }    
@@ -1810,12 +1808,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that checks if the passed parameters match those that are configured, reporting via Assertions.
         *
-        * @param Amoss_Asserts - The assertion mechanism to report via
         * @param String - The method that is being called, and therefore checked
         * @param List<String> - The names of the parameters being passed, and thereforce checked
         * @param List<Object> - The values of the parameters being passed, and thereforce checked
         */
-        public void verify( Amoss_Asserts assertionMechanism, String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+        public void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
 
             for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
 
@@ -1844,14 +1841,10 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @return Boolean - States if this expectation matches that passed passed in.
         */
         public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
-            for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
-                String actualParameterName  = parameterNames[ parameterNumber ];
-                Object actualParameterValue = parameterValues[ parameterNumber ];
-
-                Amoss_ExpectationParameter expectationParameter = expectedParameters.get( actualParameterName );
-                if ( expectationParameter != null && ! expectationParameter.matches( parameterValues[ parameterNumber ] ) ) {
-                    return false;
-                }
+            try {
+                verify( 'class', method, parameterNames, parameterValues );
+            } catch ( Exception e ) {
+                return false;
             }
             return true;
         }
@@ -1859,7 +1852,6 @@ public without sharing class Amoss_Instance implements StubProvider {
 
     interface Amoss_ExpectationParameter {
         String toString();
-        Boolean matches( Object value );
         void verify( Object value );
     }
 
@@ -1878,18 +1870,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public override String toString() {
             return 'any';
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes if this parameter matches the value that is passed into it.
-        *
-        * @param Object - The value to check
-        * @return Boolean - Does the passed parameter match this object's expected parameter.
-        */
-        public Boolean matches( Object value ) {
-            return true;
         }
 
         /**
@@ -1937,23 +1917,12 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Describes if this parameter matches the value that is passed into it.
-        *
-        * @return Boolean - Does the passed parameter match this object's expected parameter.
-        */
-        public Boolean matches( Object value ) {
-            return this.value == value;
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
         * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
         *
         * @param Object - The value to check
         */
         public void verify( Object actualValue ) {
-            if ( !matches( actualValue ) ) {
+            if ( this.value != actualValue ) {
                 throw new Amoss_AssertionFailureException()
                             .setExpected( this.value )
                             .setActual( actualValue )
@@ -1991,19 +1960,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public override String toString() {
             return String.valueOf( this.value );
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes if this parameter matches the value that is passed into it.
-        *
-        * For SObjects, only matches if the value is the same instance as the one passed in (actually an Sobject).
-        *
-        * @return Boolean - Does the passed parameter match this object's expected parameter.
-        */
-        public Boolean matches( Object value ) {
-            return this.value === (Sobject)value;
         }
 
         /**
