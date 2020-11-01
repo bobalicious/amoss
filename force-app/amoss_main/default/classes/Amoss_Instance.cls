@@ -1829,7 +1829,6 @@ public without sharing class Amoss_Instance implements StubProvider {
                     } catch ( Amoss_AssertionFailureException e ) {
                         throw e.addContextToMessage( String.format( '{0}.{1} had a problem with the parameter value for "{2}": \'{0}\'', new List<String>{ className, method, actualParameterName } ) );
                     }
-//                    assertionMechanism.assert( expectationParameter.matches( actualParameterValue ), String.format( '{0}.{1} was called with the wrong parameter value for "{2}".\nExpected: {3}\nActual: {4}\n(if it is an object, it may be a different instance)', new List<String>{ className, method, actualParameterName, String.valueOf( expectationParameter ), String.valueOf( actualParameterValue ) } ) );
                 }
             }
         }
