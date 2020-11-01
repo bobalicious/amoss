@@ -12,11 +12,8 @@ Documentation:
 
 Implement
 
-    Test overloaded behaviour that results in: "was called with an unexpected number of parameters"
 
-    Move 'verify' behaviour into the ExpectationParameter objects
-        * They should throw an exception with the issue, including full text (including Expected and Actual, where appropriate - consider a message builder?)
-        * Look how far up the verify exception should propogate before the assertion failure is made - make it as high as possible for clarity in the report to the user.
+    Test overloaded behaviour that results in: "was called with an unexpected number of parameters"
 
     Have a look:
         Can you implement Amoss_ExpectationObjectParameter - do you need to?
