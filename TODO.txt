@@ -16,17 +16,11 @@ Documentation:
 Implement
 
     Test:
-        setToEqual:
-        
-            Sobject
-                * when named
-                * expects positional
-                * expects named
+        !!!!! Named parameter when more parameters are set than are possible to be passed
+            Potentially the wrong overloaded method was called
 
-            Object
-                * when named
-                * expects positional
-                * expects named
+    Test:
+        What happens with List / Map / Set?
 
 
     Look at removing duplication between:
@@ -40,7 +34,6 @@ Implement
 
     Consider
         Just have a look - how would the new syntax drop into this?
-        What happens with List / Map / Set?
 
     Move all string contatonation over to string.format, and move ' over to " where used in a string?
 
