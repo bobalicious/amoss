@@ -1167,14 +1167,14 @@ public without sharing class Amoss_Instance implements StubProvider {
         * For example, to specify:
         *   .when()
         *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).setToEqual( 'Parameter1' )
-        *       .andParameterNamed( 'parmeterName2' ).setToEqual( 'Parameter2' )
+        *       .withParameterNamed( 'parmeterName1' ).setToTheSameValueAs( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).setToTheSameValueAs( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
         * @param Object - The value of the parameter to add to the specification
         */
-        public Amoss_NamedParametersDefiner setToEqual( Object parameterValue ) {
-            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, expectationParameterBuilder.buildEqualsParameter( parameterValue ) );
+        public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, expectationParameterBuilder.buildSameValueAsParameter( parameterValue ) );
             return new Amoss_NamedParametersDefiner( expectation );
         }
     }
@@ -1225,14 +1225,14 @@ public without sharing class Amoss_Instance implements StubProvider {
         * For example, to specify:
         *   .when()
         *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).setToEqual( 'Parameter1' )
-        *       .andParameterNamed( 'parmeterName2' ).setToEqual( 'Parameter2' )
+        *       .withParameterNamed( 'parmeterName1' ).setToTheSameValueAs( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).setToTheSameValueAs( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
         * @param Object - The value of the parameter to add to the specification
         */
-        public Amoss_PositionalParametersDefiner setToEqual( Object parameterValue ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterBuilder.buildEqualsParameter( parameterValue ) );
+        public Amoss_PositionalParametersDefiner setToTheSameValueAs( Object parameterValue ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterBuilder.buildSameValueAsParameter( parameterValue ) );
             return new Amoss_PositionalParametersDefiner( expectation );
         }
     }
@@ -1942,9 +1942,9 @@ public without sharing class Amoss_Instance implements StubProvider {
     /**
     * Internal class that should not be referenced directly in a test
     *
-    * Describes the specification of a Simple Parameter that is expected to be passed into a mocked method call
+    * Describes the specification of a 'Same Instance As' Parameter that is expected to be passed into a mocked method call
     */
-    class Amoss_ExpectationSimpleParameter implements Amoss_ExpectationParameter {
+    class Amoss_ExpectationSameInstanceAsParameter implements Amoss_ExpectationParameter {
 
         Object value;
 
@@ -2045,9 +2045,9 @@ public without sharing class Amoss_Instance implements StubProvider {
     /**
     * Internal class that should not be referenced directly in a test
     *
-    * Describes the specification of an 'equals' Parameter that is expected to be passed into a mocked method call
+    * Describes the specification of an 'same value as' Parameter that is expected to be passed into a mocked method call
     */
-    class Amoss_ExpectationEqualsParameter implements Amoss_ExpectationParameter {
+    class Amoss_ExpectationSameValueAsParameter implements Amoss_ExpectationParameter {
 
         Object value;
 
@@ -2138,7 +2138,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                 return buildParameter( (Sobject)parameter );
             }
 
-            return new Amoss_ExpectationSimpleParameter().setValue( parameter );
+            return new Amoss_ExpectationSameInstanceAsParameter().setValue( parameter );
         }
 
         /**
@@ -2155,8 +2155,8 @@ public without sharing class Amoss_Instance implements StubProvider {
 
         // TODO: document
         // TODO: test
-        public Amoss_ExpectationParameter buildEqualsParameter( Object parameter ) {
-            return new Amoss_ExpectationEqualsParameter().setValue( parameter );
+        public Amoss_ExpectationParameter buildSameValueAsParameter( Object parameter ) {
+            return new Amoss_ExpectationSameValueAsParameter().setValue( parameter );
         }
 
         /**
@@ -2174,7 +2174,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                     return new Amoss_ExpectationAnyParameter();
                 }
             }
-            return new Amoss_ExpectationSimpleParameter();
+            return new Amoss_ExpectationSameInstanceAsParameter();
         }
     }
 

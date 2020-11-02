@@ -747,12 +747,12 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method when.method.setToEqual.willReturn
+    * @method when.method.setToTheSameValueAs.willReturn
     * @case   when the expectation is set with an object, and that instance is passed
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodSetToEqualWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
         
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -766,23 +766,23 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'objectMethodUnderDouble' )
-                .withParameter().setToEqual( objectPassed )
+                .withParameter().setToTheSameValueAs( objectPassed )
                 .willReturn( 'expectedReturn' );
 
         Test.startTest();
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.setToEqual.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
-    * @method when.method.setToEqual.willReturn
+    * @method when.method.setToTheSameValueAs.willReturn
     * @case   when set with an object, and a different instance is passed with same properties
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodSetToEqualWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnTheStatedValue() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnTheStatedValue() {
         
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -796,7 +796,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'objectMethodUnderDouble' )
-                .withParameter().setToEqual( objectExpected )
+                .withParameter().setToTheSameValueAs( objectExpected )
                 .willReturn( 'ExpectedToReturn' );
 
         Boolean testFailed = false;
@@ -810,12 +810,12 @@ public with sharing class AmossTest_InstanceTest {
 
 
     /**
-    * @method when.method.setToEqual.willReturn
+    * @method when.method.setToTheSameValueAs.willReturn
     * @case   when set with an object, and a different instance is passed with different properties
     * @result will return null
     */
     @isTest
-    private static void whenMethodSetToEqualWillReturn_whenIsSetWithObjectAndDifferentInstancePassedWithDifferentProperties_willReturnNull() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassedWithDifferentProperties_willReturnNull() {
         
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -829,7 +829,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'objectMethodUnderDouble' )
-                .withParameter().setToEqual( objectExpected )
+                .withParameter().setToTheSameValueAs( objectExpected )
                 .willReturn( 'notExpectedToReturn' );
 
         Boolean testFailed = false;
@@ -903,12 +903,12 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method when.method.setToEqual.willReturn
+    * @method when.method.setToTheSameValueAs.willReturn
     * @case   when the is set with an sobject, and that instance is passed
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodSetToEqualWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
         
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -922,23 +922,23 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'sobjectMethodUnderDouble' )
-                .withParameter().setToEqual( objectPassed )
+                .withParameter().setToTheSameValueAs( objectPassed )
                 .willReturn( 'expectedReturn' );
 
         Test.startTest();
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.setToEqual.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
-    * @method when.method.setToEqual.willReturn
+    * @method when.method.setToTheSameValueAs.willReturn
     * @case   when the expectation is set with an sobject, and a different instance is passed with same properties
     * @result will still return the stated value
     */
     @isTest
-    private static void whenMethodSetToEqualWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willStillReturnTheStatedValue() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willStillReturnTheStatedValue() {
         
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -952,7 +952,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'sobjectMethodUnderDouble' )
-                .withParameter().setToEqual( objectExpected )
+                .withParameter().setToTheSameValueAs( objectExpected )
                 .willReturn( 'ExpectedReturn' );
 
         Contact objectPassed = new Contact( LastName = 'TheObject' );
@@ -960,16 +960,16 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'ExpectedReturn', returnFromDouble, 'when.method.setToEqual.willReturn, when set up with an sobject, and a different instance is passed with the same properies, will return the stated value' ) ;
+        System.assertEquals( 'ExpectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with the same properies, will return the stated value' ) ;
     }
 
     /**
-    * @method when.method.setToEqual.willReturn
+    * @method when.method.setToTheSameValueAs.willReturn
     * @case   when the expectation is set with an sobject, and a different instance is passed with different properties
     * @result will return null
     */
     @isTest
-    private static void whenMethodSetToEqualWillReturn_whenIsSetWithSobjectAndDifferentInstancePassedWithDifferentValues_willReturnNull() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassedWithDifferentValues_willReturnNull() {
         
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -983,7 +983,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'sobjectMethodUnderDouble' )
-                .withParameter().setToEqual( objectExpected )
+                .withParameter().setToTheSameValueAs( objectExpected )
                 .willReturn( 'NotExpectedReturn' );
 
         Contact objectPassed = new Contact( LastName = 'TheObject', FirstName = 'Different' );
@@ -991,7 +991,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.setToEqual.willReturn, when set up with an sobject, and a different instance is passed with different properies, will return null' ) ;
+        System.assertEquals( null, returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with different properies, will return null' ) ;
     }
 
     /**
