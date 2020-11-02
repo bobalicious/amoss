@@ -1133,6 +1133,12 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * States the parameter value that is expected for the the currently specified parameter.
         *
+        * In order to match an object, the passed parameter must:
+        *   * Be the same instance as that specified.
+        *   * Implement the method 'equals', and return true when called with the specified parameter.
+        *
+        * For primitives, it is sufficient that they are the same value.
+        *
         * Is used in combination with 'withParameterNamed'.
         *
         * For example, to specify:
@@ -1147,7 +1153,28 @@ public without sharing class Amoss_Instance implements StubProvider {
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, expectationParameterBuilder.buildParameter( parameterValue ) );
             return new Amoss_NamedParametersDefiner( expectation );
-        }     
+        }
+
+        /**
+        * States the parameter value that is expected for the the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setToEqual( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).setToEqual( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedParametersDefiner setToEqual( Object parameterValue ) {
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, expectationParameterBuilder.buildEqualsParameter( parameterValue ) );
+            return new Amoss_NamedParametersDefiner( expectation );
+        }
     }
 
     /**
@@ -1164,6 +1191,12 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * States the parameter value that is expected for the the currently specified parameter.
         *
+        * In order to match an object, the passed parameter must:
+        *   * Be the same instance as that specified.
+        *   * Implement the method 'equals', and return true when called with the specified parameter.
+        *
+        * For primitives, it is sufficient that they are the same value.
+        *
         * Is used in combination with 'withParameter'.
         *
         * For example, to specify:
@@ -1178,7 +1211,28 @@ public without sharing class Amoss_Instance implements StubProvider {
         public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterBuilder.buildParameter( parameterValue ) );
             return new Amoss_PositionalParametersDefiner( expectation );
-        }      
+        }
+
+        /**
+        * States the parameter value that is expected for the the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setToEqual( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).setToEqual( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalParametersDefiner setToEqual( Object parameterValue ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterBuilder.buildEqualsParameter( parameterValue ) );
+            return new Amoss_PositionalParametersDefiner( expectation );
+        }
     }
 
     /**
@@ -1987,6 +2041,54 @@ public without sharing class Amoss_Instance implements StubProvider {
     }
 
     /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of an 'equals' Parameter that is expected to be passed into a mocked method call
+    */
+    class Amoss_ExpectationEqualsParameter implements Amoss_ExpectationParameter {
+
+        Object value;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the value that this parameter is expectd to be
+        *
+        * @param  Object - The value that this parameter is expected to be
+        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameter setValue( Object value ) {
+            this.value = value;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * @return String - String description of the expected value.
+        */
+        public override String toString() {
+            return String.valueOf( this.value );
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+            if ( JSON.serialize( this.value ) != JSON.serialize( actualValue ) ) {
+                throw new Amoss_AssertionFailureException()
+                            .setExpected( this.value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'The value is not what was expected.' );
+            }
+        }        
+    }
+
+    /**
     * Internal class that should not be refenced in tests.
     *
     * Can produce a text description of a method call
@@ -2049,6 +2151,12 @@ public without sharing class Amoss_Instance implements StubProvider {
             return new Amoss_ExpectationSobjectParameter().setValue( parameter );
         }
 
+        // TODO: document
+        // TODO: test
+        public Amoss_ExpectationParameter buildEqualsParameter( Object parameter ) {
+            return new Amoss_ExpectationEqualsParameter().setValue( parameter );
+        }
+
         /**
         * Internal method that should not be refenced in tests.
         *
@@ -2073,7 +2181,6 @@ public without sharing class Amoss_Instance implements StubProvider {
         private Object expected;
         private Object actual;
         private String message;
-        private Amoss_AssertionFailureException sourceFailureException;
 
         /**
         * Set the expected for this exception

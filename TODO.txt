@@ -4,13 +4,34 @@ Documentation:
 
     Document the differences between the matching for:
         Primitives
-        Objects / Sobjects
+        Objects - implementing 'equals'
+        Sobjects
+
+        setTo / setToEqual
 
     Full interface definition?
     Consider a class diagram for developers?
     Language syntax diagram?
 
 Implement
+
+    Test:
+        setToEqual:
+        
+            Sobject
+                * when named
+                * expects positional
+                * expects named
+
+            Object
+                * when named
+                * expects positional
+                * expects named
+
+
+    Look at removing duplication between:
+        * Amoss_PositionalParameterValueDefiner
+        * Amoss_NamedParameterValueDefiner
 
     Test overloaded behaviour that results in: "was called with an unexpected number of parameters"
 
