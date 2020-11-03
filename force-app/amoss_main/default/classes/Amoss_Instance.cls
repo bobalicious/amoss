@@ -1153,8 +1153,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
-            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, expectationParameterBuilder.buildParameter( parameterValue ) );
-            return new Amoss_NamedParametersDefiner( expectation );
+            return setParameter( expectationParameterBuilder.buildParameter( parameterValue ) );
         }
 
         /**
@@ -1174,7 +1173,64 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
-            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, expectationParameterBuilder.buildSameValueAsParameter( parameterValue ) );
+            return setParameter( expectationParameterBuilder.buildSameValueAsParameter( parameterValue ) );
+        }
+
+        /**
+        * States the shape of the sobject parameter value that is expected for the the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated on the
+        * specified sobject set to the same value.
+        * 
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).withFieldsSetLike( contact )
+        *       .andParameterNamed( 'parmeterName2' ).withFieldsSetLike( account )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return setParameter( expectationParameterBuilder.buildFieldsSetLikeParameter( parameterValue ) );
+        }
+
+        /**
+        * States the shape of the sobject parameter value that is expected for the the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated in the
+        * specified map set to the same value.
+        * 
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).withFieldsSetTo( contactFieldsMap )
+        *       .andParameterNamed( 'parmeterName2' ).withFieldsSetTo( accountFieldsMap )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return setParameter( expectationParameterBuilder.buildFieldsSetToParameter( parameterValue ) );
+        }
+
+        /**
+        * Internal method that sets the next parameter on the expectation to that specified
+        * and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ExpectationParameter - The parameter to set on the expectation
+        * @return Amoss_PositionalParametersDefiner - The next definer
+        */
+        private Amoss_NamedParametersDefiner setParameter( Amoss_ExpectationParameter parameter ) {
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, parameter );
             return new Amoss_NamedParametersDefiner( expectation );
         }
     }
@@ -1211,8 +1267,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterBuilder.buildParameter( parameterValue ) );
-            return new Amoss_PositionalParametersDefiner( expectation );
+            return setParameter( expectationParameterBuilder.buildParameter( parameterValue ) );
         }
 
         /**
@@ -1232,9 +1287,66 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalParametersDefiner setToTheSameValueAs( Object parameterValue ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterBuilder.buildSameValueAsParameter( parameterValue ) );
-            return new Amoss_PositionalParametersDefiner( expectation );
+            return setParameter( expectationParameterBuilder.buildSameValueAsParameter( parameterValue ) );
         }
+
+        /**
+        * States the shape of the sobject parameter value that is expected for the the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated on the
+        * specified sobject set to the same value.
+        * 
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withFieldsSetLike( contact )
+        *       .andParameter().withFieldsSetLike( account )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return setParameter( expectationParameterBuilder.buildFieldsSetLikeParameter( parameterValue ) );
+        }
+
+        /**
+        * States the shape of the sobject parameter value that is expected for the the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated in the
+        * specified map set to the same value.
+        * 
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withFieldsSetTo( contactFieldsMap )
+        *       .andParameter().withFieldsSetTo( accountFieldsMap )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return setParameter( expectationParameterBuilder.buildFieldsSetToParameter( parameterValue ) );
+        }
+
+        /**
+        * Internal method that sets the next parameter on the expectation to that specified
+        * and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ExpectationParameter - The parameter to set on the expectation
+        * @return Amoss_PositionalParametersDefiner - The next definer
+        */
+        private Amoss_PositionalParametersDefiner setParameter( Amoss_ExpectationParameter parameter ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( parameter );
+            return new Amoss_PositionalParametersDefiner( expectation );
+        }        
     }
 
     /**
@@ -2085,31 +2197,132 @@ public without sharing class Amoss_Instance implements StubProvider {
                 throw new Amoss_AssertionFailureException()
                             .setExpected( this.value )
                             .setActual( actualValue )
-                            .setAssertionMessage( 'The value is not what was expected.' );
+                            .setAssertionMessage( 'The value is not what was expected' );
             }
         }        
     }
 
     /**
-    * Internal class that should not be refenced in tests.
+    * Internal class that should not be referenced directly in a test
     *
-    * Can produce a text description of a method call
+    * Describes the specification of an 'Fields Set Like' Parameter that is expected to be passed into a mocked method call
     */
-    private class Amoss_CallDescriber {
+    class Amoss_ExpectationFieldsSetLikeParameter implements Amoss_ExpectationParameter {
+
+        Sobject value;
 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Given a method name, and a list of parameters, will return a string representation of it
+        * Sets the value that this parameter is expectd to be
+        *
+        * @param  Sobject - The value that this parameter is expected to be
+        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
         */
-        public String getCallDescription( String method, List<Object> parameters ) {
-
-            List<String> stringParameters = new List<String>();
-            for ( Object thisParameter : parameters ) {
-                stringParameters.add( String.valueOf( thisParameter ) );
-            }
-            return String.format( '{0}({1})', new List<String>{ method, String.join( stringParameters, ', ' ) } );
+        public Amoss_ExpectationParameter setValue( Sobject value ) {
+            this.value = value;
+            return this;
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * @return String - String description of the expected value.
+        */
+        public override String toString() {
+            return String.valueOf( this.value );
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Sobject - The value to check
+        */
+        public void verify( Object actualValue ) {
+
+            Sobject sobjectActualValue = (Sobject)actualValue;
+
+            List<String> fieldsWithProblems = new List<String>();
+
+            Map<String,Object> expectedPopulatedFields = this.value.getPopulatedFieldsAsMap();
+            for ( String fieldName : expectedPopulatedFields.keySet() ) {
+                if ( sobjectActualValue.get( fieldName ) != expectedPopulatedFields.get( fieldName ) ) {
+                    fieldsWithProblems.add( fieldName );
+                }
+            }
+            if ( ! fieldsWithProblems.isEmpty() ) {
+                throw new Amoss_AssertionFailureException()
+                            .setExpected( this.value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
+            }
+        }        
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of an 'Fields Set To' Parameter that is expected to be passed into a mocked method call
+    */
+    class Amoss_ExpectationFieldsSetToParameter implements Amoss_ExpectationParameter {
+
+        Map<String,Object> value;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the value that this parameter is expectd to be
+        *
+        * @param  Sobject - The value that this parameter is expected to be
+        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameter setValue( Map<String,Object> value ) {
+            this.value = value;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * @return String - String description of the expected value.
+        */
+        public override String toString() {
+            return String.valueOf( this.value );
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Sobject - The value to check
+        */
+        public void verify( Object actualValue ) {
+
+            Sobject sobjectActualValue = (SObject)actualValue;
+
+            List<String> fieldsWithProblems = new List<String>();
+
+            for ( String fieldName : value.keySet() ) {
+
+                try {
+                    if ( sobjectActualValue.get( fieldName ) != value.get( fieldName ) ) {
+                        fieldsWithProblems.add( fieldName );
+                    }
+                } catch ( SObjectException e ) {
+                    throw new Amoss_AssertionFailureException()
+                                .setAssertionMessage( String.format( 'Problem comparing field "{0}": {1}', new List<String>{ fieldName, e.getMessage() } ) );
+                }
+            }
+            if ( ! fieldsWithProblems.isEmpty() ) {
+                throw new Amoss_AssertionFailureException()
+                            .setExpected( String.format( 'Fields set: {0}', new List<String>{ String.valueOf( this.value ) } ) )
+                            .setActual( actualValue )
+                            .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
+            }
+        }        
     }
 
     /**
@@ -2154,11 +2367,20 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
 
         // TODO: document
-        // TODO: test
         public Amoss_ExpectationParameter buildSameValueAsParameter( Object parameter ) {
             return new Amoss_ExpectationSameValueAsParameter().setValue( parameter );
         }
 
+        // TODO: document
+        public Amoss_ExpectationParameter buildFieldsSetLikeParameter( Sobject parameter ) {
+            return new Amoss_ExpectationFieldsSetLikeParameter().setValue( parameter );
+        }
+
+        // TODO: document
+        public Amoss_ExpectationParameter buildFieldsSetToParameter( Map<String,Object> parameter ) {
+            return new Amoss_ExpectationFieldsSetToParameter().setValue( parameter );
+        }
+        
         /**
         * Internal method that should not be refenced in tests.
         *
@@ -2241,7 +2463,33 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @author  makepositive
         */
         public void issueAsserton( Amoss_Asserts assertionMechanism ) {
-            assertionMechanism.assert( false, String.format( '{0}.\nExpected: {1}\nActual: {2}', new List<String>{ message, String.valueOf( expected ), String.valueOf( actual ) } ) );
+            String message = this.message;
+            if ( expected != null && actual != null ) {
+                message = String.format( '{0}.\nExpected: {1}\nActual: {2}', new List<String>{ this.message, String.valueOf( expected ), String.valueOf( actual ) } );
+            }
+            assertionMechanism.assert( false, message );
+        }
+    }
+
+    /**
+    * Internal class that should not be refenced in tests.
+    *
+    * Can produce a text description of a method call
+    */
+    private class Amoss_CallDescriber {
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Given a method name, and a list of parameters, will return a string representation of it
+        */
+        public String getCallDescription( String method, List<Object> parameters ) {
+
+            List<String> stringParameters = new List<String>();
+            for ( Object thisParameter : parameters ) {
+                stringParameters.add( String.valueOf( thisParameter ) );
+            }
+            return String.format( '{0}({1})', new List<String>{ method, String.join( stringParameters, ', ' ) } );
         }
     }    
 }
