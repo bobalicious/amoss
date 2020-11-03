@@ -2366,17 +2366,38 @@ public without sharing class Amoss_Instance implements StubProvider {
             return new Amoss_ExpectationSobjectParameter().setValue( parameter );
         }
 
-        // TODO: document
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ExpectationSameValueAsParameter
+        *
+        * @param  Object - The Sobject parameter value that is expected for the Amoss_ExpectationParameter
+        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationSameValueAsParameter)
+        */
         public Amoss_ExpectationParameter buildSameValueAsParameter( Object parameter ) {
             return new Amoss_ExpectationSameValueAsParameter().setValue( parameter );
         }
 
-        // TODO: document
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ExpectationFieldsSetLikeParameter, which checks that parameters have the same properties set as the defined parameter.
+        *
+        * @param  Sobject - The Sobject parameter value that is expected for the Amoss_ExpectationParameter
+        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationFieldsSetLikeParameter)
+        */
         public Amoss_ExpectationParameter buildFieldsSetLikeParameter( Sobject parameter ) {
             return new Amoss_ExpectationFieldsSetLikeParameter().setValue( parameter );
         }
 
-        // TODO: document
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ExpectationFieldsSetToParameter, which checks that parameters have the same properties set as the defined Map.
+        *
+        * @param  Map<String,Object> - The Map that contains the properties that are expected for the Amoss_ExpectationParameter
+        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationFieldsSetToParameter)
+        */
         public Amoss_ExpectationParameter buildFieldsSetToParameter( Map<String,Object> parameter ) {
             return new Amoss_ExpectationFieldsSetToParameter().setValue( parameter );
         }
@@ -2409,10 +2430,8 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Set the expected for this exception
         *
-        * @date    2020-10-31
-        * @author  makepositive
-        * @param   Object - The expected value
-        * @return  Amoss_AssertionFailureException - Itself, allowing for a fluent interface
+        * @param  Object - The expected value
+        * @return Amoss_AssertionFailureException - Itself, allowing for a fluent interface
         */
         public Amoss_AssertionFailureException setExpected( Object expected ) {
             this.expected = expected;
@@ -2422,10 +2441,8 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Set the actual for this exception
         *
-        * @date    2020-10-31
-        * @author  makepositive
-        * @param   Object - The actual value
-        * @return  Amoss_AssertionFailureException - Itself, allowing for a fluent interface
+        * @param  Object - The actual value
+        * @return Amoss_AssertionFailureException - Itself, allowing for a fluent interface
         */
         public Amoss_AssertionFailureException setActual( Object actual ) {
             this.actual = actual;
@@ -2435,9 +2452,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Set the message for failed assertion that this exception represents
         *
-        * @date    2020-10-31
-        * @author  makepositive
-        * @param   String - The assertion message for this exception.
+        * @param String - The assertion message for this exception.
         */
         public Amoss_AssertionFailureException setAssertionMessage( String message ) {
             this.message = message;
@@ -2447,9 +2462,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Adds more context to the current message on this exception.
         *
-        * @date    2020-10-31
-        * @author  makepositive
-        * @param   String - The context to add to the message, being a string containing {0}, the place the original message should exist
+        * @param String - The context to add to the message, being a string containing {0}, the place the original message should exist
         */
         public Amoss_AssertionFailureException addContextToMessage( String context ) {
             this.message = String.format( context, new List<String>{ this.message } );
@@ -2458,9 +2471,6 @@ public without sharing class Amoss_Instance implements StubProvider {
 
         /**
         * Issue an assertion failure based on the current configuration
-        *
-        * @date    2020-10-31
-        * @author  makepositive
         */
         public void issueAsserton( Amoss_Asserts assertionMechanism ) {
             String message = this.message;
