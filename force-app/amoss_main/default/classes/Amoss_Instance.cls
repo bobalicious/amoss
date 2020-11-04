@@ -43,6 +43,7 @@ public without sharing class Amoss_Instance implements StubProvider {
 
     public class Amoss_CallLogException extends Exception {}
     public class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
+    public class Amoss_ExpectedObjectCannotBeNullException extends Exception {}
 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
@@ -1904,7 +1905,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         public void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
 
             if ( expectedParameters.size() != parameterValues.size() ) {
-                throw new Amoss_AssertionFailureException()
+                throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( expectedParameters.size() )
                             .setActual( parameterValues.size() )
                             .setAssertionMessage( String.format( '{0}.{1} was called with an unexpected number of parameters', new List<String>{ className, method } ) );
@@ -2091,7 +2092,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( Object actualValue ) {
             if ( this.value != actualValue ) {
-                throw new Amoss_AssertionFailureException()
+                throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( this.value )
                             .setActual( actualValue )
                             .setAssertionMessage( 'The value is not what was expected - If it is an object, it may be the wrong instance' );
@@ -2140,12 +2141,12 @@ public without sharing class Amoss_Instance implements StubProvider {
         public void verify( Object actualValue ) {
             if ( actualValue !== this.value ) {
                 if ( actualValue == this.value ) {
-                    throw new Amoss_AssertionFailureException()
+                    throw new Amoss_EqualsAssertionFailureException()
                                 .setExpected( this.value )
                                 .setActual( actualValue )
                                 .setAssertionMessage( 'The value is the same, but not the same instance as was expected' );
                 } else {
-                    throw new Amoss_AssertionFailureException()
+                    throw new Amoss_EqualsAssertionFailureException()
                                 .setExpected( this.value )
                                 .setActual( actualValue )
                                 .setAssertionMessage( 'The value is not what was expected' );
@@ -2194,7 +2195,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( Object actualValue ) {
             if ( JSON.serialize( this.value ) != JSON.serialize( actualValue ) ) {
-                throw new Amoss_AssertionFailureException()
+                throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( this.value )
                             .setActual( actualValue )
                             .setAssertionMessage( 'The value is not what was expected' );
@@ -2220,6 +2221,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
         */
         public Amoss_ExpectationParameter setValue( Sobject value ) {
+
+            if ( value == null ) {
+                throw new Amoss_ExpectedObjectCannotBeNullException( 'Cannot specify NULL for a "FieldsSetLike" expectation' );
+            }
+
             this.value = value;
             return this;
         }
@@ -2242,6 +2248,13 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( Object actualValue ) {
 
+            if ( actualValue == null ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( this.value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'Expected an sObject, and got NULL' );
+            }
+
             Sobject sobjectActualValue = (Sobject)actualValue;
 
             List<String> fieldsWithProblems = new List<String>();
@@ -2253,7 +2266,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                 }
             }
             if ( ! fieldsWithProblems.isEmpty() ) {
-                throw new Amoss_AssertionFailureException()
+                throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( this.value )
                             .setActual( actualValue )
                             .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
@@ -2279,6 +2292,11 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
         */
         public Amoss_ExpectationParameter setValue( Map<String,Object> value ) {
+
+            if ( value == null ) {
+                throw new Amoss_ExpectedObjectCannotBeNullException( 'Cannot specify NULL for a "FieldsSetTo" expectation' );
+            }
+
             this.value = value;
             return this;
         }
@@ -2301,6 +2319,13 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( Object actualValue ) {
 
+            if ( actualValue == null ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( this.value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'Expected an Sobject, and got NULL' );
+            }
+
             Sobject sobjectActualValue = (SObject)actualValue;
 
             List<String> fieldsWithProblems = new List<String>();
@@ -2317,7 +2342,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                 }
             }
             if ( ! fieldsWithProblems.isEmpty() ) {
-                throw new Amoss_AssertionFailureException()
+                throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( String.format( 'Fields set: {0}', new List<String>{ String.valueOf( this.value ) } ) )
                             .setActual( actualValue )
                             .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
@@ -2421,33 +2446,9 @@ public without sharing class Amoss_Instance implements StubProvider {
         }
     }
 
-    public class Amoss_AssertionFailureException extends Exception {
+    public virtual class Amoss_AssertionFailureException extends Exception {
 
-        private Object expected;
-        private Object actual;
         private String message;
-
-        /**
-        * Set the expected for this exception
-        *
-        * @param  Object - The expected value
-        * @return Amoss_AssertionFailureException - Itself, allowing for a fluent interface
-        */
-        public Amoss_AssertionFailureException setExpected( Object expected ) {
-            this.expected = expected;
-            return this;
-        }
-        
-        /**
-        * Set the actual for this exception
-        *
-        * @param  Object - The actual value
-        * @return Amoss_AssertionFailureException - Itself, allowing for a fluent interface
-        */
-        public Amoss_AssertionFailureException setActual( Object actual ) {
-            this.actual = actual;
-            return this;
-        }
 
         /**
         * Set the message for failed assertion that this exception represents
@@ -2472,11 +2473,43 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Issue an assertion failure based on the current configuration
         */
-        public void issueAsserton( Amoss_Asserts assertionMechanism ) {
-            String message = this.message;
-            if ( expected != null && actual != null ) {
-                message = String.format( '{0}.\nExpected: {1}\nActual: {2}', new List<String>{ this.message, String.valueOf( expected ), String.valueOf( actual ) } );
-            }
+        public virtual void issueAsserton( Amoss_Asserts assertionMechanism ) {
+            assertionMechanism.assert( false, message );
+        }
+    }
+
+    public class Amoss_EqualsAssertionFailureException extends Amoss_AssertionFailureException {
+
+        private Object expected;
+        private Object actual;
+
+        /**
+        * Set the expected for this exception
+        *
+        * @param  Object - The expected value
+        * @return Amoss_EqualsAssertionFailureException - Itself, allowing for a fluent interface
+        */
+        public Amoss_EqualsAssertionFailureException setExpected( Object expected ) {
+            this.expected = expected;
+            return this;
+        }
+        
+        /**
+        * Set the actual for this exception
+        *
+        * @param  Object - The actual value
+        * @return Amoss_EqualsAssertionFailureException - Itself, allowing for a fluent interface
+        */
+        public Amoss_EqualsAssertionFailureException setActual( Object actual ) {
+            this.actual = actual;
+            return this;
+        }
+
+        /**
+        * Issue an assertion failure based on the current configuration
+        */
+        public override void issueAsserton( Amoss_Asserts assertionMechanism ) {
+            String message = String.format( '{0}.\nExpected: {1}\nActual: {2}', new List<String>{ this.message, String.valueOf( expected ), String.valueOf( actual ) } );
             assertionMechanism.assert( false, message );
         }
     }
