@@ -19,15 +19,10 @@ Implement
         !!!!! Named parameter when more parameters are set than are possible to be passed
             Potentially the wrong overloaded method was called
 
-        Only need to test exhaustively with positional when
+        Only need to test exhaustively with positional expects
         Then add a simple test for named 
 
         * withFieldsSetLike( Sobject )
-            * All fields match - matches
-            * Passed has more fields, but all specified fields match - matches
-            * Not all fields match - no match
-            * Not all fields populated - no match
-            * Null - no match
 
         * withFieldsSetTo( Map<String,Object> )
             * All fields match - matches
