@@ -2323,7 +2323,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( this.value )
                             .setActual( actualValue )
-                            .setAssertionMessage( 'Expected an Sobject, and got NULL' );
+                            .setAssertionMessage( 'Expected an sObject, and got NULL' );
             }
 
             Sobject sobjectActualValue = (SObject)actualValue;
@@ -2343,7 +2343,7 @@ public without sharing class Amoss_Instance implements StubProvider {
             }
             if ( ! fieldsWithProblems.isEmpty() ) {
                 throw new Amoss_EqualsAssertionFailureException()
-                            .setExpected( String.format( 'Fields set: {0}', new List<String>{ String.valueOf( this.value ) } ) )
+                            .setExpected( this.value )
                             .setActual( actualValue )
                             .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
             }

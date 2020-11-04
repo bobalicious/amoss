@@ -25,14 +25,12 @@ Implement
         * withFieldsSetLike( Sobject )
 
         * withFieldsSetTo( Map<String,Object> )
-            * All fields match - matches
-            * Passed has more fields, but all specified fields match - matches
-            * Not all fields match - no match
-            * Not all fields populated - no match
-            * Null - no match
             * Invalid field specified in map - no match
 
         What happens with List / Map / Set?
+
+        withFieldsSetLike / withFieldsSetTo
+            What happens with the parameter passed is not an sobject - possible with overloading
 
     Look at removing duplication between:
         * Amoss_PositionalParameterValueDefiner
