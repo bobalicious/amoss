@@ -321,7 +321,7 @@ In detail, it checks that the expected and passed values equal each other when s
 You should note that this may not be reliable in all situations, but should suffice for the majority of use cases.
 
 Examples:
-```
+```java
 classToDoubleController
     .when()
         .method( 'objectMethodUnderDouble' )
