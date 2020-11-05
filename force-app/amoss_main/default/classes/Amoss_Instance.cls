@@ -2254,8 +2254,15 @@ public without sharing class Amoss_Instance implements StubProvider {
                             .setActual( actualValue )
                             .setAssertionMessage( 'Expected an sObject, and got NULL' );
             }
-
-            Sobject sobjectActualValue = (Sobject)actualValue;
+            Sobject sobjectActualValue;
+            try {
+                sobjectActualValue = (SObject)actualValue;
+            } catch ( Exception e ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( this.value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( String.format( 'Expected an sObject, and got {0}', new List<String>{ Amoss_Asserts.getType( actualValue ) } ) );
+            }
 
             List<String> fieldsWithProblems = new List<String>();
 
@@ -2326,7 +2333,15 @@ public without sharing class Amoss_Instance implements StubProvider {
                             .setAssertionMessage( 'Expected an sObject, and got NULL' );
             }
 
-            Sobject sobjectActualValue = (SObject)actualValue;
+            Sobject sobjectActualValue;
+            try {
+                sobjectActualValue = (SObject)actualValue;
+            } catch ( Exception e ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( this.value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( String.format( 'Expected an sObject, and got {0}', new List<String>{ Amoss_Asserts.getType( actualValue ) } ) );
+            }
 
             List<String> fieldsWithProblems = new List<String>();
 

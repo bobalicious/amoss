@@ -61,7 +61,15 @@ public with sharing class AmossTest_ClassToDouble {
     public String sobjectMethodUnderDouble( Contact contactParam ) {
         return 'TheReturn';
     }
+    // Allows us to test overloading behaviours when expecting an Sobject
+    public String sobjectMethodUnderDouble( String notAnSobject ) {
+        return 'TheReturn';
+    }
     public String objectMethodUnderDouble( Object objectParam ) {
+        return 'TheReturn';
+    }
+    // Allows us to test overloading behaviours when expecting an Sobject
+    public String objectMethodUnderDouble( String notAnObject ) {
         return 'TheReturn';
     }
     public List<Object> methodWithListObject( List<Object> parameter1 ) {

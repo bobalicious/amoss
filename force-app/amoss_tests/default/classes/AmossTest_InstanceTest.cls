@@ -2259,15 +2259,57 @@ public with sharing class AmossTest_InstanceTest {
 
         Boolean testFailed = false;
 
+        Contact nullContact;
+
         Test.startTest();
             try {
-                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( null );
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( nullContact );
             } catch( TestException e ) {
                 testFailed = true;
             }
         Test.stopTest();
 
         checkForNullSObjectInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, null, 'expects.method.withFieldsSetLike.returning, when specified with an sobject and the method is called with null' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the parameter passed is not an sObject
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenParameterPassedIsNotAnSobject_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( 'NotAnSobject' ); // possible because of overloading
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'Expected an sObject, and got String',
+                                                    'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0,
+                                                    objectExpected, 'NotAnSobject',
+                                                    'expects.method.withFieldsSetLike.returning, when the parameter passed is not an sObject' );
     }
 
     /**
@@ -2461,11 +2503,13 @@ public with sharing class AmossTest_InstanceTest {
                 .withParameter().withFieldsSetTo( objectExpected )
                 .returning( 'expectedReturn' );
 
+        Contact nullContact;
+
         Boolean testFailed = false;
 
         Test.startTest();
             try {
-                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( null );
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( nullContact );
             } catch( TestException e ) {
                 testFailed = true;
             }
@@ -2543,6 +2587,46 @@ public with sharing class AmossTest_InstanceTest {
                                                     'Problem comparing field "InvalidField": Invalid field InvalidField for Contact',
                                                     'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0,
                                                     'expects.method.withFieldsSetTo.returning, when the expectation is set with an invalid field' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the parameter passed is not an sObject
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenParameterPassedIsNotAnSobject_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( 'NotAnSobject' ); // possible because of overloading
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'Expected an sObject, and got String',
+                                                    'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0,
+                                                    objectExpected, 'NotAnSobject',
+                                                    'expects.method.withFieldsSetTo.returning, when the parameter passed is not an sObject' );
     }
 
     /**

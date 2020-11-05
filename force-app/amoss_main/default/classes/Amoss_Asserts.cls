@@ -101,7 +101,7 @@ public with sharing class Amoss_Asserts {
      * @param Object - The object to return the type of
      * @return String - The type of the passed in object
      */
-    private static string getType( Object o ) {
+    public static string getType( Object o ) {
         if( o==null ) return 'Unknown';              // we can't say much about null with our current techniques
         if( o instanceof SObject )            return String.valueOf(((SObject)o).getSObjectType().getDescribe().getName());
         if( o instanceof Boolean )            return 'Boolean';
