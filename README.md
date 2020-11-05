@@ -292,6 +292,8 @@ This means that `canDeliver` and `scheduleDelivery` can be called in any order, 
 
 ## Specifying parameters in different ways
 
+All of the below can be used with either `withParameter` or `withParameterNamed`.
+
 ### `setTo`
 
 In general, will check that the expected and passed values are the same instance, unless object specific behaviour has been defined.
@@ -306,6 +308,8 @@ In detail, it checks that the passed parameter:
 * If an Sobject, quals the expected, as per the behaviour of '===', being:
   * That the expected and passed objects are the same instance.
 
+Note: the specification of `withParmeter( value )` is shorthand for `withParameter().setTo( value )`.
+
 ### `setToTheSameValueAs`
 
 Attempts to check that the expected and passed values evaluate to the same value, regardless of whether they are the same instance.
@@ -316,16 +320,46 @@ In detail, it checks that the expected and passed values equal each other when s
 
 You should note that this may not be reliable in all situations, but should suffice for the majority of use cases.
 
+Examples:
+```
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter().setToTheSameValueAs( anObject )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).setToTheSameValueAs( anObject )
+        .willReturn( 'theReturn' );
+```
+
 ### `withFieldsSetLike` / `withFieldsSetTo`
 
 Used to check the field values of sObjects when only some of the fields are important.  For example, you may check that certain fields are populated by the method under test before passing them into the method being doubled.  This allows you to specify the fields that will be set without concerning your test with the other values, which will be incidental.
 
 * `withFieldsSetLike` - Receives an sObject
-* `withFieldsSetTo` - Receives a Map<String,Object>
+* `withFieldsSetTo` - Receives a `Map<String,Object>`
 
 For each of the properties set on the 'expected' object, the passed sObject is checked.  Only if all the specified properties match will the passed object 'pass'.
 
 The passed object may have more properties set, and they can have any value.
+
+Examples:
+```
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter().withFieldsSetLike( new Contact( FirstName = 'theFirstName', LastName = 'theLastName' ) )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
+        .willReturn( 'theReturn' );
+```
 
 ## Other Behaviours
 
