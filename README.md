@@ -175,6 +175,8 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 
 This is very useful for making sure that our tests only configure the Test Doubles to care about the parameters that are important for the tests we are running, making them less brittle.
 
+There are several ways of specifying the expected values of parameters, and the details are covered later in the documentation.
+
 ### Using the Test Double as a Spy
 
 The controller can then be used as a Test Spy, allowing us to find out what values where passed into methods by using `latestCallOf` and `call` and `get().call()`:
@@ -287,6 +289,43 @@ DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDou
 ```
 
 This means that `canDeliver` and `scheduleDelivery` can be called in any order, and do not *have* to be called, but that *only* these two methods with these precise parameters can be called, and any other method called against the Test Double will result a test failure.
+
+## Specifying parameters in different ways
+
+### `setTo`
+
+In general, will check that the expected and passed values are the same instance, unless object specific behaviour has been defined.
+
+It is probably the most common method of checking values, particularly when you care that the Sobjects or Objects are the same instance and therefore may be mutated by the methods correctly - for example, when you are testing trigger handlers that aim to mutate the trigger context variables.
+
+In detail, it checks that the passed parameter:
+* If not an Sobject, equals the expected, as per the behaviour of '==', being:
+  * If the parameter is a primitive -  that the value is the same.
+  * If the parameter is an Object that does not implement `equals` - that the expected and passed objects are the same instance.
+  * If the parameter is an Object that does implement `equals` - that the return of `equals` is true.
+* If an Sobject, quals the expected, as per the behaviour of '===', being:
+  * That the expected and passed objects are the same instance.
+
+### `setToTheSameValueAs`
+
+Attempts to check that the expected and passed values evaluate to the same value, regardless of whether they are the same instance.
+
+Used when you don't have access to the instances that are likely to be passed, or if it is unimportant that the objects are new instances.  For example, it may be used to check the values of parameters where the objects are constructed within the method under test.
+
+In detail, it checks that the expected and passed values equal each other when serialised as JSON strings.
+
+You should note that this may not be reliable in all situations, but should suffice for the majority of use cases.
+
+### `withFieldsSetLike` / `withFieldsSetTo`
+
+Used to check the field values of sObjects when only some of the fields are important.  For example, you may check that certain fields are populated by the method under test before passing them into the method being doubled.  This allows you to specify the fields that will be set without concerning your test with the other values, which will be incidental.
+
+* `withFieldsSetLike` - Receives an sObject
+* `withFieldsSetTo` - Receives a Map<String,Object>
+
+For each of the properties set on the 'expected' object, the passed sObject is checked.  Only if all the specified properties match will the passed object 'pass'.
+
+The passed object may have more properties set, and they can have any value.
 
 ## Other Behaviours
 
