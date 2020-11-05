@@ -3,6 +3,8 @@ MIT License
 
 Copyright (c) 2020 Robert Baillie
 
+https://github.com/bobalicious/amoss
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -59,7 +61,15 @@ public with sharing class AmossTest_ClassToDouble {
     public String sobjectMethodUnderDouble( Contact contactParam ) {
         return 'TheReturn';
     }
+    // Allows us to test overloading behaviours when expecting an Sobject
+    public String sobjectMethodUnderDouble( String notAnSobject ) {
+        return 'TheReturn';
+    }
     public String objectMethodUnderDouble( Object objectParam ) {
+        return 'TheReturn';
+    }
+    // Allows us to test overloading behaviours when expecting an Sobject
+    public String objectMethodUnderDouble( String notAnObject ) {
         return 'TheReturn';
     }
     public List<Object> methodWithListObject( List<Object> parameter1 ) {

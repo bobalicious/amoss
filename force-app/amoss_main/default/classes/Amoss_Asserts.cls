@@ -3,6 +3,8 @@ MIT License
 
 Copyright (c) 2020 Robert Baillie
 
+https://github.com/bobalicious/amoss
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -99,7 +101,7 @@ public with sharing class Amoss_Asserts {
      * @param Object - The object to return the type of
      * @return String - The type of the passed in object
      */
-    private static string getType( Object o ) {
+    public static string getType( Object o ) {
         if( o==null ) return 'Unknown';              // we can't say much about null with our current techniques
         if( o instanceof SObject )            return String.valueOf(((SObject)o).getSObjectType().getDescribe().getName());
         if( o instanceof Boolean )            return 'Boolean';

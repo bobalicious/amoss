@@ -2,23 +2,47 @@ Amoss - Apex Mocks, Spies and Stubs
 
 Documentation:
 
+    Document the differences between the matching for:
+        Primitives
+        Objects - implementing 'equals'
+        Sobjects
+
+        setTo / setToEqual
+
     Full interface definition?
     Consider a class diagram for developers?
     Language syntax diagram?
 
-    2 Sobjects with the same properties are regarded as being the same objects
-    2 Objects with the same properties are NOT regarded as being the same objects
-
-
 Implement
 
-    Could recognise when objects are a different instance before failing in order to give a better assertion failure message
+    Test:
+        !!!!! Named parameter when more parameters are set than are possible to be passed
+            Potentially the wrong overloaded method was called
 
-    Document what is included in the installation.
+        Only need to test exhaustively with positional expects
+        Then add a simple test for named 
+            * withFieldsSetLike( Sobject )
+            * withFieldsSetTo( Map<String,Object> )
 
-    Code documentation (search for TODOs)
+        What happens with List / Map / Set?
 
-    Move all string contatonation over to string.format, and move ' over to " where used in a string
+    Look at removing duplication between:
+        * Amoss_PositionalParameterValueDefiner
+        * Amoss_NamedParameterValueDefiner
+
+    Look at removing duplication between:
+        * Amoss_ExpectationFieldsSetToParameter
+        * Amoss_ExpectationFieldsSetLikeParameter
+
+    Test overloaded behaviour that results in: "was called with an unexpected number of parameters"
+
+    Have a look:
+        Can you implement Amoss_ExpectationObjectParameter - do you need to?
+
+    Consider
+        Just have a look - how would the new syntax drop into this?
+
+    Move all string contatonation over to string.format, and move ' over to " where used in a string?
 
     Test:
 
@@ -53,16 +77,10 @@ Implement
         Test returns List, Set, Map
 
     General:
-
         What happens with methods that are not supposed to return something?
             Looks like it works, just need to write tests to prove it
 
-    Mock:
-
-        How to pass an 'expects parameter' when we're passing sObjects?
-
     Spy:
-
         Currently supports
             mockThing.countOf( 'method' )
         why not 

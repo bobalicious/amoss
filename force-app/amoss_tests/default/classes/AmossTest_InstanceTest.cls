@@ -3,6 +3,8 @@ MIT License
 
 Copyright (c) 2020 Robert Baillie
 
+https://github.com/bobalicious/amoss
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -21,7 +23,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 @isTest
 public with sharing class AmossTest_InstanceTest {
 
@@ -376,6 +377,32 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
+
+    /**
+    * @method when.method.withParameter.setTo.willReturn
+    * @case   when that method is called with the stated parameters
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterSetToWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().setTo( 'ActualParam1' )
+                .thenParameter().setTo( 1 )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the stated parameters, will return the stated value' );
+    }
+
     /**
     * @method when.method.withParameters.willReturn
     * @case   when that method is called with the stated parameters
@@ -580,6 +607,31 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.withParameter.setTo.willReturn
+    * @case   when that method is called with different parameters
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParameterSetToWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+        
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().setTo( 'ActualParam1' )
+                .thenParameter().setTo( 1 )
+                .willReturn( 'willNotSeeThis' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the different parameters, will return null' );
+    }
+
+    /**
     * @method when.method.withParameterNamed.setTo.willReturn
     * @case   when that method is called with different parameters
     * @result will return null
@@ -630,6 +682,630 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
         
         System.assertEquals( null, returnFromDouble, 'when.method.withParameters.setTo.willReturn (named), and the method called with the different parameters, will return null' );
+    }
+
+    //
+    //
+    // Advanced When Parameter Matching Tests
+    //
+    //
+
+    /**
+    * @method when.method.willReturn
+    * @case   when the expectation is set with an object, and that instance is passed
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameter( objectPassed )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+    }
+
+    /**
+    * @method when.method.willReturn
+    * @case   when set with an object, and a different instance is passed with same properties
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnNull() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameter( objectExpected )
+                .willReturn( 'notExpectedToReturn' );
+
+        Boolean testFailed = false;
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed, will return null' ) ;
+    }
+
+    /**
+    * @method when.method.setToTheSameValueAs.willReturn
+    * @case   when the expectation is set with an object, and that instance is passed
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectPassed )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+    }
+
+    /**
+    * @method when.method.setToTheSameValueAs.willReturn
+    * @case   when set with an object, and a different instance is passed with same properties
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnTheStatedValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .willReturn( 'ExpectedToReturn' );
+
+        Boolean testFailed = false;
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        
+        System.assertEquals( 'ExpectedToReturn', returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed with same properties, will return the stated value' ) ;
+    }
+
+    /**
+    * @method when.method.setToTheSameValueAs.willReturn
+    * @case   when set with an object, and a different instance is passed with different properties
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassedWithDifferentProperties_willReturnNull() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .willReturn( 'notExpectedToReturn' );
+
+        Boolean testFailed = false;
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'DifferentObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed with different properties, will return null' ) ;
+    }
+
+    /**
+    * @method when.method.withParameterNamed.willReturn
+    * @case   when the expectation is set with an object, and that instance is passed
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameterNamed( 'objectParam' ).setTo( objectPassed )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+    }
+
+    /**
+    * @method when.method.withParameterNamed.willReturn
+    * @case   when set with an object, and a different instance is passed with same properties
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnNull() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameterNamed( 'objectParam' ).setTo( objectExpected )
+                .willReturn( 'notExpectedToReturn' );
+
+        Boolean testFailed = false;
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed, will return null' ) ;
+    }
+
+    /**
+    * @method when.method.withParameterNamed.setToTheSameValueAs.willReturn
+    * @case   when the expectation is set with an object, and that instance is passed
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameterNamed( 'objectParam' ).setToTheSameValueAs( objectPassed )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.setToTheSameValueAs.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+    }
+
+    /**
+    * @method when.method.withParameterNamed.setToTheSameValueAs.willReturn
+    * @case   when set with an object, and a different instance is passed with same properties
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnTheStatedValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameterNamed( 'objectParam' ).setToTheSameValueAs( objectExpected )
+                .willReturn( 'ExpectedToReturn' );
+
+        Boolean testFailed = false;
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        
+        System.assertEquals( 'ExpectedToReturn', returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed with same properties, will return the stated value' ) ;
+    }
+
+    /**
+    * @method when.method.withParameterNamed.setToTheSameValueAs.willReturn
+    * @case   when set with an object, and a different instance is passed with different properties
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassedWithDifferentProperties_willReturnNull() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'objectMethodUnderDouble' )
+                .withParameterNamed( 'objectParam' ).setToTheSameValueAs( objectExpected )
+                .willReturn( 'notExpectedToReturn' );
+
+        Boolean testFailed = false;
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'DifferentObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed with different properties, will return null' ) ;
+    }
+
+    /**
+    * @method when.method.willReturn
+    * @case   when the is set with an sobject, and that instance is passed
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectPassed = new Contact( LastName = 'TheContact' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter( objectPassed )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+    }
+
+    /**
+    * @method when.method.willReturn
+    * @case   when the expectation is set with an sobject, and a different instance is passed with same properties
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willReturnNull() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter( objectExpected )
+                .willReturn( 'NotExpectedReturn' );
+
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.willReturn, when set up with an sobject, and a different instance is passed, will return null' ) ;
+    }
+
+    /**
+    * @method when.method.setToTheSameValueAs.willReturn
+    * @case   when is set with an sobject, and that instance is passed
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectPassed = new Contact( LastName = 'TheContact' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectPassed )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+    }
+
+    /**
+    * @method when.method.setToTheSameValueAs.willReturn
+    * @case   when the expectation is set with an sobject, and a different instance is passed with same properties
+    * @result will still return the stated value
+    */
+    @isTest
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willStillReturnTheStatedValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .willReturn( 'ExpectedReturn' );
+
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'ExpectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with the same properies, will return the stated value' ) ;
+    }
+
+    /**
+    * @method when.method.setToTheSameValueAs.willReturn
+    * @case   when the expectation is set with an sobject, and a different instance is passed with different properties
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassedWithDifferentValues_willReturnNull() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .willReturn( 'NotExpectedReturn' );
+
+        Contact objectPassed = new Contact( LastName = 'TheObject', FirstName = 'Different' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with different properies, will return null' ) ;
+    }
+
+    /**
+    * @method when.method.withParamterNamed.willReturn
+    * @case   when the is set with an sobject, and that instance is passed
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectPassed = new Contact( LastName = 'TheContact' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameterNamed( 'contactParam' ).setTo( objectPassed )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParamterNamed.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+    }
+
+    /**
+    * @method when.method.withParamterNamed.willReturn
+    * @case   when the expectation is set with an sobject, and a different instance is passed with same properties
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willReturnNull() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameterNamed( 'contactParam' ).setTo( objectExpected )
+                .willReturn( 'NotExpectedReturn' );
+
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParamterNamed.willReturn, when set up with an sobject, and a different instance is passed, will return null' ) ;
+    }
+
+    /**
+    * @method when.method.withParamterNamed.setToTheSameValueAs.willReturn
+    * @case   when is set with an sobject, and that instance is passed
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectPassed = new Contact( LastName = 'TheContact' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameterNamed( 'contactParam' ).setToTheSameValueAs( objectPassed )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+    }
+
+    /**
+    * @method when.method.withParamterNamed.setToTheSameValueAs.willReturn
+    * @case   when the expectation is set with an sobject, and a different instance is passed with same properties
+    * @result will still return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willStillReturnTheStatedValue() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameterNamed( 'contactParam' ).setToTheSameValueAs( objectExpected )
+                .willReturn( 'ExpectedReturn' );
+
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( 'ExpectedReturn', returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with the same properies, will return the stated value' ) ;
+    }
+
+    /**
+    * @method when.method.withParamterNamed.setToTheSameValueAs.willReturn
+    * @case   when the expectation is set with an sobject, and a different instance is passed with different properties
+    * @result will return null
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassedWithDifferentValues_willReturnNull() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .when()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameterNamed( 'contactParam' ).setToTheSameValueAs( objectExpected )
+                .willReturn( 'NotExpectedReturn' );
+
+        Contact objectPassed = new Contact( LastName = 'TheObject', FirstName = 'Different' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with different properies, will return null' ) ;
     }
 
     /**
@@ -727,7 +1403,6 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, position notation used first, then named notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
         System.assertEquals( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, position notation used first, then named notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
     }
-
 
     /**
     * @method when.method.withParameter.willReturn multiple times, named first, then position
@@ -1116,12 +1791,15 @@ public with sharing class AmossTest_InstanceTest {
                 String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
             } catch( TestException e ) {}
         Test.stopTest();
-        
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value in position 0';
-        System.assertEquals( 'ActualParam1'     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'OtherActualParam1', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'ActualParam1', 'OtherActualParam1', 'expects.method.returning, when the method is called with different parameters' );
     }
+
+    //
+    //
+    // Advanced Expectation Parameter Matching Tests
+    //
+    //
 
     /**
     * @method expects.method.returning
@@ -1154,7 +1832,7 @@ public with sharing class AmossTest_InstanceTest {
 
     /**
     * @method expects.method.returning
-    * @case   when the expectation is set with an object, and a differency instance is passed with same properties
+    * @case   when the expectation is set with an object, and a different instance is passed with same properties
     * @result will fail the test
     */
     @isTest
@@ -1185,15 +1863,910 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
         
-        String expectedAssertion = 'AmossTest_ClassToDouble.objectMethodUnderDouble was called with the wrong parameter value in position 0';
-        System.assert( testFailed, 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the expected parameter value' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.objectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an object and the method is called with a different instance' );
+    }
 
-        System.assertEquals( objectExpected   , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the expected parameter value' );
-        System.assertEquals( objectPassed     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the actual parameter value' );
+    /**
+    * @method expects.method.setToTheSameValueAs.returning
+    * @case   when the expectation is set with an object, and a different instance is passed with same properties
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodSetToSameValueAsReturning_whenExpectsIsSetWithObjectAndDifferentInstancePassed_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
 
-        System.assertNotEquals( objectPassed  , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the expected parameter value - effectively checking assert behaviour states the objects do not match' );
-        System.assertNotEquals( objectExpected, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with the actual parameter value - effectively checking assert behaviour states the objects do not match' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when specified with an object and the method is called with a different instance, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .expects()
+                .method( 'objectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.setToTheSameValueAs.returning
+    * @case   when the expectation is set with an object, and a different instance is passed with different properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodSetToSameValueAsReturning_whenExpectsIsSetWithObjectAndDifferentInstancePassedWithDifferentProperties_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
+
+        classToDoubleController
+            .expects()
+                .method( 'objectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheOtherObject' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.objectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when specified with an object and the method is called with a different instance with different values' );
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with an sobject, and that instance is passed
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectAndPassed_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectPassed = new Contact( LastName = 'TheContact' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter( objectPassed )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with same properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassed_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject and the method is called with a different instance' );
+    }
+
+    /**
+    * @method expects.method.setToTheSameValueAs.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with same properties
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodSetToSameValueAsReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassed_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.setToTheSameValueAs.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with different properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodSetToSameValueAsReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassedWithDifferentValues_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'TheOtherObject' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when specified with an sobject and the method is called with a different instance with different values' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the expectation is set with an sobject, and that instance is passed
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenExpectsIsSetWithSobjectAndPassed_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectPassed )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with same properties
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenDifferentInstancePassedWithSameProperties_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with extra properties
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenDifferentInstancePassedWithExtraProperties_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst', MobilePhone = '1234' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with different properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenDifferentInstancePassedWithDifferentProperties_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'DifferentFirst' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterFieldsInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.withFieldsSetLike.returning, when specified with an sobject and the method is called with a different instance with different properties' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with fewer properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenDifferentInstancePassedWithFewerProperties_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterFieldsInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.withFieldsSetLike.returning, when specified with an sobject and the method is called with a different instance with fewer properties' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the expectation is set with an sobject, and null is passed
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenExpectsIsSetWithSobjectAndNullIsPassed_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+
+        Contact nullContact;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( nullContact );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForNullSObjectInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, null, 'expects.method.withFieldsSetLike.returning, when specified with an sobject and the method is called with null' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the parameter passed is not an sObject
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenParameterPassedIsNotAnSobject_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( 'NotAnSobject' ); // possible because of overloading
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'Expected an sObject, and got String',
+                                                    'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0,
+                                                    objectExpected, 'NotAnSobject',
+                                                    'expects.method.withFieldsSetLike.returning, when the parameter passed is not an sObject' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when the expectation is set with null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetLikeReturning_whenExpectsIsSetWithNull_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDoubleController
+                    .expects()
+                        .method( 'sobjectMethodUnderDouble' )
+                        .withParameter().withFieldsSetLike( null )
+                        .returning( 'expectedReturn' );
+            } catch ( Amoss_Instance.Amoss_ExpectedObjectCannotBeNullException e ) {
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( 'Cannot specify NULL for a "FieldsSetLike" expectation', exceptionMessage, 'expects.method.withFieldsSetLike.returning, when the expectation is set with null, will throw an exception detailing the problem' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the expectation is set with an map, and an sobject passed with same properties
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenSobjectPassedWithSameProperties_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the expectation is set, and an sObject is passed with extra properties
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenSobjectPassedWithExtraProperties_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst', MobilePhone = '1234' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the expectation is set, and an sObject is passed with different properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenSobjectWithDifferentProperties_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'DifferentFirst' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterFieldsInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.withFieldsSetTo.returning, when the method is called with an sObject with different properties' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the expectation is set, and an sObject is passed with fewer properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenSobjectPassedWithFewerProperties_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterFieldsInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.withFieldsSetTo.returning, when the method is called with an Sobject with fewer properties' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the expectation is set, and null is passed
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenExpectsIsSetAndNullIsPassed_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Contact nullContact;
+
+        Boolean testFailed = false;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( nullContact );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForNullSObjectInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, null, 'expects.method.withFieldsSetTo.returning, when specified, and the method is called with null' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the expectation is set with null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenExpectsIsSetWithNull_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDoubleController
+                    .expects()
+                        .method( 'sobjectMethodUnderDouble' )
+                        .withParameter().withFieldsSetTo( null )
+                        .returning( 'expectedReturn' );
+            } catch ( Amoss_Instance.Amoss_ExpectedObjectCannotBeNullException e ) {
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( 'Cannot specify NULL for a "FieldsSetTo" expectation', exceptionMessage, 'expects.method.withFieldsSetTo.returning, when the expectation is set with null, will throw an exception detailing the problem' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the expectation is set with an invalid field
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenExpectationIsSetWithAnInvalidField_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst', 'InvalidField' => 'A value' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'Problem comparing field "InvalidField": Invalid field InvalidField for Contact',
+                                                    'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0,
+                                                    'expects.method.withFieldsSetTo.returning, when the expectation is set with an invalid field' );
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when the parameter passed is not an sObject
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithFieldsSetToReturning_whenParameterPassedIsNotAnSobject_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( 'NotAnSobject' ); // possible because of overloading
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'Expected an sObject, and got String',
+                                                    'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0,
+                                                    objectExpected, 'NotAnSobject',
+                                                    'expects.method.withFieldsSetTo.returning, when the parameter passed is not an sObject' );
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with an sobject via named syntax, and a different instance is passed with same properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectWithNamedSyntaxAndDifferentInstancePassed_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameterNamed( 'contactParam' ).setTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterNamedInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 'contactParam', objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject via named syntax and the method is called with a different instance' );
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with different properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassedWithDifferentProperties_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheExpected' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ThePassed' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject and the method is called with a different instance that has different properties' );
+    }
+
+    /**
+    * @method expects.method.setToTheSameValueAs.returning
+    * @case   when the expectation is set with an sobject via named syntax, and a different instance is passed with same properties
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsMethodSetToSameValueAsReturning_whenExpectsIsSetWithSobjectWithNamedSyntaxAndDifferentInstancePassed_willNotFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheObject' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameterNamed( 'contactParam' ).setToTheSameValueAs( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'TheObject' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.setToTheSameValueAs.returning
+    * @case   when the expectation is set with an sobject, and a different instance is passed with different properties
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodSetToSameValueAsReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassedWithDifferentProperties_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Contact objectExpected = new Contact( LastName = 'TheExpected' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Boolean testFailed = false;
+        Contact objectPassed = new Contact( LastName = 'ThePassed' );
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when specified with an sobject and the method is called with a different instance that has different properties' );
     }
 
     /**
@@ -1250,10 +2823,7 @@ public with sharing class AmossTest_InstanceTest {
             } catch( TestException e ) {}
         Test.stopTest();
         
-        String expectedAssertion = 'AmossTest_ClassToDouble.overloadedMethodUnderDouble was called with the wrong parameter value in position 1';
-        System.assertEquals( 1                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
-        System.assertEquals( '1'              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when an overloaded method is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.overloadedMethodUnderDouble', 1, 1, '1', 'expects.method.returning, when an overloaded method is called with different parameters' );
     }
 
     /**
@@ -1349,11 +2919,8 @@ public with sharing class AmossTest_InstanceTest {
                 String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
             } catch( TestException e ) {}
         Test.stopTest();
-        
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value for "parameter1"';
-        System.assertEquals( 'ActualParam1'     , assertsDoubleController.get().LatestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'OtherActualParam1', assertsDoubleController.get().LatestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion  , assertsDoubleController.get().LatestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method defined using named parameters and is called with different parameters, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+
+        checkForWrongParameterNamedAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 'parameter1', 'ActualParam1', 'OtherActualParam1', 'expects.method.returning, when the method defined using named parameters and is called with different parameters' );
     }
 
     /**
@@ -3003,18 +4570,8 @@ public with sharing class AmossTest_InstanceTest {
     @isTest
     private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalledWithNonMatchingParameters_willFailTheTest() {
         
-        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
-        assertsDoubleController
-            .when()
-                .method( 'assertEquals' )
-                .withParameter( 'this' )
-                .thenParameter( 'not-this' )
-                .thenAnyParameter()
-                .throws( new TestException( 'Mismatching assertion would normally halt the test, so we will too' ) )
-            .also().allows()
-                .method( 'assertEquals' )
-                .withAnyParameters();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
@@ -3033,10 +4590,7 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
         
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value in position 0';
-        System.assertEquals( 'this'           , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'not-this'       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'this', 'not-this', 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters' );
     }    
 
     //
@@ -3339,18 +4893,8 @@ public with sharing class AmossTest_InstanceTest {
     @isTest
     private static void allowAnyCall_false_expectsMethodReturning_whenTheMethodIsOnlyCalledWithDifferentParameters_willFailTheTest() {
         
-        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
-        assertsDoubleController
-            .when()
-                .method( 'assertEquals' )
-                .withParameter( 'this' )
-                .thenParameter( 'not-this' )
-                .thenAnyParameter()
-                .throws( new TestException( 'Mismatching assertion would normally halt the test, so we will too' ) )
-            .also().allows()
-                .method( 'assertEquals' )
-                .withAnyParameters();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
@@ -3370,10 +4914,7 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called with the wrong parameter value in position 0';
-        System.assertEquals( 'this'           , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assertEquals with the expected parameter value' );
-        System.assertEquals( 'not-this'       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assertEquals with the actual parameter value' );
-        Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters, will fail, by calling assert with an assertion message that clearly describes the issue' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'this', 'not-this', 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters' );
     }
 
     /**
@@ -3958,9 +5499,13 @@ public with sharing class AmossTest_InstanceTest {
                 .handledBy( new MockAssertEqualsHandler() )
             .also().allows()
                 .method( 'assert' )
+                .withParameter( true )
+                .thenAnyParameter()
+            .also().allows()
+                .method( 'assert' )
                 .withParameter( false )
                 .thenAnyParameter()
-                .throws( new TestException( 'False assertion would normally halt the test, so we will too' ) );
+                .handledBy( new MockAssertHandler() );
         return assertsDoubleController;
     }
 
@@ -3971,5 +5516,72 @@ public with sharing class AmossTest_InstanceTest {
             }
             return null;
         }
+    }
+
+    class MockAssertHandler implements Amoss_MethodHandler {
+        public Object handleMethodCall( List<Object> parameters ) {
+            if ( parameters[0] == false ) {
+                throw new TestException( 'False assertion would normally halt the test, so we will too, for: '  + String.valueOf( parameters[1] ) );
+            }
+            return null;
+        }
+    }
+
+    private static void checkForWrongParameterInPositionAssertion( Amoss_Instance assertsDoubleController, String method, Integer parameterPosition, Object expected, Object actual, String message ) {
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'The value is not what was expected', method, parameterPosition, expected, actual, message );
+    }
+
+    private static void checkForWrongParameterFieldsInPositionAssertion( Amoss_Instance assertsDoubleController, String method, Integer parameterPosition, Object expected, Object actual, String message ) {
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'The following fields were not set as expected', method, parameterPosition, expected, actual, message );
+    }
+
+    private static void checkForWrongParameterInPositionInstanceAssertion( Amoss_Instance assertsDoubleController, String method, Integer parameterPosition, Object expected, Object actual, String message ) {
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'The value is the same, but not the same instance as was expected', method, parameterPosition, expected, actual, message );
+    }
+
+    private static void checkForNullSObjectInPositionInstanceAssertion( Amoss_Instance assertsDoubleController, String method, Integer parameterPosition, Object expected, Object actual, String message ) {
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'Expected an sObject, and got NULL', method, parameterPosition, expected, actual, message );
+    }
+
+    private static void checkForWrongParameterNamedAssertion( Amoss_Instance assertsDoubleController, String method, String parameterName, Object expected, Object actual, String message ) {
+        checkForWrongParameterNamedAssertion( assertsDoubleController, 'The value is not what was expected', method, parameterName, expected, actual, message );
+    }
+
+    private static void checkForWrongParameterNamedInstanceAssertion( Amoss_Instance assertsDoubleController, String method, String parameterName, Object expected, Object actual, String message ) {
+        checkForWrongParameterNamedAssertion( assertsDoubleController, 'The value is the same, but not the same instance as was expected', method, parameterName, expected, actual, message );
+    }
+
+    private static void checkForWrongParameterInPositionAssertion( Amoss_Instance assertsDoubleController, String expectedDetailAssertion, String method, Integer parameterPosition, String message ) {
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), message + ', will fail, by calling assert with false' );
+
+        String expectedAssertion = method + ' had a problem with the parameter value in position ' + String.valueOf( parameterPosition );
+        String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        Amoss_Asserts.assertContains( expectedAssertion, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly describes the issue' );
+        Amoss_Asserts.assertContains( expectedDetailAssertion, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly describes the issue in detail' );
+    }
+
+    private static void checkForWrongParameterInPositionAssertion( Amoss_Instance assertsDoubleController, String expectedDetailAssertion, String method, Integer parameterPosition, Object expected, Object actual, String message ) {
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, expectedDetailAssertion, method, parameterPosition, message );
+
+        String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        Amoss_Asserts.assertContains( 'Expected: ' + expected, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the expected parameter value' );
+        Amoss_Asserts.assertContains( 'Actual: '   + actual  , actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the actual parameter value' );
+    }
+
+    private static void checkForWrongParameterNamedAssertion( Amoss_Instance assertsDoubleController, String expectedDetailAssertion, String method, String parameterName, Object expected, Object actual, String message ) {
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), message + ', will fail, by calling assert with false' );
+
+        String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+        String expectedAssertion = method + ' had a problem with the parameter value for "' + String.valueOf( parameterName ) + '"';
+
+        Amoss_Asserts.assertContains( expectedAssertion, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly describes the issue' );
+        Amoss_Asserts.assertContains( expectedDetailAssertion, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly describes the issue in detail' );
+        Amoss_Asserts.assertContains( 'Expected: ' + expected, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the expected parameter value' );
+        Amoss_Asserts.assertContains( 'Actual: '   + actual  , actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the actual parameter value' );
     }
 }
