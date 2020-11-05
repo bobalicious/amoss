@@ -347,7 +347,7 @@ For each of the properties set on the 'expected' object, the passed sObject is c
 The passed object may have more properties set, and they can have any value.
 
 Examples:
-```
+```java
 classToDoubleController
     .when()
         .method( 'objectMethodUnderDouble' )
