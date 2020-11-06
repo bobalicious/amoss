@@ -102,21 +102,33 @@ public with sharing class Amoss_Asserts {
      * @return String - The type of the passed in object
      */
     public static string getType( Object o ) {
-        if( o==null ) return 'Unknown';              // we can't say much about null with our current techniques
-        if( o instanceof SObject )            return String.valueOf(((SObject)o).getSObjectType().getDescribe().getName());
-        if( o instanceof Boolean )            return 'Boolean';
-        if( o instanceof Id )                 return 'Id';
-        if( o instanceof String )             return 'String';
-        if( o instanceof Blob )               return 'Blob';
-        if( o instanceof Date )               return 'Date';
-        if( o instanceof Datetime )           return 'DateTime';
-        if( o instanceof Time )               return 'Time';
-        if( o instanceof String )             return 'String';
-        if( o instanceof Integer )            return 'Integer';
-        if( o instanceof Long )               return 'Long';
-        if( o instanceof Decimal )            return 'Decimal';
-        if( o instanceof Double )             return 'Double';
-        if( o instanceof List<Object> )       return 'List';
+        if( o instanceof SObject ) {
+            try {
+                return String.valueOf(((SObject)o).getSObjectType().getDescribe().getName());
+            } catch ( Exception e ) {} // not actually an Sobject...
+        }
+        if( o instanceof Boolean )             return 'Boolean';
+        if( o instanceof Id )                  return 'Id';
+        if( o instanceof String )              return 'String';
+        if( o instanceof Blob )                return 'Blob';
+        if( o instanceof Date )                return 'Date';
+        if( o instanceof Datetime )            return 'DateTime';
+        if( o instanceof Time )                return 'Time';
+        if( o instanceof String )              return 'String';
+        if( o instanceof Integer )             return 'Integer';
+        if( o instanceof Long )                return 'Long';
+        if( o instanceof Double )              return 'Decimal / Double'; // Cannot reliably distinguish between a decimal and a double
+        if( o instanceof Decimal )             return 'Decimal / Double';
+
+        if( o instanceof List<Object> )        return 'List<Object>';
+
+        if( o instanceof Map<String,Object> )  return 'Map<String,Object>';  // There's a limited amount of casting that can be done for Maps and Sets
+        if( o instanceof Map<Id,Object> )      return 'Map<Id,Object>';      // So we detect the common types and leave it at that.  The rest will be
+        if( o instanceof Map<Integer,Object> ) return 'Map<Integer,Object>'; // reported as 'Object'
+
+        // Look at casting and then getting the error message out..?
+
+        if( o==null ) return 'Unknown (null)';              // We can't say much about null with our current techniques, but put at the end in case that changes
         return 'Object';
     }    
 }

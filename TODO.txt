@@ -2,23 +2,16 @@ Amoss - Apex Mocks, Spies and Stubs
 
 Documentation:
 
-    Document the differences between the matching for:
-        Primitives
-        Objects - implementing 'equals'
-        Sobjects
-
-        setTo / setToEqual
-
     Full interface definition?
     Consider a class diagram for developers?
     Language syntax diagram?
 
 Implement
 
-    Test:
-        !!!!! Named parameter when more parameters are set than are possible to be passed
-            Potentially the wrong overloaded method was called
+    Test and fix 'getType' - #1 priority
 
+
+    Test:
         Only need to test exhaustively with positional expects
         Then add a simple test for named 
             * withFieldsSetLike( Sobject )
