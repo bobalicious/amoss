@@ -8,12 +8,8 @@ Documentation:
 
 Implement
 
-    Test and fix 'getType' - #1 priority
-
-
     Test:
-        Only need to test exhaustively with positional expects
-        Then add a simple test for named 
+        Add a simple test for named syntax for
             * withFieldsSetLike( Sobject )
             * withFieldsSetTo( Map<String,Object> )
 
