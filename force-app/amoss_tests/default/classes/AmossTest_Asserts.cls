@@ -178,17 +178,17 @@ public with sharing class AmossTest_Asserts {
             },
             new Map<String,Object>{
                 'parameter' => new List<Contact>(),
-                'expected'  => 'List<Object>',
+                'expected'  => 'List<Contact>',
                 'case'      => 'a List of sObjects (Contact)'
             },
             new Map<String,Object>{
                 'parameter' => new List<String>(),
-                'expected'  => 'List<Object>',
+                'expected'  => 'List<String>',
                 'case'      => 'a List of Strings'
             },
             new Map<String,Object>{
                 'parameter' => new List<Decimal>(),
-                'expected'  => 'List<Object>',
+                'expected'  => 'List<Decimal>',
                 'case'      => 'a List of Decimals'
             },
             new Map<String,Object>{
@@ -203,12 +203,12 @@ public with sharing class AmossTest_Asserts {
             },
             new Map<String,Object>{
                 'parameter' => new Map<String,String>(),
-                'expected'  => 'Map<String,Object>',
+                'expected'  => 'Map<String,String>',
                 'case'      => 'a Map<String,String>'
             },
             new Map<String,Object>{
                 'parameter' => new Map<String,Contact>(),
-                'expected'  => 'Map<String,Object>',
+                'expected'  => 'Map<String,Contact>',
                 'case'      => 'a Map<String,Contact>'
             },
             new Map<String,Object>{
@@ -218,11 +218,9 @@ public with sharing class AmossTest_Asserts {
             },
             new Map<String,Object>{
                 'parameter' => new Map<Integer,String>(),
-                'expected'  => 'Map<Integer,Object>',
+                'expected'  => 'Map<Integer,String>',
                 'case'      => 'a Map<Integer,String>'
-            }
-
-/*
+            },
             new Map<String,Object>{
                 'parameter' => new Set<Object>(),
                 'expected'  => 'Set<Object>',
@@ -230,16 +228,29 @@ public with sharing class AmossTest_Asserts {
             },
             new Map<String,Object>{
                 'parameter' => new Set<String>(),
-                'expected'  => 'Set<Object>',
+                'expected'  => 'Set<String>',
                 'case'      => 'a Set<String>'
             },
             new Map<String,Object>{
                 'parameter' => new Set<Contact>(),
-                'expected'  => 'Set<Object>',
+                'expected'  => 'Set<Contact>',
                 'case'      => 'a Set<Contact>'
+            },
+            new Map<String,Object>{
+                'parameter' => new List<Map<Object,Set<Date>>>(),
+                'expected'  => 'List<Map<Object,Set<Date>>>',
+                'case'      => 'a nested collection'
+            },
+            new Map<String,Object>{
+                'parameter' => new AmossTest_ClassToDouble( 'param' ),
+                'expected'  => 'AmossTest_ClassToDouble',
+                'case'      => 'a non-system class'
+            },
+            new Map<String,Object>{
+                'parameter' => new Amoss_Instance( AmossTest_ClassToDouble.class ).generateDouble(),
+                'expected'  => 'AmossTest_ClassToDouble',
+                'case'      => 'a test double of a class'
             }
-*/
-
         };
 
         for ( Map<String,Object> thisTestCase : testCases ) {
