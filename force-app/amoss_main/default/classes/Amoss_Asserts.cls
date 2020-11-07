@@ -102,21 +102,71 @@ public with sharing class Amoss_Asserts {
      * @return String - The type of the passed in object
      */
     public static string getType( Object o ) {
-        if( o==null ) return 'Unknown';              // we can't say much about null with our current techniques
-        if( o instanceof SObject )            return String.valueOf(((SObject)o).getSObjectType().getDescribe().getName());
-        if( o instanceof Boolean )            return 'Boolean';
-        if( o instanceof Id )                 return 'Id';
-        if( o instanceof String )             return 'String';
-        if( o instanceof Blob )               return 'Blob';
-        if( o instanceof Date )               return 'Date';
-        if( o instanceof Datetime )           return 'DateTime';
-        if( o instanceof Time )               return 'Time';
-        if( o instanceof String )             return 'String';
-        if( o instanceof Integer )            return 'Integer';
-        if( o instanceof Long )               return 'Long';
-        if( o instanceof Decimal )            return 'Decimal';
-        if( o instanceof Double )             return 'Double';
-        if( o instanceof List<Object> )       return 'List';
+        if( o instanceof SObject ) {
+            try {
+                return String.valueOf(((SObject)o).getSObjectType().getDescribe().getName());
+            } catch ( Exception e ) {} // not actually an Sobject: There's a bug in Apex where List<Sobject> will return true for "instanceOf Sobject" when it shouldn't
+        }
+        if( o instanceof Boolean ) {
+            return 'Boolean';
+        }
+        if( o instanceof Id ) {
+            return 'Id';
+        }
+        if( o instanceof String ) {
+            return 'String';
+        }
+        if( o instanceof Blob ) {
+            return 'Blob';
+        }
+        if( o instanceof Date ) {
+            return 'Date';
+        }
+        if( o instanceof Datetime ) {
+            return 'DateTime';
+        }
+        if( o instanceof Time ) {
+            return 'Time';
+        }
+        if( o instanceof String ) {
+            return 'String';
+        }
+        if( o instanceof Integer ) {
+            return 'Integer';
+        }
+        if( o instanceof Long ) {
+            return 'Long';
+        }
+        if( o instanceof Double ) {
+            return 'Decimal / Double'; // Cannot reliably distinguish between a decimal and a double
+        }
+        if( o instanceof Decimal ) {
+            return 'Decimal / Double';
+        }
+        if( o == null ) return 'Unknown (null)'; // If it's null, we can't tell what it is
+
+        // Having covered the primitives and special cases, we now try to cast the object
+        // into something we know it can't be in order to get what Apex thinks it is from
+        // the Exception.
+        // Is a bit of a hack, but the test for this method should check that it continues
+        // to work as Apex changes behaviour.
+        try {
+            DateTime impossibleCast = (DateTime)o;
+        } catch ( Exception e ) {
+
+            Matcher dataTypeMatcher = pattern.compile( 'Invalid conversion from runtime type (.*) to Datetime' ).matcher( e.getMessage() ); 
+            if ( dataTypeMatcher.matches() ) {
+                String dataType = dataTypeMatcher.group( 1 );
+                // Don't like 'ANY' as a response - this exception is the only place you ever see it,
+                // so we replace it with Object - but since an object type could have 'ANY' in it, 
+                // we have to only do it for places where it can appear and we are certain it's
+                // Salesforce's doing, not the developer's
+                return dataType.replace( ',ANY>', ',Object>' ).replace( '<ANY,', '<Object,' ).replace( '<ANY>', '<Object>' );
+            }
+        }
+
+        // I can't think of any reason why would reach here,
+        // but just in case...
         return 'Object';
     }    
 }
