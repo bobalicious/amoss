@@ -8,6 +8,46 @@ Documentation:
 
 Implement
 
+    Documentation for 'setTo'
+
+        Current behaviour - Lists:
+
+                List<Contact> expectedContacts = new List<Contact>{ new Contact(), ... }
+            will match:
+                List<Contact> passedContacts = new List<Contact>{ new Contact(), ... }
+            or
+                List<Object> passedContacts = new List<Contact>{ new Contact(), ... }
+            but not
+                List<Object> passedContacts = new List<Object>{ new Contact(), ... }
+                    (will say the types do not match)
+
+        Current behaviour - Maps:
+
+            Map<String,Contact> expectedContacts = new Map<String,Contact>{
+                'one' => new Contact(), 'two' => new Contact()
+            };
+        will match:
+            Map<String,Contact> passedContacts = new Map<String,Contact>{
+                'one' => new Contact(), 'two' => new Contact()
+            };
+        or
+            Map<String,Object> passedContacts = new Map<String,Contact>{
+                'one' => new Contact(), 'two' => new Contact()
+            };
+        or
+            Map<String,Object> passedContacts = new Map<String,Object>{
+                'one' => new Contact(), 'two' => new Contact()
+            };
+
+        but not (will say types don't match, even though it's primarily the values that don't)
+            Map<String,Object> passedContacts = new Map<String,Object>{
+                'one' => new Contact( Id = '003000000000000' ), 'two' => new Contact()
+            };
+        or (will say values are different)
+            Map<String,Contact> passedContacts = new Map<String,Contact>{
+                'one' => new Contact( Id = '003000000000000' ), 'two' => new Contact()
+            };
+
     Test:
         Add a simple test for named syntax for
             * withFieldsSetLike( Sobject )
@@ -24,9 +64,6 @@ Implement
         * Amoss_ExpectationFieldsSetLikeParameter
 
     Test overloaded behaviour that results in: "was called with an unexpected number of parameters"
-
-    Have a look:
-        Can you implement Amoss_ExpectationObjectParameter - do you need to?
 
     Consider
         Just have a look - how would the new syntax drop into this?

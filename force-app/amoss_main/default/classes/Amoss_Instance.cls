@@ -2092,10 +2092,18 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( Object actualValue ) {
             if ( this.value != actualValue ) {
-                throw new Amoss_EqualsAssertionFailureException()
-                            .setExpected( this.value )
-                            .setActual( actualValue )
-                            .setAssertionMessage( 'The value is not what was expected - If it is an object, it may be the wrong instance' );
+                if ( Amoss_Asserts.getType( this.value ) != Amoss_Asserts.getType( actualValue ) ) {
+                    throw new Amoss_EqualsAssertionFailureException()
+                                .setExpected( Amoss_Asserts.getType( this.value ) )
+                                .setActual( Amoss_Asserts.getType( actualValue ) )
+                                .setAssertionMessage( 'The value is not what was expected - The types do not match' );
+
+                } else {
+                    throw new Amoss_EqualsAssertionFailureException()
+                                .setExpected( this.value )
+                                .setActual( actualValue )
+                                .setAssertionMessage( 'The value is not what was expected - If it is an object, it may be the wrong instance' );
+                }
             }
         }        
     }
@@ -2388,7 +2396,9 @@ public without sharing class Amoss_Instance implements StubProvider {
             // As we only want to distinguish between a couple of types, this seems the
             // simplest way.
             if ( parameter instanceOf Sobject ) {
-                return buildParameter( (Sobject)parameter );
+                try {
+                    return buildParameter( (Sobject)parameter );
+                } catch ( Exception e ) {} // we need to do this since 'instanceOf Sobject' will return true for lists of Sobject
             }
 
             return new Amoss_ExpectationSameInstanceAsParameter().setValue( parameter );
