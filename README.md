@@ -296,6 +296,8 @@ This means that `canDeliver` and `scheduleDelivery` can be called in any order, 
 
 All of the below can be used with either `withParameter` or `withParameterNamed`.
 
+# NOTE - The behaviour described here is not complete - clarification of the behaviour for `List`, `Set` and `Map` has yet to be implemented and documented.
+
 ### `setTo`
 
 In general, will check that the expected and passed values are the same instance, unless object specific behaviour has been defined.
@@ -307,7 +309,7 @@ In detail, it checks that the passed parameter:
   * If the parameter is a primitive -  that the value is the same.
   * If the parameter is an Object that does not implement `equals` - that the expected and passed objects are the same instance.
   * If the parameter is an Object that does implement `equals` - that the return of `equals` is true.
-* If an Sobject, quals the expected, as per the behaviour of '===', being:
+* If an Sobject, equals the expected, as per the behaviour of '===', being:
   * That the expected and passed objects are the same instance.
 
 Note: the specification of `withParmeter( value )` is shorthand for `withParameter().setTo( value )`.
