@@ -2796,7 +2796,7 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListObject', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values, will fail' );
+        checkForWrongParameterInPositionAssertion( 'The elements are the same, but not the same instances as was expected', assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListObject', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values, will fail' );
     }
 
     /**
