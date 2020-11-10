@@ -2719,12 +2719,12 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter( objectExpected )
                 .returning( new List<Contact>() );
 
         Test.startTest();
-            classToDouble.methodWithListObject( objectExpected );
+            classToDouble.methodWithListOfObjects( objectExpected );
         Test.stopTest();
 
         classToDoubleController.verify();
@@ -2749,7 +2749,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter( objectExpected )
                 .returning( new List<Contact>() );
 
@@ -2758,13 +2758,13 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.startTest();
             try {
-                classToDouble.methodWithListObject( objectPassed );
+                classToDouble.methodWithListOfObjects( objectPassed );
             } catch( TestException e ) {
                 testFailed = true;
             }
         Test.stopTest();
 
-        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'The value is the same, but not the same instance as was expected', 'AmossTest_ClassToDouble.methodWithListObject', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'The value is the same, but not the same instance as was expected', 'AmossTest_ClassToDouble.methodWithListOfObjects', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values' );
     }
 
     /**
@@ -2786,7 +2786,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter( objectExpected )
                 .returning( new List<Contact>() );
 
@@ -2795,7 +2795,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.startTest();
             try {
-                classToDouble.methodWithListObject( objectPassed );
+                classToDouble.methodWithListOfObjects( objectPassed );
             } catch( TestException e ) {
                 testFailed = true;
             }
@@ -2803,7 +2803,7 @@ public with sharing class AmossTest_InstanceTest {
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController,
                                                     'The value is the same, but the list and some of its elements are not the same instances as was expected',
-                                                    'AmossTest_ClassToDouble.methodWithListObject', 0,
+                                                    'AmossTest_ClassToDouble.methodWithListOfObjects', 0,
                                                     objectExpected, objectPassed,
                                                     'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values' );
     }
@@ -2827,7 +2827,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter( objectExpected )
                 .returning( new List<Contact>() );
 
@@ -2836,13 +2836,13 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.startTest();
             try {
-                classToDouble.methodWithListObject( objectPassed );
+                classToDouble.methodWithListOfObjects( objectPassed );
             } catch( TestException e ) {
                 testFailed = true;
             }
         Test.stopTest();
 
-        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListObject', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values, will fail' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListOfObjects', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values, will fail' );
     }
 
     /**
@@ -2864,12 +2864,12 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter().setToTheSameValueAs( objectExpected )
                 .returning( new List<Contact>() );
 
         Test.startTest();
-            classToDouble.methodWithListObject( objectExpected );
+            classToDouble.methodWithListOfObjects( objectExpected );
         Test.stopTest();
 
         classToDoubleController.verify();
@@ -2894,14 +2894,14 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter().setToTheSameValueAs( objectExpected )
                 .returning( new List<Contact>() );
 
         List<Contact> objectPassed = new List<Contact>{ objectExpected[0], objectExpected[1] };
 
         Test.startTest();
-            classToDouble.methodWithListObject( objectPassed );
+            classToDouble.methodWithListOfObjects( objectPassed );
         Test.stopTest();
 
         classToDoubleController.verify();
@@ -2926,14 +2926,14 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter().setToTheSameValueAs( objectExpected )
                 .returning( new List<Contact>() );
 
         List<Contact> objectPassed = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
         Test.startTest();
-            classToDouble.methodWithListObject( objectPassed );
+            classToDouble.methodWithListOfObjects( objectPassed );
         Test.stopTest();
 
         classToDoubleController.verify();
@@ -2958,7 +2958,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter().setToTheSameValueAs( objectExpected )
                 .returning( new List<Contact>() );
 
@@ -2967,13 +2967,13 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.startTest();
             try {
-                classToDouble.methodWithListObject( objectPassed );
+                classToDouble.methodWithListOfObjects( objectPassed );
             } catch( TestException e ) {
                 testFailed = true;
             }
         Test.stopTest();
 
-        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListObject', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values, will fail' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListOfObjects', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values, will fail' );
     }
 
     /**
@@ -2995,14 +2995,14 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter().setToTheSameValueAs( objectExpected )
                 .returning( new List<Contact>() );
 
         List<Contact> objectPassed = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
         Test.startTest();
-            classToDouble.methodWithListObject( objectPassed );
+            classToDouble.methodWithListOfObjects( objectPassed );
         Test.stopTest();
 
         classToDoubleController.verify();
@@ -3027,14 +3027,14 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .expects()
-                .method( 'methodWithListObject' )
+                .method( 'methodWithListOfObjects' )
                 .withParameter().setToTheSameValueAs( objectExpected )
                 .returning( new List<Contact>() );
 
         List<Object> objectPassed = new List<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
         Test.startTest();
-            classToDouble.methodWithListObject( objectPassed );
+            classToDouble.methodWithListOfObjects( objectPassed );
         Test.stopTest();
 
         classToDoubleController.verify();
@@ -4278,8 +4278,8 @@ public with sharing class AmossTest_InstanceTest {
         Test.startTest();
             List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
 
-            classToDouble.methodWithListObject( parameterPassed );
-            List<Object> parameterReturned = (List<Object>)classToDoubleController.call( 0 ).of( 'methodWithListObject' ).parameter( 0 );
+            classToDouble.methodWithListOfObjects( parameterPassed );
+            List<Object> parameterReturned = (List<Object>)classToDoubleController.call( 0 ).of( 'methodWithListOfObjects' ).parameter( 0 );
         Test.stopTest();
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a list of objects, will return the parameter' );
@@ -4299,8 +4299,8 @@ public with sharing class AmossTest_InstanceTest {
         Test.startTest();
             List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
 
-            classToDouble.methodWithListObject( parameterPassed );
-            List<Object> parameterReturned = (List<Object>)classToDoubleController.call( 0 ).of( 'methodWithListObject' ).parameter( 'parameter1' );
+            classToDouble.methodWithListOfObjects( parameterPassed );
+            List<Object> parameterReturned = (List<Object>)classToDoubleController.call( 0 ).of( 'methodWithListOfObjects' ).parameter( 'parameter1' );
         Test.stopTest();
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a list of objects, will return the parameter' );
@@ -4320,8 +4320,8 @@ public with sharing class AmossTest_InstanceTest {
         Test.startTest();
             Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
 
-            classToDouble.methodWithSetObject( parameterPassed );
-            Set<Object> parameterReturned = (Set<Object>)classToDoubleController.call( 0 ).of( 'methodWithSetObject' ).parameter( 0 );
+            classToDouble.methodWithSetOfObjects( parameterPassed );
+            Set<Object> parameterReturned = (Set<Object>)classToDoubleController.call( 0 ).of( 'methodWithSetOfObjects' ).parameter( 0 );
         Test.stopTest();
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a set of objects, will return the parameter' );
@@ -4341,8 +4341,8 @@ public with sharing class AmossTest_InstanceTest {
         Test.startTest();
             Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
 
-            classToDouble.methodWithSetObject( parameterPassed );
-            Set<Object> parameterReturned = (Set<Object>)classToDoubleController.call( 0 ).of( 'methodWithSetObject' ).parameter( 'parameter1' );
+            classToDouble.methodWithSetOfObjects( parameterPassed );
+            Set<Object> parameterReturned = (Set<Object>)classToDoubleController.call( 0 ).of( 'methodWithSetOfObjects' ).parameter( 'parameter1' );
         Test.stopTest();
         
         System.assertEquals( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a set of objects, will return the parameter' );

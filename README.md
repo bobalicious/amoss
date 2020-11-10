@@ -303,11 +303,11 @@ In general, will check that the expected and passed values are the same instance
 It is probably the most common method of checking values, particularly when you care that the Sobjects or Objects are the same instance and therefore may be mutated by the methods correctly - for example, when you are testing trigger handlers that aim to mutate the trigger context variables.
 
 In detail, it checks that the passed parameter:
-* If not an Sobject, equals the expected, as per the behaviour of '==', being:
+* If not an Sobject, or a List / Set / Map, equals the expected, as per the behaviour of '==', being:
   * If the parameter is a primitive -  that the value is the same.
   * If the parameter is an Object that does not implement `equals` - that the expected and passed objects are the same instance.
   * If the parameter is an Object that does implement `equals` - that the return of `equals` is true.
-* If an Sobject, quals the expected, as per the behaviour of '===', being:
+* If an Sobject,  or a List / Set / Map, equals the expected, as per the behaviour of '===', being:
   * That the expected and passed objects are the same instance.
 
 Note: the specification of `withParmeter( value )` is shorthand for `withParameter().setTo( value )`.
@@ -336,8 +336,34 @@ classToDoubleController
         .withParameterNamed( 'parameterName' ).setToTheSameValueAs( anObject )
         .willReturn( 'theReturn' );
 ```
+### Collection Specific Comparisons
 
-### `withFieldsSetLike` / `withFieldsSetTo`
+#### `withElementsSetTo`
+
+Checks that the elements within the collection are the same instances (with the same keys, if appopriate) as the one configured.
+
+Allows you to check that, for example, a Map is generated that contains the same instances as a List that was passed in, meaning that mutations to the elements of the resulting Map will effect the original List.
+
+You can think of this as a half-way house between `setTo` (which checks the collection is the same instance), and `setToTheSameValueAs` (which will match even if the neither the collection nor its elements are the same instances).
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'methodWithListOfObjects' )
+        .withParameter().withElementsSetTo( expectedList )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'methodWithSetOfObjects' )
+        .withParameterNamed( 'parameterName' ).withElementsSetTo( expectedMap )
+        .willReturn( 'theReturn' );
+```
+
+### sObject Specific Comparisons
+
+#### `withFieldsSetLike` / `withFieldsSetTo`
 
 Used to check the field values of sObjects when only some of the fields are important.  For example, you may check that certain fields are populated by the method under test before passing them into the method being doubled.  This allows you to specify the fields that will be set without concerning your test with the other values, which will be incidental.
 

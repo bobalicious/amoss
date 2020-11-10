@@ -72,10 +72,10 @@ public with sharing class AmossTest_ClassToDouble {
     public String objectMethodUnderDouble( String notAnObject ) {
         return 'TheReturn';
     }
-    public List<Object> methodWithListObject( List<Object> parameter1 ) {
+    public List<Object> methodWithListOfObjects( List<Object> parameter1 ) {
         return new List<Object>();
     }
-    public Set<Object> methodWithSetObject( Set<Object> parameter1 ) {
+    public Set<Object> methodWithSetOfObjects( Set<Object> parameter1 ) {
         return new Set<Object>();
     }
     public Map<String,Object> methodWithMapStringObject( Map<String,Object> parameter1 ) {

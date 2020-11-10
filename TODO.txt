@@ -8,18 +8,19 @@ Documentation:
 
 Implement
 
+    withElementsSetTo( List<Object> )
+    - Does not have to be the same instance (but will pass if it is)
+    - Evey element in the list should '===' the expected
+
+    Implement tests and behaviour for:
+        setTo( Map<Id,Object> )
+        setTo( Map<String,Object> )
+        setTo( Map<Date,Object> )
+        withElementsSetTo( Map<Id,Object> )
+        withElementsSetTo( Map<String,Object> )
+        withElementsSetTo( Map<Date,Object> )
+
     Documentation for 'setTo'
-
-        Current behaviour - Lists:
-
-                List<Contact> expectedContacts = new List<Contact>{ new Contact(), ... }
-            will match:
-                List<Contact> passedContacts = new List<Contact>{ new Contact(), ... }
-            or
-                List<Object> passedContacts = new List<Contact>{ new Contact(), ... }
-            but not
-                List<Object> passedContacts = new List<Object>{ new Contact(), ... }
-                    (will say the types do not match)
 
         Current behaviour - Maps:
 
@@ -52,8 +53,13 @@ Implement
         Add a simple test for named syntax for
             * withFieldsSetLike( Sobject )
             * withFieldsSetTo( Map<String,Object> )
+            * setTo( List<Object> )
 
-        What happens with List / Map / Set?
+        Positional syntax List:
+
+
+        Expects Map
+        Expects Set
 
     Look at removing duplication between:
         * Amoss_PositionalParameterValueDefiner
@@ -63,7 +69,9 @@ Implement
         * Amoss_ExpectationFieldsSetToParameter
         * Amoss_ExpectationFieldsSetLikeParameter
 
-    Test overloaded behaviour that results in: "was called with an unexpected number of parameters"
+    Test overloaded behaviour that results in:
+        "was called with an unexpected number of parameters"
+        Expecting a List and get something else
 
     Consider
         Just have a look - how would the new syntax drop into this?
