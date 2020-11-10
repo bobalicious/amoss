@@ -2733,10 +2733,10 @@ public with sharing class AmossTest_InstanceTest {
     /**
     * @method expects.method.returning
     * @case   when the expectation is set with a list, and a different instance is passed, containing the same objects
-    * @result will pass
+    * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAList_andADifferentInstanceContainingSameObjects() {
+    private static void expectsMethodReturning_whenExpectationSetWithAList_andADifferentInstanceContainingSameObjects_willFail() {
         
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -2753,13 +2753,18 @@ public with sharing class AmossTest_InstanceTest {
                 .withParameter( objectExpected )
                 .returning( new List<Contact>() );
 
+        Boolean testFailed = false;
         List<Contact> objectPassed = new List<Contact>{ objectExpected[0], objectExpected[1] };
 
         Test.startTest();
-            classToDouble.methodWithListObject( objectPassed );
+            try {
+                classToDouble.methodWithListObject( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
         Test.stopTest();
 
-        classToDoubleController.verify();
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'The value is the same, but not the same instance as was expected', 'AmossTest_ClassToDouble.methodWithListObject', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values' );
     }
 
     /**
@@ -2796,7 +2801,11 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        checkForWrongParameterInPositionAssertion( 'The elements are the same, but not the same instances as was expected', assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListObject', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values, will fail' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'The value is the same, but the list and some of its elements are not the same instances as was expected',
+                                                    'AmossTest_ClassToDouble.methodWithListObject', 0,
+                                                    objectExpected, objectPassed,
+                                                    'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values' );
     }
 
     /**
