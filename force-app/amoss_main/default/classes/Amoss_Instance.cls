@@ -2210,7 +2210,7 @@ public without sharing class Amoss_Instance implements StubProvider {
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( Amoss_Asserts.getType( this.value ) )
                             .setActual( Amoss_Asserts.getType( actualValue ) )
-                            .setAssertionMessage( 'The value is not the type that was expected' );
+                            .setAssertionMessage( 'The value is not what was expected - The types do not match' );
             }
 
             if ( actualValue !== this.value ) {
@@ -2486,13 +2486,29 @@ public without sharing class Amoss_Instance implements StubProvider {
             if ( parameter instanceOf List<Object> ) {
                 return buildSameInstanceParameter( (List<Object>)parameter );
             }
+            if ( Amoss_Asserts.getType( parameter ).startsWith( 'Map<' ) ) { // because of the way we can't cast Maps with different types of keys, and to avoid loads of instance of checks
+                return buildSameInstanceParameter( parameter );
+            }
+            if ( Amoss_Asserts.getType( parameter ).startsWith( 'Set<' ) ) { // because of the way we can't cast Set, and to avoid loads of instance of checks
+                return buildSameInstanceParameter( parameter );
+            }
             if ( parameter instanceOf Sobject ) {
-                try {
-                    return buildSameInstanceParameter( (Sobject)parameter );
-                } catch ( Exception e ) {} // we need to do this since 'instanceOf Sobject' will return true for lists of Sobject
+                return buildSameInstanceParameter( (Sobject)parameter );
             }
 
             return new Amoss_ExpectationEqualsParameter().setValue( parameter );
+        }
+
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ExpectationSameInstanceParameter
+        *
+        * @param  Object - The Object parameter value that is expected for the Amoss_ExpectationParameter
+        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationSameInstanceParameter)
+        */
+        public Amoss_ExpectationParameter buildSameInstanceParameter( Object parameter ) {
+            return new Amoss_ExpectationSameInstanceParameter().setValue( parameter );
         }
 
         /**

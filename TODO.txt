@@ -6,6 +6,9 @@ Documentation:
     Consider a class diagram for developers?
     Language syntax diagram?
 
+Question:
+    Is there anything we can do about the error we get when we mismatch the types on return?  Doubt it.  Maybe just add a FAQ?
+
 Implement
 
     withElementsSetTo( List<Object> )
