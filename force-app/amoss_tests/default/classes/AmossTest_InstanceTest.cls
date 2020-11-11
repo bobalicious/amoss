@@ -3286,7 +3286,6 @@ public with sharing class AmossTest_InstanceTest {
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithMapStringToObject', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when the expectation is set with a map, and a different instance is passed, containing different instances with the different values' );
     }
 
-
     /**
     * @method expects.method.setToTheSameValueAs.returning
     * @case   when the expectation is set with a map, and a different instance is passed, containing different instances with different keys
@@ -3388,7 +3387,66 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController.verify();
     }
 
-    // TODO: simple tests with other maps will go here
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with a Map (indexed by Id), and the same instance is passed
+    * @result will pass
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectationSetWithAMapById_andSameInstanceIsPassed_willPass() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<Id,Sobject> objectExpected = new Map<Id,Sobject>{ '003000000000001' => new Contact( LastName = 'Contact1' ), '003000000000002' => new Contact( LastName = 'Contact2' ) };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithMapIdToObject' )
+                .withParameter( objectExpected )
+                .returning( new Map<Id,Sobject>() );
+
+        Test.startTest();
+            classToDouble.methodWithMapIdToObject( objectExpected );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with a Map (indexed by Date), and the same instance is passed
+    * @result will pass
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectationSetWithAMapByDate_andSameInstanceIsPassed_willPass() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Map<Date,Sobject> objectExpected = new Map<Date,Sobject>{ Date.newInstance( 2019, 01, 05 ) => new Contact( LastName = 'Contact1' ), Date.newInstance( 2019, 01, 06 ) => new Contact( LastName = 'Contact2' ) };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithMapDateToObject' )
+                .withParameter( objectExpected )
+                .returning( new Map<Date,Sobject>() );
+
+        Test.startTest();
+            classToDouble.methodWithMapDateToObject( objectExpected );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
 
     /**
     * @method expects.method.setToTheSameValueAs.returning
