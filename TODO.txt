@@ -22,14 +22,6 @@ Implement
 
     Documentation is below...
 
-    Test:
-        Add a simple test for named syntax for
-            * withFieldsSetLike( Sobject )
-            * withFieldsSetTo( Map<String,Object> )
-            * setTo( List<Object> )
-            * setTo( Map<String,Object> )
-            * setTo( Set<Object> )
-
     Look at removing duplication between:
         * Amoss_PositionalParameterValueDefiner
         * Amoss_NamedParameterValueDefiner
