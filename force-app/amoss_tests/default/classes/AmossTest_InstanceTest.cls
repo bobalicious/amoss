@@ -3417,7 +3417,6 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController.verify();
     }
 
-
     /**
     * @method expects.method.returning
     * @case   when the expectation is set with a Map (indexed by Date), and the same instance is passed
@@ -3446,6 +3445,143 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with a Set, and the same instance is passed
+    * @result will pass
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectationSetWithASet_andSameInstanceIsPassed_willPass() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Set<Object> objectExpected = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithSetOfObjects' )
+                .withParameter( objectExpected )
+                .returning( new Set<Object>() );
+
+        Test.startTest();
+            classToDouble.methodWithSetOfObjects( objectExpected );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.returning
+    * @case   when the expectation is set with a Set, and the a different instance with the same values
+    * @result will fail
+    */
+    @isTest
+    private static void expectsMethodReturning_whenExpectationSetWithASet_andDifferentInstanceWithSameValuesIsPassed_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Set<Object> objectExpected = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithSetOfObjects' )
+                .withParameter( objectExpected )
+                .returning( new Set<Object>() );
+
+        Set<Object> objectPassed = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
+
+        Boolean testFailed = false;
+        Test.startTest();
+            try {
+                classToDouble.methodWithSetOfObjects( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithSetOfObjects', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a Set, and a different instance is passed, containing same values' );
+    }
+
+    /**
+    * @method expects.method.setToSameValueAs.returning
+    * @case   when the expectation is set with a Set, and the a different instance with the same values
+    * @result will pass
+    */
+    @isTest
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithASet_andDifferentInstanceWithSameValuesIsPassed_willPass() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Set<Object> objectExpected = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithSetOfObjects' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .returning( new Set<Object>() );
+
+        Set<Object> objectPassed = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
+
+        Test.startTest();
+            classToDouble.methodWithSetOfObjects( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+
+    /**
+    * @method expects.method.setToTheSameValueAsreturning
+    * @case   when the expectation is set with a Set, and the a different instance with different values
+    * @result will fail
+    */
+    @isTest
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithASet_andDifferentInstanceWithSameValuesIsPassed_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Set<Object> objectExpected = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithSetOfObjects' )
+                .withParameter().setToTheSameValueAs( objectExpected )
+                .returning( new Set<Object>() );
+
+        Set<Object> objectPassed = new Set<Object>{ new Contact( LastName = 'Diff-Contact1' ), new Contact( LastName = 'Diff-Contact2' ) };
+
+        Boolean testFailed = false;
+        Test.startTest();
+            try {
+                classToDouble.methodWithSetOfObjects( objectPassed );
+            } catch( TestException e ) {
+                testFailed = true;
+            }
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithSetOfObjects', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when the expectation is set with a Set, and a different instance is passed, containing different values' );
     }
 
     /**
