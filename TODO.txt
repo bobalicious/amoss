@@ -6,54 +6,21 @@ Documentation:
     Consider a class diagram for developers?
     Language syntax diagram?
 
+Question:
+    Is there anything we can do about the error we get when we mismatch the types on return?  Doubt it.  Maybe just add a FAQ?
+
 Implement
 
-    Documentation for 'setTo'
+    withElementsSetTo( List<Object> )
+    - Does not have to be the same instance (but will pass if it is)
+    - Evey element in the list should '===' the expected
 
-        Current behaviour - Lists:
+    Implement tests and behaviour for:
+        withElementsSetTo( Map<Id,Object> )
+        withElementsSetTo( Map<String,Object> )
+        withElementsSetTo( Map<Date,Object> )
 
-                List<Contact> expectedContacts = new List<Contact>{ new Contact(), ... }
-            will match:
-                List<Contact> passedContacts = new List<Contact>{ new Contact(), ... }
-            or
-                List<Object> passedContacts = new List<Contact>{ new Contact(), ... }
-            but not
-                List<Object> passedContacts = new List<Object>{ new Contact(), ... }
-                    (will say the types do not match)
-
-        Current behaviour - Maps:
-
-            Map<String,Contact> expectedContacts = new Map<String,Contact>{
-                'one' => new Contact(), 'two' => new Contact()
-            };
-        will match:
-            Map<String,Contact> passedContacts = new Map<String,Contact>{
-                'one' => new Contact(), 'two' => new Contact()
-            };
-        or
-            Map<String,Object> passedContacts = new Map<String,Contact>{
-                'one' => new Contact(), 'two' => new Contact()
-            };
-        or
-            Map<String,Object> passedContacts = new Map<String,Object>{
-                'one' => new Contact(), 'two' => new Contact()
-            };
-
-        but not (will say types don't match, even though it's primarily the values that don't)
-            Map<String,Object> passedContacts = new Map<String,Object>{
-                'one' => new Contact( Id = '003000000000000' ), 'two' => new Contact()
-            };
-        or (will say values are different)
-            Map<String,Contact> passedContacts = new Map<String,Contact>{
-                'one' => new Contact( Id = '003000000000000' ), 'two' => new Contact()
-            };
-
-    Test:
-        Add a simple test for named syntax for
-            * withFieldsSetLike( Sobject )
-            * withFieldsSetTo( Map<String,Object> )
-
-        What happens with List / Map / Set?
+    Documentation is below...
 
     Look at removing duplication between:
         * Amoss_PositionalParameterValueDefiner
@@ -63,7 +30,9 @@ Implement
         * Amoss_ExpectationFieldsSetToParameter
         * Amoss_ExpectationFieldsSetLikeParameter
 
-    Test overloaded behaviour that results in: "was called with an unexpected number of parameters"
+    Test overloaded behaviour that results in:
+        "was called with an unexpected number of parameters"
+        Expecting a List and get something else
 
     Consider
         Just have a look - how would the new syntax drop into this?
@@ -112,3 +81,30 @@ Implement
         why not 
             mockThing.get().countOf( 'method' )
             this would be in line with the parameter getters
+
+
+
+### Collection Specific Comparisons
+
+#### `withElementsSetTo`
+
+Checks that the elements within the collection are the same instances (with the same keys, if appopriate) as the one configured.
+
+Allows you to check that, for example, a Map is generated that contains the same instances as a List that was passed in, meaning that mutations to the elements of the resulting Map will effect the original List.
+
+You can think of this as a half-way house between `setTo` (which checks the collection is the same instance), and `setToTheSameValueAs` (which will match even if the neither the collection nor its elements are the same instances).
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'methodWithListOfObjects' )
+        .withParameter().withElementsSetTo( expectedList )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'methodWithSetOfObjects' )
+        .withParameterNamed( 'parameterName' ).withElementsSetTo( expectedMap )
+        .willReturn( 'theReturn' );
+```

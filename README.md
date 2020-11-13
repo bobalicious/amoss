@@ -296,21 +296,23 @@ This means that `canDeliver` and `scheduleDelivery` can be called in any order, 
 
 All of the below can be used with either `withParameter` or `withParameterNamed`.
 
-# NOTE - The behaviour described here is not complete - clarification of the behaviour for `List`, `Set` and `Map` has yet to be implemented and documented.
-
 ### `setTo`
 
 In general, will check that the expected and passed values are the same instance, unless object specific behaviour has been defined.
 
-It is probably the most common method of checking values, particularly when you care that the Sobjects or Objects are the same instance and therefore may be mutated by the methods correctly - for example, when you are testing trigger handlers that aim to mutate the trigger context variables.
+It is probably the most common method of checking values, particularly when you care that the Sobjects / Objects / collections are the same instance and therefore may be mutated by the methods correctly - for example, when you are testing trigger handlers that aim to mutate the trigger context variables.
 
 In detail, it checks that the passed parameter:
-* If not an Sobject, equals the expected, as per the behaviour of '==', being:
-  * If the parameter is a primitive -  that the value is the same.
-  * If the parameter is an Object that does not implement `equals` - that the expected and passed objects are the same instance.
-  * If the parameter is an Object that does implement `equals` - that the return of `equals` is true.
-* If an Sobject, equals the expected, as per the behaviour of '===', being:
+
+* If an Sobject / List / Set / Map, equals the expected, as per the behaviour of '===', being:
   * That the expected and passed objects are the same instance.
+
+* Otherwise, as per the behaviour of '==', being:
+  * If the parameter is a primitive -  that the value is the same.
+  * If the parameter is an Object that does not implement `equals`:
+    * That the expected and passed objects are the same instance.
+  * If the parameter is an Object that does implement `equals`:
+    * That the return of `equals` is true.
 
 Note: the specification of `withParmeter( value )` is shorthand for `withParameter().setTo( value )`.
 
@@ -339,7 +341,9 @@ classToDoubleController
         .willReturn( 'theReturn' );
 ```
 
-### `withFieldsSetLike` / `withFieldsSetTo`
+### sObject Specific Comparisons
+
+#### `withFieldsSetLike` / `withFieldsSetTo`
 
 Used to check the field values of sObjects when only some of the fields are important.  For example, you may check that certain fields are populated by the method under test before passing them into the method being doubled.  This allows you to specify the fields that will be set without concerning your test with the other values, which will be incidental.
 
