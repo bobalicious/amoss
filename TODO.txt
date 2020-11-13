@@ -20,15 +20,15 @@ Implement
         withElementsSetTo( Map<String,Object> )
         withElementsSetTo( Map<Date,Object> )
 
+    Documentation is below...
+
     Test:
         Add a simple test for named syntax for
             * withFieldsSetLike( Sobject )
             * withFieldsSetTo( Map<String,Object> )
             * setTo( List<Object> )
             * setTo( Map<String,Object> )
-
-        Positional syntax List:
-            Expects Set
+            * setTo( Set<Object> )
 
     Look at removing duplication between:
         * Amoss_PositionalParameterValueDefiner
@@ -89,3 +89,30 @@ Implement
         why not 
             mockThing.get().countOf( 'method' )
             this would be in line with the parameter getters
+
+
+
+### Collection Specific Comparisons
+
+#### `withElementsSetTo`
+
+Checks that the elements within the collection are the same instances (with the same keys, if appopriate) as the one configured.
+
+Allows you to check that, for example, a Map is generated that contains the same instances as a List that was passed in, meaning that mutations to the elements of the resulting Map will effect the original List.
+
+You can think of this as a half-way house between `setTo` (which checks the collection is the same instance), and `setToTheSameValueAs` (which will match even if the neither the collection nor its elements are the same instances).
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'methodWithListOfObjects' )
+        .withParameter().withElementsSetTo( expectedList )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'methodWithSetOfObjects' )
+        .withParameterNamed( 'parameterName' ).withElementsSetTo( expectedMap )
+        .willReturn( 'theReturn' );
+```
