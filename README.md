@@ -6,6 +6,8 @@ Apex Mock Objects, Spies and Stubs - A Simple Mocking framework for Apex (Salesf
 
 This is a BETA state project and should be used with caution.  Whilst the intention is that this code is stable and bug free, this may not be the case.  There is no intention to change the existing interface of this framework, although that cannot be guaranteed.
 
+Note: There are currently some minor issues with the behaviour of Named Parameter specification when used with overloaded methods.  Particularly, it will not check that all specified parameters are passed.  This is currently being fixed on an active branch.
+
 ## Why use Amoss?
 
 Amoss provides a simple interface for implementing Mock, Test Spy and Stub objects (Test Doubles) for use in Unit Testing.
