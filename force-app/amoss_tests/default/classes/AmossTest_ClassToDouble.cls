@@ -50,6 +50,9 @@ public with sharing class AmossTest_ClassToDouble {
     public String overloadedMethodUnderDouble( String parameter1, Integer parameter2 ) {
         return 'TheReturn';
     }
+    public String overloadedMethodUnderDouble( String parameter1, String parameter2, String parameter3 ) {
+        return 'TheReturn';
+    }
     public void methodUnderDoubleWithNoReturn( String parameter1, Integer parameter2 ) {
     }
     public String methodWithNoParametersUnderDouble() {
@@ -61,14 +64,12 @@ public with sharing class AmossTest_ClassToDouble {
     public String sobjectMethodUnderDouble( Contact contactParam ) {
         return 'TheReturn';
     }
-    // Allows us to test overloading behaviours when expecting an Sobject
     public String sobjectMethodUnderDouble( String notAnSobject ) {
         return 'TheReturn';
     }
     public String objectMethodUnderDouble( Object objectParam ) {
         return 'TheReturn';
     }
-    // Allows us to test overloading behaviours when expecting an Sobject
     public String objectMethodUnderDouble( String notAnObject ) {
         return 'TheReturn';
     }

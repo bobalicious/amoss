@@ -1983,6 +1983,16 @@ public without sharing class Amoss_Instance implements StubProvider {
         */
         public void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
 
+            Integer numberOfDefinedParameters = expectedParameters.size();
+            Integer numberOfPassedParameters  = parameterNames.size();
+
+            if ( numberOfDefinedParameters > numberOfPassedParameters ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( new List<String>( expectedParameters.keySet() ) )
+                            .setActual( parameterNames )
+                            .setAssertionMessage( String.format( '{0}.{1} was called with fewer parameters than were specified', new List<String>{ className, method } ) );
+            }
+
             for ( Integer parameterNumber = 0; parameterNumber < parameterValues.size(); parameterNumber++ ) {
 
                 String actualParameterName  = parameterNames[ parameterNumber ];
