@@ -189,7 +189,7 @@ public with sharing class AmossTest_InstanceTest {
         methodHandlerController
             .expects()
                 .method( 'handleMethodCall' )
-                .withParameterNamed( 'parameters' ).setTo( new List<Object>{ 'OtherActualParam1', 1 } )
+                .withParameter().setToTheSameValueAs( new List<Object>{ 'OtherActualParam1', 1 } )
                 .returns( 'expectedReturn' );
             
         Amoss_MethodHandler methodHandler = (Amoss_MethodHandler)methodHandlerController.generateDouble();
@@ -3895,7 +3895,38 @@ public with sharing class AmossTest_InstanceTest {
             } catch( TestException e ) {}
         Test.stopTest();
 
-        checkForEqualsAssertionFailure( assertsDoubleController, 'was called with fewer parameters than were specified', 'AmossTest_ClassToDouble.overloadedMethodUnderDouble', new List<String>{ 'parameter1', 'parameter2', 'parameter3' }, new List<String>{ 'parameter1', 'parameter2' }, 'expects.method.returning, when the method defined using named parameters and is called with fewer parameters than were defined' );
+        checkForEqualsAssertionFailure( assertsDoubleController, 'was called with different parameters to those specified', 'AmossTest_ClassToDouble.overloadedMethodUnderDouble', new List<String>{ 'parameter1', 'parameter2', 'parameter3' }, new List<String>{ 'parameter1', 'parameter2' }, 'expects.method.returning, when the method defined using named parameters and is called with fewer parameters than were defined' );
+    }
+
+    /**
+    * @method expects.method.returning, named parameters
+    * @case   when the method is called fewer parameters than those specified
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodReturning_whenUsingNamedParametersAndTheMethodIsCalledWithDifferentlyNamedParameters_willFailTheTest() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'overloadedMethodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).setTo( 'ActualParam1' )
+                .andParameterNamed( 'parameter3' ).setTo( 'ActualParam3' )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            try {
+                String returnFromDouble = classToDouble.overloadedMethodUnderDouble( 'ActualParam1', 'ActualParam2' );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForEqualsAssertionFailure( assertsDoubleController, 'was called with different parameters to those specified', 'AmossTest_ClassToDouble.overloadedMethodUnderDouble', new List<String>{ 'parameter1', 'parameter3' }, new List<String>{ 'parameter1', 'parameter2' }, 'expects.method.returning, when the method defined using named parameters and is called with fewer parameters than were defined' );
     }
 
     /**
