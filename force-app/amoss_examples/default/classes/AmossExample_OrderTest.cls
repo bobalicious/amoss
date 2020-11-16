@@ -138,12 +138,12 @@ public with sharing class AmossExample_OrderTest {
             .expects()
                 .method( 'canDeliver' )
                 .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
-                .andParameterNamed( 'deliverDate' ).setTo( deliveryDate )
+                .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
                 .returning( true )
             .then().expects()
                 .method( 'scheduleDelivery' )
                 .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
-                .andParameterNamed( 'deliverDate' ).setTo( deliveryDate )
+                .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
                 .returning( true );
 
         AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
