@@ -11,21 +11,6 @@ Question:
 
 Implement
 
-    Test overloaded behaviour that results in:
-        "was called with an unexpected number of parameters"
-        Expecting a List and get something else
-
-    withElementsSetTo( List<Object> )
-    - Does not have to be the same instance (but will pass if it is)
-    - Evey element in the list should '===' the expected
-
-    Implement tests and behaviour for:
-        withElementsSetTo( Map<Id,Object> )
-        withElementsSetTo( Map<String,Object> )
-        withElementsSetTo( Map<Date,Object> )
-
-    Documentation is below...
-
     Look at removing duplication between:
         * Amoss_PositionalParameterValueDefiner
         * Amoss_NamedParameterValueDefiner
@@ -64,23 +49,12 @@ Implement
         Setting 'returning' when the method has a void return
             methodUnderDoubleWithNoReturn - when setup to return something
 
-        Not setting 'returning' when the method has a non void return
-            methodUnderDouble - when setup not to return anything
- 
-        Test expects with List, Set, Map - test assertions with the same - is List<Object> an Object?
-        Test returns List, Set, Map
-
-    General:
-        What happens with methods that are not supposed to return something?
-            Looks like it works, just need to write tests to prove it
-
     Spy:
         Currently supports
             mockThing.countOf( 'method' )
         why not 
             mockThing.get().countOf( 'method' )
             this would be in line with the parameter getters
-
 
 
 ### Collection Specific Comparisons
