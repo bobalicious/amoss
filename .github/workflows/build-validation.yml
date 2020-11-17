@@ -1,0 +1,12 @@
+name: Test Build on Push
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: sfdx-actions/setup-sfdx@v1
+        with:
+          sfdx-auth-url: ${{ secrets.SF_AUTH_SECRET }}
+      - name: deploy-and-test
+        run: sfdx force:source:deploy -l RunLocalTests --checkonly --wait 30 -p force-app
