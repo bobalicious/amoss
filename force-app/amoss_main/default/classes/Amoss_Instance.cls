@@ -39,7 +39,7 @@ SOFTWARE.
 *
 */
 @isTest
-public without sharing class Amoss_Instance implements StubProvider {
+public without sharing class Amoss_Instance implements StubProvider { //NOPMD - Is a single class library, hence the requirement for a significant number of public methods
 
     public class Amoss_CallLogException extends Exception {}
     public class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
@@ -266,7 +266,7 @@ public without sharing class Amoss_Instance implements StubProvider {
     *
     * Is the StubProvider.handleMethodCall method that handles the resulting method calls to the mock object.
     */
-    public Object handleMethodCall( Object       mockedObject,
+    public Object handleMethodCall( Object       mockedObject,              //NOPMD - matches spec of StubProvider.handleMethodCall
                                     String       mockedMethod,
                                     Type         returnType,
                                     List<Type>   parameterTypes,
@@ -773,7 +773,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         * @param  List<Object> - The parameter values to match against
         * @return Boolean - States if the given method and parameterValues match the next expectation.
         */
-        public Boolean matchesNext(  String method, List<String> parameterNames, List<Object> parameterValues ) {
+        public Boolean matchesNext( String method, List<String> parameterNames, List<Object> parameterValues ) {
             return expectations.size() > 0 && expectations[0].matches( method, parameterNames, parameterValues );
         }
 
@@ -1632,7 +1632,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * @return Object - The value that this expectation is configured to return
         */
-        public Object getReturnValue( Object       mockedObject  , String       mockedMethod  , Type         returnType,
+        public Object getReturnValue( Object       mockedObject  , String       mockedMethod  , Type         returnType,         //NOPMD - matches spec of StubProvider.handleMethodCall
                                       List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
 
             return returnMechanism.getReturn( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
@@ -1691,7 +1691,7 @@ public without sharing class Amoss_Instance implements StubProvider {
     * when a return should have been made
     */
     private interface Amoss_ExpectationReturnMechanism {
-        Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,
+        Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,        //NOPMD - matches spec of StubProvider.handleMethodCall
                           List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  );
     }
 
@@ -1718,7 +1718,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * @return Object - The return value that was specified
         */
-        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,
+        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,     //NOPMD - matches spec of StubProvider.handleMethodCall
                                  List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
             return returnValue;
         }
@@ -1745,7 +1745,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that throws the configured exception
         */
-        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,
+        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,     //NOPMD - matches spec of StubProvider.handleMethodCall
                                  List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
             throw exceptionToThrow;
         }
@@ -1772,7 +1772,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that calls the exception handler
         */
-        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,
+        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,     //NOPMD - matches spec of StubProvider.handleMethodCall
                                  List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
             return returnHandler.handleMethodCall( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
         }
@@ -1799,7 +1799,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         /**
         * Internal method that calls the exception handler
         */
-        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,
+        public Object getReturn( Object       mockedObject  , String       mockedMethod  , Type         returnType,         //NOPMD - matches spec of StubProvider.handleMethodCall
                                  List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
             return returnHandler.handleMethodCall( parameters );
         }
@@ -2058,7 +2058,7 @@ public without sharing class Amoss_Instance implements StubProvider {
         *
         * @param Object - The value to check
         */
-        public void verify( Object actualValue ) {
+        public void verify( Object actualValue ) {          //NOPMD - Amoss_ExpectationAnyParameter is a special case that behaves predominantly like a 'Null Object'
         }
     }
 
