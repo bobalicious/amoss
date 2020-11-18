@@ -1,3 +1,5 @@
 .sfdx
 .vscode
 secrets.txt
+articles
+force-app/main/
