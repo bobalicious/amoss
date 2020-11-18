@@ -18,6 +18,9 @@ If you are familar with using SFDX, the ant migration tool or using a local IDE,
 
 However, if you are not confident, you *can* use the following button.
 
+> NOTE: if running from the branch 'main', you should enter 'main' into the 'Branch/Tag/Commit:' field of 'Salesforce Deploy'.
+> This is because of a bug in that application that incorrectly selects the default branch as 'master' (https://github.com/afawcett/githubsfdeploy/issues/43)
+
 <a href="https://githubsfdeploy.herokuapp.com">
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">
