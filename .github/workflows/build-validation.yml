@@ -2,15 +2,19 @@ name: Test Build on Push
 on: [push]
 jobs:
   test:
+    name: Checkout and validate build configurations
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - uses: sfdx-actions/setup-sfdx@v1
         with:
           sfdx-auth-url: ${{ secrets.SF_AUTH_SECRET }}
+      # Execute a build of the full installation of the Amoss base classes, tests and example code.
       - name: deploy-and-test-full-build
         run: sfdx force:source:deploy -l RunLocalTests --checkonly --wait 30 -p force-app
+      # Execute a build of the proper installation of the Amoss base classes and tests.  Do not install the example code.
       - name: deploy-and-test-no-examples
         run: sfdx force:source:deploy -l RunLocalTests --checkonly --wait 30 -p "force-app/amoss_main,force-app/amoss_tests"
+      # Execute a build of the smallest possible installation of Amoss.  Only the base classes.  No tests or example code.
       - name: deploy-and-test-minimal-build
         run: sfdx force:source:deploy -l RunLocalTests --checkonly --wait 30 -p force-app/amoss_main
