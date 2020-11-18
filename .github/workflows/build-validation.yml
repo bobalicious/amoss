@@ -8,5 +8,9 @@ jobs:
       - uses: sfdx-actions/setup-sfdx@v1
         with:
           sfdx-auth-url: ${{ secrets.SF_AUTH_SECRET }}
-      - name: deploy-and-test
+      - name: deploy-and-test-full-build
         run: sfdx force:source:deploy -l RunLocalTests --checkonly --wait 30 -p force-app
+      - name: deploy-and-test-no-examples
+        run: sfdx force:source:deploy -l RunLocalTests --checkonly --wait 30 -p "force-app/amoss_main,force-app/amoss_tests"
+      - name: deploy-and-test-minimal-build
+        run: sfdx force:source:deploy -l RunLocalTests --checkonly --wait 30 -p force-app/amoss_main
