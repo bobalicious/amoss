@@ -48,7 +48,7 @@ Amoss can be used to build simple stub objects - AKA Configurable Test Doubles, 
 
 ```java
     Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
-    DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+    DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 ```
 
 The result is an object that can be used in place of the object being stubbed.
@@ -91,7 +91,7 @@ deliveryProviderController
         .method( 'scheduleDelivery' )
         .willReturn( true );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -115,7 +115,7 @@ deliveryProviderController
         .method( 'canDeliver' )
         .willReturn( false );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -135,7 +135,7 @@ deliveryProviderController
         .method( 'canDeliver' )
         .willReturn( false );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -152,7 +152,7 @@ deliveryProviderController
         .thenAnyParameter()
         .willReturn( true );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -171,7 +171,7 @@ deliveryProviderController
         .method( 'canDeliver' )
         .willReturn( false );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -227,7 +227,7 @@ deliveryProviderController
         .thenParameter( deliveryDate )
         .returning( true );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 
@@ -255,7 +255,7 @@ deliveryProviderController
         .method( 'scheduleDelivery' )
         .willReturn( true );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 
@@ -286,7 +286,7 @@ deliveryProviderController
         .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -471,7 +471,7 @@ deliveryProviderController
         .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .throws( new DeliveryProvider.DeliveryProviderUnableToDeliverException( 'DeliveryProvider does not have a delivery slot' ) );
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -490,7 +490,7 @@ Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider
 deliveryProviderController
     .expectsNoCalls();
 
-DeliveryProvider deliveryProviderDouble = deliveryProviderController.generateDouble();
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
 
 ...
 ```
@@ -537,7 +537,7 @@ testDoubleController
 If return values do not need to be specified, may be as simple as:
 
 ```java
-    ObjectUnderTestDouble testDouble = new Amoss_Instance( ObjectUnderTestDouble.class ).generateDouble();
+    ObjectUnderTestDouble testDouble = (ObjectUnderTestDouble)( new Amoss_Instance( ObjectUnderTestDouble.class ).generateDouble() );
 ```
 
 #### Brittle?
