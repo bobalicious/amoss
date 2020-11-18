@@ -12,7 +12,8 @@ In order for the project to succeed it must:
 ## Design Principles:
 
 The consumer should not need to reference any class other than the instantiation of the Test Double - `Amoss_Instance` - in the first place.
-    * This limits the amount of noise in the specification of a Test Double.  Class names (espcially namespaced ones) get in the way of the meaning of the code and so they should not be required.
+
+* This limits the amount of noise in the specification of a Test Double.  Class names (espcially namespaced ones) get in the way of the meaning of the code and so they should not be required.
 
 ### Designing Methods:
 
@@ -35,5 +36,4 @@ The consumer should not need to reference any class other than the instantiation
         * The `Amoss_MethodDefiner` defines the initial phrasing (essentially the interface) for method for the expectation, being `method`.
         * It then returns an 'Amoss_ParametersDefiner', which defines the entry point of the parameter phrasing, and so on.
         * The following methods (which are available on most 'Definers' then state the end of that phrasing, and result in an `Amoss_Instance` being returned.  This then re-starts the whole process.
-* However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a `Amoss_Instance`.    
- 
+* However, the consumer should never be concerned with this, and should not need to directly reference any class other than when initially constructing a `Amoss_Instance`.
