@@ -59,7 +59,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     public enum ParameterSpecialType { ANY_VALUE }
 
-    public static Amoss_ExpectationParameterBuilder expectationParameterBuilder = new Amoss_ExpectationParameterBuilder();
+    public static Amoss_ExpectationParameterVerifierBuilder expectationParameterVerifierBuilder = new Amoss_ExpectationParameterVerifierBuilder();
 
     public Amoss_Instance( Type classType ) {
         this.classType = classType;
@@ -1079,7 +1079,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner thenParameter( Object parameterValue ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( Amoss_Instance.expectationParameterBuilder.buildEqualsParameter( parameterValue ) );
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
             return this;
         }        
 
@@ -1113,7 +1113,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         */
         public Amoss_PositionalParametersDefiner thenAnyParameter() {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterBuilder.buildParameter( ParameterSpecialType.ANY_VALUE ) );
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( expectationParameterVerifierBuilder.buildParameterVerifier( ParameterSpecialType.ANY_VALUE ) );
             return this;
         }      
     }
@@ -1154,7 +1154,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
-            return setParameter( expectationParameterBuilder.buildEqualsParameter( parameterValue ) );
+            return setParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
         }
 
         /**
@@ -1174,7 +1174,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
-            return setParameter( expectationParameterBuilder.buildSameValueAsParameter( parameterValue ) );
+            return setParameter( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
         }
 
         /**
@@ -1197,7 +1197,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
-            return setParameter( expectationParameterBuilder.buildFieldsSetLikeParameter( parameterValue ) );
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
         }
 
         /**
@@ -1220,17 +1220,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
-            return setParameter( expectationParameterBuilder.buildFieldsSetToParameter( parameterValue ) );
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
         }
 
         /**
         * Internal method that sets the next parameter on the expectation to that specified
         * and then returns the next definer in the allowed syntax
         *
-        * @param  Amoss_ExpectationParameter - The parameter to set on the expectation
+        * @param  Amoss_ValueVerifier - The parameter to set on the expectation
         * @return Amoss_PositionalParametersDefiner - The next definer
         */
-        private Amoss_NamedParametersDefiner setParameter( Amoss_ExpectationParameter parameter ) {
+        private Amoss_NamedParametersDefiner setParameter( Amoss_ValueVerifier parameter ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter( parameterName, parameter );
             return new Amoss_NamedParametersDefiner( expectation );
         }
@@ -1268,7 +1268,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
-            return setParameter( expectationParameterBuilder.buildEqualsParameter( parameterValue ) );
+            return setParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
         }
 
         /**
@@ -1288,7 +1288,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalParametersDefiner setToTheSameValueAs( Object parameterValue ) {
-            return setParameter( expectationParameterBuilder.buildSameValueAsParameter( parameterValue ) );
+            return setParameter( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
         }
 
         /**
@@ -1311,7 +1311,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
-            return setParameter( expectationParameterBuilder.buildFieldsSetLikeParameter( parameterValue ) );
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
         }
 
         /**
@@ -1334,17 +1334,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
-            return setParameter( expectationParameterBuilder.buildFieldsSetToParameter( parameterValue ) );
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
         }
 
         /**
         * Internal method that sets the next parameter on the expectation to that specified
         * and then returns the next definer in the allowed syntax
         *
-        * @param  Amoss_ExpectationParameter - The parameter to set on the expectation
+        * @param  Amoss_ValueVerifier - The parameter to set on the expectation
         * @return Amoss_PositionalParametersDefiner - The next definer
         */
-        private Amoss_PositionalParametersDefiner setParameter( Amoss_ExpectationParameter parameter ) {
+        private Amoss_PositionalParametersDefiner setParameter( Amoss_ValueVerifier parameter ) {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter( parameter );
             return new Amoss_PositionalParametersDefiner( expectation );
         }        
@@ -1424,7 +1424,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
 
             for ( Object thisParameterValue : parameterValues ) {
-                expectedParameters.addParameter( expectationParameterBuilder.buildEqualsParameter( thisParameterValue ) );
+                expectedParameters.addParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( thisParameterValue ) );
             }
 
             expectation.setExpectationParameters( expectedParameters );
@@ -1451,7 +1451,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             Amoss_ExpectationNamedParameters expectedParameters = new Amoss_ExpectationNamedParameters();
 
             for ( String thisParameterName : parameters.keySet() ) {
-                expectedParameters.setParameter( thisParameterName, expectationParameterBuilder.buildEqualsParameter( parameters.get( thisParameterName ) ) );
+                expectedParameters.setParameter( thisParameterName, expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameters.get( thisParameterName ) ) );
             }
             expectation.setExpectationParameters( expectedParameters );
 
@@ -1476,7 +1476,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
-            expectedParameters.addParameter( expectationParameterBuilder.buildEqualsParameter( parameterValue ) );
+            expectedParameters.addParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
             expectation.setExpectationParameters( expectedParameters );
 
             return new Amoss_PositionalParametersDefiner( expectation );
@@ -1523,7 +1523,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
             expectation.setExpectationParameters( expectedParameters );
 
-            expectedParameters.addParameter( expectationParameterBuilder.buildParameter( ParameterSpecialType.ANY_VALUE ) );
+            expectedParameters.addParameter( expectationParameterVerifierBuilder.buildParameterVerifier( ParameterSpecialType.ANY_VALUE ) );
 
             return new Amoss_PositionalParametersDefiner( expectation );
         }
@@ -1869,15 +1869,15 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     */
     private class Amoss_ExpectationPositionalParameters implements Amoss_ExpectationParameters {
 
-        private List<Amoss_ExpectationParameter> expectedParameters = new List<Amoss_ExpectationParameter>();
+        private List<Amoss_ValueVerifier> expectedParameters = new List<Amoss_ValueVerifier>();
 
         /**
         * Internal method that adds a parameter to the list of parameters that are valid for this Expectation.
         *
-        * @param Amoss_ExpectationParameter - The parameter to add to the list of expected ones
+        * @param Amoss_ValueVerifier - The parameter to add to the list of expected ones
         * @return Amoss_ExpectationParameters - Itself, allowing for a fluent interface
         */
-        Amoss_ExpectationPositionalParameters addParameter( Amoss_ExpectationParameter parameter ) {
+        Amoss_ExpectationPositionalParameters addParameter( Amoss_ValueVerifier parameter ) {
             expectedParameters.add( parameter );
             return this;
         }
@@ -1946,16 +1946,16 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     */
     private class Amoss_ExpectationNamedParameters implements Amoss_ExpectationParameters {
 
-        private Map<String,Amoss_ExpectationParameter> expectedParameters = new Map<String,Amoss_ExpectationParameter>();
+        private Map<String,Amoss_ValueVerifier> expectedParameters = new Map<String,Amoss_ValueVerifier>();
 
         /**
         * Internal method that sets the expected parameter with the given name, to have the given parameter.
         *
         * @param String - The name of the parameter to add to the specification
-        * @param Amoss_ExpectationParameter - The representation of the parameter to add to the specification
+        * @param Amoss_ValueVerifier - The representation of the parameter to add to the specification
         * @return Amoss_ExpectationNamedParameters - Itself, allowing for a fluent interface
         */
-        Amoss_ExpectationNamedParameters setParameter( String parameterName, Amoss_ExpectationParameter parameter ) {
+        Amoss_ExpectationNamedParameters setParameter( String parameterName, Amoss_ValueVerifier parameter ) {
             expectedParameters.put( parameterName, parameter );
             return this;
         }
@@ -1997,7 +1997,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
                 String actualParameterName  = parameterNames[ parameterNumber ];
                 Object actualParameterValue = parameterValues[ parameterNumber ];
-                Amoss_ExpectationParameter expectationParameter = expectedParameters.get( actualParameterName );
+                Amoss_ValueVerifier expectationParameter = expectedParameters.get( actualParameterName );
 
                 if ( expectationParameter != null ) {
                     try {
@@ -2029,7 +2029,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
-    interface Amoss_ExpectationParameter {
+    interface Amoss_ValueVerifier {
         String toString();
         void verify( Object value );
     }
@@ -2040,7 +2040,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Describes the specification of 'any' parameter value that is expected to be passed into a mocked method call
     *
     */
-    class Amoss_ExpectationAnyParameter implements Amoss_ExpectationParameter {
+    class Amoss_AnyValueVerifier implements Amoss_ValueVerifier {
 
         /**
         * Internal method that should not be called directly in tests.
@@ -2058,7 +2058,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @param Object - The value to check
         */
-        public void verify( Object actualValue ) {          //NOPMD - Amoss_ExpectationAnyParameter is a special case that behaves predominantly like a 'Null Object'
+        public void verify( Object actualValue ) {          //NOPMD - Amoss_AnyValueVerifier is a special case that behaves predominantly like a 'Null Object'
         }
     }
 
@@ -2067,7 +2067,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Describes the specification of a 'Same Instance As' Parameter that is expected to be passed into a mocked method call
     */
-    class Amoss_ExpectationEqualsParameter implements Amoss_ExpectationParameter {
+    class Amoss_EqualsValueVerifier implements Amoss_ValueVerifier {
 
         Object value;
 
@@ -2077,9 +2077,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Sets the value that this parameter is expectd to be
         *
         * @param  Object - The value that this parameter is expected to be
-        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ExpectationParameter setValue( Object value ) {
+        public Amoss_ValueVerifier setValueToVerifyAgainst( Object value ) {
             this.value = value;
             return this;
         }
@@ -2124,7 +2124,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Describes the specification of an Object Parameter that is expected to be the same instance
     * when passed into a mocked method call
     */
-    class Amoss_ExpectationSameInstanceParameter implements Amoss_ExpectationParameter {
+    class Amoss_SameInstanceVerifier implements Amoss_ValueVerifier {
 
         Object value;
 
@@ -2134,9 +2134,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Sets the value that this parameter is expectd to be
         *
         * @param  Object - The value that this parameter is expected to be (actually an Sobject)
-        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ExpectationParameter setValue( Object value ) {
+        public Amoss_ValueVerifier setValueToVerifyAgainst( Object value ) {
             this.value = value;
             return this;
         }
@@ -2180,7 +2180,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Describes the specification of a List Parameter that is expected to be
     * the same instance when passed into a mocked method call
     */
-    class Amoss_ExpectationListSameInstanceParameter implements Amoss_ExpectationParameter {
+    class Amoss_ListSameInstanceVerifier implements Amoss_ValueVerifier {
 
         List<Object> value;
 
@@ -2190,9 +2190,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Sets the value that this parameter is expectd to be
         *
         * @param  Object - The value that this parameter is expected to be (actually an Sobject)
-        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ExpectationParameter setValue( Object value ) {
+        public Amoss_ValueVerifier setValueToVerifyAgainst( Object value ) {
             this.value = (List<Object>)value;
             return this;
         }
@@ -2266,7 +2266,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Describes the specification of an 'same value as' Parameter that is expected to be passed into a mocked method call
     */
-    class Amoss_ExpectationSameValueAsParameter implements Amoss_ExpectationParameter {
+    class Amoss_SameValueAsVerifier implements Amoss_ValueVerifier {
 
         Object value;
 
@@ -2276,9 +2276,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Sets the value that this parameter is expectd to be
         *
         * @param  Object - The value that this parameter is expected to be
-        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ExpectationParameter setValue( Object value ) {
+        public Amoss_ValueVerifier setValueToVerifyAgainst( Object value ) {
             this.value = value;
             return this;
         }
@@ -2314,7 +2314,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Describes the specification of an 'Fields Set Like' Parameter that is expected to be passed into a mocked method call
     */
-    class Amoss_ExpectationFieldsSetLikeParameter implements Amoss_ExpectationParameter {
+    class Amoss_FieldsSetLikeVerifier implements Amoss_ValueVerifier {
 
         Sobject value;
 
@@ -2324,9 +2324,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Sets the value that this parameter is expectd to be
         *
         * @param  Sobject - The value that this parameter is expected to be
-        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ExpectationParameter setValue( Sobject value ) {
+        public Amoss_ValueVerifier setValueToVerifyAgainst( Sobject value ) {
 
             if ( value == null ) {
                 throw new Amoss_ExpectedObjectCannotBeNullException( 'Cannot specify NULL for a "FieldsSetLike" expectation' );
@@ -2392,7 +2392,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Describes the specification of an 'Fields Set To' Parameter that is expected to be passed into a mocked method call
     */
-    class Amoss_ExpectationFieldsSetToParameter implements Amoss_ExpectationParameter {
+    class Amoss_FieldsSetToVerifier implements Amoss_ValueVerifier {
 
         Map<String,Object> value;
 
@@ -2402,9 +2402,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Sets the value that this parameter is expectd to be
         *
         * @param  Sobject - The value that this parameter is expected to be
-        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ExpectationParameter setValue( Map<String,Object> value ) {
+        public Amoss_ValueVerifier setValueToVerifyAgainst( Map<String,Object> value ) {
 
             if ( value == null ) {
                 throw new Amoss_ExpectedObjectCannotBeNullException( 'Cannot specify NULL for a "FieldsSetTo" expectation' );
@@ -2474,129 +2474,129 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     /**
     * Internal class that should not be refenced in tests.
     *
-    * Constructs instances of Amoss_ExpectationParameter.
+    * Constructs instances of Amoss_ValueVerifier.
     */
-    private class Amoss_ExpectationParameterBuilder {
+    private class Amoss_ExpectationParameterVerifierBuilder {
 
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of Amoss_ExpectationParameter based on the passed Object.
+        * Constructs an instance of Amoss_ValueVerifier based on the passed Object.
         *
-        * @param  Object - The parameter value that is expected for the Amoss_ExpectationParameter
-        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter
+        * @param  Object - The parameter value that is expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter
         */
-        public Amoss_ExpectationParameter buildEqualsParameter( Object parameter ) {
+        public Amoss_ValueVerifier buildEqualsParameterVerifier( Object parameter ) {
 
             // Not ideal, but since we don't want to implement multiple versions of
-            // setTo in the grammer, every call to buildEqualsParameter would resolve to the Object (this)
+            // setTo in the grammer, every call to buildEqualsParameterVerifier would resolve to the Object (this)
             // version.
             // As we only want to distinguish between a couple of types, this seems the
             // simplest way.
             if ( parameter instanceOf List<Object> ) {
-                return buildSameInstanceParameter( (List<Object>)parameter );
+                return buildSameInstanceParameterVerifier( (List<Object>)parameter );
             }
             if ( Amoss_Asserts.getType( parameter ).startsWith( 'Map<' ) ) { // because of the way we can't cast Maps with different types of keys, and to avoid loads of instance of checks
-                return buildSameInstanceParameter( parameter );
+                return buildSameInstanceParameterVerifier( parameter );
             }
             if ( Amoss_Asserts.getType( parameter ).startsWith( 'Set<' ) ) { // because of the way we can't cast Set, and to avoid loads of instance of checks
-                return buildSameInstanceParameter( parameter );
+                return buildSameInstanceParameterVerifier( parameter );
             }
             if ( parameter instanceOf Sobject ) {
-                return buildSameInstanceParameter( (Sobject)parameter );
+                return buildSameInstanceParameterVerifier( (Sobject)parameter );
             }
 
-            return new Amoss_ExpectationEqualsParameter().setValue( parameter );
+            return new Amoss_EqualsValueVerifier().setValueToVerifyAgainst( parameter );
         }
 
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of an Amoss_ExpectationSameInstanceParameter
+        * Constructs an instance of an Amoss_SameInstanceVerifier
         *
-        * @param  Object - The Object parameter value that is expected for the Amoss_ExpectationParameter
-        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationSameInstanceParameter)
+        * @param  Object - The Object parameter value that is expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_SameInstanceVerifier)
         */
-        public Amoss_ExpectationParameter buildSameInstanceParameter( Object parameter ) {
-            return new Amoss_ExpectationSameInstanceParameter().setValue( parameter );
+        public Amoss_ValueVerifier buildSameInstanceParameterVerifier( Object parameter ) {
+            return new Amoss_SameInstanceVerifier().setValueToVerifyAgainst( parameter );
         }
 
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of an Amoss_ExpectationSameInstanceParameter
+        * Constructs an instance of an Amoss_SameInstanceVerifier
         *
-        * @param  Sobject - The Sobject parameter value that is expected for the Amoss_ExpectationParameter
-        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationSameInstanceParameter)
+        * @param  Sobject - The Sobject parameter value that is expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_SameInstanceVerifier)
         */
-        public Amoss_ExpectationParameter buildSameInstanceParameter( Sobject parameter ) {
-            return new Amoss_ExpectationSameInstanceParameter().setValue( parameter );
+        public Amoss_ValueVerifier buildSameInstanceParameterVerifier( Sobject parameter ) {
+            return new Amoss_SameInstanceVerifier().setValueToVerifyAgainst( parameter );
         }
 
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of an Amoss_ExpectationSameInstanceParameter
+        * Constructs an instance of an Amoss_SameInstanceVerifier
         *
-        * @param  List<Object> - The List parameter value that is expected for the Amoss_ExpectationParameter
-        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationSameInstanceParameter)
+        * @param  List<Object> - The List parameter value that is expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_SameInstanceVerifier)
         */
-        public Amoss_ExpectationParameter buildSameInstanceParameter( List<Object> parameter ) {
-            return new Amoss_ExpectationListSameInstanceParameter().setValue( parameter );
+        public Amoss_ValueVerifier buildSameInstanceParameterVerifier( List<Object> parameter ) {
+            return new Amoss_ListSameInstanceVerifier().setValueToVerifyAgainst( parameter );
         }
 
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of an Amoss_ExpectationSameValueAsParameter
+        * Constructs an instance of an Amoss_SameValueAsVerifier
         *
-        * @param  Object - The Sobject parameter value that is expected for the Amoss_ExpectationParameter
-        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationSameValueAsParameter)
+        * @param  Object - The Sobject parameter value that is expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_SameValueAsVerifier)
         */
-        public Amoss_ExpectationParameter buildSameValueAsParameter( Object parameter ) {
-            return new Amoss_ExpectationSameValueAsParameter().setValue( parameter );
+        public Amoss_ValueVerifier buildSameValueAsParameterVerifier( Object parameter ) {
+            return new Amoss_SameValueAsVerifier().setValueToVerifyAgainst( parameter );
         }
 
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of an Amoss_ExpectationFieldsSetLikeParameter, which checks that parameters have the same properties set as the defined parameter.
+        * Constructs an instance of an Amoss_FieldsSetLikeVerifier, which checks that parameters have the same properties set as the defined parameter.
         *
-        * @param  Sobject - The Sobject parameter value that is expected for the Amoss_ExpectationParameter
-        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationFieldsSetLikeParameter)
+        * @param  Sobject - The Sobject parameter value that is expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_FieldsSetLikeVerifier)
         */
-        public Amoss_ExpectationParameter buildFieldsSetLikeParameter( Sobject parameter ) {
-            return new Amoss_ExpectationFieldsSetLikeParameter().setValue( parameter );
+        public Amoss_ValueVerifier buildFieldsSetLikeParameter( Sobject parameter ) {
+            return new Amoss_FieldsSetLikeVerifier().setValueToVerifyAgainst( parameter );
         }
 
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of an Amoss_ExpectationFieldsSetToParameter, which checks that parameters have the same properties set as the defined Map.
+        * Constructs an instance of an Amoss_FieldsSetToVerifier, which checks that parameters have the same properties set as the defined Map.
         *
-        * @param  Map<String,Object> - The Map that contains the properties that are expected for the Amoss_ExpectationParameter
-        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_ExpectationFieldsSetToParameter)
+        * @param  Map<String,Object> - The Map that contains the properties that are expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_FieldsSetToVerifier)
         */
-        public Amoss_ExpectationParameter buildFieldsSetToParameter( Map<String,Object> parameter ) {
-            return new Amoss_ExpectationFieldsSetToParameter().setValue( parameter );
+        public Amoss_ValueVerifier buildFieldsSetToParameter( Map<String,Object> parameter ) {
+            return new Amoss_FieldsSetToVerifier().setValueToVerifyAgainst( parameter );
         }
         
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of an Amoss_ExpectationSameInstanceParameter, based on the passed in ParameterSpecialType.
+        * Constructs an instance of an Amoss_SameInstanceVerifier, based on the passed in ParameterSpecialType.
         *
         * @param  Object - The Special Type of Expectation Parameter object to construct
-        * @return Amoss_ExpectationParameter - The appropriate Expectation Parameter instance for this passed in special type.
+        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this passed in special type.
         */
-        public Amoss_ExpectationParameter buildParameter( ParameterSpecialType parameterType ) {
+        public Amoss_ValueVerifier buildParameterVerifier( ParameterSpecialType parameterType ) {
 
             switch on parameterType {
                 when ANY_VALUE {
-                    return new Amoss_ExpectationAnyParameter();
+                    return new Amoss_AnyValueVerifier();
                 }
             }
-            return new Amoss_ExpectationEqualsParameter();
+            return new Amoss_EqualsValueVerifier();
         }
     }
 
