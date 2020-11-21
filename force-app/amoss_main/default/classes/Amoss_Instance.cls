@@ -2670,22 +2670,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
             List<Object> actualList = (List<Object>)actualValue;
 
-            Boolean anElementMatches = false;
             for ( Integer index=0; index < actualList.size(); index++ ) {
                 try {
                     elementVerifier.verify( actualList[ index ] );
-                    anElementMatches = true;
+                    return;
                 } catch ( Amoss_AssertionFailureException e ) { //NOPMD - Intentionally left empty - verify throws an exception if a value does not pass verification.  We just want one element that passes
                 }
             }
 
-            if ( !anElementMatches ) {
-                throw new Amoss_EqualsAssertionFailureException()
-                            .setExpected( elementVerifier.getDescription() )
-                            .setActual( actualValue )
-                            .setAssertionMessage( 'The value is not what was expected - At least one element in the list should pass the described verification' );
-
-            }
+            throw new Amoss_EqualsAssertionFailureException()
+                        .setExpected( elementVerifier.getDescription() )
+                        .setActual( actualValue )
+                        .setAssertionMessage( 'The value is not what was expected - At least one element in the list should pass the described verification' );
         }
 
         /**
