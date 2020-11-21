@@ -2031,6 +2031,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     interface Amoss_ExpectationParameter {
         String toString();
+        String getDescription();
         void verify( Object value );
     }
 
@@ -2059,6 +2060,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value to check
         */
         public void verify( Object actualValue ) {          //NOPMD - Amoss_ExpectationAnyParameter is a special case that behaves predominantly like a 'Null Object'
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return 'Value can have any value';
         }
     }
 
@@ -2115,7 +2127,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                                 .setAssertionMessage( 'The value is not what was expected - If it is an object, it may be the wrong instance' );
                 }
             }
-        }        
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return String.format( 'Value must equal {0}', new List<String>{ String.valueOf( value ) } );
+        }
     }
 
     /**
@@ -2171,6 +2194,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                                 .setAssertionMessage( 'The value is not what was expected' );
                 }
             }
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return String.format( 'Value must be the same instance as {0}', new List<String>{ String.valueOf( value ) } );
         }
     }
 
@@ -2259,6 +2293,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             }
             return true;
         }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return String.format( 'Value must be a list that is the same instance as {0}', new List<String>{ String.valueOf( value ) } );
+        }
     }
 
     /**
@@ -2306,7 +2351,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                             .setActual( actualValue )
                             .setAssertionMessage( 'The value is not what was expected' );
             }
-        }        
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return String.format( 'Value must have the same effective value as {0}', new List<String>{ String.valueOf( value ) } );
+        }
     }
 
     /**
@@ -2384,7 +2440,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                             .setActual( actualValue )
                             .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
             }
-        }        
+        }
+        
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return String.format( 'Value must be an sObject with at least the same fields set as {0}', new List<String>{ String.valueOf( value ) } );
+        }
     }
 
     /**
@@ -2468,8 +2535,170 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                             .setActual( actualValue )
                             .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
             }
-        }        
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return String.format( 'Value must be an sObject with at least the same fields set as {0}', new List<String>{ String.valueOf( value ) } );
+        }
     }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of a List Parameter that must contain elements that all pass
+    * the verifier configured
+    */
+    class Amoss_ListElementsAllVerifier implements Amoss_ExpectationParameter {
+
+        Amoss_ExpectationParameter elementVerifier;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the Element Verifier that the list parameter elements are expected to pass.
+        *
+        * @param  Object - The Verifier that the passed value must pass.  Is actually an Amoss_ExpectationParameter.
+        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameter setValue( Object value ) {
+            this.elementVerifier = (Amoss_ExpectationParameter)value;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * @return String - String description of the expected value.
+        */
+        public override String toString() {
+            return elementVerifier.getDescription();
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the verifier that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+
+            if ( ! (actualValue instanceOf List<Object>) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'List<Object>' )
+                            .setActual( Amoss_Asserts.getType( actualValue ) )
+                            .setAssertionMessage( 'The value is not what was expected - The types do not match' );
+            }
+
+            List<Object> actualList = (List<Object>)actualValue;
+
+            for ( Integer index=0; index < actualList.size(); index++ ) {
+                try {
+                    elementVerifier.verify( actualList[ index ] );
+                } catch ( Amoss_AssertionFailureException e ) {
+                    throw e.addContextToMessage( String.format( 'List element {0} does not match what was expected: \'{0}\'', new List<String>{ String.valueOf( index ) } ) );
+                }
+            }
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return String.format( 'Value must be a List with all elements passing: {0}', new List<String>{ elementVerifier.getDescription() } );
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of a List Parameter that must contain at least one element that all passes
+    * the verifier configured
+    */
+    class Amoss_ListElementsAnyVerifier implements Amoss_ExpectationParameter {
+
+        Amoss_ExpectationParameter elementVerifier;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the Element Verifier that at least one of the list parameter's element is expected to pass
+        *
+        * @param  Object - The Verifier that one of the passed elements must pass.  Is actually an Amoss_ExpectationParameter.
+        * @return Amoss_ExpectationParameter - Itself, allowing for a fluent interface
+        */
+        public Amoss_ExpectationParameter setValue( Object value ) {
+            this.elementVerifier = (Amoss_ExpectationParameter)value;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * @return String - String description of the expected value.
+        */
+        public override String toString() {
+            return elementVerifier.getDescription();
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the verifier that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+
+            if ( ! (actualValue instanceOf List<Object>) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'List<Object>' )
+                            .setActual( Amoss_Asserts.getType( actualValue ) )
+                            .setAssertionMessage( 'The value is not what was expected - The types do not match' );
+            }
+
+            List<Object> actualList = (List<Object>)actualValue;
+
+            Boolean anElementMatches = false;
+            for ( Integer index=0; index < actualList.size(); index++ ) {
+                try {
+                    elementVerifier.verify( actualList[ index ] );
+                    anElementMatches = true;
+                } catch ( Amoss_AssertionFailureException e ) { //NOPMD - Intentionally left empty - verify throws an exception if a value does not pass verification.  We just want one element that passes
+                }
+            }
+
+            if ( !anElementMatches ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( elementVerifier.getDescription() )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'The value is not what was expected - At least one element in the list should pass the described verification' );
+
+            }
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public String getDescription() {
+            return String.format( 'Value must be a List with at least one element passing: {0}', new List<String>{ elementVerifier.getDescription() } );
+        }        
+    }    
 
     /**
     * Internal class that should not be refenced in tests.
