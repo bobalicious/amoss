@@ -205,7 +205,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Generally called immediately prior to the test's assertions.
     */
     public void verify() {
-        assertionMechanism.assertEquals( '', expectations.getRemainingCallsDescription(), String.format( 'Expected call stack for {0} should be empty, and it is not', new List<String>{ getClassName() } ) );
+        assertionMechanism.assertEquals( new List<String>(), expectations.getRemainingCallsDescriptions(), String.format( 'Expected call stack for {0} should be empty, and it is not', new List<String>{ getClassName() } ) );
     }
 
     /**
@@ -807,14 +807,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Generates and returns a description of the expectations that remain in the current queue.
         *
-        * @return String - A description of the remaining expectations.
+        * @return List<String> - A list of the descriptions of the remaining expectations.
         */
-        public String getRemainingCallsDescription() {
+        public List<String> getRemainingCallsDescriptions() {
             List<String> remainingCallDescriptions = new List<String>();
             for ( Amoss_Expectation thisExpectation : expectations ) {
                 remainingCallDescriptions.add( thisExpectation.getCallDescription() );
             }
-            return String.join( remainingCallDescriptions, ', ' );
+            return remainingCallDescriptions;
         }
 
         /**
@@ -1915,7 +1915,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 try {
                     expectedParameters[ parameterNumber ].verify( parameterValues[ parameterNumber ] );
                 } catch ( Amoss_AssertionFailureException e ) {
-                    throw e.addContextToMessage( String.format( '{0}.{1} had a problem with the parameter value in position {2}: \'{0}\'', new List<String>{ className, method, String.valueOf( parameterNumber ) } ) );
+                    throw e.addContextToMessage( String.format( '{0}.{1} had a problem with the parameter value in position {2}: \'{0}\'', new List<Object>{ className, method, parameterNumber } ) );
                 }
             }
         }
@@ -2031,7 +2031,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     interface Amoss_ExpectationParameter {
         String toString();
-        String getDescription();
         void verify( Object value );
     }
 
@@ -2042,15 +2041,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     */
     class Amoss_ExpectationAnyParameter implements Amoss_ExpectationParameter {
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * @return String - String description of the expected value.
-        */
-        public override String toString() {
-            return 'any';
-        }
 
         /**
         * Internal method that should not be called directly in tests.
@@ -2069,8 +2059,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @return String - A clear description of the value's verification
         */
-        public String getDescription() {
-            return 'Value can have any value';
+        public override String toString() {
+            return 'Any value';
         }
     }
 
@@ -2099,7 +2089,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * @return String - String description of the expected value.
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
         */
         public override String toString() {
             return String.valueOf( this.value );
@@ -2127,17 +2119,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                                 .setAssertionMessage( 'The value is not what was expected - If it is an object, it may be the wrong instance' );
                 }
             }
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes the verification that this object to configured to make
-        *
-        * @return String - A clear description of the value's verification
-        */
-        public String getDescription() {
-            return String.format( 'Value must equal {0}', new List<String>{ String.valueOf( value ) } );
         }
     }
 
@@ -2167,10 +2148,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * @return String - String description of the expected value.
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
         */
         public override String toString() {
-            return String.valueOf( this.value );
+            return String.format( 'Same instance as {0}', new List<Object>{ value } );
         }
 
         /**
@@ -2194,17 +2177,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                                 .setAssertionMessage( 'The value is not what was expected' );
                 }
             }
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes the verification that this object to configured to make
-        *
-        * @return String - A clear description of the value's verification
-        */
-        public String getDescription() {
-            return String.format( 'Value must be the same instance as {0}', new List<String>{ String.valueOf( value ) } );
         }
     }
 
@@ -2234,10 +2206,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * @return String - String description of the expected value.
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
         */
         public override String toString() {
-            return String.valueOf( this.value );
+            return String.format( 'Same instance as {0}', new List<Object>{ value } );
         }
 
         /**
@@ -2293,17 +2267,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             }
             return true;
         }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes the verification that this object to configured to make
-        *
-        * @return String - A clear description of the value's verification
-        */
-        public String getDescription() {
-            return String.format( 'Value must be a list that is the same instance as {0}', new List<String>{ String.valueOf( value ) } );
-        }
     }
 
     /**
@@ -2331,7 +2294,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * @return String - String description of the expected value.
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
         */
         public override String toString() {
             return String.valueOf( this.value );
@@ -2351,17 +2316,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                             .setActual( actualValue )
                             .setAssertionMessage( 'The value is not what was expected' );
             }
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes the verification that this object to configured to make
-        *
-        * @return String - A clear description of the value's verification
-        */
-        public String getDescription() {
-            return String.format( 'Value must have the same effective value as {0}', new List<String>{ String.valueOf( value ) } );
         }
     }
 
@@ -2395,10 +2349,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * @return String - String description of the expected value.
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
         */
         public override String toString() {
-            return String.valueOf( this.value );
+            return String.format( 'SObject with fields set like {0}', new List<Object>{ value } );
         }
 
         /**
@@ -2438,19 +2394,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( this.value )
                             .setActual( actualValue )
-                            .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
+                            .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<Object>{ fieldsWithProblems } ) );
             }
-        }
-        
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes the verification that this object to configured to make
-        *
-        * @return String - A clear description of the value's verification
-        */
-        public String getDescription() {
-            return String.format( 'Value must be an sObject with at least the same fields set as {0}', new List<String>{ String.valueOf( value ) } );
         }
     }
 
@@ -2484,10 +2429,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * @return String - String description of the expected value.
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
         */
         public override String toString() {
-            return String.valueOf( this.value );
+            return String.format( 'SObject with at least the same fields set as {0}', new List<Object>{ value } );
         }
 
         /**
@@ -2526,26 +2473,15 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                     }
                 } catch ( SObjectException e ) {
                     throw new Amoss_AssertionFailureException()
-                                .setAssertionMessage( String.format( 'Problem comparing field "{0}": {1}', new List<String>{ fieldName, e.getMessage() } ) );
+                                .setAssertionMessage( String.format( 'Problem comparing field "{0}": {1}', new List<Object>{ fieldName, e.getMessage() } ) );
                 }
             }
             if ( ! fieldsWithProblems.isEmpty() ) {
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( this.value )
                             .setActual( actualValue )
-                            .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<String>{ String.valueOf( fieldsWithProblems ) } ) );
+                            .setAssertionMessage( String.format( 'The following fields were not set as expected: {0}', new List<Object>{ fieldsWithProblems } ) );
             }
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes the verification that this object to configured to make
-        *
-        * @return String - A clear description of the value's verification
-        */
-        public String getDescription() {
-            return String.format( 'Value must be an sObject with at least the same fields set as {0}', new List<String>{ String.valueOf( value ) } );
         }
     }
 
@@ -2575,10 +2511,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * @return String - String description of the expected value.
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
         */
         public override String toString() {
-            return elementVerifier.getDescription();
+            return String.format( 'List with all elements: {0}', new List<Object>{ elementVerifier } );
         }
 
         /**
@@ -2603,20 +2541,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 try {
                     elementVerifier.verify( actualList[ index ] );
                 } catch ( Amoss_AssertionFailureException e ) {
-                    throw e.addContextToMessage( String.format( 'List element {0} does not match what was expected: \'{0}\'', new List<String>{ String.valueOf( index ) } ) );
+                    throw e.addContextToMessage( String.format( 'List element {0} does not match what was expected: \'{0}\'', new List<Object>{ index } ) );
                 }
             }
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes the verification that this object to configured to make
-        *
-        * @return String - A clear description of the value's verification
-        */
-        public String getDescription() {
-            return String.format( 'Value must be a List with all elements passing: {0}', new List<String>{ elementVerifier.getDescription() } );
         }
     }
 
@@ -2646,11 +2573,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * @return String - String description of the expected value.
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
         */
         public override String toString() {
-            return elementVerifier.getDescription();
-        }
+            return String.format( 'List with at least one element: {0}', new List<Object>{ elementVerifier } );
+        }  
 
         /**
         * Internal method that should not be called directly in tests.
@@ -2679,21 +2608,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             }
 
             throw new Amoss_EqualsAssertionFailureException()
-                        .setExpected( elementVerifier.getDescription() )
+                        .setExpected( String.valueOf( elementVerifier ) )
                         .setActual( actualValue )
                         .setAssertionMessage( 'The value is not what was expected - At least one element in the list should pass the described verification' );
-        }
-
-        /**
-        * Internal method that should not be called directly in tests.
-        *
-        * Describes the verification that this object to configured to make
-        *
-        * @return String - A clear description of the value's verification
-        */
-        public String getDescription() {
-            return String.format( 'Value must be a List with at least one element passing: {0}', new List<String>{ elementVerifier.getDescription() } );
-        }        
+        }      
     }    
 
     /**
@@ -2888,7 +2806,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Issue an assertion failure based on the current configuration
         */
         public override void issueAsserton( Amoss_Asserts assertionMechanism ) {
-            String message = String.format( '{0}.\nExpected: {1}\nActual: {2}', new List<String>{ this.message, String.valueOf( expected ), String.valueOf( actual ) } );
+            String message = String.format( '{0}.\nExpected: {1}\nActual: {2}', new List<Object>{ this.message, expected, actual } );
             assertionMechanism.assert( false, message );
         }
     }
@@ -2907,11 +2825,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public String getCallDescription( String method, List<Object> parameters ) {
 
-            List<String> stringParameters = new List<String>();
-            for ( Object thisParameter : parameters ) {
-                stringParameters.add( String.valueOf( thisParameter ) );
-            }
-            return String.format( '{0}({1})', new List<String>{ method, String.join( stringParameters, ', ' ) } );
+            // List<String> stringParameters = new List<String>();
+            // for ( Object thisParameter : parameters ) {
+            //     stringParameters.add( String.valueOf( thisParameter ) );
+            // }
+            return String.format( '{0}({1})', new List<String>{ method, String.join( parameters, ', ' ) } );
         }
     }    
 }
