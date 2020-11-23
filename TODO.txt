@@ -22,6 +22,14 @@ Implement
         * Amoss_PositionalParameterValueDefiner
         * Amoss_NamedParameterValueDefiner
 
+        * Amoss_PositionalAllElementsInCollectionValueDefiner
+        * Amoss_NamedAllElementsInCollectionValueDefiner
+
+        * Amoss_PositionalAnyElementsInCollectionValueDefiner
+        * Amoss_NamedAnyElementsInCollectionValueDefiner
+
+
+
     Look at removing duplication between:
         * Amoss_ExpectationFieldsSetToParameter
         * Amoss_ExpectationFieldsSetLikeParameter

@@ -1223,6 +1223,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return setParameter( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
         }
 
+        public Amoss_NamedAllElementsInCollectionValueDefiner withAllElements() {
+            return new Amoss_NamedAllElementsInCollectionValueDefiner( expectation, parameterName );
+        }
+
+        public Amoss_NamedAnyElementInCollectionValueDefiner withAnyElement() {
+            return new Amoss_NamedAnyElementInCollectionValueDefiner( expectation, parameterName );
+        }
+
         /**
         * Internal method that sets the next parameter on the expectation to that specified
         * and then returns the next definer in the allowed syntax
@@ -1337,6 +1345,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return setParameter( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
         }
 
+        public Amoss_PositionalAllElementsInCollectionValueDefiner withAllElements() {
+            return new Amoss_PositionalAllElementsInCollectionValueDefiner( expectation );
+        }
+
+        public Amoss_PositionalAnyElementInCollectionValueDefiner withAnyElement() {
+            return new Amoss_PositionalAnyElementInCollectionValueDefiner( expectation );
+        }
+
         /**
         * Internal method that sets the next parameter on the expectation to that specified
         * and then returns the next definer in the allowed syntax
@@ -1376,6 +1392,159 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_NamedParameterValueDefiner andParameterNamed( String parameterName ) {
             return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
         }
+    }
+
+    /**
+     * The part of the grammar that allows the specification of TBC
+     *
+     */
+    // here
+    public class Amoss_PositionalAllElementsInCollectionValueDefiner extends Amoss_ExpectationDefiner {
+
+        public Amoss_PositionalAllElementsInCollectionValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        // of value?
+        public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
+        }
+
+        // of value?
+        public Amoss_PositionalParametersDefiner setToTheSameValueAs( Object parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
+        }
+
+        public Amoss_PositionalParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
+        }
+
+        public Amoss_PositionalParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
+        }
+
+        private Amoss_PositionalParametersDefiner setParameter( Amoss_ValueVerifier parameter ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter(
+                expectationParameterVerifierBuilder.buildAllElementsVerifiedByParameter( parameter )
+             );
+            return new Amoss_PositionalParametersDefiner( expectation );
+        }        
+    }
+
+    /**
+     * The part of the grammar that allows the specification of TBC
+     *
+     */
+    // here
+    public class Amoss_PositionalAnyElementInCollectionValueDefiner extends Amoss_ExpectationDefiner {
+
+        public Amoss_PositionalAnyElementInCollectionValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
+        }
+
+        public Amoss_PositionalParametersDefiner setToTheSameValueAs( Object parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
+        }
+
+        public Amoss_PositionalParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
+        }
+
+        public Amoss_PositionalParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
+        }
+
+        private Amoss_PositionalParametersDefiner setParameter( Amoss_ValueVerifier parameter ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameter(
+                expectationParameterVerifierBuilder.buildAnyElementVerifiedByParameter( parameter )
+             );
+            return new Amoss_PositionalParametersDefiner( expectation );
+        }        
+    }    
+
+/// Named
+    /**
+     * The part of the grammar that allows the specification of TBC
+     *
+     */
+    // here
+    public class Amoss_NamedAllElementsInCollectionValueDefiner extends Amoss_ExpectationDefiner {
+
+        String parameterName;
+
+        public Amoss_NamedAllElementsInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
+            super( expectation );
+            this.parameterName = parameterName;
+        }
+
+        // of value?
+        public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
+        }
+
+        // of value?
+        public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
+        }
+
+        public Amoss_NamedParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
+        }
+
+        public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
+        }
+
+        private Amoss_NamedParametersDefiner setParameter( Amoss_ValueVerifier parameter ) {
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter(
+                parameterName,
+                expectationParameterVerifierBuilder.buildAllElementsVerifiedByParameter( parameter )
+            );
+            return new Amoss_NamedParametersDefiner( expectation );
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the specification of TBC
+     *
+     */
+    // here
+    public class Amoss_NamedAnyElementInCollectionValueDefiner extends Amoss_ExpectationDefiner {
+
+        String parameterName;
+
+        public Amoss_NamedAnyElementInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
+            super( expectation );
+            this.parameterName = parameterName;
+        }
+
+        public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
+        }
+
+        public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
+        }
+
+        public Amoss_NamedParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
+        }
+
+        public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return setParameter( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
+        }
+
+        private Amoss_NamedParametersDefiner setParameter( Amoss_ValueVerifier parameter ) {
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameter(
+                parameterName,
+                expectationParameterVerifierBuilder.buildAnyElementVerifiedByParameter( parameter )
+            );
+            return new Amoss_NamedParametersDefiner( expectation );
+        }     
     }
 
     /**
@@ -2723,7 +2892,19 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_ValueVerifier buildFieldsSetToParameter( Map<String,Object> parameter ) {
             return new Amoss_FieldsSetToVerifier().setValueToVerifyAgainst( parameter );
         }
-        
+
+        // TODO: document
+        public Amoss_ValueVerifier buildAllElementsVerifiedByParameter( Amoss_ValueVerifier elementVerifier ) {
+            return new Amoss_ListElementsAllVerifier().setValueToVerifyAgainst( elementVerifier );
+        }
+
+        // TODO: document
+        public Amoss_ValueVerifier buildAnyElementVerifiedByParameter( Amoss_ValueVerifier elementVerifier ) {
+            return new Amoss_ListElementsAnyVerifier().setValueToVerifyAgainst( elementVerifier );
+        }
+
+
+
         /**
         * Internal method that should not be refenced in tests.
         *
