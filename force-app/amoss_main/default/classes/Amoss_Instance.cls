@@ -2503,7 +2503,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param  Object - The Verifier that the passed value must pass.  Is actually an Amoss_ValueVerifier.
         * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ValueVerifier setValue( Object value ) {
+        public Amoss_ValueVerifier setValueToVerifyAgainst( Object value ) {
             this.elementVerifier = (Amoss_ValueVerifier)value;
             return this;
         }
@@ -2565,7 +2565,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param  Object - The Verifier that one of the passed elements must pass.  Is actually an Amoss_ValueVerifier.
         * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ValueVerifier setValue( Object value ) {
+        public Amoss_ValueVerifier setValueToVerifyAgainst( Object value ) {
             this.elementVerifier = (Amoss_ValueVerifier)value;
             return this;
         }
