@@ -17,17 +17,7 @@ Implement
 
     Tests:
         Output of verify when different parameter types specified
-
-    Look at removing duplication between:
-        * Amoss_PositionalParameterValueDefiner
-        * Amoss_NamedParameterValueDefiner
-
-        * Amoss_PositionalAllElementsInCollectionValueDefiner
-        * Amoss_NamedAllElementsInCollectionValueDefiner
-
-        * Amoss_PositionalAnyElementsInCollectionValueDefiner
-        * Amoss_NamedAnyElementsInCollectionValueDefiner
-
+        All the all and any behaviours
 
     Look at removing duplication between:
         * Amoss_ExpectationFieldsSetToParameter
