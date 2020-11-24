@@ -29,7 +29,6 @@ Implement
         * Amoss_NamedAnyElementsInCollectionValueDefiner
 
 
-
     Look at removing duplication between:
         * Amoss_ExpectationFieldsSetToParameter
         * Amoss_ExpectationFieldsSetLikeParameter
