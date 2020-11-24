@@ -1119,163 +1119,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
-     * The part of the grammar that allows the specification of the shape of a value of a named parameter.
-     * The name must have already been specified.
-     *
-     * At this point in the syntax, the only valid thing to do is define the parameter value.
-     */
-    public class Amoss_NamedParameterValueDefiner extends Amoss_ExpectationDefiner {
-
-        String parameterName;
-
-        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation, String parameterName ) {
-            super( expectation );
-            this.parameterName = parameterName;
-        }
-
-        /**
-        * States the parameter value that is expected for the the currently specified parameter.
-        *
-        * In order to match an object, the passed parameter must:
-        *   * Be the same instance as that specified.
-        *   * Implement the method 'equals', and return true when called with the specified parameter.
-        *
-        * For primitives, it is sufficient that they are the same value.
-        *
-        * Is used in combination with 'withParameterNamed'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
-        *       .andParameterNamed( 'parmeterName2' ).setTo( 'Parameter2' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * @param Object - The value of the parameter to add to the specification
-        */
-        public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
-            return setParameterVerifier( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
-        }
-
-        /**
-        * States the parameter value that is expected for the the currently specified parameter.
-        *
-        * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
-        *
-        * Is used in combination with 'withParameterNamed'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).setToTheSameValueAs( 'Parameter1' )
-        *       .andParameterNamed( 'parmeterName2' ).setToTheSameValueAs( 'Parameter2' )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * @param Object - The value of the parameter to add to the specification
-        */
-        public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
-            return setParameterVerifier( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
-        }
-
-        /**
-        * States the shape of the SObject parameter value that is expected for the currently specified parameter.
-        *
-        * In order to match, the ultimately passed parameter must have the properties that are populated on the
-        * specified sobject set to the same value.
-        * 
-        * The ultimate parameter may have more properties set.
-        *
-        * Is used in combination with 'withParameterNamed'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).withFieldsSetLike( contact )
-        *       .andParameterNamed( 'parmeterName2' ).withFieldsSetLike( account )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * @param Object - The value of the parameter to add to the specification
-        */
-        public Amoss_NamedParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
-            return setParameterVerifier( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
-        }
-
-        /**
-        * States the shape of the SObject parameter value that is expected for the currently specified parameter.
-        *
-        * In order to match, the ultimately passed parameter must have the properties that are populated in the
-        * specified map set to the same value.
-        * 
-        * The ultimate parameter may have more properties set.
-        *
-        * Is used in combination with 'withParameterNamed'.
-        *
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).withFieldsSetTo( contactFieldsMap )
-        *       .andParameterNamed( 'parmeterName2' ).withFieldsSetTo( accountFieldsMap )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * @param Object - The value of the parameter to add to the specification
-        */
-        public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
-            return setParameterVerifier( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
-        }
-
-        /**
-        * States the shape of a List parameter value that is expected for the currently specified parameter.
-        *
-        * In order to match, the ultimately passed parameter be a list where EVERY element matches the next specification.
-        * 
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).withAllElements().withFieldsSetTo( contactFieldsMap )
-        *       .andParameterNamed( 'parmeterName2' ).withAllElements().setTo( true )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * @param Object - The value of the parameter to add to the specification
-        */
-        public Amoss_NamedAllElementsInCollectionValueDefiner withAllElements() {
-            return new Amoss_NamedAllElementsInCollectionValueDefiner( expectation, parameterName );
-        }
-
-        /**
-        * States the shape of a List parameter value that is expected for the currently specified parameter.
-        *
-        * In order to match, the ultimately passed parameter be a list where ANY element matches the next specification.
-        * 
-        * For example, to specify:
-        *   .when()
-        *       .method( 'methodName' )
-        *       .withParameterNamed( 'parmeterName1' ).withAnyElement().withFieldsSetTo( contactFieldsMap )
-        *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setTo( true )
-        *       .willReturn( 'theValueItShouldReturn' )
-        *
-        * @param Object - The value of the parameter to add to the specification
-        */
-        public Amoss_NamedAnyElementInCollectionValueDefiner withAnyElement() {
-            return new Amoss_NamedAnyElementInCollectionValueDefiner( expectation, parameterName );
-        }
-
-        /**
-        * Internal method that sets the next parameter on the expectation to that specified
-        * and then returns the next definer in the allowed syntax
-        *
-        * @param  Amoss_ValueVerifier - The parameter to set on the expectation
-        * @return Amoss_PositionalParametersDefiner - The next definer
-        */
-        private Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
-            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameterVerifier( parameterName, parameter );
-            return new Amoss_NamedParametersDefiner( expectation );
-        }
-    }
-
-    /**
      * The part of the grammar that allows the specification of the value of a positional parameter.
      *
-     * At this point in the syntax, the only valid thing to do is define the parameter value.
+     * At this point in the syntax, the only valid thing to do is define the parameter value via verifiers.
      */
     public abstract class Amoss_AbstractPositionalParameterValueDefiner extends Amoss_ExpectationDefiner {
 
@@ -1447,6 +1293,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of positional collection parameters
      * based on the how every element in the list is set
      */
+    // TODO: Document
     public class Amoss_PositionalAllElementsInCollectionValueDefiner extends Amoss_AbstractPositionalParameterValueDefiner {
 
         public Amoss_PositionalAllElementsInCollectionValueDefiner( Amoss_Expectation expectation ) {
@@ -1465,7 +1312,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of TBC
      *
      */
-    // here
+    // TODO: Document
     public class Amoss_PositionalAnyElementInCollectionValueDefiner extends Amoss_AbstractPositionalParameterValueDefiner {
 
         public Amoss_PositionalAnyElementInCollectionValueDefiner( Amoss_Expectation expectation ) {
@@ -1508,32 +1355,196 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
-
-
-/// Named
     /**
-     * The part of the grammar that allows the specification of TBC
+     * The part of the grammar that allows the specification of the shape of a value of a named parameter.
+     * The name must have already been specified.
      *
+     * At this point in the syntax, the only valid thing to do is define the parameter value.
      */
-    // here
-    public class Amoss_NamedAllElementsInCollectionValueDefiner extends Amoss_ExpectationDefiner {
+    // TODO: document
+    public abstract class Amoss_AbstractNamedParameterValueDefiner extends Amoss_ExpectationDefiner {
 
         String parameterName;
 
-        public Amoss_NamedAllElementsInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
+        public Amoss_AbstractNamedParameterValueDefiner( Amoss_Expectation expectation, String parameterName ) {
             super( expectation );
             this.parameterName = parameterName;
         }
 
+        /**
+        * Internal method that sets the next parameter on the expectation to that specified
+        * and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ValueVerifier - The parameter to set on the expectation
+        * @return Amoss_PositionalParametersDefiner - The next definer
+        */
+        // TODO: re-document
+        protected abstract Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter );
+
+        /**
+        * States the parameter value that is expected for the the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter must:
+        *   * Be the same instance as that specified.
+        *   * Implement the method 'equals', and return true when called with the specified parameter.
+        *
+        * For primitives, it is sufficient that they are the same value.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setTo( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
+            return setParameterVerifier( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).setToTheSameValueAs( 'Parameter1' )
+        *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setToTheSameValueAs( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
+            return setParameterVerifier( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the shape of the SObject parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated on the
+        * specified sobject set to the same value.
+        * 
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).withFieldsSetLike( contact )
+        *       .andParameterNamed( 'parmeterName2' ).withAnyElement().withFieldsSetLike( account )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
         public Amoss_NamedParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
             return setParameterVerifier( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
         }
 
+        /**
+        * States the shape of the SObject parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated in the
+        * specified map set to the same value.
+        * 
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).withFieldsSetTo( contactFieldsMap )
+        *       .andParameterNamed( 'parmeterName2' ).withAnyElement().withFieldsSetTo( accountFieldsMap )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
         public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
             return setParameterVerifier( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
         }
+    }
 
-        private Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
+    /**
+     * The part of the grammar that allows the specification of the shape of a value of a named parameter.
+     * The name must have already been specified.
+     *
+     * At this point in the syntax, the only valid thing to do is define the parameter value.
+     */
+    public class Amoss_NamedParameterValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
+
+        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation, String parameterName ) {
+            super( expectation, parameterName );
+        }
+
+        /**
+        * States the shape of a List parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter be a list where EVERY element matches the next specification.
+        * 
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).withAllElements().withFieldsSetTo( contactFieldsMap )
+        *       .andParameterNamed( 'parmeterName2' ).withAllElements().setTo( true )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedAllElementsInCollectionValueDefiner withAllElements() {
+            return new Amoss_NamedAllElementsInCollectionValueDefiner( expectation, parameterName );
+        }
+
+        /**
+        * States the shape of a List parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter be a list where ANY element matches the next specification.
+        * 
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).withAnyElement().withFieldsSetTo( contactFieldsMap )
+        *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setTo( true )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedAnyElementInCollectionValueDefiner withAnyElement() {
+            return new Amoss_NamedAnyElementInCollectionValueDefiner( expectation, parameterName );
+        }
+
+        /**
+        * Internal method that sets the next parameter on the expectation to that specified
+        * and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ValueVerifier - The parameter to set on the expectation
+        * @return Amoss_PositionalParametersDefiner - The next definer
+        */
+        protected override Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
+            ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameterVerifier( parameterName, parameter );
+            return new Amoss_NamedParametersDefiner( expectation );
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the specification of TBC
+     *
+     */
+    // TODO: document
+    public class Amoss_NamedAllElementsInCollectionValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
+
+        public Amoss_NamedAllElementsInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
+            super( expectation, parameterName );
+        }
+
+        protected override Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameterVerifier(
                 parameterName,
                 expectationParameterVerifierBuilder.buildAllElementsVerifiedByParameter( parameter )
@@ -1546,33 +1557,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of TBC
      *
      */
-    // here
-    public class Amoss_NamedAnyElementInCollectionValueDefiner extends Amoss_ExpectationDefiner {
-
-        String parameterName;
+    // TODO: document
+    public class Amoss_NamedAnyElementInCollectionValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
 
         public Amoss_NamedAnyElementInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
-            super( expectation );
-            this.parameterName = parameterName;
+            super( expectation, parameterName );
         }
 
-        public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
-            return setParameterVerifier( expectationParameterVerifierBuilder.buildEqualsParameterVerifier( parameterValue ) );
-        }
-
-        public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
-            return setParameterVerifier( expectationParameterVerifierBuilder.buildSameValueAsParameterVerifier( parameterValue ) );
-        }
-
-        public Amoss_NamedParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
-            return setParameterVerifier( expectationParameterVerifierBuilder.buildFieldsSetLikeParameter( parameterValue ) );
-        }
-
-        public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
-            return setParameterVerifier( expectationParameterVerifierBuilder.buildFieldsSetToParameter( parameterValue ) );
-        }
-
-        private Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
+        protected override Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameterVerifier(
                 parameterName,
                 expectationParameterVerifierBuilder.buildAnyElementVerifiedByParameter( parameter )
