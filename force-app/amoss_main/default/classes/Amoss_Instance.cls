@@ -1122,6 +1122,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of the value of a positional parameter.
      *
      * At this point in the syntax, the only valid thing to do is define the parameter value via verifiers.
+     * 
+     * Defines the core of the behaviour - can be applied in different ways by overriding 'setParameterVerifier'
      */
     public abstract class Amoss_AbstractPositionalParameterValueDefiner extends Amoss_ExpectationDefiner {
 
@@ -1277,51 +1279,64 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * Internal method that sets the next parameter on the expectation to that specified
+        * Internal method that sets the next parameter's verifier on the expectation to that specified
         * and then returns the next definer in the allowed syntax
         *
-        * @param  Amoss_ValueVerifier - The parameter to set on the expectation
+        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
         * @return Amoss_PositionalParametersDefiner - The next definer
         */
-        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier( parameter );
+        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier( verifier );
             return new Amoss_PositionalParametersDefiner( expectation );
         }        
     }
 
     /**
      * The part of the grammar that allows the specification of positional collection parameters
-     * based on the how every element in the list is set
+     * based on *every* element in the list matching the specified verifier
      */
-    // TODO: Document
     public class Amoss_PositionalAllElementsInCollectionValueDefiner extends Amoss_AbstractPositionalParameterValueDefiner {
 
         public Amoss_PositionalAllElementsInCollectionValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
 
-        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
+        /**
+        * Internal method that sets the next parameter on the expectation to be checked that every element matches the specified
+        * verifier and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
+        * @return Amoss_PositionalParametersDefiner - The next definer
+        */
+        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier(
-                expectationParameterVerifierBuilder.buildAllElementsVerifiedByParameter( parameter )
+                expectationParameterVerifierBuilder.buildAllElementsVerifiedByParameter( verifier )
              );
             return new Amoss_PositionalParametersDefiner( expectation );
         }        
     }
 
     /**
-     * The part of the grammar that allows the specification of TBC
-     *
+     * The part of the grammar that allows the specification of positional collection parameters
+     * based on any element in the list matching the specified verifier
      */
-    // TODO: Document
     public class Amoss_PositionalAnyElementInCollectionValueDefiner extends Amoss_AbstractPositionalParameterValueDefiner {
 
         public Amoss_PositionalAnyElementInCollectionValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
 
-        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
+        /**
+        * Internal method that sets the next parameter on the expectation to be checked that any element matches the specified
+        * verifier and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
+        * @return Amoss_PositionalParametersDefiner - The next definer
+        */
+
+        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier(
-                expectationParameterVerifierBuilder.buildAnyElementVerifiedByParameter( parameter )
+                expectationParameterVerifierBuilder.buildAnyElementVerifiedByParameter( verifier )
              );
             return new Amoss_PositionalParametersDefiner( expectation );
         }        
@@ -1360,8 +1375,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The name must have already been specified.
      *
      * At this point in the syntax, the only valid thing to do is define the parameter value.
+     * 
+     * Defines the core of the behaviour - can be applied in different ways by overriding 'setParameterVerifier'
      */
-    // TODO: document
     public abstract class Amoss_AbstractNamedParameterValueDefiner extends Amoss_ExpectationDefiner {
 
         String parameterName;
@@ -1372,13 +1388,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * Internal method that sets the next parameter on the expectation to that specified
-        * and then returns the next definer in the allowed syntax
+        * Internal method that sets the parameter on the expectation to be expected to match the specified
+        * verifier and then returns the next definer in the allowed syntax
         *
         * @param  Amoss_ValueVerifier - The parameter to set on the expectation
         * @return Amoss_PositionalParametersDefiner - The next definer
         */
-        // TODO: re-document
         protected abstract Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter );
 
         /**
@@ -1521,7 +1536,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * Internal method that sets the next parameter on the expectation to that specified
+        * Internal method that sets the next parameter on the expectation to the specified verifier
         * and then returns the next definer in the allowed syntax
         *
         * @param  Amoss_ValueVerifier - The parameter to set on the expectation
@@ -1534,16 +1549,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
-     * The part of the grammar that allows the specification of TBC
-     *
+     * The part of the grammar that allows the specification of named collection parameters
+     * based on *every* element in the list matching the specified verifier
      */
-    // TODO: document
     public class Amoss_NamedAllElementsInCollectionValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
 
         public Amoss_NamedAllElementsInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
             super( expectation, parameterName );
         }
 
+        /**
+        * Internal method that sets the current parameter on the expectation to be checked that every element matches the
+        * specified verifier and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
+        * @return Amoss_NamedParametersDefiner - The next definer
+        */
         protected override Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameterVerifier(
                 parameterName,
@@ -1554,16 +1575,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
-     * The part of the grammar that allows the specification of TBC
-     *
+     * The part of the grammar that allows the specification of named collection parameters
+     * based on *any* element in the list matching the specified verifier
      */
-    // TODO: document
     public class Amoss_NamedAnyElementInCollectionValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
 
         public Amoss_NamedAnyElementInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
             super( expectation, parameterName );
         }
 
+        /**
+        * Internal method that sets the current parameter on the expectation to be checked if any element matches the verifier
+        * specified and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
+        * @return Amoss_NamedParametersDefiner - The next definer
+        */
         protected override Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).setParameterVerifier(
                 parameterName,
@@ -2822,7 +2849,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Constructs an instance of Amoss_ValueVerifier based on the passed Object.
         *
         * @param  Object - The parameter value that is expected for the Amoss_ValueVerifier
-        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter
         */
         public Amoss_ValueVerifier buildEqualsParameterVerifier( Object parameter ) {
 
@@ -2853,7 +2880,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Constructs an instance of an Amoss_SameInstanceVerifier
         *
         * @param  Object - The Object parameter value that is expected for the Amoss_ValueVerifier
-        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_SameInstanceVerifier)
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_SameInstanceVerifier)
         */
         public Amoss_ValueVerifier buildSameInstanceParameterVerifier( Object parameter ) {
             return new Amoss_SameInstanceVerifier().setValueToVerifyAgainst( parameter );
@@ -2865,7 +2892,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Constructs an instance of an Amoss_SameInstanceVerifier
         *
         * @param  Sobject - The Sobject parameter value that is expected for the Amoss_ValueVerifier
-        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_SameInstanceVerifier)
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_SameInstanceVerifier)
         */
         public Amoss_ValueVerifier buildSameInstanceParameterVerifier( Sobject parameter ) {
             return new Amoss_SameInstanceVerifier().setValueToVerifyAgainst( parameter );
@@ -2877,7 +2904,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Constructs an instance of an Amoss_SameInstanceVerifier
         *
         * @param  List<Object> - The List parameter value that is expected for the Amoss_ValueVerifier
-        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_SameInstanceVerifier)
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_SameInstanceVerifier)
         */
         public Amoss_ValueVerifier buildSameInstanceParameterVerifier( List<Object> parameter ) {
             return new Amoss_ListSameInstanceVerifier().setValueToVerifyAgainst( parameter );
@@ -2889,7 +2916,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Constructs an instance of an Amoss_SameValueAsVerifier
         *
         * @param  Object - The Sobject parameter value that is expected for the Amoss_ValueVerifier
-        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_SameValueAsVerifier)
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_SameValueAsVerifier)
         */
         public Amoss_ValueVerifier buildSameValueAsParameterVerifier( Object parameter ) {
             return new Amoss_SameValueAsVerifier().setValueToVerifyAgainst( parameter );
@@ -2901,7 +2928,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Constructs an instance of an Amoss_FieldsSetLikeVerifier, which checks that parameters have the same properties set as the defined parameter.
         *
         * @param  Sobject - The Sobject parameter value that is expected for the Amoss_ValueVerifier
-        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_FieldsSetLikeVerifier)
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_FieldsSetLikeVerifier)
         */
         public Amoss_ValueVerifier buildFieldsSetLikeParameter( Sobject parameter ) {
             return new Amoss_FieldsSetLikeVerifier().setValueToVerifyAgainst( parameter );
@@ -2913,23 +2940,37 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Constructs an instance of an Amoss_FieldsSetToVerifier, which checks that parameters have the same properties set as the defined Map.
         *
         * @param  Map<String,Object> - The Map that contains the properties that are expected for the Amoss_ValueVerifier
-        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this parameter (actually a Amoss_FieldsSetToVerifier)
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_FieldsSetToVerifier)
         */
         public Amoss_ValueVerifier buildFieldsSetToParameter( Map<String,Object> parameter ) {
             return new Amoss_FieldsSetToVerifier().setValueToVerifyAgainst( parameter );
         }
 
-        // TODO: document
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ListElementsAllVerifier, which checks that a given value is a list that has all elements passing
+        * the provided Amoss_ValueVerifier.
+        *
+        * @param  Amoss_ValueVerifier - The value verifier that should be used to check all the elements in the later passed value.
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_ListElementsAllVerifier)
+        */
         public Amoss_ValueVerifier buildAllElementsVerifiedByParameter( Amoss_ValueVerifier elementVerifier ) {
             return new Amoss_ListElementsAllVerifier().setValueToVerifyAgainst( elementVerifier );
         }
 
-        // TODO: document
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ListElementsAnyVerifier, which checks that a given value is a list that has any of the elements passing
+        * the provided Amoss_ValueVerifier.
+        *
+        * @param  Amoss_ValueVerifier - The value verifier that should be used to check the elements in the later passed value.
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_ListElementsAnyVerifier)
+        */
         public Amoss_ValueVerifier buildAnyElementVerifiedByParameter( Amoss_ValueVerifier elementVerifier ) {
             return new Amoss_ListElementsAnyVerifier().setValueToVerifyAgainst( elementVerifier );
         }
-
-
 
         /**
         * Internal method that should not be refenced in tests.
