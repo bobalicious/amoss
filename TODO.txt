@@ -1,9 +1,5 @@
 Amoss - Apex Mocks, Spies and Stubs
 
-Current story:
-    Merge develop into it and fix compilation errors
-    Implement new language constructs
-
 Documentation:
 
     Full interface definition?
