@@ -2672,10 +2672,105 @@ public with sharing class AmossTest_InstanceTest {
                                                     'expects.method.withAllElements.returning, when the parameter passed is not a list' );
     }
 
+    /**
+    * @method expects.method.withAnyElement.setTo.returning
+    * @case   when the list parameter passed does matches any elements
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsMethodWithAnyElementToReturning_whenAnyElementsInTheParameterMatch_willPass() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
 
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
 
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
 
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().setTo( 'expected' )
+                .returning( expectedReturn );
 
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'unexpected', 'expected' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAnyElement.setTo.returning, when the list parameter passed does matches an element, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.setTo.returning
+    * @case   when the list parameter passed does not match all elements
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAnyElementToReturning_whenNoElementsInTheParameterMatch_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().setTo( 'expected' );
+
+        Test.startTest();
+            try {
+                List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'unexpected', 'unexpected' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    'AmossTest_ClassToDouble.methodWithListOfObjects', 0,
+                                                    'expected', '(unexpected, unexpected)',
+                                                    'expects.method.withAnyElement.returning, when the list parameter passed does not match every element' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.setTo.returning
+    * @case   when the list parameter passed is not a list
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAnyElementSetToReturning_whenTheParameterPassedIsNotAList_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameter().withAnyElement().setTo( 'expected' )
+                .thenAnyParameter()
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDouble( 'not a list', 2 );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'The types do not match',
+                                                    'AmossTest_ClassToDouble.methodUnderDouble', 0,
+                                                    'List<Object>', 'String',
+                                                    'expects.method.withAnyElement.returning, when the parameter passed is not a list' );
+    }
 
     /**
     * @method expects.method.returning
