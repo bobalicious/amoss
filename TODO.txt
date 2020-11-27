@@ -12,7 +12,6 @@ Question:
 Implement
 
     Tests:
-        Output of verify when different parameter types specified
         All the all and any behaviours
 
     Look at removing duplication between:
