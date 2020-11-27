@@ -2572,6 +2572,37 @@ public with sharing class AmossTest_InstanceTest {
                                                     'expects.method.withFieldsSetTo.returning, when the parameter passed is not an sObject' );
     }
 
+    /**
+    * @method expects.method.withAllElements.setTo.returning
+    * @case   when the list parameter passed does matches all elements
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsMethodWithAllElementsToReturning_whenAllElementsInTheParameterMatch_willPass() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().setTo( 'expected' )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'expected', 'expected' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAllElements.setTo.returning, when the list parameter passed does matches all elements, will return the specified value' );
+    }
 
     /**
     * @method expects.method.withAllElements.setTo.returning
@@ -2591,8 +2622,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .expects()
                 .method( 'methodWithListOfObjects' )
-                .withParameter().withAllElements().setTo( 'expected' )
-                .returning( 'expectedReturn' );
+                .withParameter().withAllElements().setTo( 'expected' );
 
         Test.startTest();
             try {
@@ -2607,9 +2637,43 @@ public with sharing class AmossTest_InstanceTest {
                                                     'expects.method.withAllElements.returning, when the list parameter passed does not match every element' );
     }
 
-    // is not a list
-    // does not match
-    // matches
+    /**
+    * @method expects.method.withAllElements.setTo.returning
+    * @case   when the list parameter passed is not a list
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAllElementsToReturning_whenTheParameterPassedIsNotAList_willFail() {
+        
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameter().withAllElements().setTo( 'expected' )
+                .thenAnyParameter()
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDouble( 'not a list', 2 );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'The types do not match',
+                                                    'AmossTest_ClassToDouble.methodUnderDouble', 0,
+                                                    'List<Object>', 'String',
+                                                    'expects.method.withAllElements.returning, when the parameter passed is not a list' );
+    }
+
+
+
 
 
 
