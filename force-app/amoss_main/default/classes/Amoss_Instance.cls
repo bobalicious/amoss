@@ -1279,6 +1279,24 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States the shape of a List parameter value that is expected for the next parameter.
+        *
+        * In order to match, the ultimately passed parameter be a list where the specified element matches the next specification.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withElementAt( 1 ).withFieldsSetTo( contactFieldsMap )
+        *       .withParameter().withElementAt( 2 ).setTo( true )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
+            return new Amoss_PositionalElementAtPositionInCollectionValueDefiner( expectation, elementPosition );
+        }
+
+        /**
         * Internal method that sets the next parameter's verifier on the expectation to that specified
         * and then returns the next definer in the allowed syntax
         *
@@ -1562,6 +1580,24 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_NamedAnyElementInCollectionValueDefiner withAnyElement() {
             return new Amoss_NamedAnyElementInCollectionValueDefiner( expectation, parameterName );
+        }
+
+        /**
+        * States the shape of a List parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter be a list where the element at the specified position matches the next specification.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).withElementAt( 2 ).withFieldsSetTo( contactFieldsMap )
+        *       .andParameterNamed( 'parmeterName2' ).withElementAt( 2 ).setTo( true )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_NamedElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
+            return new Amoss_NamedElementAtPositionInCollectionValueDefiner( expectation, parameterName, elementPosition );
         }
 
         /**
@@ -2965,7 +3001,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                             .setAssertionMessage( 'The value is not what was expected - The list is not as long as required' );
             }
 
-            elementVerifier.verify( actualList[ elementPosition ] );
+            try {
+                elementVerifier.verify( actualList[ elementPosition ] );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( String.format( 'List element {0} does not match what was expected: \'{0}\'', new List<Object>{ elementPosition } ) );
+            }
         }
     }
 
