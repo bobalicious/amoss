@@ -2345,11 +2345,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
-    interface Amoss_ValueVerifier {
-        String toString();
-        void verify( Object value );
-    }
-
     /**
     * Internal class that should not be referenced directly in a test
     *

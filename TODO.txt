@@ -11,6 +11,20 @@ Question:
 
 Implement
 
+    Recursive condition setting (for lists particularly)
+    E.g.
+
+        withParameter()
+            .withElementAt(0).setTo( 'expected1' )
+            .withElementAt(1).setTo( 'expected2' )
+            .withAnyElement().setTo( 'anywhereExpected' )
+
+    And
+        withParameter()
+            .withElementAt(0).withElementAt(2).setTo('expected1')
+            .withElementAt(1).withAnyElement().set('anywhereExpected')
+
+
     Tests:
         PMD configuration for test method name format
 
