@@ -12,7 +12,14 @@ Question:
 Implement
 
     Tests:
-        All the all and any behaviours
+        PMD configuration for test method name format
+
+        Compilation test for all the combinations that are allowed in the grammar?
+
+    Think about withElements
+        setTo (given a list)
+        what else would you implement?
+
 
     Look at removing duplication between:
         * Amoss_ExpectationFieldsSetToParameter
@@ -51,7 +58,7 @@ Implement
     Spy:
         Currently supports
             mockThing.countOf( 'method' )
-        why not 
+        why not
             mockThing.get().countOf( 'method' )
             this would be in line with the parameter getters
 
