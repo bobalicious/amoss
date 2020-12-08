@@ -1141,7 +1141,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         protected abstract Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier );
 
         /**
-        * States the parameter value that is expected for the the currently specified parameter.
+        * States the parameter value that is expected for the currently specified parameter.
         *
         * In order to match an object, the passed parameter must:
         *   * Be the same instance as that specified.
@@ -1165,7 +1165,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * States the parameter value that is expected for the the currently specified parameter.
+        * States the parameter value that is expected for the currently specified parameter.
         *
         * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
         *
@@ -1185,7 +1185,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * States the shape of the SObject parameter value that is expected for the the currently specified parameter.
+        * States the shape of the SObject parameter value that is expected for the currently specified parameter.
         *
         * In order to match, the ultimately passed parameter must have the properties that are populated on the
         * specified sobject set to the same value.
@@ -1208,7 +1208,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * States the shape of the sobject parameter value that is expected for the the currently specified parameter.
+        * States the shape of the sobject parameter value that is expected for the currently specified parameter.
         *
         * In order to match, the ultimately passed parameter must have the properties that are populated in the
         * specified map set to the same value.
@@ -1228,6 +1228,23 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the verifier that should be used to check the currently specified parameter.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().verifiedBy( customVerifier )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Amoss_ValueVerifier - The verifier to add to the specification
+        */
+        public Amoss_PositionalParametersDefiner verifiedBy( Amoss_ValueVerifier verifier ) {
+            return setParameterVerifier( verifier );
         }
     }
 
@@ -1444,7 +1461,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         protected abstract Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter );
 
         /**
-        * States the parameter value that is expected for the the currently specified parameter.
+        * States the parameter value that is expected for the currently specified parameter.
         *
         * In order to match an object, the passed parameter must:
         *   * Be the same instance as that specified.
@@ -1468,7 +1485,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * States the parameter value that is expected for the the currently specified parameter.
+        * States the parameter value that is expected for the currently specified parameter.
         *
         * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
         *
@@ -1531,6 +1548,23 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the verifier that should be used to check the currently specified parameter.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parameterName1' ).verifiedBy( customVerifier )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Amoss_ValueVerifier - The verifier to add to the specification
+        */
+        public Amoss_NamedParametersDefiner verifiedBy( Amoss_ValueVerifier verifier ) {
+            return setParameterVerifier( verifier );
         }
     }
 

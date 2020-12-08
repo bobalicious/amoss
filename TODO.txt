@@ -11,6 +11,14 @@ Question:
 
 Implement
 
+    Tests:
+        verifiedBy
+        Compilation test for all the combinations that are allowed in the grammar?
+
+    Document:
+        verifiedBy
+        class documentation for Amoss_MethodHandler would be nice - see Amoss_ValueVerifier
+
     Recursive condition setting (for lists particularly)
     E.g.
 
@@ -24,11 +32,8 @@ Implement
             .withElementAt(0).withElementAt(2).setTo('expected1')
             .withElementAt(1).withAnyElement().set('anywhereExpected')
 
-
-    Tests:
         PMD configuration for test method name format
 
-        Compilation test for all the combinations that are allowed in the grammar?
 
     Think about withElements
         setTo (given a list)
