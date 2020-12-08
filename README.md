@@ -370,6 +370,73 @@ classToDoubleController
         .willReturn( 'theReturn' );
 ```
 
+### List Specific Comparisons
+
+#### `withAnyElement`
+
+Used to check that a parameter is a list that contains *any* of the elements passing the specified condition.  It can be used with any of the matching methods that you can use directly on the parameter (e.g. `setTo`, `setToTheSameValueAs`, etc), with the exception of the other list comparisons (I.E. you cannot check a list within a list.  Yet).
+
+* `withAnyElement` - Requires a further condition to be defined.
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter().withAnyElement().setTo( 'expectedString' )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).withAnyElement().withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
+        .willReturn( 'theReturn' );
+```
+
+#### `withAllElements`
+
+Used to check that a parameter is a list where *all* of the elements pass the specified condition.  It can be used with any of the matching methods that you can use directly on the parameter (e.g. `setTo`, `setToTheSameValueAs`, etc), with the exception of the other list comparisons (I.E. you cannot check a list within a list.  Yet).
+
+* `withAllElements` - Requires a further condition to be defined.
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter().withAllElements().setTo( 'expectedString' )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).withAllElements().withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
+        .willReturn( 'theReturn' );
+```
+
+#### `withElementAt`
+
+Used to check that a parameter is a list where the element at the given position passes the specified condition.  It can be used with any of the matching methods that you can use directly on the parameter (e.g. `setTo`, `setToTheSameValueAs`, etc), with the exception of the other list comparisons.
+
+Unfortunately, it is not yet possible to specify multiple positions.
+
+* `withElementAt` - Requires an element position to be defined, followed by a further condition.
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter().withElementAt( 1 ).setTo( 'expectedString' )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).withElementAt( 0 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
+        .willReturn( 'theReturn' );
+```
+
 ## Other Behaviours
 
 ### Using Method Handlers
@@ -402,7 +469,7 @@ class ExampleMethodHandler implements Amoss_MethodHandler {
 
 @isTest
 private static void methodBeingTested_whenGivenSomething_doesSomething() {
-    
+
     Amoss_MethodHandler methodHander = new ExampleMethodHandler();
 
     Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
@@ -441,7 +508,7 @@ class ExampleMethodHandler implements StubProvider {
 
 @isTest
 private static void methodBeingTested_whenGivenSomething_doesSomething() {
-    
+
     StubProvider methodHander = new ExampleMethodHandler();
 
     Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
