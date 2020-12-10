@@ -15,6 +15,9 @@ Implement
         verifiedBy
         Compilation test for all the combinations that are allowed in the grammar?
 
+        allowsAnyCall with no parameter = allowsAnyCall( true )
+        when( 'methodName' ) / allows( 'methodName' ) / expects( 'methodName' ) as a shortcut
+
     Document:
         verifiedBy
         class documentation for Amoss_MethodHandler would be nice - see Amoss_ValueVerifier

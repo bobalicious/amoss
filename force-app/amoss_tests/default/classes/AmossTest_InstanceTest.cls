@@ -2578,7 +2578,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
     * @result will pass the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsToReturning_whenAllElementsInTheParameterMatch_willPass() {
+    private static void expectsMethodWithAllElementsSetToReturning_whenAllElementsInTheParameterMatch_willPass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -2610,7 +2610,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsToReturning_whenNotAllElementsInTheParameterMatch_willFail() {
+    private static void expectsMethodWithAllElementsSetToReturning_whenNotAllElementsInTheParameterMatch_willFail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -2643,7 +2643,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsToReturning_whenTheParameterPassedIsNotAList_willFail() {
+    private static void expectsMethodWithAllElementsSetToReturning_whenTheParameterPassedIsNotAList_willFail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -2678,7 +2678,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
     * @result will pass the test
     */
     @isTest
-    private static void expectsMethodWithAnyElementToReturning_whenAnyElementsInTheParameterMatch_willPass() {
+    private static void expectsMethodWithAnyElementSetToReturning_whenAnyElementsInTheParameterMatch_willPass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -2710,7 +2710,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAnyElementToReturning_whenNoElementsInTheParameterMatch_willFail() {
+    private static void expectsMethodWithAnyElementSetToReturning_whenNoElementsInTheParameterMatch_willFail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -2935,6 +2935,190 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
                                                     'AmossTest_ClassToDouble.methodWithListOfObjects', 0,
                                                     'List<Object>', 'Unknown (null)',
                                                     'expects.method.withElementAt.returning, when the parameter is null' );
+    }
+
+    /**
+    * @method expects.method.verifiedBy.returning
+    * @case   when the verifier does not throw an exception
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsMethodVerifiedByReturning_whenTheVerifierDoesNotThrowAnException_willPass() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
+        verifierToDoubleController
+            .expects()
+                .method( 'verify' )
+                .withParameter().setTo( 'expectedParameterValue' )
+            .then().expects()
+                .method( 'verify' )
+                .withParameter().setTo( 1 );
+        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+
+        String expectedReturn = 'theReturn';
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameter().verifiedBy( customVerifierThatPasses )
+                .thenParameter().verifiedBy( customVerifierThatPasses )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'expectedParameterValue', 1 );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.verifiedBy.returning, when the verifier does not throw an exception (I.E. passes) will pass the test' );
+    }
+
+    /**
+    * @method expects.method.verifiedBy.returning
+    * @case   when the verifier throws an Amoss_AssertionFailureException
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodVerifiedByReturning_whenTheVerifierThrowsAnAssertException_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
+        verifierToDoubleController
+            .allowsAnyCall( true )
+            .expects()
+                .method( 'verify' )
+                .withParameter().setTo( 'expectedParameterValue' )
+                .throwing( new Amoss_Instance.Amoss_EqualsAssertionFailureException()
+                                .setExpected( 'expectedValue' )
+                                .setActual( 'actualValue' )
+                                .setAssertionMessage( 'This is the failure' ) );
+
+        Amoss_ValueVerifier customVerifierThatFails = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+
+        String expectedReturn = 'theReturn';
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameter().verifiedBy( customVerifierThatFails )
+                .thenParameter().verifiedBy( customVerifierThatFails )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDouble( 'expectedParameterValue', 1 );
+            } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'This is the failure',
+                                                    'AmossTest_ClassToDouble.methodUnderDouble', 0,
+                                                    'expectedValue', 'actualValue',
+                                                    'expects.method.verifiedBy.returning, when the verifier throws an assertion exception' );
+    }
+
+    /**
+    * @method when.method.verifiedBy.returning
+    * @case   when the verifier does not throw an exception
+    * @result will match the call and return the value
+    */
+    @isTest
+    private static void whenMethodVerifiedByReturning_whenTheVerifierDoesNotThrowAnException_willMatchAndReturnTheValue() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
+        verifierToDoubleController
+            .expects()
+                .method( 'verify' )
+                .withParameter().setTo( 'expectedParameterValue' )
+            .then().expects()
+                .method( 'verify' )
+                .withParameter().setTo( 1 );
+        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+
+        String expectedReturn = 'theReturn';
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().verifiedBy( customVerifierThatPasses )
+                .thenParameter().verifiedBy( customVerifierThatPasses )
+                .willReturn( expectedReturn )
+            .also().when()
+                .method( 'methodUnderDouble' )
+                .willReturn( 'not this value' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'expectedParameterValue', 1 );
+        Test.stopTest();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'when.method.verifiedBy.returning, when the verifier does not throw an exception (I.E. passes) will match the return' );
+    }
+
+    /**
+    * @method when.method.verifiedBy.returning
+    * @case   when the verifier throws an exception
+    * @result will not match the call
+    */
+    @isTest
+    private static void whenMethodVerifiedByReturning_whenTheVerifierThrowsAnException_willNotMatchAndReturnTheValue() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
+        verifierToDoubleController
+            .expects()
+                .method( 'verify' )
+                .withParameter().setTo( 'expectedParameterValue' )
+            .then().expects()
+                .method( 'verify' )
+                .withParameter().setTo( 1 )
+                .throwing( new Amoss_Instance.Amoss_EqualsAssertionFailureException()
+                                .setExpected( 'expectedValue' )
+                                .setActual( 'actualValue' )
+                                .setAssertionMessage( 'This parameter does not match' ) );
+
+        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+
+        String expectedReturn = 'theReturn';
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().verifiedBy( customVerifierThatPasses )
+                .thenParameter().verifiedBy( customVerifierThatPasses )
+                .willReturn( 'not this value' )
+            .also().when()
+                .method( 'methodUnderDouble' )
+                .willReturn( expectedReturn );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'expectedParameterValue', 1 );
+        Test.stopTest();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'when.method.verifiedBy.returning, when the verifier throws an exception (I.E. fails) will not match and return the specified value' );
     }
 
     /**

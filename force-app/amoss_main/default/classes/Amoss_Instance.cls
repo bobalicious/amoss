@@ -273,39 +273,41 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                                     List<String> parameterNames,
                                     List<Object> parameters ) {
 
-        try {
+        String callDescription = new Amoss_CallDescriber().getCallDescription( mockedMethod, parameters );
 
-            String callDescription = new Amoss_CallDescriber().getCallDescription( mockedMethod, parameters );
+        callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
 
-            callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
-
-            if ( expectsNoCalls ) {
-                assertionMechanism.assertEquals( '', callDescription, String.format( '{0} did not expect any methods to be called', new List<String>{ getClassName() } ) );
-            }
-
-            if ( whens.hasExpectations() ) {
-                Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameterNames, parameters );
-                if ( whenExpectation != null ) {
-                    return whenExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
-                }
-            }
-
-            if ( allowsAnyCall == false && expectations.isEmpty() ) {
-                if ( !whens.isEmpty() ) {
-                    assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected, and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
-                } else {
-                    assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
-                }
-            }
-
-            if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameterNames, parameters ) ) {
-                Amoss_Expectation thisExpectation = expectations.unshift();
-                thisExpectation.verify( assertionMechanism, mockedMethod, parameterNames, parameters );
-                return thisExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
-            }
-        } catch ( Amoss_AssertionFailureException assertionFailure ) {
-            assertionFailure.issueAsserton( assertionMechanism );
+        if ( expectsNoCalls ) {
+            assertionMechanism.assertEquals( '', callDescription, String.format( '{0} did not expect any methods to be called', new List<String>{ getClassName() } ) );
         }
+
+        if ( whens.hasExpectations() ) {
+            Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameterNames, parameters );
+            if ( whenExpectation != null ) {
+                return whenExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
+            }
+        }
+
+        if ( allowsAnyCall == false && expectations.isEmpty() ) {
+            if ( !whens.isEmpty() ) {
+                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected, and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
+            } else {
+                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+            }
+        }
+
+        if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameterNames, parameters ) ) {
+            Amoss_Expectation thisExpectation = expectations.unshift();
+
+                try {
+                    thisExpectation.verify( assertionMechanism, mockedMethod, parameterNames, parameters );
+                } catch ( Amoss_Instance.Amoss_AssertionFailureException assertionFailure ) {
+                    assertionFailure.issueAsserton( assertionMechanism );
+                }
+
+            return thisExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
+        }
+
         return null;
     }
 
