@@ -2163,10 +2163,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * An implementing class should provide a mechanism to get a String description, verify passed parameters are as stated (reporting via assertions)
     * and checking passed parameters are as stated (returning a Boolean)
     */
-    private interface Amoss_ExpectationParameters {
-        String getParametersDescription();
-        void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues );
-        Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues );
+    private abstract class Amoss_ExpectationParameters {
+
+        Amoss_CompositeValueVerifier currentParameterVerifier;
+
+        public Amoss_ExpectationParameters addVerifier( Amoss_ValueVerifier verifier ) {
+            currentParameterVerifier.addVerifier( verifier );
+            return this;
+        }
+
+        public abstract String getParametersDescription();
+        public abstract void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues );
+        public abstract Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues );
     }
 
     /**
@@ -2174,7 +2182,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Always assumes that any parameters will match (since 'any' should)
     */
-    private class Amoss_ExpectationAnyParameters implements Amoss_ExpectationParameters {
+    private class Amoss_ExpectationAnyParameters extends Amoss_ExpectationParameters {
 
         /**
         * Internal method that returns a String description of the parameter values that are expected.
@@ -2183,7 +2191,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @return String - The description of the expected parameter values
         */
-        public String getParametersDescription() {
+        public override String getParametersDescription() {
             return 'any';
         }
 
@@ -2196,7 +2204,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param List<String> - The names of the parameters being passed, and thereforce checked
         * @param List<Object> - The values of the parameters being passed, and thereforce checked
         */
-        public void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+        public override void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
             return;
         }
 
@@ -2210,7 +2218,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param List<Object> - The parameters to check this expectation against.
         * @return Boolean - States if this expectation matches that passed passed in.
         */
-        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
+        public override Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
             return true;
         }
     }
@@ -2219,7 +2227,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Internal interface that allows for the specification of parameters that an Expectation should have using 'positional' notation.
     * That is, they are specified in order.
     */
-    private class Amoss_ExpectationPositionalParameters implements Amoss_ExpectationParameters {
+    private class Amoss_ExpectationPositionalParameters extends Amoss_ExpectationParameters {
 
         private List<Amoss_ValueVerifier> expectedParameters = new List<Amoss_ValueVerifier>();
 
@@ -2239,7 +2247,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @return String - The description of the expected parameter values
         */
-        public String getParametersDescription() {
+        public override String getParametersDescription() {
             List<String> stringParameters = new List<String>();
             for( Object thisParameter : expectedParameters ) {
                 stringParameters.add( String.valueOf( thisParameter ) );
@@ -2254,7 +2262,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param List<String> - The names of the parameters being passed, and thereforce checked
         * @param List<Object> - The values of the parameters being passed, and thereforce checked
         */
-        public void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+        public override void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
 
             if ( expectedParameters.size() != parameterValues.size() ) {
                 throw new Amoss_EqualsAssertionFailureException()
@@ -2282,7 +2290,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param List<Object> - The parameters to check this expectation against.
         * @return Boolean - States if this expectation matches that passed passed in.
         */
-        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
+        public override Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
             try {
                 verify( 'class', method, parameterNames, parameterValues );
             } catch ( Exception e ) {
@@ -2296,7 +2304,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Internal interface that allows for the specification of parameters that an Expectation should have using 'positional' notation.
     * That is, they are specified using their names
     */
-    private class Amoss_ExpectationNamedParameters implements Amoss_ExpectationParameters {
+    private class Amoss_ExpectationNamedParameters extends Amoss_ExpectationParameters {
 
         private Map<String,Amoss_ValueVerifier> expectedParameters = new Map<String,Amoss_ValueVerifier>();
 
@@ -2318,7 +2326,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @return String - The description of the expected parameter values
         */
-        public String getParametersDescription() {
+        public override String getParametersDescription() {
             List<String> stringParameters = new List<String>();
             for( String thisParameterName : expectedParameters.keySet() ) {
                 stringParameters.add( thisParameterName + ' => ' + String.valueOf( expectedParameters.get( thisParameterName ) ) );
@@ -2333,7 +2341,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param List<String> - The names of the parameters being passed, and thereforce checked
         * @param List<Object> - The values of the parameters being passed, and thereforce checked
         */
-        public void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
+        public override void verify( String className, String method, List<String> parameterNames, List<Object> parameterValues ){
 
             Set<String> expectedParameterNames = expectedParameters.keySet();
             Set<String> actualParameterNames   = new Set<String>( parameterNames );
@@ -2371,7 +2379,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param List<Object> - The parameters to check this expectation against.
         * @return Boolean - States if this expectation matches that passed passed in.
         */
-        public Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
+        public override Boolean matches( String method, List<String> parameterNames, List<Object> parameterValues ) {
             try {
                 verify( 'class', method, parameterNames, parameterValues );
             } catch ( Exception e ) {
@@ -2389,6 +2397,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     class Amoss_CompositeValueVerifier implements Amoss_ValueVerifier {
 
         List<Amoss_ValueVerifier> valueVerifiers = new List<Amoss_ValueVerifier>();
+
+        public Amoss_CompositeValueVerifier addVerifier( Amoss_ValueVerifier verifier ) {
+            valueVerifiers.add( verifier );
+            return this;
+        }
 
         /**
         * Internal method that should not be called directly in tests.
