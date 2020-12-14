@@ -2384,6 +2384,55 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     /**
     * Internal class that should not be referenced directly in a test
     *
+    * Allows for multiple ValueVerifier implementations to be evaluated against a single value
+    */
+    class Amoss_CompositeValueVerifier implements Amoss_ValueVerifier {
+
+        List<Amoss_ValueVerifier> valueVerifiers = new List<Amoss_ValueVerifier>();
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public override String toString() {
+            switch on valueVerifiers.size() {
+                when 0 {
+                    return 'ERROR: No verifiers defined';
+                }
+                when 1 {
+                    return String.valueOf( valueVerifiers[0] );
+                }
+                when else {
+                    return '[ ' + String.join( valueVerifiers, ', ' ) + ' ]';
+                }
+            }
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+            if ( valueVerifiers.size() == 0 ) {
+                throw new Amoss_AssertionFailureException()
+                            .setAssertionMessage( 'The specification of the expected parameter value is incompletely set up' );
+            }
+
+            for( Amoss_ValueVerifier thisValueVerifier : valueVerifiers ) {
+                thisValueVerifier.verify( actualValue );
+            }
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
     * Describes the specification of 'any' parameter value that is expected to be passed into a mocked method call
     *
     */

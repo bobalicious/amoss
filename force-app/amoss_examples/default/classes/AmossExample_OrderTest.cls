@@ -53,11 +53,11 @@ public with sharing class AmossExample_OrderTest {
      * When the methods on the Test Double are called, they do not care what the parameters are - they simply respond with true.
      *
      * The behaviour is checked by 'spying' on the parameters that were passed after the event using explicit assertions.
-     * 
+     *
      * This means that the test is only loosely tied to the implementation of the delivery provider.  If a new parameter
      * is added to the end of the methods, the test will still run and pass.
      * Although, if the shape of the parameters referenced in the assertions change, then the test will start to fail.
-     * 
+     *
      * It is also loosely tied to the implementation.  If, for example, 'scheduleDelivery' was called before 'canDeliver', this
      * test would still pass.  In some circumstances, this may be an advantage.  In this case it's a shortcoming.
      *
@@ -117,7 +117,7 @@ public with sharing class AmossExample_OrderTest {
      * The behaviour is checked by stating that methods are 'expected' to be called, then verifying that they are.
      *
      * The framework checks that the methods are called in the order that they are expected, strongly tying the test to the method's implementation.
-     * 
+     *
      * In some circumstances, this may not be desired, however in this case it is an advantage.  We are checking that 'canDelivery'
      * is called BEFORE 'scheduleDelivery' is.
      *
@@ -178,7 +178,7 @@ public with sharing class AmossExample_OrderTest {
      * The behaviour is checked by stating that methods are 'expected' to be called, then verifying that they are.
      *
      * The framework checks that the methods are called in the order that they are expected, strongly tying the test to the method's implementation.
-     * 
+     *
      * In some circumstances, this may not be desired, however in this case it is an advantage.  We are checking that 'canDelivery'
      * is called BEFORE 'scheduleDelivery' is.
      *
@@ -245,7 +245,7 @@ public with sharing class AmossExample_OrderTest {
      * The behaviour is checked by stating that methods are 'allowed' to be called, then checking that they are by spying the values
      *
      * However, the order of method calls are not checked, and the methods could be called in any order without causing failures.
-     * 
+     *
      * In some circumstances, this may be an advantage, however in this case it is a shortcoming.  We are NOT checking that 'canDelivery'
      * is called before 'scheduleDelivery' is.
      *
@@ -481,5 +481,5 @@ public with sharing class AmossExample_OrderTest {
         deliveryProviderController.verify();
 
         System.assertEquals( false, scheduleDeliveryResponse, 'scheduleDelivery, when a delivery provider throws an exception, returns false' );
-    }    
+    }
 }
