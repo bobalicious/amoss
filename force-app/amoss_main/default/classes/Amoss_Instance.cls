@@ -1080,7 +1080,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner thenParameter( Object parameterValue ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters())
+                .moveToNextParameter()
+                .addVerifierToCurrentParameter( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
             return this;
         }
 
@@ -1099,6 +1101,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParameterValueDefiner thenParameter() {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters())
+                .moveToNextParameter();
             return new Amoss_PositionalParameterValueDefiner( expectation );
         }
 
@@ -1115,7 +1119,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         */
         public Amoss_PositionalParametersDefiner thenAnyParameter() {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier( valueVerifierBuilder.buildVerifier( ValueSpecialType.ANY_VALUE ) );
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters())
+                .moveToNextParameter()
+                .addVerifierToCurrentParameter( valueVerifierBuilder.buildVerifier( ValueSpecialType.ANY_VALUE ) );
             return this;
         }
     }
@@ -1323,7 +1329,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return Amoss_PositionalParametersDefiner - The next definer
         */
         protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier( verifier );
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter( verifier );
             return new Amoss_PositionalParametersDefiner( expectation );
         }
     }
@@ -1346,7 +1352,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return Amoss_PositionalParametersDefiner - The next definer
         */
         protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier(
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter(
                 valueVerifierBuilder.buildAllElementsVerifier( verifier )
              );
             return new Amoss_PositionalParametersDefiner( expectation );
@@ -1372,7 +1378,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
 
         protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier(
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter(
                 valueVerifierBuilder.buildAnyElementVerifier( verifier )
              );
             return new Amoss_PositionalParametersDefiner( expectation );
@@ -1401,7 +1407,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
 
         protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addParameterVerifier(
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter(
                 valueVerifierBuilder.buildElementAtVerifier( verifier, elementPosition )
              );
             return new Amoss_PositionalParametersDefiner( expectation );
@@ -1751,7 +1757,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * For example:
         *   .when()
         *       .method( 'methodName' )
-        *       .withAnyParameter()
+        *       .withAnyParameters()
         *       .willReturn( 'theValueItShouldReturn' )
         *
         */
@@ -1776,7 +1782,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
 
             for ( Object thisParameterValue : parameterValues ) {
-                expectedParameters.addParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( thisParameterValue ) );
+                expectedParameters
+                    .moveToNextParameter()
+                    .addVerifierToCurrentParameter( valueVerifierBuilder.buildEqualsVerifier( thisParameterValue ) );
             }
 
             expectation.setExpectationParameters( expectedParameters );
@@ -1828,7 +1836,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
-            expectedParameters.addParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
+            expectedParameters
+                .moveToNextParameter()
+                .addVerifierToCurrentParameter( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
             expectation.setExpectationParameters( expectedParameters );
 
             return new Amoss_PositionalParametersDefiner( expectation );
@@ -1852,7 +1862,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalParameterValueDefiner withParameter() {
 
-            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters().moveToNextParameter();
             expectation.setExpectationParameters( expectedParameters );
             return new Amoss_PositionalParameterValueDefiner( expectation );
         }
@@ -1872,10 +1882,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalParametersDefiner withAnyParameter() {
 
-            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
+            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters().moveToNextParameter();
             expectation.setExpectationParameters( expectedParameters );
 
-            expectedParameters.addParameterVerifier( valueVerifierBuilder.buildVerifier( ValueSpecialType.ANY_VALUE ) );
+            expectedParameters.addVerifierToCurrentParameter( valueVerifierBuilder.buildVerifier( ValueSpecialType.ANY_VALUE ) );
 
             return new Amoss_PositionalParametersDefiner( expectation );
         }
@@ -2165,9 +2175,15 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     */
     private abstract class Amoss_ExpectationParameters {
 
+        // TODO: document this...
         Amoss_CompositeValueVerifier currentParameterVerifier;
 
-        public Amoss_ExpectationParameters addVerifier( Amoss_ValueVerifier verifier ) {
+        public Amoss_CompositeValueVerifier buildCurrentParameterVerifier() {
+            currentParameterVerifier = new Amoss_CompositeValueVerifier();
+            return currentParameterVerifier;
+        }
+
+        public Amoss_ExpectationParameters addVerifierToCurrentParameter( Amoss_ValueVerifier verifier ) {
             currentParameterVerifier.addVerifier( verifier );
             return this;
         }
@@ -2231,16 +2247,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         private List<Amoss_ValueVerifier> expectedParameters = new List<Amoss_ValueVerifier>();
 
+        // TODO: document
+        Amoss_ExpectationPositionalParameters moveToNextParameter() {
+            expectedParameters.add( buildCurrentParameterVerifier() );
+            return this;
+        }
+
         /**
         * Internal method that adds a parameter to the list of parameters that are valid for this Expectation.
         *
         * @param Amoss_ValueVerifier - The parameter to add to the list of expected ones
         * @return Amoss_ExpectationParameters - Itself, allowing for a fluent interface
-        */
-        Amoss_ExpectationPositionalParameters addParameterVerifier( Amoss_ValueVerifier parameter ) {
-            expectedParameters.add( parameter );
-            return this;
-        }
+        // */
+        // Amoss_ExpectationPositionalParameters addParameterVerifier( Amoss_ValueVerifier parameter ) {
+        //     expectedParameters.add( parameter );
+        //     return this;
+        // }
 
         /**
         * Internal method that returns a String description of the parameter values that are expected, as a comma seperated list.
@@ -2307,6 +2329,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private class Amoss_ExpectationNamedParameters extends Amoss_ExpectationParameters {
 
         private Map<String,Amoss_ValueVerifier> expectedParameters = new Map<String,Amoss_ValueVerifier>();
+
+        // TODO: document
+        Amoss_ExpectationNamedParameters moveToParameter( String parameterName ) {
+            expectedParameters.put( parameterName, buildCurrentParameterVerifier() );
+            return this;
+        }
 
         /**
         * Internal method that sets the expected parameter with the given name, to have the given parameter.
