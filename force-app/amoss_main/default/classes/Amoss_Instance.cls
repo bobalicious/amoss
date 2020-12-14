@@ -1439,7 +1439,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_NamedParameterValueDefiner andParameterNamed( String parameterName ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).moveToParameter( parameterName );
-            return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
+            return new Amoss_NamedParameterValueDefiner( expectation );
         }
     }
 
@@ -1451,13 +1451,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      *
      * Defines the core of the behaviour - can be applied in different ways by overriding 'setParameterVerifier'
      */
+    // TODO: can we remove the need for the abstract one?
     public abstract class Amoss_AbstractNamedParameterValueDefiner extends Amoss_ExpectationDefiner {
 
-        String parameterName;
-
-        public Amoss_AbstractNamedParameterValueDefiner( Amoss_Expectation expectation, String parameterName ) {
+        public Amoss_AbstractNamedParameterValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
-            this.parameterName = parameterName;
         }
 
         /**
@@ -1585,8 +1583,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      */
     public class Amoss_NamedParameterValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
 
-        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation, String parameterName ) {
-            super( expectation, parameterName );
+        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
         }
 
         /**
@@ -1604,7 +1602,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedAllElementsInCollectionValueDefiner withAllElements() {
-            return new Amoss_NamedAllElementsInCollectionValueDefiner( expectation, parameterName );
+            return new Amoss_NamedAllElementsInCollectionValueDefiner( expectation );
         }
 
         /**
@@ -1622,7 +1620,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedAnyElementInCollectionValueDefiner withAnyElement() {
-            return new Amoss_NamedAnyElementInCollectionValueDefiner( expectation, parameterName );
+            return new Amoss_NamedAnyElementInCollectionValueDefiner( expectation );
         }
 
         /**
@@ -1640,7 +1638,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
-            return new Amoss_NamedElementAtPositionInCollectionValueDefiner( expectation, parameterName, elementPosition );
+            return new Amoss_NamedElementAtPositionInCollectionValueDefiner( expectation, elementPosition );
         }
 
         /**
@@ -1662,8 +1660,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      */
     public class Amoss_NamedAllElementsInCollectionValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
 
-        public Amoss_NamedAllElementsInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
-            super( expectation, parameterName );
+        public Amoss_NamedAllElementsInCollectionValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
         }
 
         /**
@@ -1687,8 +1685,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      */
     public class Amoss_NamedAnyElementInCollectionValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
 
-        public Amoss_NamedAnyElementInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName ) {
-            super( expectation, parameterName );
+        public Amoss_NamedAnyElementInCollectionValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
         }
 
         /**
@@ -1714,8 +1712,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         Integer elementPosition;
 
-        public Amoss_NamedElementAtPositionInCollectionValueDefiner( Amoss_Expectation expectation, String parameterName, Integer elementPosition ) {
-            super( expectation, parameterName );
+        public Amoss_NamedElementAtPositionInCollectionValueDefiner( Amoss_Expectation expectation, Integer elementPosition ) {
+            super( expectation );
             this.elementPosition = elementPosition;
         }
 
@@ -1908,7 +1906,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             Amoss_ExpectationNamedParameters expectedParameters = new Amoss_ExpectationNamedParameters().moveToParameter( parameterName );
             expectation.setExpectationParameters( expectedParameters );
 
-            return new Amoss_NamedParameterValueDefiner( expectation, parameterName );
+            return new Amoss_NamedParameterValueDefiner( expectation );
         }
     }
 
