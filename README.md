@@ -370,6 +370,139 @@ classToDoubleController
         .willReturn( 'theReturn' );
 ```
 
+### List Specific Comparisons
+
+#### `withAnyElement`
+
+Used to check that a parameter is a list that contains *any* of the elements passing the specified condition.  It can be used with any of the matching methods that you can use directly on the parameter (e.g. `setTo`, `setToTheSameValueAs`, etc), with the exception of the other list comparisons (I.E. you cannot check a list within a list.  Yet).
+
+* `withAnyElement` - Requires a further condition to be defined.
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter().withAnyElement().setTo( 'expectedString' )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).withAnyElement().withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
+        .willReturn( 'theReturn' );
+```
+
+#### `withAllElements`
+
+Used to check that a parameter is a list where *all* of the elements pass the specified condition.  It can be used with any of the matching methods that you can use directly on the parameter (e.g. `setTo`, `setToTheSameValueAs`, etc), with the exception of the other list comparisons (I.E. you cannot check a list within a list.  Yet).
+
+* `withAllElements` - Requires a further condition to be defined.
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter().withAllElements().setTo( 'expectedString' )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).withAllElements().withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
+        .willReturn( 'theReturn' );
+```
+
+#### `withElementAt`
+
+Used to check that a parameter is a list where the element at the given position passes the specified condition.  It can be used with any of the matching methods that you can use directly on the parameter (e.g. `setTo`, `setToTheSameValueAs`, etc), with the exception of the other list comparisons.
+
+Unfortunately, it is not yet possible to specify multiple positions.
+
+* `withElementAt` - Requires an element position to be defined, followed by a further condition.
+
+Examples:
+```java
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter().withElementAt( 1 ).setTo( 'expectedString' )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).withElementAt( 0 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
+        .willReturn( 'theReturn' );
+```
+
+### Custom Verifiers
+
+If the standard means of verifying parameters doesn't give you the level of control you need, you might consider writing a custom verifier.
+
+Before you do so, you might consider if you would be better served by making your Test Double's behaviour less specific and using it as a Test Spy (check parameters after the call).  Doing so will likely result in a more readable test that is less brittle.
+
+That said, if you need to, you can implement your own implementations of `Amoss_ValueVerifier` and pass it into the specification using `verifiedBy`.
+
+For example:
+
+```java
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameterName( 'parameter1' ).verifiedBy( customVerifier )
+        .willReturn( 'theReturn' );
+```
+
+An implementation must implement two methods:
+
+* `toString` - A string representation that will be used when describing the expected call in a failed verify call against the Test Double's controller.
+* `verify` - The method that will check the given value 'matches' the expected.
+
+### Writing the `verify` method
+
+`verify` is used in two ways:
+* Checking that a method call matches an expectation, and ultimately issuing a failing assertion if it doesn't.
+* Checking if a 'when' is applicable for a particular method call.
+
+In order to ensure that that the method works in both situations, `verify` should check that the passed given value passes verification, by reporting any via throwing an exception of one the following types:
+    * `Amoss_Instance.Amoss_AssertionFailureException`
+    * `Amoss_Instance.Amoss_EqualsAssertionFailureException`
+
+These exceptions are then either caught and resolved as a 'mis-match', or converted into a failed assertion.
+
+When the Exception is raised, `setAssertionMessage` should be called to clearly define the failure.
+
+E.g.
+
+```java
+throw new Amoss_Instance.Amoss_AssertionFailureException()
+                                .setAssertionMessage( 'Value should be a Map indexed by Date, containing if each is a bank holiday' )
+                                // or some other complex check
+```
+
+When using Amoss_EqualsAssertionFailureException, setExpected and setActual should also be set, with the values
+being relevant within the context of the stated assertionMessage.
+
+E.g.
+
+```java
+throw new Amoss_Instance.Amoss_EqualsAssertionFailureException()
+                                .setExpected( 'Map<Date,Boolean>' )
+                                .setActual( actualType )
+                                .setAssertionMessage( 'Value should be a Map indexed by Date, containing if each is a bank holiday.  Was not the expected Type.' )
+```
+(Note that `setAssertionMessage` returns a `Amoss_AssertionFailureException`, so it is easiest to order the method calls this way round)
+
+If other verifiers are used within a custom verifier, any `Amoss_AssertionFailureExceptions` can be caught and
+have context added to the failure by calling addContextToMessage against the exception before re-throwing.
+
+Care should be taken to ensure that no exceptions other than `Amoss_AssertionFailureExceptions` and its subclasses are
+thrown.  This ensures that failures are clearly reported to the user.
+
+In addition, no calls to `System.assert` or its variations should be made directly in this method otherwise unexpected behaviours may result, particularly when using the 'when' and 'allows' syntax.
+
 ## Other Behaviours
 
 ### Using Method Handlers
@@ -402,7 +535,7 @@ class ExampleMethodHandler implements Amoss_MethodHandler {
 
 @isTest
 private static void methodBeingTested_whenGivenSomething_doesSomething() {
-    
+
     Amoss_MethodHandler methodHander = new ExampleMethodHandler();
 
     Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
@@ -441,7 +574,7 @@ class ExampleMethodHandler implements StubProvider {
 
 @isTest
 private static void methodBeingTested_whenGivenSomething_doesSomething() {
-    
+
     StubProvider methodHander = new ExampleMethodHandler();
 
     Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
