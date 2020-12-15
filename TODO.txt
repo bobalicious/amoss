@@ -11,46 +11,8 @@ Question:
 
 Implement
 
-    Recursive definition:
-
-        Done - Amoss_CompositeValueVerifier
-            verify
-                If no verifiers defined, error
-                Execute each of the verifiers
-
-            toString
-                If one verifier, return it
-                If more than one verifier, return [ toString, toString, ... ]
-
-    Amoss_ParametersDefiner
-
-
-    Amoss_ExpectationParameters
-
-        Add member variable
-            Amoss_CompositeValueVerifier currentParameterVerifier
-
-        Add addVerifierToCurrentParameter
-            currentParameterVerifier.addVerifier( verifier )
-
-
-    Amoss_ExpectationPositionalParameters
-        Add defineNextParameter
-            currentParameterVerifier = new Amoss_CompositeValueVerifier()
-            expectedParameters.add( currentParameterVerifier );
-
-        Remove setParameterVerifier
-
-    Amoss_ExpectationNamedParameters
-        Add defineParameter( String parameterName )
-            currentParameterVerifier = new Amoss_CompositeValueVerifier()
-            expectedParameters.put( parameterName, currentParameterVerifier );
-
-        Remove setParameterVerifier
-
-    Change all references to setParameterVerifier to addVerifierToCurrentParameter
-
     Look at how the grammar can then change with recursive definitions - particularly on setting list based value verifiers
+    Implement a lot of 'named parameter tests?'
 
     Tests:
         Compilation test for all the combinations that are allowed in the grammar?
