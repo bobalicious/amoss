@@ -11,7 +11,8 @@ Question:
 
 Implement
 
-    Look at how the grammar can then change with recursive definitions - particularly on setting list based value verifiers
+    Change the documentation of the Amoss_AbstractPositionalCollectionParameterValueDefiner (and the Named version) so the examples are for lists
+    Remove the redundant Abstract classes
     Implement a lot of 'named parameter tests?'
 
     Tests:

@@ -1060,7 +1060,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of parameters based on their
      * position.  I.E. expected parameters are defined in order.
      */
-    public class Amoss_PositionalParametersDefiner extends Amoss_ReturnsDefiner {
+    public virtual class Amoss_PositionalParametersDefiner extends Amoss_ReturnsDefiner {
 
         public Amoss_PositionalParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
@@ -1257,6 +1257,137 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
+     * The part of the grammar that allows the specification of the value of a positional parameter once it is
+     * defined as being a list.
+     *
+     * At this point in the syntax, the only valid thing to do is define the parameter value via verifiers.
+     *
+     * Defines the core of the behaviour - can be applied in different ways by overriding 'setParameterVerifier'
+     */
+    public abstract class Amoss_AbstractPositionalCollectionParameterValueDefiner extends Amoss_ExpectationDefiner {
+
+        public Amoss_AbstractPositionalCollectionParameterValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        /**
+        * Internal method that sets the next parameter on the expectation to that specified
+        * and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ValueVerifier - The parameter to set on the expectation
+        * @return Amoss_PositionalParameterAdditionalCollectionValueDefiner - The next definer
+        */
+        protected abstract Amoss_PositionalParameterAdditionalCollectionValueDefiner setParameterVerifier( Amoss_ValueVerifier verifier );
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter must:
+        *   * Be the same instance as that specified.
+        *   * Implement the method 'equals', and return true when called with the specified parameter.
+        *
+        * For primitives, it is sufficient that they are the same value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().setTo( 'Parameter1' )
+        *       .andParameter().withAnyElement().setTo( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner setTo( Object parameterValue ) {
+            return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().setToTheSameValueAs( 'Parameter1' )
+        *       .andParameter().withAnyElement().setToTheSameValueAs( 'Parameter2' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner setToTheSameValueAs( Object parameterValue ) {
+            return setParameterVerifier( valueVerifierBuilder.buildSameValueAsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the shape of the SObject parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated on the
+        * specified sobject set to the same value.
+        *
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withFieldsSetLike( contact )
+        *       .andParameter().withAnyElement().withFieldsSetLike( account )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return setParameterVerifier( valueVerifierBuilder.buildFieldsSetLikeVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the shape of the sobject parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated in the
+        * specified map set to the same value.
+        *
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withFieldsSetTo( contactFieldsMap )
+        *       .andParameter().withAnyElement().withFieldsSetTo( accountFieldsMap )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return setParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the verifier that should be used to check the currently specified parameter.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().verifiedBy( customVerifier )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Amoss_ValueVerifier - The verifier to add to the specification
+        */
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner verifiedBy( Amoss_ValueVerifier verifier ) {
+            return setParameterVerifier( verifier );
+        }
+    }
+
+    /**
      * The part of the grammar that allows the specification of the value of a positional parameter.
      *
      * At this point in the syntax, the only valid thing to do is define the parameter value.
@@ -1338,7 +1469,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of positional collection parameters
      * based on *every* element in the list matching the specified verifier
      */
-    public class Amoss_PositionalAllElementsInCollectionValueDefiner extends Amoss_AbstractPositionalParameterValueDefiner {
+    public class Amoss_PositionalAllElementsInCollectionValueDefiner extends Amoss_AbstractPositionalCollectionParameterValueDefiner {
 
         public Amoss_PositionalAllElementsInCollectionValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
@@ -1349,13 +1480,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * verifier and then returns the next definer in the allowed syntax
         *
         * @param  Amoss_ValueVerifier - The verifier to set on the expectation
-        * @return Amoss_PositionalParametersDefiner - The next definer
+        * @return Amoss_PositionalParameterAdditionalCollectionValueDefiner - The next definer
         */
-        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
+        protected override Amoss_PositionalParameterAdditionalCollectionValueDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter(
                 valueVerifierBuilder.buildAllElementsVerifier( verifier )
              );
-            return new Amoss_PositionalParametersDefiner( expectation );
+            return new Amoss_PositionalParameterAdditionalCollectionValueDefiner( expectation );
         }
     }
 
@@ -1363,7 +1494,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of positional collection parameters
      * based on any element in the list matching the specified verifier
      */
-    public class Amoss_PositionalAnyElementInCollectionValueDefiner extends Amoss_AbstractPositionalParameterValueDefiner {
+    public class Amoss_PositionalAnyElementInCollectionValueDefiner extends Amoss_AbstractPositionalCollectionParameterValueDefiner {
 
         public Amoss_PositionalAnyElementInCollectionValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
@@ -1374,14 +1505,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * verifier and then returns the next definer in the allowed syntax
         *
         * @param  Amoss_ValueVerifier - The verifier to set on the expectation
-        * @return Amoss_PositionalParametersDefiner - The next definer
+        * @return Amoss_PositionalParameterAdditionalCollectionValueDefiner - The next definer
         */
 
-        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
+        protected override Amoss_PositionalParameterAdditionalCollectionValueDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter(
                 valueVerifierBuilder.buildAnyElementVerifier( verifier )
              );
-            return new Amoss_PositionalParametersDefiner( expectation );
+            return new Amoss_PositionalParameterAdditionalCollectionValueDefiner( expectation );
         }
     }
 
@@ -1389,7 +1520,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of positional collection parameters
      * based on a given element in the list matching the specified verifier
      */
-    public class Amoss_PositionalElementAtPositionInCollectionValueDefiner extends Amoss_AbstractPositionalParameterValueDefiner {
+    public class Amoss_PositionalElementAtPositionInCollectionValueDefiner extends Amoss_AbstractPositionalCollectionParameterValueDefiner {
 
         Integer elementPosition;
 
@@ -1403,14 +1534,82 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * verifier and then returns the next definer in the allowed syntax
         *
         * @param  Amoss_ValueVerifier - The verifier to set on the expectation
-        * @return Amoss_PositionalParametersDefiner - The next definer
+        * @return Amoss_PositionalParameterAdditionalCollectionValueDefiner - The next definer
         */
 
-        protected override Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
+        protected override Amoss_PositionalParameterAdditionalCollectionValueDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter(
                 valueVerifierBuilder.buildElementAtVerifier( verifier, elementPosition )
              );
-            return new Amoss_PositionalParametersDefiner( expectation );
+            return new Amoss_PositionalParameterAdditionalCollectionValueDefiner( expectation );
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the additional specification of the shape of a value of a named parameter once
+     * the parameter is defined as being a list.
+     *
+     * The name must have already been specified.
+     *
+     */
+    public class Amoss_PositionalParameterAdditionalCollectionValueDefiner extends Amoss_PositionalParametersDefiner {
+
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        /**
+        * States the shape of a List parameter value that is expected for the next parameter.
+        *
+        * In order to match, the ultimately passed parameter be a list where EVERY element matches the next specification.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withAllElements().withFieldsSetTo( contactFieldsMap )
+        *       .withParameter().withAllElements().setTo( true )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalAllElementsInCollectionValueDefiner withAllElements() {
+            return new Amoss_PositionalAllElementsInCollectionValueDefiner( expectation );
+        }
+
+        /**
+        * States the shape of a List parameter value that is expected for the next parameter.
+        *
+        * In order to match, the ultimately passed parameter be a list where ANY element matches the next specification.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withAnyElement().withFieldsSetTo( contactFieldsMap )
+        *       .withParameter().withAnyElement().setTo( true )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalAnyElementInCollectionValueDefiner withAnyElement() {
+            return new Amoss_PositionalAnyElementInCollectionValueDefiner( expectation );
+        }
+
+        /**
+        * States the shape of a List parameter value that is expected for the next parameter.
+        *
+        * In order to match, the ultimately passed parameter be a list where the specified element matches the next specification.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withElementAt( 1 ).withFieldsSetTo( contactFieldsMap )
+        *       .withParameter().withElementAt( 2 ).setTo( true )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The value of the parameter to add to the specification
+        */
+        public Amoss_PositionalElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
+            return new Amoss_PositionalElementAtPositionInCollectionValueDefiner( expectation, elementPosition );
         }
     }
 
