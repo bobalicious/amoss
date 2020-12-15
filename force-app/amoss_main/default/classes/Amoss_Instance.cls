@@ -1138,18 +1138,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * Internal method that sets the next parameter's verifier on the expectation to that specified
-        * and then returns the next definer in the allowed syntax
-        *
-        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
-        * @return Amoss_PositionalParametersDefiner - The next definer
-        */
-        private Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter( verifier );
-            return new Amoss_PositionalParametersDefiner( expectation );
-        }
-
-        /**
         * States the parameter value that is expected for the currently specified parameter.
         *
         * In order to match an object, the passed parameter must:
@@ -1308,6 +1296,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
             return new Amoss_PositionalElementAtPositionInCollectionValueDefiner( expectation, elementPosition );
+        }
+
+        /**
+        * Internal method that sets the next parameter's verifier on the expectation to that specified
+        * and then returns the next definer in the allowed syntax
+        *
+        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
+        * @return Amoss_PositionalParametersDefiner - The next definer
+        */
+        private Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter( verifier );
+            return new Amoss_PositionalParametersDefiner( expectation );
         }
     }
 
@@ -1624,24 +1624,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The name must have already been specified.
      *
      * At this point in the syntax, the only valid thing to do is define the parameter value.
-     *
-     * Defines the core of the behaviour - can be applied in different ways by overriding 'setParameterVerifier'
      */
-    // TODO: can we remove the need for this abstract one?
-    public abstract class Amoss_AbstractNamedParameterValueDefiner extends Amoss_ExpectationDefiner {
+    public class Amoss_NamedParameterValueDefiner extends Amoss_ExpectationDefiner {
 
-        public Amoss_AbstractNamedParameterValueDefiner( Amoss_Expectation expectation ) {
+        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
-
-        /**
-        * Internal method that sets the parameter on the expectation to be expected to match the specified
-        * verifier and then returns the next definer in the allowed syntax
-        *
-        * @param  Amoss_ValueVerifier - The parameter to set on the expectation
-        * @return Amoss_PositionalParametersDefiner - The next definer
-        */
-        protected abstract Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier parameter );
 
         /**
         * States the parameter value that is expected for the currently specified parameter.
@@ -1749,19 +1737,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_NamedParametersDefiner verifiedBy( Amoss_ValueVerifier verifier ) {
             return setParameterVerifier( verifier );
         }
-    }
-
-    /**
-     * The part of the grammar that allows the specification of the shape of a value of a named parameter.
-     * The name must have already been specified.
-     *
-     * At this point in the syntax, the only valid thing to do is define the parameter value.
-     */
-    public class Amoss_NamedParameterValueDefiner extends Amoss_AbstractNamedParameterValueDefiner {
-
-        public Amoss_NamedParameterValueDefiner( Amoss_Expectation expectation ) {
-            super( expectation );
-        }
 
         /**
         * States the shape of a List parameter value that is expected for the currently specified parameter.
@@ -1824,7 +1799,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param  Amoss_ValueVerifier - The parameter to set on the expectation
         * @return Amoss_PositionalParametersDefiner - The next definer
         */
-        protected override Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
+        private Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter( verifier );
             return new Amoss_NamedParametersDefiner( expectation );
         }
