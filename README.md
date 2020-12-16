@@ -418,8 +418,6 @@ classToDoubleController
 
 Used to check that a parameter is a list where the element at the given position passes the specified condition.  It can be used with any of the matching methods that you can use directly on the parameter (e.g. `setTo`, `setToTheSameValueAs`, etc), with the exception of the other list comparisons.
 
-Unfortunately, it is not yet possible to specify multiple positions.
-
 * `withElementAt` - Requires an element position to be defined, followed by a further condition.
 
 Examples:

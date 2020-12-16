@@ -12,7 +12,6 @@ Question:
 Implement
 
     Change the documentation of the Amoss_AbstractPositionalCollectionParameterValueDefiner (and the Named version) so the examples are for lists
-    Remove the redundant Abstract classes
     Implement a lot of 'named parameter tests?'
 
     Tests:
