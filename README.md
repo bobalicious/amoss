@@ -425,13 +425,34 @@ Examples:
 classToDoubleController
     .when()
         .method( 'objectMethodUnderDouble' )
-        .withParameter().withElementAt( 1 ).setTo( 'expectedString' )
+        .withParameter()
+            .withElementAt( 0 ).setTo( 'expectedString-number1' )
+            .withElementAt( 1 ).setTo( 'expectedString-number2' )
         .willReturn( 'theReturn' );
 
 classToDoubleController
     .when()
         .method( 'objectMethodUnderDouble' )
-        .withParameterNamed( 'parameterName' ).withElementAt( 0 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
+        .withParameterNamed( 'parameterName' )
+            .withElementAt( 0 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'Person1' } )
+            .withElementAt( 1 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'Person2' } )
+        .willReturn( 'theReturn' );
+```
+
+#### Combining list specifications
+
+All of the list based specifications can be combined, providing the opportunity to create quite complex parameter checking with simple structures.
+
+For example, you may want to check that every Contact in a list has the 'PersonAccount' flag set, and then also check the particular Names of the Contacts at the same time, maybe to ensure they are passed in a particular order.  You might do that with:
+
+```java
+classToDoubleController
+    .when()
+        .method( 'objectMethodUnderDouble' )
+        .withParameter()
+            .withAllElements().withFieldsSetTo( new Map<String,Object>{ 'IsPersonAccount' => true } )
+            .withElementAt( 0 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'Person1' } )
+            .withElementAt( 1 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'Person2' } )
         .willReturn( 'theReturn' );
 ```
 

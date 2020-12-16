@@ -11,10 +11,15 @@ Question:
 
 Implement
 
-    Change the documentation of the Amoss_AbstractPositionalCollectionParameterValueDefiner (and the Named version) so the examples are for lists
-    Implement a lot of 'named parameter tests?'
-
     Tests:
+
+        Check there's documentation in each of the methods
+
+        Tests for the composite nature of the list checking
+        Basic structure, then the verify tests for the output
+
+        Implement more 'named parameter tests?'
+
         Compilation test for all the combinations that are allowed in the grammar?
 
         allowsAnyCall with no parameter = allowsAnyCall( true )

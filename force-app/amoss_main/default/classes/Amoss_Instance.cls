@@ -1797,7 +1797,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * and then returns the next definer in the allowed syntax
         *
         * @param  Amoss_ValueVerifier - The parameter to set on the expectation
-        * @return Amoss_PositionalParametersDefiner - The next definer
+        * @return Amoss_NamedParametersDefiner - The next definer
         */
         private Amoss_NamedParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter( verifier );
