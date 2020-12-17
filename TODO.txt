@@ -9,46 +9,54 @@ Documentation:
 Question:
     Is there anything we can do about the error we get when we mismatch the types on return?  Doubt it.  Maybe just add a FAQ?
 
-Implement
+Implement missing tests:
 
-    Tests:
+    Positional
+        element.setToTheSameValueAs
+        element.withFieldsSetTo
+        element.verifiedBy
+
+        element then withAllElements
+        element then withAnyElement
+
+    Named
+        verifiedBy
+        element.setTo
+        element.setToTheSameValueAs
+        element.withFieldsSetTo
+        element.verifiedBy
+
+        element then withAllElements
+        element then withAnyElement
+        element then withElementAt
+
+    Define parameter with no property
+        Description shows an error
+        Verify throws a failure
+
+    Define parameter with multiple properties
+        Description shows all the properties
+
+    SameInstance Description
+    ListSameInstance Description
+    ListSameInstance given something not a list
+
+    Implement:
 
         Check there's documentation in each of the methods
 
-        Tests for the composite nature of the list checking
-        Basic structure, then the verify tests for the output
-
-        Implement more 'named parameter tests?'
-
         Compilation test for all the combinations that are allowed in the grammar?
 
-        allowsAnyCall with no parameter = allowsAnyCall( true )
-        when( 'methodName' ) / allows( 'methodName' ) / expects( 'methodName' ) as a shortcut
-
     Document:
-        verifiedBy
         class documentation for Amoss_MethodHandler would be nice - see Amoss_ValueVerifier
 
-    Recursive condition setting (for lists particularly)
-    E.g.
 
-        withParameter()
-            .withElementAt(0).setTo( 'expected1' )
-            .withElementAt(1).setTo( 'expected2' )
-            .withAnyElement().setTo( 'anywhereExpected' )
-
-    And
-        withParameter()
-            .withElementAt(0).withElementAt(2).setTo('expected1')
-            .withElementAt(1).withAnyElement().set('anywhereExpected')
-
-        PMD configuration for test method name format
+    PMD configuration for test method name format
 
 
     Think about withElements
         setTo (given a list)
         what else would you implement?
-
 
     Look at removing duplication between:
         * Amoss_ExpectationFieldsSetToParameter

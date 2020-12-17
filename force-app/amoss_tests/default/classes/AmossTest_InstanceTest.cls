@@ -1671,7 +1671,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
         Test.startTest();
             try {
                 String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
-            } catch ( TestException e ) {}
+            } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         System.assertEquals( '' , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with an empty string as expected' );
@@ -1851,7 +1851,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.objectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an object and the method is called with a different instance' );
     }
@@ -1978,7 +1978,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject and the method is called with a different instance' );
     }
@@ -2042,7 +2042,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when specified with an sobject and the method is called with a different instance with different values' );
     }
@@ -2166,7 +2166,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterFieldsInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.withFieldsSetLike.returning, when specified with an sobject and the method is called with a different instance with different properties' );
     }
@@ -2199,7 +2199,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterFieldsInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.withFieldsSetLike.returning, when specified with an sobject and the method is called with a different instance with fewer properties' );
     }
@@ -2233,7 +2233,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( nullContact );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForNullSObjectInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, null, 'expects.method.withFieldsSetLike.returning, when specified with an sobject and the method is called with null' );
     }
@@ -2265,7 +2265,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( 'NotAnSobject' ); // possible because of overloading
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController,
                                                     'Expected an sObject, and got String',
@@ -2396,7 +2396,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterFieldsInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.withFieldsSetTo.returning, when the method is called with an sObject with different properties' );
     }
@@ -2429,7 +2429,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterFieldsInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.withFieldsSetTo.returning, when the method is called with an Sobject with fewer properties' );
     }
@@ -2463,7 +2463,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( nullContact );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForNullSObjectInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, null, 'expects.method.withFieldsSetTo.returning, when specified, and the method is called with null' );
     }
@@ -2528,7 +2528,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController,
                                                     'Problem comparing field "InvalidField": Invalid field InvalidField for Contact',
@@ -2563,7 +2563,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( 'NotAnSobject' ); // possible because of overloading
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController,
                                                     'Expected an sObject, and got String',
@@ -2806,6 +2806,41 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
 
     /**
     * @method expects.method.withElementAt.setTo.returning
+    * @case   when specified multiple times and the list parameter passed has the elements matching
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsMethodWithElementAtSetToReturningMultipleTimes_whenElementInTheParameterMatches_willPass() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter()
+                    .withElementAt( 0 ).setTo( 'expected1' )
+                    .withElementAt( 1 ).setTo( 'expected2' )
+                    .withElementAt( 2 ).setTo( 'expected3' )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'expected1', 'expected2', 'expected3' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.setTo.returning, when specified multiple times, and the list parameter contains the elements matching the specified value, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.setTo.returning
     * @case   when the list parameter's element does not match
     * @result will fail the test
     */
@@ -2834,6 +2869,42 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
                                                     'List element 0 does not match what was expected: The value is not what was expected',
                                                     'AmossTest_ClassToDouble.methodWithListOfObjects', 0,
                                                     'expected', 'unexpected',
+                                                    'expects.method.withElementAt.returning, when the list parameter\'s element does not match' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.setTo.returning
+    * @case   when specified multiple times and one of the list parameter's element does not match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithElementAtSetToReturningMultipleTimes_whenSpecifiedElementDoesNotMatch_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter()
+                    .withElementAt( 0 ).setTo( 'expected1' )
+                    .withElementAt( 1 ).setTo( 'expected2' )
+                    .withElementAt( 2 ).setTo( 'expected3' );
+
+        Test.startTest();
+            try {
+                List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'expected1', 'unexpected', 'expected3' } );
+            } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected: The value is not what was expected',
+                                                    'AmossTest_ClassToDouble.methodWithListOfObjects', 0,
+                                                    'expected2', 'unexpected',
                                                     'expects.method.withElementAt.returning, when the list parameter\'s element does not match' );
     }
 
@@ -3149,7 +3220,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterNamedInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 'contactParam', objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject via named syntax and the method is called with a different instance' );
     }
@@ -3182,7 +3253,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.returning, when specified with an sobject and the method is called with a different instance that has different properties' );
     }
@@ -3246,7 +3317,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithListOfObjects( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'The value is the same, but not the same instance as was expected', 'AmossTest_ClassToDouble.methodWithListOfObjects', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values' );
     }
@@ -3280,7 +3351,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithListOfObjects( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController,
                                                     'The value is the same, but the list and some of its elements are not the same instances as was expected',
@@ -3318,7 +3389,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithListOfObjects( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListOfObjects', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values' );
     }
@@ -3446,7 +3517,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithListOfObjects( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithListOfObjects', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when the expectation is set with a list, and a different instance is passed, containing different instances with the same values' );
     }
@@ -3574,7 +3645,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithMapStringToObject( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'The value is the same, but not the same instance as was expected', 'AmossTest_ClassToDouble.methodWithMapStringToObject', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a map, and a different instance is passed, containing different instances with the same values' );
     }
@@ -3608,7 +3679,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithMapStringToObject( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController,
                                                     'The value is the same, but not the same instance as was expected',
@@ -3646,7 +3717,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithMapStringToObject( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithMapStringToObject', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a map, and a different instance is passed, containing different instances with the same values' );
     }
@@ -3744,7 +3815,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithMapStringToObject( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithMapStringToObject', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when the expectation is set with a map, and a different instance is passed, containing different instances with the different values' );
     }
@@ -3778,7 +3849,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithMapStringToObject( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithMapStringToObject', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when the expectation is set with a map, and a different instance is passed, containing different instances with the different keys' );
     }
@@ -3966,7 +4037,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithSetOfObjects( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionInstanceAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithSetOfObjects', 0, objectExpected, objectPassed, 'expects.method.returning, when the expectation is set with a Set, and a different instance is passed, containing same values' );
     }
@@ -4033,7 +4104,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 classToDouble.methodWithSetOfObjects( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodWithSetOfObjects', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when the expectation is set with a Set, and a different instance is passed, containing different values' );
     }
@@ -4097,7 +4168,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
             try {
                 String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
             } catch( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
-            Test.stopTest();
+        Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.sobjectMethodUnderDouble', 0, objectExpected, objectPassed, 'expects.method.setToTheSameValueAs.returning, when specified with an sobject and the method is called with a different instance that has different properties' );
     }
@@ -5554,7 +5625,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
 
             try {
                 classToDouble.methodUnderDoubleWithNoReturn( 'this', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDoubleWithNoReturn was called more times than was expected';
@@ -6248,6 +6319,9 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
         System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
         System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
+
+    //HERE
+
     /**
     * @method  expects.method.returning
     * @case    when the method is called
@@ -6296,7 +6370,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
 
             try {
                 classToDouble.methodUnderDouble( 'this', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
@@ -6412,7 +6486,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
 
             try {
                 classToDouble.methodUnderDouble( 'thisNew', 2 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
@@ -6578,7 +6652,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
         Test.startTest();
             try {
                 classToDouble.methodUnderDouble( 'not-this', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'this', 'not-this', 'expects.method.withParameter.thenParameter.returning, when the method is called with non-matching parameters' );
@@ -6609,7 +6683,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
 
             try {
                 classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
@@ -6695,7 +6769,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
 
             try {
                 classToDouble.methodUnderDouble( 'this', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
@@ -6761,7 +6835,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
 
             try {
                 classToDouble.otherMethodUnderDouble( 'this', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected';
@@ -6831,7 +6905,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
 
             try {
                 classToDouble.methodUnderDouble( 'that', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
@@ -6902,7 +6976,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
         Test.startTest();
             try {
                 classToDouble.methodUnderDouble( 'not-this', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'this', 'not-this', 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters' );
@@ -6963,7 +7037,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
         Test.startTest();
             try {
                 classToDouble.otherMethodUnderDouble( 'this', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
@@ -7030,7 +7104,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
         Test.startTest();
             try {
                 classToDouble.methodUnderDouble( 'that', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
@@ -7091,7 +7165,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
         Test.startTest();
             try {
                 classToDouble.otherMethodUnderDouble( 'this', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
@@ -7156,7 +7230,7 @@ public with sharing class AmossTest_InstanceTest { // NOPMD: class is effectivel
         Test.startTest();
             try {
                 classToDouble.methodUnderDouble( 'that', 1 );
-            } catch ( TestException e ) {}
+            } catch ( TestException e ) {} // NOPMD: the checking of the exception is handled by the check method
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
