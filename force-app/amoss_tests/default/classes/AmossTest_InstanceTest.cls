@@ -6073,7 +6073,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
-        String expectedCallStackEntry = 'methodUnderDouble( List with at least one element: SObject with fields set like Contact:{FirstName=expectedName} )';
+        String expectedCallStackEntry = 'methodUnderDouble( At least one => SObject with fields set like Contact:{FirstName=expectedName} )';
 
         System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
         System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
@@ -6329,6 +6329,86 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method  expects.method.withParameter.withAllElements.withAnyElement.withElementAt
+    * @case    when the method is not called, and verify is
+    * @result  will fail and describe the parameters
+    */
+    @isTest
+    private static void expectsMethodWithParameterWithElementsCombination_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+
+        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        assertsDoubleController
+            .allows()
+                .method( 'assertEquals' );
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameter()
+                    .withAnyElement().setTo( 'anyElementSetTo1' )
+                    .withAnyElement().setTo( 'anyElementSetTo2' )
+                    .withAllElements().withFieldsSetLike( new Contact( FirstName = 'allSet' ) )
+                    .withAllElements().withFieldsSetTo( new Map<String,Object>{ 'LastName' => 'allSet' } )
+                    .withElementAt( 0 ).setToTheSameValueAs( 'setToValue' );
+
+        Test.startTest();
+            classToDoubleController.verify();
+        Test.stopTest();
+
+        String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
+        String expectedCallStackEntry = 'methodUnderDouble( Should match all of [ At least one => anyElementSetTo1, At least one => anyElementSetTo2, All => SObject with fields set like Contact:{FirstName=allSet}, All => SObject with at least the same fields set as {LastName=allSet}, 0 => setToValue ] )';
+
+        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method  expects.method.withParameterNamed.withAllElements.withAnyElement.withElementAt
+    * @case    when the method is not called, and verify is
+    * @result  will fail and describe the parameters
+    */
+    @isTest
+    private static void expectsMethodWithParameterNamedWithElementsCombination_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+
+        Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        assertsDoubleController
+            .allows()
+                .method( 'assertEquals' );
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' )
+                    .withAnyElement().setTo( 'anyElementSetTo1' )
+                    .withAnyElement().setTo( 'anyElementSetTo2' )
+                    .withAllElements().withFieldsSetLike( new Contact( FirstName = 'allSet' ) )
+                    .withAllElements().withFieldsSetTo( new Map<String,Object>{ 'LastName' => 'allSet' } )
+                    .withElementAt( 0 ).setToTheSameValueAs( 'setToValue' );
+
+        Test.startTest();
+            classToDoubleController.verify();
+        Test.stopTest();
+
+        String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
+        String expectedCallStackEntry = 'methodUnderDouble( parameter1 => Should match all of [ At least one => anyElementSetTo1, At least one => anyElementSetTo2, All => SObject with fields set like Contact:{FirstName=allSet}, All => SObject with at least the same fields set as {LastName=allSet}, 0 => setToValue ] )';
+
+        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
     * @method  expects.method.withParameterNamed.withAnyElement
     * @case    when the method is not called, and verify is
     * @result  will fail and describe the parameters
@@ -6356,7 +6436,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'Expected call stack for AmossTest_ClassToDouble should be empty, and it is not';
-        String expectedCallStackEntry = 'methodUnderDouble( parameter1 => List with at least one element: SObject with fields set like Contact:{FirstName=expectedName} )';
+        String expectedCallStackEntry = 'methodUnderDouble( parameter1 => At least one => SObject with fields set like Contact:{FirstName=expectedName} )';
 
         System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
         System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );

@@ -50,6 +50,9 @@ Implement missing tests:
         class documentation for Amoss_MethodHandler would be nice - see Amoss_ValueVerifier
 
 
+    Consider reducing:
+        setToTheSameValueAs to setToSameValueAs
+
     Think about withElements
         setTo (given a list)
         what else would you implement?

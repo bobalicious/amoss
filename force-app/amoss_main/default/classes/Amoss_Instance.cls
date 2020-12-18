@@ -3356,7 +3356,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return String - A clear description of the value's verification
         */
         public override String toString() {
-            return String.format( 'List with at least one element: {0}', new List<Object>{ elementVerifier } );
+            return String.format( 'At least one => {0}', new List<Object>{ elementVerifier } );
         }
 
         /**
