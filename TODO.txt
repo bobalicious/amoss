@@ -11,20 +11,19 @@ Question:
 
 Implement missing tests:
 
-    Positional
-        element.setToTheSameValueAs
-        element.withFieldsSetTo
-        element.verifiedBy
+    Positional - evaluation of:
+        list element.setToTheSameValueAs
+        list element.withFieldsSetTo
+        list element.verifiedBy
 
         element then withAllElements
         element then withAnyElement
 
-    Named
-        verifiedBy
-        element.setTo
-        element.setToTheSameValueAs
-        element.withFieldsSetTo
-        element.verifiedBy
+    Named - evaluation of:
+        list element.setTo
+        list element.setToTheSameValueAs
+        list element.withFieldsSetTo
+        list element.verifiedBy
 
         element then withAllElements
         element then withAnyElement
@@ -49,9 +48,6 @@ Implement missing tests:
 
     Document:
         class documentation for Amoss_MethodHandler would be nice - see Amoss_ValueVerifier
-
-
-    PMD configuration for test method name format
 
 
     Think about withElements
