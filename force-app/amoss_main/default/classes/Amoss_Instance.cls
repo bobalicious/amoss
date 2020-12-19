@@ -546,9 +546,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return Object  - The parameter value that was passed in the stated position
         */
         public Object getParameter( Integer parameterNumber ) {
-            if ( parameterValues == null ) {
-                throw new Amoss_CallLogException( method + ' was not called' );
-            }
             if ( parameterValues.isEmpty()  ) {
                 throw new Amoss_CallLogException( method + ' was not called with any parameters' );
             }
@@ -572,9 +569,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return Object  - The parameter value that was passed with the stated name
         */
         public Object getParameter( String parameterName ) {
-            if ( parameterValuesByName == null ) {
-                throw new Amoss_CallLogException( method + ' was not called' );
-            }
             if ( parameterValuesByName.isEmpty() ) {
                 throw new Amoss_CallLogException( method + ' was not called with any parameters' );
             }
@@ -594,9 +588,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return List<Object> - The parameter values that were passed.
         */
         public List<Object> getParameters() {
-            if ( parameterValues == null ) {
-                throw new Amoss_CallLogException( method + ' was not called' );
-            }
             return parameterValues;
         }
 
@@ -610,9 +601,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return Map<String,Object> - The parameter values that were passed, indexed by their name.
         */
         public Map<String,Object> getParametersByName() {
-            if ( parameterValuesByName == null ) {
-                throw new Amoss_CallLogException( method + ' was not called' );
-            }
             return parameterValuesByName;
         }
     }
