@@ -11,10 +11,6 @@ Question:
 
 Implement missing tests:
 
-    Check there are tests for
-        set two expects on a list, first one fails
-        set two expects on a list, second one fails
-
     SameInstance Description
     ListSameInstance Description
     ListSameInstance given something not a list
