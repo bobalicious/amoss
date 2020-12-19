@@ -57,8 +57,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Boolean allowsAnyCallExplicitlyDefined = false;
     private Boolean expectsNoCalls                 = false;
 
-    public enum ValueSpecialType { ANY_VALUE }
-
     public static Amoss_ValueVerifierBuilder valueVerifierBuilder = new Amoss_ValueVerifierBuilder();
 
     public Amoss_Instance( Type classType ) {
@@ -1109,7 +1107,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_PositionalParametersDefiner thenAnyParameter() {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters())
                 .moveToNextParameter()
-                .addVerifierToCurrentParameter( valueVerifierBuilder.buildVerifier( ValueSpecialType.ANY_VALUE ) );
+                .addVerifierToCurrentParameter( valueVerifierBuilder.buildAnyVerifier() );
             return this;
         }
     }
@@ -2223,7 +2221,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters().moveToNextParameter();
             expectation.setExpectationParameters( expectedParameters );
 
-            expectedParameters.addVerifierToCurrentParameter( valueVerifierBuilder.buildVerifier( ValueSpecialType.ANY_VALUE ) );
+            expectedParameters.addVerifierToCurrentParameter( valueVerifierBuilder.buildAnyVerifier() );
 
             return new Amoss_PositionalParametersDefiner( expectation );
         }
@@ -3612,19 +3610,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be refenced in tests.
         *
-        * Constructs an instance of an Amoss_SameInstanceVerifier, based on the passed in ValueSpecialType.
+        * Constructs an instance of an Amoss_AnyValueVerifier
         *
-        * @param  Object - The Special Type of Expectation Parameter object to construct
-        * @return Amoss_ValueVerifier - The appropriate Expectation Parameter instance for this passed in special type.
+        * @return Amoss_ValueVerifier - The Amoss_AnyValueVerifier
         */
-        public Amoss_ValueVerifier buildVerifier( ValueSpecialType parameterType ) {
-
-            switch on parameterType {
-                when ANY_VALUE {
-                    return new Amoss_AnyValueVerifier();
-                }
-            }
-            return new Amoss_EqualsValueVerifier();
+        public Amoss_ValueVerifier buildAnyVerifier() {
+            return new Amoss_AnyValueVerifier();
         }
     }
 
