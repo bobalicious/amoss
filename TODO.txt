@@ -11,30 +11,9 @@ Question:
 
 Implement missing tests:
 
-    Positional - evaluation of:
-        list element.setToTheSameValueAs
-        list element.withFieldsSetTo
-        list element.verifiedBy
-
-        element then withAllElements
-        element then withAnyElement
-
-    Named - evaluation of:
-        list element.setTo
-        list element.setToTheSameValueAs
-        list element.withFieldsSetTo
-        list element.verifiedBy
-
-        element then withAllElements
-        element then withAnyElement
-        element then withElementAt
-
-    Define parameter with no property
-        Description shows an error
-        Verify throws a failure
-
-    Define parameter with multiple properties
-        Description shows all the properties
+    Check there are tests for
+        set two expects on a list, first one fails
+        set two expects on a list, second one fails
 
     SameInstance Description
     ListSameInstance Description
@@ -43,12 +22,10 @@ Implement missing tests:
     Implement:
 
         Check there's documentation in each of the methods
-
         Compilation test for all the combinations that are allowed in the grammar?
 
     Document:
         class documentation for Amoss_MethodHandler would be nice - see Amoss_ValueVerifier
-
 
     Consider reducing:
         setToTheSameValueAs to setToSameValueAs

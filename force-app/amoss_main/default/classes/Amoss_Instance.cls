@@ -2767,7 +2767,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public override String toString() {
             switch on valueVerifiers.size() {
                 when 0 {
-                    return 'ERROR: No verifiers defined';
+                    return 'ERROR: No specification of the parameter shape was made (e.g. setTo)';
                 }
                 when 1 {
                     return String.valueOf( valueVerifiers[0] );
