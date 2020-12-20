@@ -64,6 +64,9 @@ public with sharing class AmossTest_ClassToDouble {
     public String sobjectMethodUnderDouble( Contact contactParam ) {
         return 'TheReturn';
     }
+    public String sobjectMethodUnderDouble( Contact contactParam, Account accountParam ) {
+        return 'TheReturn';
+    }
     public String sobjectMethodUnderDouble( String notAnSobject ) {
         return 'TheReturn';
     }
