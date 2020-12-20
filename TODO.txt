@@ -11,9 +11,6 @@ Question:
 
 Implement missing tests:
 
-    SameInstance Description
-    ListSameInstance Description
-    ListSameInstance given something not a list
 
     Implement:
 
