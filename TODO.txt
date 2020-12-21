@@ -6,15 +6,8 @@ Documentation:
     Consider a class diagram for developers?
     Language syntax diagram?
 
-Question:
-    Is there anything we can do about the error we get when we mismatch the types on return?  Doubt it.  Maybe just add a FAQ?
-
-Implement missing tests:
-
-
     Implement:
-
-        Check there's documentation in each of the methods
+        Look for duplication in the grammar specification
         Compilation test for all the combinations that are allowed in the grammar?
 
     Document:
@@ -38,26 +31,6 @@ Implement missing tests:
 
     Test:
 
-        Consider adding a lot more tests - check what doesn't fail when you comment things out
-
-        look if there are more 'expects' behaviours to test with named parameters
-        do we need to test 'allows' behaviours with named parameters
-        withParameters, using a List
-        withParameters, using a Map
-
-    Test:
-
-        Test the behaviour of combinations, with regards to 'allowsAnyCall'
-
-            Define a when, then expects, call a method that is not defined, fails the test
-            Define a when, then allows,  call a method that is not defined, fails the test
-            Define an expects, then when, call a method that is not defined, fails the test
-            Define an allows, then when, call a method that is not defined, fails the test
-            Define an expects, then allows, call a method that is not defined, fails the test
-            Define an allows, then expects, call a method that is not defined, fails the test
-
-        When and allows matches before Expected
-
         Setting 'returning' when the method has a void return
             methodUnderDoubleWithNoReturn - when setup to return something
 
@@ -67,29 +40,3 @@ Implement missing tests:
         why not
             mockThing.get().countOf( 'method' )
             this would be in line with the parameter getters
-
-
-### Collection Specific Comparisons
-
-#### `withElementsSetTo`
-
-Checks that the elements within the collection are the same instances (with the same keys, if appopriate) as the one configured.
-
-Allows you to check that, for example, a Map is generated that contains the same instances as a List that was passed in, meaning that mutations to the elements of the resulting Map will effect the original List.
-
-You can think of this as a half-way house between `setTo` (which checks the collection is the same instance), and `setToTheSameValueAs` (which will match even if the neither the collection nor its elements are the same instances).
-
-Examples:
-```java
-classToDoubleController
-    .when()
-        .method( 'methodWithListOfObjects' )
-        .withParameter().withElementsSetTo( expectedList )
-        .willReturn( 'theReturn' );
-
-classToDoubleController
-    .when()
-        .method( 'methodWithSetOfObjects' )
-        .withParameterNamed( 'parameterName' ).withElementsSetTo( expectedMap )
-        .willReturn( 'theReturn' );
-```

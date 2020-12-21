@@ -2511,14 +2511,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     */
     private abstract class Amoss_ExpectationParameters {
 
-        // TODO: document this...
+        /**
+        * Is the collection of ValueVerifiers for the parameter that is in the process of being specified.
+        *
+        * Allows us to add new verifiers to the current parameter without having to keep track of which parameter
+        * it is we are specifying.
+        */
         Amoss_CompositeValueVerifier currentParameterVerifier;
 
+        /**
+        * Build a new 'current parameter verifier' and apply that as the nw current one so we can add
+        * new value verifiers to it.
+        */
         public Amoss_CompositeValueVerifier buildCurrentParameterVerifier() {
             currentParameterVerifier = new Amoss_CompositeValueVerifier();
             return currentParameterVerifier;
         }
 
+        /**
+        * Add a new value verifier to the current parameter
+        */
         public Amoss_ExpectationParameters addVerifierToCurrentParameter( Amoss_ValueVerifier verifier ) {
             currentParameterVerifier.addVerifier( verifier );
             return this;
@@ -2583,22 +2595,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         private List<Amoss_ValueVerifier> expectedParameters = new List<Amoss_ValueVerifier>();
 
-        // TODO: document
+        /**
+        * Internal method that moves the current specification on to the next parameter so that any further
+        * parameter specifications apply to that parameter.
+        */
         Amoss_ExpectationPositionalParameters moveToNextParameter() {
             expectedParameters.add( buildCurrentParameterVerifier() );
             return this;
         }
-
-        /**
-        * Internal method that adds a parameter to the list of parameters that are valid for this Expectation.
-        *
-        * @param Amoss_ValueVerifier - The parameter to add to the list of expected ones
-        * @return Amoss_ExpectationParameters - Itself, allowing for a fluent interface
-        // */
-        // Amoss_ExpectationPositionalParameters addParameterVerifier( Amoss_ValueVerifier parameter ) {
-        //     expectedParameters.add( parameter );
-        //     return this;
-        // }
 
         /**
         * Internal method that returns a String description of the parameter values that are expected, as a comma seperated list.
@@ -2666,7 +2670,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         private Map<String,Amoss_ValueVerifier> expectedParameters = new Map<String,Amoss_ValueVerifier>();
 
-        // TODO: document
+        /**
+        * Internal method that moves the current specification on to the parameter named, so that any further
+        * parameter specifications apply to that parameter.
+        */
         Amoss_ExpectationNamedParameters moveToParameter( String parameterName ) {
             expectedParameters.put( parameterName, buildCurrentParameterVerifier() );
             return this;
@@ -3700,11 +3707,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Given a method name, and a list of parameters, will return a string representation of it
         */
         public String getCallDescription( String method, List<Object> parameters ) {
-
-            // List<String> stringParameters = new List<String>();
-            // for ( Object thisParameter : parameters ) {
-            //     stringParameters.add( String.valueOf( thisParameter ) );
-            // }
             return String.format( '{0}({1})', new List<String>{ method, String.join( parameters, ', ' ) } );
         }
     }
