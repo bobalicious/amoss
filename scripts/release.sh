@@ -22,12 +22,13 @@ rm -rf ./force-app/amoss_examples
 echo ""
 echo Tagging with $newversionname
 echo -----------------------------------------------------------------------
-echo git tag -a $newversionname -m "Release $newversionnumber"
-echo git push origin $newversionname
+git tag -a $newversionname -m "Release $newversionnumber"
+git push origin $newversionname
+
 echo ""
 echo Building unlocked package
 echo -----------------------------------------------------------------------
-echo sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname
+sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname
 
 echo ""
 echo Reverting GIT workspace
