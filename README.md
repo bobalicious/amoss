@@ -8,6 +8,25 @@ Amoss provides a simple interface for implementing Mock, Test Spy and Stub objec
 
 It's intended to be very straightforward to use, and to result in code that's even more straightforward to read.
 
+As a simple example, the following example:
+
+* Creates a Test Double of the class `DeliveryProvider`
+* Configures the methods `canDeliver` and `scheduleDelivery` to always return `true`
+
+```java
+
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
+    .when()
+        .method( 'canDeliver' )
+        .willReturn( true )
+    .also().when()
+        .method( 'scheduleDelivery' )
+        .willReturn( true );
+
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
+```
+
 ### Installating it
 
 #### git clone / copy / deploy
@@ -28,10 +47,12 @@ You should note that this *may not* be the most recent version that exists on th
 #### Unlocked Package - Installation link
 
 For Dev Instances or Production, the Unlocked Package can be installed via:
-    https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
+
+* https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
 
 For all other instances:
-    https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
+
+* https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
 
 #### Install Button
 
