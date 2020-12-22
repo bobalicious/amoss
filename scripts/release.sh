@@ -29,13 +29,17 @@ echo ""
 echo Building unlocked package
 echo -----------------------------------------------------------------------
 sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname
+echo ""
+echo Getting new package\'s Id and Alias
+echo -----------------------------------------------------------------------
 newversionid=$(sfdx force:package:version:list -p 'amoss' -o CreatedDate --concise | tail -1 | awk '{print $3}')
+newversionalias=$(sfdx force:package:version:list -p 'amoss' -o CreatedDate | tail -1 | awk '{print $5}')
 
 echo ""
-echo Updating references in the README to: $newversionname / $newversionid
+echo Updating references in the README to: $newversionalias / $newversionid
 echo -----------------------------------------------------------------------
 
-sed -i '' -E "s/force:package:install --package \"amoss@(.*)\"/force:package:install --package \"amoss@$newversionname\"/" README.md
+sed -i '' -E "s/force:package:install --package \"(.*)\"/force:package:install --package \"$newversionalias\"/" README.md
 sed -i '' -E "s/installPackage.apexp\?p0=(.*)/installPackage.apexp\?p0=$newversionid/" README.md
 
 echo ""

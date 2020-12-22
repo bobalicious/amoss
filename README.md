@@ -37,11 +37,12 @@ If you are familar with using SFDX, the ant migration tool or using a local IDE,
 
 Alternatively, Amoss is available as an Unlocked Package, and the 'currently published' version based *this* branch can be installed (after setting the default org), using:
 
-`sfdx force:package:install --package "amoss@v0.9.0.1"`
+`sfdx force:package:install --package "amoss@0.9.0-1"`
 
 You should note that this *may not* be the most recent version that exists on this branch.  There are times when the most recent version has not been published as an Unlocked Package Version.  In addition, the Unlocked Package contains the `amoss_main` and `amoss_test` files, though does not include `amoss_examples`.
 
-> If you are not familiar with the SFDX commands, then it is recommended that you read the documentation here: https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_force_package.htm
+##### Note
+If you are not familiar with the SFDX commands, then it is recommended that you read the documentation here: https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_force_package.htm
 
 
 #### Unlocked Package - Installation link
@@ -58,8 +59,11 @@ For all other instances:
 
 As a final option, you can install directly from this page, using the following 'Deploy to Salesforce' button.
 
-> NOTE: if running from the branch 'main', you should enter 'main' into the 'Branch/Tag/Commit:' field of 'Salesforce Deploy'.
-> This is because of a bug in that application that incorrectly selects the default branch as 'master' (https://github.com/afawcett/githubsfdeploy/issues/43)
+##### Note
+
+If running from the branch 'main', you should enter 'main' into the 'Branch/Tag/Commit:' field of 'Salesforce Deploy'.
+
+This is because of a bug in that application that incorrectly selects the default branch as 'master' (https://github.com/afawcett/githubsfdeploy/issues/43)
 
 <a href="https://githubsfdeploy.herokuapp.com">
   <img alt="Deploy to Salesforce"
