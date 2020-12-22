@@ -19,6 +19,7 @@ git reset --hard
 
 rm -rf ./force-app/amoss_examples
 
+# We do this first in case we're accidentally releasing the same version number again
 echo ""
 echo Tagging with $newversionname
 echo -----------------------------------------------------------------------
@@ -29,6 +30,13 @@ echo ""
 echo Building unlocked package
 echo -----------------------------------------------------------------------
 sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname
+
+echo ""
+echo Committing change to SFDX configuration
+echo -----------------------------------------------------------------------
+git add sfdx-project.json
+git commit -m "Added version $newversionname"
+git push
 
 echo ""
 echo Reverting GIT workspace
