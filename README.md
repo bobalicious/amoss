@@ -2,24 +2,68 @@
 
 Apex Mock Objects, Spies and Stubs - A Simple Mocking framework for Apex (Salesforce)
 
-## Disclaimer
-
-This is a BETA state project and should be used with caution.  Whilst the intention is that this code is stable and bug free, this may not be the case.  There is no intention to change the existing interface of this framework, although that cannot be guaranteed.
-
 ## Why use Amoss?
 
 Amoss provides a simple interface for implementing Mock, Test Spy and Stub objects (Test Doubles) for use in Unit Testing.
 
 It's intended to be very straightforward to use, and to result in code that's even more straightforward to read.
 
+As a simple example, the following example:
+
+* Creates a Test Double of the class `DeliveryProvider`
+* Configures the methods `canDeliver` and `scheduleDelivery` to always return `true`
+
+```java
+
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
+    .when()
+        .method( 'canDeliver' )
+        .willReturn( true )
+    .also().when()
+        .method( 'scheduleDelivery' )
+        .willReturn( true );
+
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
+```
+
 ### Installating it
 
-If you are familar with using SFDX, the ant migration tool or using a local IDE, I recommend that you clone this repository, copy the Amoss files you require, and install them using your normal mechanism.
+#### git clone / copy / deploy
 
-However, if you are not confident, you *can* use the following button.
+If you are familar with using SFDX, the ant migration tool or using a local IDE, It is recommended that you either clone this repository or download a release from the release section, copy the Amoss files you require, and install them using your normal mechanism.
 
-> NOTE: if running from the branch 'main', you should enter 'main' into the 'Branch/Tag/Commit:' field of 'Salesforce Deploy'.
-> This is because of a bug in that application that incorrectly selects the default branch as 'master' (https://github.com/afawcett/githubsfdeploy/issues/43)
+#### Unlocked Package - SFDX
+
+Alternatively, Amoss is available as an Unlocked Package, and the 'currently published' version based *this* branch can be installed (after setting the default org), using:
+
+`sfdx force:package:install --package "amoss@0.9.0-1"`
+
+You should note that this *may not* be the most recent version that exists on this branch.  There are times when the most recent version has not been published as an Unlocked Package Version.  In addition, the Unlocked Package contains the `amoss_main` and `amoss_test` files, though does not include `amoss_examples`.
+
+##### Note
+If you are not familiar with the SFDX commands, then it is recommended that you read the documentation here: https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_force_package.htm
+
+
+#### Unlocked Package - Installation link
+
+For Dev Instances or Production, the Unlocked Package can be installed via:
+
+* https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
+
+For all other instances:
+
+* https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
+
+#### Install Button
+
+As a final option, you can install directly from this page, using the following 'Deploy to Salesforce' button.
+
+##### Note
+
+If running from the branch 'main', you should enter 'main' into the 'Branch/Tag/Commit:' field of 'Salesforce Deploy'.
+
+This is because of a bug in that application that incorrectly selects the default branch as 'master' (https://github.com/afawcett/githubsfdeploy/issues/43)
 
 <a href="https://githubsfdeploy.herokuapp.com">
   <img alt="Deploy to Salesforce"
