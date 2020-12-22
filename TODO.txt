@@ -2,13 +2,6 @@ Amoss - Apex Mocks, Spies and Stubs
 
 Documentation:
 
-    Write a packager:
-        * Copy the current force-app into a temp directory
-        * Remove amoss_examples
-        * Call the packager
-
-
-
     Full interface definition?
     Consider a class diagram for developers?
     Language syntax diagram?
