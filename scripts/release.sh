@@ -30,15 +30,6 @@ echo -----------------------------------------------------------------------
 echo sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname
 
 echo ""
-echo Creating GitHub release
-echo -----------------------------------------------------------------------
-curl \
-  -X POST \
-  -H "Accept: application/vnd.github.v3+json" \
-  https://api.github.com/repos/bobalicious/amoss/releases \
-  -d '{"tag_name":"$newversionname", "draft":true, "prerelease":true}'
-
-echo ""
 echo Reverting GIT workspace
 echo -----------------------------------------------------------------------
 git reset --hard
