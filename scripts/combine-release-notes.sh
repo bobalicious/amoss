@@ -6,10 +6,10 @@
 
 
 echo "# Version $1" > RELEASE_NOTES.md.new
-echo ""
-echo "Tag                   : $2"
-echo "SFDX Install          : $3"
-echo "Unlocked Package Link : $4"
+echo "" > RELEASE_NOTES.md.new
+echo "Tag                   : $2" > RELEASE_NOTES.md.new
+echo "SFDX Install          : $3" > RELEASE_NOTES.md.new
+echo "Unlocked Package Link : $4" > RELEASE_NOTES.md.new
 
 sed -E 's/\# Release Notes since Last Release//' PENDING_RELEASE_NOTES.md >> RELEASE_NOTES.md.new
 
