@@ -90,6 +90,28 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.willReturn (shortcut version)
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWillReturnShortcut_whenTheMethodIsCalled_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .when( 'methodUnderDouble' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.willReturn (shortcut), and the method called, will return the stated value, regardless of the parameters passed' );
+    }
+
+    /**
     * @method when.method.returns
     * @case   when that method is called
     * @result will return the stated value
@@ -1476,6 +1498,27 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method allows.method.returning (shortcut)
+    * @case   when that method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void allowsMethodReturningShortcut_whenTheMethodIsCalled_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .allows( 'methodUnderDouble' )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'allows.method.returning (shortcut), and the method called, will return the stated value, regardless of the parameters passed' );
+    }
+    /**
     * @method allows.method.returning
     * @case   when a different method is called
     * @result will fail the test
@@ -1678,6 +1721,28 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         System.assertEquals( 'expectedReturn', returnFromDouble, 'expects.method.returning, and the method called once, will return the stated value, regardless of the parameters passed' );
+    }
+
+    /**
+    * @method expects.method.returning (shortcut)
+    * @case   when that method is called once
+    * @result will return the stated value
+    */
+    @isTest
+    private static void expectsMethodReturningShortcut_whenTheMethodIsCalledOnce_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .expects( 'methodUnderDouble' )
+                .returning( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'expects.method.returning (shortcut), and the method called once, will return the stated value, regardless of the parameters passed' );
     }
 
     /**
@@ -3026,7 +3091,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
         verifierToDoubleController
-            .allowsAnyCall( true )
+            .allowsAnyCall()
             .expects()
                 .method( 'verify' )
                 .withParameter().setTo( 'expectedParameterValue' )
@@ -6848,12 +6913,12 @@ public with sharing class AmossTest_InstanceTest {
     //
 
     /**
-    * @method  allowAnyCall
+    * @method  allowsAnyCall
     * @case    when given false, no methods are defined, and a method is called
     * @result  will make the test fail
     */
     @isTest
-    private static void allowAnyCall_whenGivenFalseAndNoMethodsAreDefinedAndAMethodIsCalled_willFailTheTest() {
+    private static void allowsAnyCall_whenGivenFalseAndNoMethodsAreDefinedAndAMethodIsCalled_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -6877,12 +6942,12 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method  allowAnyCall
+    * @method  allowsAnyCall
     * @case    when given true, no methods are defined, and a method is called
     * @result  will return null
     */
     @isTest
-    private static void allowAnyCall_whenGivenTrueAndAndNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
+    private static void allowsAnyCall_whenGivenTrueAndAndNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
@@ -6897,12 +6962,12 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method  allowAnyCall.true.expects.method.returning
+    * @method  allowsAnyCall.true.expects.method.returning
     * @case    when the method is called more than once
     * @result  will not fail the test
     */
     @isTest
-    private static void allowAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willNotFailTheTest() {
+    private static void allowsAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willNotFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -6924,17 +6989,17 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowAnyCalls is true, and the expected method is called too many times, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowAnyCalls is true, and the expected method is called too many times, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
-    * @method  allowAnyCall.false.expects.method.returning
+    * @method  allowsAnyCall.false.expects.method.returning
     * @case    when the method is called more than once
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_false_expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+    private static void allowsAnyCall_false_expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -6958,17 +7023,17 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowAnyCall is called with false, and the method is called more times than expected, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowAnyCall is called with false, and the method is called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times than expected, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
-    * @method  allowAnyCall.true.expects.method.returning
+    * @method  allowsAnyCall.true.expects.method.returning
     * @case    when a different method is called
     * @result  will not fail the test
     */
     @isTest
-    private static void allowAnyCall_true_expectsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
+    private static void allowsAnyCall_true_expectsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -6990,17 +7055,49 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowAnyCalls is true, and a method that is not expected is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowAnyCalls is true, and a method that is not expected is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and a method that is not expected is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and a method that is not expected is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
-    * @method  allowAnyCall.false.expects.method.returning
+    * @method  allowsAnyCall.true.expects.method.returning (shortcut)
+    * @case    when a different method is called
+    * @result  will not fail the test
+    */
+    @isTest
+    private static void allowsAnyCallhortcut_true_expectsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .allowsAnyCall()
+            .expects()
+                .method( 'methodUnderDouble' )
+                .returning( 'TheReturn' );
+
+        Test.startTest();
+            classToDouble.methodUnderDouble( 'this', 1 );
+            classToDouble.otherMethodUnderDouble( 'this', 1 );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall, and a method that is not expected is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall, and a method that is not expected is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+    }
+
+    /**
+    * @method  allowsAnyCall.false.expects.method.returning
     * @case    when a different method is called
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_false_expectsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
+    private static void allowsAnyCall_false_expectsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7024,17 +7121,17 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
-    * @method  allowAnyCall.true.expects.method.returning
+    * @method  allowsAnyCall.true.expects.method.returning
     * @case    when the method is called again with different parameters
     * @result  will not fail the test
     */
     @isTest
-    private static void allowAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
+    private static void allowsAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7044,7 +7141,7 @@ public with sharing class AmossTest_InstanceTest {
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
 
         classToDoubleController
-            .allowsAnyCall( true )
+            .allowsAnyCall()
             .expects()
                 .method( 'methodUnderDouble' )
                 .withParameter( 'this' )
@@ -7058,17 +7155,17 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowAnyCalls is true, and the expected method is called too many times, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowAnyCalls is true, and the expected method is called too many times, with different parameters, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, with different parameters, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
-    * @method  allowAnyCall.false.expects.method.returning
+    * @method  allowsAnyCall.false.expects.method.returning
     * @case    when the method is called again with different parameters
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_false_expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_false_expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7094,17 +7191,17 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowAnyCall is called with false, and the method is called more times with different parameters, will fail by calling assert with false' );
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowAnyCall is called with false, and the method is called more times with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times with different parameters, will fail by calling assert with false' );
+        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
-    * @method  allowAnyCall.true.expects.method.returning.verify
+    * @method  allowsAnyCall.true.expects.method.returning.verify
     * @case    when the method is called only with different parameters
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledOnlyWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledOnlyWithDifferentParameters_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7131,17 +7228,17 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( new List<String>()                                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowAnyCalls is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>{ 'methodUnderDouble( this, 1 )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowAnyCalls is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with a non empty actual remaining call stack - and fail the test' );
+        System.assertEquals( new List<String>()                                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        System.assertEquals( new List<String>{ 'methodUnderDouble( this, 1 )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with a non empty actual remaining call stack - and fail the test' );
     }
 
     /**
-    * @method  allowAnyCall.false.expects.method.returning
+    * @method  allowsAnyCall.false.expects.method.returning
     * @case    when the method is only called with different parameters
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_false_expectsMethodReturning_whenTheMethodIsOnlyCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_false_expectsMethodReturning_whenTheMethodIsOnlyCalledWithDifferentParameters_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7164,16 +7261,16 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( TestException e ) {}
         Test.stopTest();
 
-        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'this', 'not-this', 'expects.method.withParameter.thenParameter.returning, and allowAnyCalls with false, when the method is only called with non-matching parameters' );
+        checkForWrongParameterInPositionAssertion( assertsDoubleController, 'AmossTest_ClassToDouble.methodUnderDouble', 0, 'this', 'not-this', 'expects.method.withParameter.thenParameter.returning, and allowsAnyCall with false, when the method is only called with non-matching parameters' );
     }
 
     /**
-    * @method  allowAnyCall.true.when.method.willReturn
+    * @method  allowsAnyCall.true.when.method.willReturn
     * @case    when a different method is called
     * @result  will not fail the test
     */
     @isTest
-    private static void allowAnyCall_true_whenMethodWillReturn_whenADifferentMethodIsCalled_willNotFailTheTest() {
+    private static void allowsAnyCall_true_whenMethodWillReturn_whenADifferentMethodIsCalled_willNotFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7194,17 +7291,17 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'when.method, when allowAnyCalls is true, and a method that is not set up as a when is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'when.method, when allowAnyCalls is true, and a method that is not set up as a when is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'when.method, when allowsAnyCall is true, and a method that is not set up as a when is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'when.method, when allowsAnyCall is true, and a method that is not set up as a when is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
-    * @method  allowAnyCall.false.when.method.willReturn
+    * @method  allowsAnyCall.false.when.method.willReturn
     * @case    when a different method is called
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_false_whenMethodWillReturn_whenADifferentMethodIsCalled_willFailTheTest() {
+    private static void allowsAnyCall_false_whenMethodWillReturn_whenADifferentMethodIsCalled_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7226,17 +7323,17 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
-        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
-    * @method  allowAnyCall.true.when.method.willReturn
+    * @method  allowsAnyCall.true.when.method.willReturn
     * @case    when the method is called again with different parameters
     * @result  will not fail the test
     */
     @isTest
-    private static void allowAnyCall_true_whenMethodWillReturn_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
+    private static void allowsAnyCall_true_whenMethodWillReturn_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7259,17 +7356,17 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'when.method, when allowAnyCalls is true, and the when method is called with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'when.method, when allowAnyCalls is true, and the when method is called with different parameters, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'when.method, when allowsAnyCall is true, and the when method is called with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'when.method, when allowsAnyCall is true, and the when method is called with different parameters, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
-    * @method  allowAnyCall.false.when.method.willReturn
+    * @method  allowsAnyCall.false.when.method.willReturn
     * @case    when the method is called again with different parameters
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_false_whenMethodWillReturn_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_false_whenMethodWillReturn_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7293,17 +7390,17 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
-        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
-    * @method  allowAnyCall.true.allows.method.returning
+    * @method  allowsAnyCall.true.allows.method.returning
     * @case    when a different method is called
     * @result  will not fail the test
     */
     @isTest
-    private static void allowAnyCall_true_allowsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
+    private static void allowsAnyCall_true_allowsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7322,17 +7419,17 @@ public with sharing class AmossTest_InstanceTest {
             classToDouble.otherMethodUnderDouble( 'this', 1 );
         Test.stopTest();
 
-        System.assertEquals( 0, assertsDoubleController.countOf( 'assert'       ), 'allows.method, when allowAnyCalls is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert called)' );
-        System.assertEquals( 0, assertsDoubleController.countOf( 'assertEquals' ), 'allows.method, when allowAnyCalls is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert equals called)' );
+        System.assertEquals( 0, assertsDoubleController.countOf( 'assert'       ), 'allows.method, when allowsAnyCall is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert called)' );
+        System.assertEquals( 0, assertsDoubleController.countOf( 'assertEquals' ), 'allows.method, when allowsAnyCall is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert equals called)' );
     }
 
     /**
-    * @method  allowAnyCall.false.allows.method.returning
+    * @method  allowsAnyCall.false.allows.method.returning
     * @case    when a different method is called
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_false_allowsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
+    private static void allowsAnyCall_false_allowsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7354,17 +7451,17 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with false' );
-        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowsAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowsAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**
-    * @method  allowAnyCall.true.allows.method.returning
+    * @method  allowsAnyCall.true.allows.method.returning
     * @case    when the method is called with different parameters
     * @result  will not fail the test
     */
     @isTest
-    private static void allowAnyCall_true_allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
+    private static void allowsAnyCall_true_allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7385,17 +7482,17 @@ public with sharing class AmossTest_InstanceTest {
             classToDouble.methodUnderDouble( 'that', 1 );
         Test.stopTest();
 
-        System.assertEquals( 0, assertsDoubleController.countOf( 'assert'       ), 'allows.method, when allowAnyCalls is true, and the allowed method is called with different parameters, will not fail the test (no assert called)' );
-        System.assertEquals( 0, assertsDoubleController.countOf( 'assertEquals' ), 'allows.method, when allowAnyCalls is true, and the allowed method is called with different parameters, will not fail the test (no assert equals called)' );
+        System.assertEquals( 0, assertsDoubleController.countOf( 'assert'       ), 'allows.method, when allowsAnyCall is true, and the allowed method is called with different parameters, will not fail the test (no assert called)' );
+        System.assertEquals( 0, assertsDoubleController.countOf( 'assertEquals' ), 'allows.method, when allowsAnyCall is true, and the allowed method is called with different parameters, will not fail the test (no assert equals called)' );
     }
 
     /**
-    * @method  allowAnyCall.false.allows.method.returning
+    * @method  allowsAnyCall.false.allows.method.returning
     * @case    when the method is called with different parameters
     * @result  will fail the test
     */
     @isTest
-    private static void allowAnyCall_false_allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_false_allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
@@ -7419,8 +7516,8 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'AmossTest_ClassToDouble.methodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
-        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
+        Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
     /**

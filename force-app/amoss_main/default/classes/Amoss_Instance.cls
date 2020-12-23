@@ -82,10 +82,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * 'Expectations' take lower priority than 'whens' (I.E. if a matching 'when' is defined at call time, then it will match that over the next 'expect').
     *
     * Define in the format:
-    * expects()
-    *       .method( 'methodName' )
-    *       .withParameter( 'parameterValue' )
-    *       .returning( 'theValueItShouldReturn' )
+    *   expects()
+    *     .method( 'methodName' )
+    *     .withParameter( 'parameterValue' )
+    *     .returning( 'theValueItShouldReturn' )
     */
     public Amoss_MethodDefiner expects() {
 
@@ -102,7 +102,25 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
-    * States that the when a method is called that matched the definition, stated behaviour will
+    * States that the next method definition is expected to be called in the order it appears.
+    *
+    * If a method is subsequently called out of order, will fail the test.
+    *
+    * Calling 'verify' will check that all expectations have been met, failing the test if not.
+    *
+    * 'Expectations' take lower priority than 'whens' (I.E. if a matching 'when' is defined at call time, then it will match that over the next 'expect').
+    *
+    * Define in the format:
+    *   expects( 'methodName' )
+    *     .withParameter( 'parameterValue' )
+    *     .returning( 'theValueItShouldReturn' )
+    */
+    public Amoss_ParametersDefiner expects( String method ) {
+        return expects().method( method );
+    }
+
+    /**
+    * States that when a method is called that matches the definition, the stated behaviour will
     * be exhibited.
     *
     * Call order is not checked, and 'verify' will not check that 'whens' have been met.
@@ -112,9 +130,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Define in the format:
     *   when()
-    *   .method( 'methodName' )
-    *   .withParameter( 'parameterValue' )
-    *   .willReturn( 'theValueItShouldReturn' )
+    *     .method( 'methodName' )
+    *     .withParameter( 'parameterValue' )
+    *     .willReturn( 'theValueItShouldReturn' )
     */
     public Amoss_MethodDefiner when() {
 
@@ -128,7 +146,25 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
-    * States that the when a method is called that matched the definition, stated behaviour will
+    * States that when a method is called that matches the definition, the stated behaviour will
+    * be exhibited.
+    *
+    * Call order is not checked, and 'verify' will not check that 'whens' have been met.
+    *
+    * 'Whens' take higher priority than 'expectations' (I.E. if a matching 'when' is defined at call time, then it
+    * will match that over the next 'expect').
+    *
+    * Define in the format:
+    *   when( 'methodName' )
+    *     .withParameter( 'parameterValue' )
+    *     .willReturn( 'theValueItShouldReturn' )
+    */
+    public Amoss_ParametersDefiner when( String method ) {
+        return when().method( method );
+    }
+
+    /**
+    * States that when a method is called that matches the definition, the stated behaviour will
     * be exhibited.  Very similar to 'when'
     *
     * Call order is not checked, and 'verify' will not check that 'whens' have been met.
@@ -138,9 +174,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Define in the format:
     *   allows()
-    *   .method( 'methodName' )
-    *   .withParameter( 'parameterValue' )
-    *   .willReturn( 'theValueItShouldReturn' )
+    *     .method( 'methodName' )
+    *     .withParameter( 'parameterValue' )
+    *     .willReturn( 'theValueItShouldReturn' )
     */
     public Amoss_MethodDefiner allows() {
 
@@ -152,6 +188,24 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             allowsAnyCall = false;
         }
         return when();
+    }
+
+    /**
+    * States that when a method is called that matches the definition, the stated behaviour will
+    * be exhibited.  Very similar to 'when'
+    *
+    * Call order is not checked, and 'verify' will not check that 'whens' have been met.
+    *
+    * 'Whens' take higher priority than 'expectations' (I.E. if a matching 'when' is defined at call time, then it
+    * will match that over the next 'expect').
+    *
+    * Define in the format:
+    *   allows( 'methodName' )
+    *   .withParameter( 'parameterValue' )
+    *   .willReturn( 'theValueItShouldReturn' )
+    */
+    public Amoss_ParametersDefiner allows( String method ) {
+        return allows().method( method );
     }
 
     /**
@@ -175,6 +229,21 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         this.allowsAnyCallExplicitlyDefined = true;
         this.allowsAnyCall = allowsAnyCall;
         return this;
+    }
+
+    /**
+    * States that whatever mechanism is used to defined the 'expectations' or 'whens' against this
+    * object, it will allow any call to a method to be successful and for those that are not defined
+    * to return null.
+    *
+    * Example usage:
+    *   allowsAnyCall()
+    *     .when( 'methodName' )
+    *     .withParameter( 'parameterValue' )
+    *     .willReturn( 'theValueItShouldReturn' )
+    */
+    public Amoss_Instance allowsAnyCall( ) {
+        return allowsAnyCall( true );
     }
 
     /**
