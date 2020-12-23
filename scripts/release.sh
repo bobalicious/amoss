@@ -51,8 +51,8 @@ echo Committing change to SFDX configuration
 echo -----------------------------------------------------------------------
 git add sfdx-project.json
 git add README.md
-#git add RELEASE_NOTES.md
-#git add PENDING_RELEASE_NOTES.md
+git add RELEASE_NOTES.md
+git add PENDING_RELEASE_NOTES.md
 
 git commit -m "Added version $newversionname"
 git push
