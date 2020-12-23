@@ -912,7 +912,7 @@ For more information, see here: https://developer.salesforce.com/docs/atlas.en-u
 
 ## Release Notes
 
-Release notes for Amoss can be found [here](./RELEASE_NOTES.md), and changes on this branch that are pending release into the Unlocked Package / Release Tags can be found [here](./PENDING_RELEASE_NOTES.md)
+Release notes for Amoss can be found [here](./RELEASE_NOTES.md), and changes on this branch that are pending release into the Unlocked Package / Release Tags can be found [here](./PENDING_RELEASE_NOTES.md).
 
 ## Acknowledgements / References
 

@@ -1,5 +1,4 @@
 # Release Notes since Last Release
-
 Introduced a slighty shorter format for defining `when`, `allows` and `expects`.
 
 For example:
