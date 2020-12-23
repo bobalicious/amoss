@@ -39,6 +39,8 @@ Alternatively, Amoss is available as an Unlocked Package, and the 'currently pub
 
 You should note that this *may not* be the most recent version that exists on this branch.  There are times when the most recent version has not been published as an Unlocked Package Version.  In addition, the Unlocked Package contains the `amoss_main` and `amoss_test` files, though does not include `amoss_examples`.
 
+Links to the release notes, and any changes pending release can be found at the end of this file.
+
 ##### Note
 If you are not familiar with the SFDX commands, then it is recommended that you read the documentation here: https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_force_package.htm
 
@@ -908,6 +910,9 @@ Primarily these are:
 
 For more information, see here: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_StubProvider.htm
 
+## Release Notes
+
+Release notes for Amoss can be found [here](./RELEASE_NOTES.md), and changes on this branch that are pending release into the Unlocked Package / Release Tags can be found [here](./PENDING_RELEASE_NOTES.md)
 
 ## Acknowledgements / References
 
