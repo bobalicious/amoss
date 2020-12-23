@@ -41,12 +41,18 @@ echo -----------------------------------------------------------------------
 
 sed -i '' -E "s/force:package:install --package \"(.*)\"/force:package:install --package \"$newversionalias\"/" README.md
 sed -i '' -E "s/installPackage.apexp\?p0=(.*)/installPackage.apexp\?p0=$newversionid/" README.md
+echo ""
+echo Updating RELEASE_NOTES with PENDING_RELEASE_NOTES
+echo -----------------------------------------------------------------------
+./scripts/combine-release-notes.sh $newversionnumber $newversionname "sfdx force:package:install --package \"$newversionalias\"" "https://login.salesforce.com/packaging/installPackage.apexp?p0=$newversionid"
 
 echo ""
 echo Committing change to SFDX configuration
 echo -----------------------------------------------------------------------
 git add sfdx-project.json
 git add README.md
+git add RELEASE_NOTES.md
+git add PENDING_RELEASE_NOTES.md
 
 git commit -m "Added version $newversionname"
 git push

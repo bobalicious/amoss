@@ -17,11 +17,9 @@ As a simple example, the following example:
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .when()
-        .method( 'canDeliver' )
+    .when( 'canDeliver' )
         .willReturn( true )
-    .also().when()
-        .method( 'scheduleDelivery' )
+    .also().when( 'scheduleDelivery' )
         .willReturn( true );
 
 DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
@@ -40,6 +38,8 @@ Alternatively, Amoss is available as an Unlocked Package, and the 'currently pub
 `sfdx force:package:install --package "amoss@0.9.0-1"`
 
 You should note that this *may not* be the most recent version that exists on this branch.  There are times when the most recent version has not been published as an Unlocked Package Version.  In addition, the Unlocked Package contains the `amoss_main` and `amoss_test` files, though does not include `amoss_examples`.
+
+Links to the release notes, and any changes pending release can be found at the end of this file.
 
 ##### Note
 If you are not familiar with the SFDX commands, then it is recommended that you read the documentation here: https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_force_package.htm
@@ -128,11 +128,9 @@ We can configure the Test Double, so that certain methods return certain values 
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .when()
-        .method( 'canDeliver' )
+    .when( 'canDeliver' )
         .willReturn( true )
-    .also().when()
-        .method( 'scheduleDelivery' )
+    .also().when( 'scheduleDelivery' )
         .willReturn( true );
 
 DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
@@ -150,13 +148,11 @@ If we want our Test Double to be a little more strict about the parameters it re
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .when()
-        .method( 'canDeliver' )
+    .when( 'canDeliver' )
         .withParameter( deliveryPostcode )
         .thenParameter( deliveryDate )
         .willReturn( true )
-    .also().when()
-        .method( 'canDeliver' )
+    .also().when( 'canDeliver' )
         .willReturn( false );
 
 DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
@@ -170,13 +166,11 @@ We can also use a 'named parameter' notation, by using the methods `withParamete
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .when()
-        .method( 'canDeliver' )
+    .when( 'canDeliver' )
         .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
         .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .willReturn( true )
-    .also().when()
-        .method( 'canDeliver' )
+    .also().when( 'canDeliver' )
         .willReturn( false );
 
 DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
@@ -190,8 +184,7 @@ If we want to be strict about some parameters, but don't care about others we ca
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .when()
-        .method( 'canDeliver' )
+    .when( 'canDeliver' )
         .withParameter( deliveryPostcode )
         .thenAnyParameter()
         .willReturn( true );
@@ -207,12 +200,10 @@ Or, when using 'named notation', we can simply omit them from our list:
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .when()
-        .method( 'canDeliver' )
+    .when( 'canDeliver' )
         .withParameterNamed( 'postcode' ).setTo( deliveryPostcode ) // since we don't mention 'deliveryDate', it can be any value
         .willReturn( true )
-    .also().when()
-        .method( 'canDeliver' )
+    .also().when( 'canDeliver' )
         .willReturn( false );
 
 DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
@@ -260,13 +251,11 @@ A very similar configuraiton syntax can be used to define the Test Double as a s
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .expects()
-        .method( 'canDeliver' )
+    .expects( 'canDeliver' )
         .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
         .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
-    .then().expects()
-        .method( 'scheduleDelivery' )
+    .then().expects( 'scheduleDelivery' )
         .withParameter( deliveryPostcode )  // once again, either syntax is fine
         .thenParameter( deliveryDate )
         .returning( true );
@@ -290,13 +279,11 @@ A single object can be used as both a Mock and a Test Spy at the same time:
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .expects()
-        .method( 'canDeliver' )
+    .expects( 'canDeliver' )
         .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
         .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
-    .also().when()
-        .method( 'scheduleDelivery' )
+    .also().when( 'scheduleDelivery' )
         .willReturn( true );
 
 DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
@@ -319,13 +306,11 @@ If you like the way Test Spies have clear assertions, but don't want just any me
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .allows()
-        .method( 'canDeliver' )
+    .allows( 'canDeliver' )
         .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
         .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true )
-    .also().allows()
-        .method( 'scheduleDelivery' )
+    .also().allows( 'scheduleDelivery' )
         .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
         .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .returning( true );
@@ -374,14 +359,12 @@ You should note that this may not be reliable in all situations, but should suff
 Examples:
 ```java
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameter().setToTheSameValueAs( anObject )
         .willReturn( 'theReturn' );
 
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameterNamed( 'parameterName' ).setToTheSameValueAs( anObject )
         .willReturn( 'theReturn' );
 ```
@@ -402,14 +385,12 @@ The passed object may have more properties set, and they can have any value.
 Examples:
 ```java
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameter().withFieldsSetLike( new Contact( FirstName = 'theFirstName', LastName = 'theLastName' ) )
         .willReturn( 'theReturn' );
 
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameterNamed( 'parameterName' ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
         .willReturn( 'theReturn' );
 ```
@@ -425,14 +406,12 @@ Used to check that a parameter is a list that contains *any* of the elements pas
 Examples:
 ```java
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameter().withAnyElement().setTo( 'expectedString' )
         .willReturn( 'theReturn' );
 
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameterNamed( 'parameterName' ).withAnyElement().withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
         .willReturn( 'theReturn' );
 ```
@@ -446,14 +425,12 @@ Used to check that a parameter is a list where *all* of the elements pass the sp
 Examples:
 ```java
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameter().withAllElements().setTo( 'expectedString' )
         .willReturn( 'theReturn' );
 
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameterNamed( 'parameterName' ).withAllElements().withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'theFirstName', 'LastName' => 'theLastName' } )
         .willReturn( 'theReturn' );
 ```
@@ -467,16 +444,14 @@ Used to check that a parameter is a list where the element at the given position
 Examples:
 ```java
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameter()
             .withElementAt( 0 ).setTo( 'expectedString-number1' )
             .withElementAt( 1 ).setTo( 'expectedString-number2' )
         .willReturn( 'theReturn' );
 
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameterNamed( 'parameterName' )
             .withElementAt( 0 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'Person1' } )
             .withElementAt( 1 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'Person2' } )
@@ -491,8 +466,7 @@ For example, you may want to check that every Contact in a list has the 'PersonA
 
 ```java
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameter()
             .withAllElements().withFieldsSetTo( new Map<String,Object>{ 'IsPersonAccount' => true } )
             .withElementAt( 0 ).withFieldsSetTo( new Map<String,Object>{ 'FirstName' => 'Person1' } )
@@ -512,8 +486,7 @@ For example:
 
 ```java
 classToDoubleController
-    .when()
-        .method( 'objectMethodUnderDouble' )
+    .when( 'objectMethodUnderDouble' )
         .withParameterName( 'parameter1' ).verifiedBy( customVerifier )
         .willReturn( 'theReturn' );
 ```
@@ -604,8 +577,7 @@ private static void methodBeingTested_whenGivenSomething_doesSomething() {
     Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
 
     objectBeingDoubledController
-        .when()
-            .method( 'getContactId' )
+        .when( 'getContactId' )
             .withAnyParameter()
             .handledBy( methodHander );
 
@@ -643,8 +615,7 @@ private static void methodBeingTested_whenGivenSomething_doesSomething() {
     Amoss_Instance objectBeingDoubledController = new Amoss_Instance( ClassBeingDoubled.class );
 
     objectBeingDoubledController
-        .when()
-            .method( 'getContactId' )
+        .when( 'getContactId' )
             .withAnyParameter()
             .handledBy( methodHander );
 
@@ -661,8 +632,7 @@ Test Doubles can also be told to throw exceptions, using `throwing`, `throws` or
 
 Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
 deliveryProviderController
-    .when()
-        .method( 'canDeliver' )
+    .when( 'canDeliver' )
         .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
         .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
         .throws( new DeliveryProvider.DeliveryProviderUnableToDeliverException( 'DeliveryProvider does not have a delivery slot' ) );
@@ -678,7 +648,7 @@ In some situations you may want to create a Mock Object that ensures that no cal
 
 For that, you can use `expectsNoCalls`.
 
-This method cannot be used in conjunction with any other method definition (`expects`, `allows`, `when`), or the statement that the double `allowsAnyCalls`.  If an attempt is made to do so, an exception is thrown.
+This method cannot be used in conjunction with any other method definition (`expects`, `allows`, `when`). If an attempt is made to do so, an exception is thrown.
 
 ```java
 
@@ -692,6 +662,29 @@ DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderCont
 ```
 
 It is valid to call `verify` against the controller at the end of the test, but this will always pass since the expected call stack will always be empty.
+
+### Longer format .method definition
+
+Occassionally you may find that the definition of the method name gets swamped by the other definitions.  In that situation you may want to use the slightly longer form `when().method( methodName )`, to more clearly highlight the methods being defined.
+
+For example:
+
+```java
+
+Amoss_Instance deliveryProviderController = new Amoss_Instance( DeliveryProvider.class );
+deliveryProviderController
+    .expects()
+        .method( 'canDeliver' )
+        .withParameterNamed( 'postcode' ).setTo( deliveryPostcode )
+        .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
+        .returning( true )
+    .also().when()
+        .method( 'scheduleDelivery' )
+        .willReturn( true );
+
+DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.generateDouble();
+```
+The `method` variation is available for all three method definition scenarios: `when`, `allows` and `expects`.
 
 ## What? When?
 
@@ -715,17 +708,15 @@ However, it is likely that the test will check that the method under tests acts 
 
 It is of particular note that when implemented using 'withAnyParameter' (or without parameters being specified), the method signatures of the object being stubbed can change without impacting the tests.
 
-#### Is characterised by the pattern: when.method.with.willReturn
+#### Is characterised by the pattern: when.with.willReturn
 
 ```java
 
 testDoubleController
-    .when()
-        .method( 'methodName1' )
+    .when( 'methodName1' )
         .withAnyParameters()    // this is actually redundant, as the default behaviour is 'withAnyParameters'
         .willReturn( true )
-    .also().when()
-        .method( 'methodName2' )
+    .also().when( 'methodName2' )
         .withAnyParameters()
         .willReturn( true );
 ```
@@ -754,17 +745,15 @@ However, it is implied that it is important that *other* methods, those not spec
 
 Is not particularly brittle to changes in the implementation of the class being 'stubbed'.  However, tests may start to break when the implementation under test changes and new methods are called against that object.
 
-#### Is characterised by the pattern: allows.method.with.returning
+#### Is characterised by the pattern: allows.with.returning
 
 ```java
 
 testDoubleController
-    .allows()
-        .method( 'methodName1' )
+    .allows( 'methodName1' )
         .withAnyParameters()
         .returning( true )
-    .also().allows()
-        .method( 'methodName2' )
+    .also().allows( 'methodName2' )
         .withAnyParameters()
         .returning( true );
 ```
@@ -788,17 +777,15 @@ That is, the test is checking that the method under test calls particular method
 
 Can be used to test that individual methods are called, and the order in which that particular method is called.  However, cannot be used to test that different methods are called in a particular sequence.  In order to do that, a Mock Object (see below) is required.
 
-#### Is characterised by the pattern: when.method.with.willReturn followed by call.of.parameter
+#### Is characterised by the pattern: when.with.willReturn followed by call.of.parameter
 
 ```java
 
 spiedUponObjectController
-    .when()
-        .method( 'methodName1' )
+    .when( 'methodName1' )
         .withAnyParameters()
         .willReturn( true )
-    .also().when()
-        .method( 'methodName2' )
+    .also().when( 'methodName2' )
         .withAnyParameters()
         .willReturn( true );
 
@@ -826,17 +813,15 @@ Can be used to test that individual methods are called, and the order in which t
 
 It is implied that it is important that *other* methods, those not specified, are *not* called.
 
-#### Is characterised by the pattern: allows.method.with.willReturn followed by call.of.parameter
+#### Is characterised by the pattern: allows.with.willReturn followed by call.of.parameter
 
 ```java
 
 spiedUponObjectController
-    .allows()
-        .method( 'methodName1' )
+    .allows( 'methodName1' )
         .withAnyParameters()
         .willReturn( true )
-    .also().allows()
-        .method( 'methodName2' )
+    .also().allows( 'methodName2' )
         .withAnyParameters()
         .willReturn( true );
 
@@ -864,17 +849,15 @@ It is also implied that it is important that *other* methods, those not specifie
 
 Because of the strict nature of the specification, this is the most brittle of the constructs, and often results in tests that fail when the implementation of the method under test is altered.
 
-#### Is characterised by the pattern: expects.method.with.willReturn followed by verify
+#### Is characterised by the pattern: expects.with.willReturn followed by verify
 
 ```java
 
 mockObjectController
-    .expects()
-        .method( 'methodName1' )
+    .expects( 'methodName1' )
         .withParameter( 'expectedParameterValue1' )
         .willReturn( true )
-    .then().expects()
-        .method( 'methodName2' )
+    .then().expects( 'methodName2' )
         .withParameter( 'expectedParameterValue2' )
         .willReturn( true );
 
@@ -889,11 +872,11 @@ In all cases, 'willReturn' or 'returning' could be replaced with 'throws' or 'ha
 
 Type                | Use Cases | Brittle? | Construct Pattern
 ------------------- | --------- | -------- | ------------------------
-Test Stub           | Ancillary objects, parameters passed are not the main focus of the test             | Least brittle | when.method.with.willReturn
-Strict Test Stub    | Ancillary objects, parameters passed are not the main focus of the test             | Brittle to addition of new calls on object being stubbed | allows.method.with.returning
-Test Spy            | Focus of the test, order of execution is not important, prefer the assertion syntax | Is brittle to the interface of the object being stubbed, less brittle to the implementation of the method under test | when.method.with.willReturn, call.of.parameter
-Strict Test Spy     | Focus of the test, order of execution is not important, prefer the assertion syntax | Is brittle to the interface of the object being stubbed and addition of new calls on object being stubbed, a little more brittle to the implementation of the method under test | allows.method.with.returns, call.of.parameter
-Mock Object         | Focus of the test, order of execution is important                                  | Most brittle construct, brittle to the implementation of the method under test | expect.method.with.returning, verify
+Test Stub           | Ancillary objects, parameters passed are not the main focus of the test             | Least brittle | when.with.willReturn
+Strict Test Stub    | Ancillary objects, parameters passed are not the main focus of the test             | Brittle to addition of new calls on object being stubbed | allows.with.returning
+Test Spy            | Focus of the test, order of execution is not important, prefer the assertion syntax | Is brittle to the interface of the object being stubbed, less brittle to the implementation of the method under test | when.with.willReturn, call.of.parameter
+Strict Test Spy     | Focus of the test, order of execution is not important, prefer the assertion syntax | Is brittle to the interface of the object being stubbed and addition of new calls on object being stubbed, a little more brittle to the implementation of the method under test | allows.with.returns, call.of.parameter
+Mock Object         | Focus of the test, order of execution is important                                  | Most brittle construct, brittle to the implementation of the method under test | expect.with.returning, verify
 
 ## Synonyms
 
@@ -927,6 +910,9 @@ Primarily these are:
 
 For more information, see here: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_StubProvider.htm
 
+## Release Notes
+
+Release notes for Amoss can be found [here](./RELEASE_NOTES.md), and changes on this branch that are pending release into the Unlocked Package / Release Tags can be found [here](./PENDING_RELEASE_NOTES.md).
 
 ## Acknowledgements / References
 

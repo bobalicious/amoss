@@ -16,10 +16,6 @@ Documentation:
     Consider reducing:
         setToTheSameValueAs to setToSameValueAs
 
-    Think about withElements
-        setTo (given a list)
-        what else would you implement?
-
     Look at removing duplication between:
         * Amoss_ExpectationFieldsSetToParameter
         * Amoss_ExpectationFieldsSetLikeParameter
