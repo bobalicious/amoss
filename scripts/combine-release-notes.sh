@@ -7,8 +7,8 @@
 
 echo "# Version $1" >> RELEASE_NOTES.md.new
 echo "" >> RELEASE_NOTES.md.new
-echo "* Git Tag                : `$2`" >> RELEASE_NOTES.md.new
-echo "* SFDX Install           : `$3`" >> RELEASE_NOTES.md.new
+echo "* Git Tag                : \`$2\`" >> RELEASE_NOTES.md.new
+echo "* SFDX Install           : \`$3\`" >> RELEASE_NOTES.md.new
 echo "* Unlocked Package Links :" >> RELEASE_NOTES.md.new
 echo "  * $4" >> RELEASE_NOTES.md.new
 echo "  * $5" >> RELEASE_NOTES.md.new
