@@ -1135,10 +1135,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner thenParameter( Object parameterValue ) {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters())
-                .moveToNextParameter()
-                .addVerifierToCurrentParameter( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
-            return this;
+            return thenParameter().setTo( parameterValue );
         }
 
         /**
@@ -2182,16 +2179,15 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_ReturnsDefiner withParameters( Object[] parameterValues ) {
 
-            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
-
+            Amoss_PositionalParametersDefiner parameterDefiner;
+            // Yep, the difference between the first call (withParameter) and later ones (thenParameter) came back to bite me
             for ( Object thisParameterValue : parameterValues ) {
-                expectedParameters
-                    .moveToNextParameter()
-                    .addVerifierToCurrentParameter( valueVerifierBuilder.buildEqualsVerifier( thisParameterValue ) );
+                if ( parameterDefiner == null ) {
+                    parameterDefiner = withParameter().setTo( thisParameterValue );
+                } else {
+                    parameterDefiner = parameterDefiner.thenParameter().setTo( thisParameterValue );
+                }
             }
-
-            expectation.setExpectationParameters( expectedParameters );
-
             return new Amoss_ReturnsDefiner( expectation );
         }
 
@@ -2211,15 +2207,15 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
 
-            Amoss_ExpectationNamedParameters expectedParameters = new Amoss_ExpectationNamedParameters();
-
+            Amoss_NamedParametersDefiner parameterDefiner;
+            // Yep, the difference between the first call (withParameterNamed) and later ones (andParameterNamed) came back to bite me
             for ( String thisParameterName : parameters.keySet() ) {
-                expectedParameters
-                    .moveToParameter( thisParameterName )
-                    .addVerifierToCurrentParameter( valueVerifierBuilder.buildEqualsVerifier( parameters.get( thisParameterName ) ) );
+                if ( parameterDefiner == null ) {
+                    parameterDefiner = withParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
+                } else {
+                    parameterDefiner = parameterDefiner.andParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
+                }
             }
-            expectation.setExpectationParameters( expectedParameters );
-
             return new Amoss_ReturnsDefiner( expectation );
         }
 
@@ -2239,14 +2235,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
-
-            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters();
-            expectedParameters
-                .moveToNextParameter()
-                .addVerifierToCurrentParameter( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
-            expectation.setExpectationParameters( expectedParameters );
-
-            return new Amoss_PositionalParametersDefiner( expectation );
+            return withParameter().setTo( parameterValue );
         }
 
 
