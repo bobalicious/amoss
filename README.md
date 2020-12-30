@@ -35,7 +35,7 @@ If you are familar with using SFDX, the ant migration tool or using a local IDE,
 
 Alternatively, Amoss is available as an Unlocked Package, and the 'currently published' version based *this* branch can be installed (after setting the default org), using:
 
-`sfdx force:package:install --package "amoss@0.9.0-1"`
+`sfdx force:package:install --package "amoss@0.9.1-0"`
 
 You should note that this *may not* be the most recent version that exists on this branch.  There are times when the most recent version has not been published as an Unlocked Package Version.  In addition, the Unlocked Package contains the `amoss_main` and `amoss_test` files, though does not include `amoss_examples`.
 
@@ -49,11 +49,11 @@ If you are not familiar with the SFDX commands, then it is recommended that you 
 
 For Dev Instances or Production, the Unlocked Package can be installed via:
 
-* https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
+* https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PoQAK
 
 For all other instances:
 
-* https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
+* https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PoQAK
 
 #### Install Button
 
