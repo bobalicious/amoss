@@ -1,9 +1,10 @@
 # Version 0.9.1.0
 
-* Git Tag               : `v0.9.1.0`
-* SFDX Install          : `sfdx force:package:install --package "amoss@0.9.1-0"`
-* Unlocked Package Link :
+* Git Tag                : `v0.9.1.0`
+* SFDX Install           : `sfdx force:package:install --package "amoss@0.9.1-0"`
+* Unlocked Package Links :
   * https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PoQAK
+  * https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PoQAK
 
 Introduced a slighty shorter format for defining `when`, `allows` and `expects`.
 
@@ -16,8 +17,10 @@ Introduced parameter-free version of `allowsAnyCall` that is equivalent to `allo
 
 # Version 0.9.0.1
 
-* Git Tag               : `v0.9.0.1`
-* SFDX Install          : `sfdx force:package:install --package "amoss@0.9.0-1"`
-* Unlocked Package Link : https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
+* Git Tag                : `v0.9.0.1`
+* SFDX Install           : `sfdx force:package:install --package "amoss@0.9.0-1"`
+* Unlocked Package Links :
+  * https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
+  * https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PeQAK
 
 Introduced the Release Notes file.
