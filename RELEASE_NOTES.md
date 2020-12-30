@@ -2,7 +2,8 @@
 
 * Git Tag               : `v0.9.1.0`
 * SFDX Install          : `sfdx force:package:install --package "amoss@0.9.1-0"`
-* Unlocked Package Link : https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PoQAK
+* Unlocked Package Link :
+  * https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O0PoQAK
 
 Introduced a slighty shorter format for defining `when`, `allows` and `expects`.
 
