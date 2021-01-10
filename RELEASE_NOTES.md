@@ -6,8 +6,9 @@
   * https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O1vJQAS
   * https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O1vJQAS
 
-Improved format of the Release Notes file
-Simplified internal implementation of some of the shortcuts (e.g. `withParameter( value )` )
+Improved format of the Release Notes file.
+
+Simplified internal implementation of some of the shortcuts (e.g. `withParameter( value )` ).
 
 # Version 0.9.1.0
 
