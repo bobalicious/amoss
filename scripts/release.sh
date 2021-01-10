@@ -28,7 +28,7 @@ git tag -a $newversionname -m "Release $newversionnumber"
 echo ""
 echo Building unlocked package
 echo -----------------------------------------------------------------------
-sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname
+sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname -t $newversionname -c
 echo ""
 echo Getting new package\'s Id and Alias
 echo -----------------------------------------------------------------------
@@ -44,7 +44,7 @@ sed -i '' -E "s/installPackage.apexp\?p0=(.*)/installPackage.apexp\?p0=$newversi
 echo ""
 echo Updating RELEASE_NOTES with PENDING_RELEASE_NOTES
 echo -----------------------------------------------------------------------
-./scripts/combine-release-notes.sh $newversionnumber $newversionname "sfdx force:package:install --package \"$newversionalias\"" "https://login.salesforce.com/packaging/installPackage.apexp?p0=$newversionid"
+./scripts/combine-release-notes.sh $newversionnumber $newversionname "sfdx force:package:install --package \"$newversionalias\"" "https://login.salesforce.com/packaging/installPackage.apexp?p0=$newversionid" "https://test.salesforce.com/packaging/installPackage.apexp?p0=$newversionid"
 
 echo ""
 echo Committing change to SFDX configuration
