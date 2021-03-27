@@ -282,7 +282,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Use in the following formats:
     *   get().call( 2 ).of( 'methodName' ).parameter( 1 )
-    *   get().latestCallOf( 'methodName' ).parameter( 1 )
+    *   get().latestCallOf( 'methodName' ).parameter( 'parameterName' )
     *
     */
     public Amoss_CallChecker get() {
@@ -296,8 +296,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Use in the format:
     *   call( 2 ).of( 'methodName' ).parameter( 1 )
+    *   call( 2 ).of( 'methodName' ).parameter( 'parameterName' )
     *
-    * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+    * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last call.
     */
     public Amoss_CallChecker call( Integer callNumber ) {
         return new Amoss_CallChecker( callLog ).call( callNumber );
@@ -448,8 +449,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Use in the format:
         *   get().call( 2 ).of( 'methodName' ).parameter( 1 )
+        *   get().call( 2 ).of( 'methodName' ).parameter( 'parameterName' )
         *
-        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last call.
         */
         public Amoss_CallChecker call( Integer callNumber ) {
             this.callNumber = callNumber;
@@ -706,7 +708,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * If the method wasn't called, or called enough times, will throw an exception
         *
         * @param String  - The method to retrieve the call log entry for.
-        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last call.
         */
         public Amoss_CallLogEntry getCallLog( String method, Integer callNumber ) {
 
@@ -749,7 +751,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Gets the parameter at the stated position that was passed into the stated method at the stated call number in the stack.
         *
         * @param  String  - The method to retrieve the parameters for.
-        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last call.
         * @param  Integer - The position of the parameter in the call. Indexed from 0.
         * @return Object  - The requested parameter value.
         */
@@ -763,7 +765,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Gets the parameter at the stated position that was passed into the stated method at the stated call number in the stack.
         *
         * @param  String  - The method to retrieve the parameters for.
-        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last call.
         * @param  Integer - The position of the parameter in the call. Indexed from 0.
         * @return Object  - The requested parameter value.
         */
@@ -777,7 +779,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Gets the parameters that were passed into the stated method at the stated call number in the stack.
         *
         * @param  String  - The method to retrieve the parameters for.
-        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last call.
         * @return List<Object> - The requested parameter values.
         */
         public List<Object> getCallLogParameters( String method, Integer callNumber ) {
@@ -790,7 +792,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Gets the parameters that were passed into the stated method at the stated call number in the stack.
         *
         * @param  String  - The method to retrieve the parameters for.
-        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last call.
         * @return Map<String,Object> - The requested parameter values, indexed by their name.
         */
         public Map<String,Object> getCallLogParametersByName( String method, Integer callNumber ) {
