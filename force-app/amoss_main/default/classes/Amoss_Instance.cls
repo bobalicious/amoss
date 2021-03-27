@@ -48,8 +48,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
     private Amoss_CallLog      callLog      = new Amoss_CallLog();
+    private Object defaultMethodReturn;
 
-    Type classType;
+    private Type classType;
 
     private Amoss_Asserts assertionMechanism = new Amoss_Asserts();
 
@@ -68,8 +69,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * @return Object  - The instance to use in your test
     */
+    private Object generatedDouble;
     public Object generateDouble() {
-        return Test.createStub( classType, this );
+        // Note that this is lazy loaded so that we can generate fluent interfaces generally.
+        // I.E. we always want generateDouble to return the same object.
+        if ( generatedDouble == null ) {
+            generatedDouble = Test.createStub( classType, this );
+        }
+        return generatedDouble;
     }
 
     /**
@@ -232,6 +239,30 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
+    * States that when a method is called that does not have a return type defined, it will return the stated object
+    *
+    * Example usage:
+    *   setDefaultMethodReturn( new Contact( Name='The default contact' ) )
+    */
+    public Amoss_Instance byDefaultMethodsReturn( Object defaultMethodReturn ) {
+        this.defaultMethodReturn = defaultMethodReturn;
+        return this;
+    }
+
+    /**
+    * States that when a method is called that does not have a return type defined, it will return itself.
+    *
+    * I.E. the interface of the object being doubled implements a fluent interface
+    *
+    * Example usage:
+    *   isFluent()
+    */
+    public Amoss_Instance isFluent() {
+        this.byDefaultMethodsReturn( generateDouble() );
+        return this;
+    }
+
+    /**
     * States that whatever mechanism is used to defined the 'expectations' or 'whens' against this
     * object, it will allow any call to a method to be successful and for those that are not defined
     * to return null.
@@ -376,7 +407,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return thisExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
         }
 
-        return null;
+        return defaultMethodReturn;
     }
 
     /**

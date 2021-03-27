@@ -158,6 +158,166 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method isFluent
+    * @case   when an unspecified, fluent method is called
+    * @result will return the generated double
+    */
+    @isTest
+    private static void isFluent_whenAnUnspecifiedFluentMethodIsCalled_willReturnTheGeneratedDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .isFluent();
+
+        Test.startTest();
+            AmossTest_ClassToDouble returnFromDouble = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        System.assertEquals( classToDouble, returnFromDouble, 'isFluent, when an unspecified, fluent method is called, will return the generated double' );
+    }
+
+    /**
+    * @method isFluent
+    * @case   when an unspecified, non fluent method is called
+    * @result will throw an exception
+    */
+    @isTest
+    private static void isFluent_whenAnUnspecifiedNonFluentMethodIsCalled_willThrowAnException() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .isFluent();
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDouble( '1', 2 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( true, exceptionThrown, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
+        System.assertEquals( 'Invalid conversion from runtime type AmossTest_ClassToDouble to String', exceptionMessage, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
+    }
+
+    /**
+    * @method isFluent
+    * @case   when an unspecified, method with no return is called
+    * @result will not throw an exception
+    */
+    @isTest
+    private static void isFluent_whenAnUnspecifiedMethodWithNoReturnIsCalled_willNotThrowAnException() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .isFluent();
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDoubleWithNoReturn( '1', 2 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( false, exceptionThrown, 'isFluent, when an unspecified, method with no return is called, will not throw an exception' );
+    }
+
+    /**
+    * @method byDefaultMethodsReturn
+    * @case   when an unspecified, method is called
+    * @result will return the specified value
+    */
+    @isTest
+    private static void isFluent_whenAnUnspecifiedMethodIsCalled_willReturnTheSpecifiedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .byDefaultMethodsReturn( 'DefaultReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        System.assertEquals( 'DefaultReturn', returnFromDouble, 'byDefaultMethodsReturn,  when an unspecified, method is called, will return the specified value' );
+    }
+
+    /**
+    * @method byDefaultMethodsReturn
+    * @case   when an unspecified, method with a different return type is called
+    * @result will throw an exception
+    */
+    @isTest
+    private static void byDefaultMethodsReturn_whenAnUnspecifiedMethodWithADifferentReturnTypeIsCalled_willThrowAnException() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .byDefaultMethodsReturn( 'DefaultReturn' );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( null );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( true, exceptionThrown, 'byDefaultMethodsReturn, when an unspecified method with a different return type is called, will throw an exception' );
+        System.assertEquals( 'Invalid conversion from runtime type String to List<ANY>', exceptionMessage, 'byDefaultMethodsReturn, when an unspecified method with a different return type, will throw an exception' );
+    }
+
+    /**
+    * @method byDefaultMethodsReturn
+    * @case   when an unspecified, method with no return is called
+    * @result will not throw an exception
+    */
+    @isTest
+    private static void byDefaultMethodsReturn_whenAnUnspecifiedMethodWithNoReturnIsCalled_willNotThrowAnException() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        classToDoubleController
+            .byDefaultMethodsReturn( 'DefaultReturn' );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDoubleWithNoReturn( '1', 2 );
+            } catch( DmlException e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( false, exceptionThrown, 'byDefaultMethodsReturn, when an unspecified, method with no return is called, will not throw an exception' );
+    }
+
+    /**
     * @method when.method.handledBy, StubProvider
     * @case   when that method is called
     * @result will call handleMethodCall on the specified object and return the result

@@ -91,6 +91,9 @@ public with sharing class AmossTest_ClassToDouble {
     public Map<Date,Object> methodWithMapDateToObject( Map<Date,Object> parameter1 ) {
         return new Map<Date,Object>();
     }
+    public AmossTest_ClassToDouble fluentMethod() {
+        return this;
+    }
 
     public class PassableObject {
         String property;
