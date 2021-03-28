@@ -48,7 +48,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
     private Amoss_CallLog      callLog      = new Amoss_CallLog();
-    private Object defaultMethodReturn;
+
+    private Object  defaultMethodReturn;
+    private Boolean isFluent = false;
 
     private Type classType;
 
@@ -77,6 +79,29 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             generatedDouble = Test.createStub( classType, this );
         }
         return generatedDouble;
+    }
+
+    public Object generateNewDouble() {
+        return this.createClone().generateDouble();
+    }
+
+    private Amoss_Instance createClone() {
+        return new Amoss_Instance( this );
+    }
+
+    private Amoss_Instance( Amoss_Instance toClone ) {
+        this.expectations                   = toClone.expectations;
+        this.whens                          = toClone.whens;
+        this.classType                      = toClone.classType;
+        this.allowsAnyCall                  = toClone.allowsAnyCall;
+        this.allowsAnyCallExplicitlyDefined = toClone.allowsAnyCallExplicitlyDefined;
+        this.expectsNoCalls                 = toClone.expectsNoCalls;
+
+        if ( toClone.isFluent ) {
+            this.isFluent();
+        } else {
+            this.defaultMethodReturn = toClone.defaultMethodReturn;
+        }
     }
 
     /**
@@ -245,6 +270,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *   setDefaultMethodReturn( new Contact( Name='The default contact' ) )
     */
     public Amoss_Instance byDefaultMethodsReturn( Object defaultMethodReturn ) {
+        // TODO: if the default return is already set, then error
         this.defaultMethodReturn = defaultMethodReturn;
         return this;
     }
@@ -258,6 +284,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *   isFluent()
     */
     public Amoss_Instance isFluent() {
+        this.isFluent = true;
         this.byDefaultMethodsReturn( generateDouble() );
         return this;
     }

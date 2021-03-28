@@ -7895,6 +7895,70 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     //
+    // generateDouble and generateNewDouble behaviours
+    //
+    /**
+    * @method generateDouble
+    * @case   when called multiple times
+    * @result will return the same instance
+    */
+    @isTest
+    private static void generateDouble_whenCalledMultipleTimes_willReturnTheSameInstance() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        Test.startTest();
+            AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+            AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        Test.stopTest();
+
+        System.assertEquals( classToDouble1, classToDouble2, 'generateDouble, when called multiple times, will return the same instance' );
+    }
+
+    /**
+    * @method generateNewDouble
+    * @result will return a different instance to generateDouble
+    */
+    @isTest
+    private static void generateNewDouble_willReturnADifferentInstanceToGenerateDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        Test.startTest();
+            AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+            AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateNewDouble();
+        Test.stopTest();
+
+        System.assertNotEquals( classToDouble1, classToDouble2, 'generateNewDouble, will return a different instance to generateDouble' );
+    }
+
+    // TODO: test the basica behaviours of the double when generateNewDouble has been called
+
+    /**
+    * @method generateNewDouble
+    * @case   when isFluent has been called
+    * @result will return a different instance to generateDouble, where the double's methods return differt instanstances too
+    */
+    @isTest
+    private static void generateNewDouble_onAnIsFluent_returnsDifferentInstancesFromMethods() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .isFluent();
+
+        AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateNewDouble();
+
+        Test.startTest();
+            AmossTest_ClassToDouble returnFromDouble1 = classToDouble1.fluentMethod();
+            AmossTest_ClassToDouble returnFromDouble2 = classToDouble2.fluentMethod();
+        Test.stopTest();
+
+        System.assertEquals( classToDouble2, returnFromDouble2, 'generateNewDouble, against an isFluent double, will return a double that responds to method calls as per the original' );
+        System.assertNotEquals( returnFromDouble1, returnFromDouble2, 'generateNewDouble, against an isFluent double, will return a double that responds to method calls with a different instance to the orignal one' );
+    }
+
+    //
     // Limitation tests - If any of these tests begin to fail, then an important limitation
     // has been removed and we may consider changing the functionality / documentation a little
     //
