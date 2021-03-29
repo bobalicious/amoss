@@ -29,7 +29,7 @@ SOFTWARE.
 *
 * Is instantiated with a class Type, then configured with combinations of 'expect', 'when' and 'allows'.
 *
-* Once configured, is used to 'generateDouble', which can then be used in place of the class being doubled.
+* Once configured, is used to 'getDouble', which can then be used in place of the class being doubled.
 *
 * On completion, a call-log can be spied for parameter values, and mock the expected call stack can be
 * checked using 'verify'.
@@ -66,29 +66,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         this.classType = classType;
     }
 
-    /**
-    * Generates the instance of the class that you use in the application under test.
-    *
-    * @return Object  - The instance to use in your test
-    */
-    private Object generatedDouble;
-    public Object generateDouble() {
-        // Note that this is lazy loaded so that we can generate fluent interfaces generally.
-        // I.E. we always want generateDouble to return the same object.
-        if ( generatedDouble == null ) {
-            generatedDouble = Test.createStub( classType, this );
-        }
-        return generatedDouble;
-    }
-
-    public Object generateNewDouble() {
-        return this.createClone().generateDouble();
-    }
-
-    private Amoss_Instance createClone() {
-        return new Amoss_Instance( this );
-    }
-
     private Amoss_Instance( Amoss_Instance toClone ) {
         this.expectations                   = toClone.expectations;
         this.whens                          = toClone.whens;
@@ -102,6 +79,49 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         } else {
             this.defaultMethodReturn = toClone.defaultMethodReturn;
         }
+    }
+
+    /**
+    * Returns the instance of the class that you use in the application under test.
+    *
+    * @return Object  - The instance to use in your test
+    */
+    private Object generatedDouble;
+    public Object getDouble() {
+        // Note that this is lazy loaded so that we can generate fluent interfaces generally.
+        // I.E. we always want getDouble to return the same object.
+        if ( generatedDouble == null ) {
+            generatedDouble = Test.createStub( classType, this );
+        }
+        return generatedDouble;
+    }
+
+    /**
+    * Generates a new instance of the class that you use in the application under tests.
+    * Used to generate multiple objects that all behave in the same way when you do not require
+    * access to the conroller.
+    *
+    * Will clone the Amoss_Instance, although will not provide access to it.
+    *
+    * Is generally not required, and getDouble should be used in most cases.
+    *
+    * @return Object  - The instance to use in your test
+    */
+    public Object generateNewDouble() {
+        return this.createClone().getDouble();
+    }
+
+    /**
+    * Creates a clone of this instance, allowing multiple versions of the object being doubled to
+    * be created, along with access to the controller (as opposed to the behaviour of generateNewDouble)
+    *
+    * Is generally not required.
+    *
+    * @return Amoss_Instance - The new instance of the controller
+    */
+    // TODO: test
+    public Amoss_Instance createClone() {
+        return new Amoss_Instance( this );
     }
 
     /**
@@ -285,7 +305,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     */
     public Amoss_Instance isFluent() {
         this.isFluent = true;
-        this.byDefaultMethodsReturn( generateDouble() );
+        this.byDefaultMethodsReturn( getDouble() );
         return this;
     }
 
