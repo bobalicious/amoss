@@ -431,6 +431,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         if ( whens.hasExpectations() ) {
             Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameterNames, parameters );
             if ( whenExpectation != null ) {
+                // If this throws a System.TypeException exception, it is likely you have misconfigured your
+                // return type in your when or allows.  See the note below for more context.
                 return whenExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
             }
         }
@@ -451,11 +453,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 } catch ( Amoss_Instance.Amoss_AssertionFailureException assertionFailure ) {
                     assertionFailure.issueAsserton( assertionMechanism );
                 }
-
+            // If this throws a System.TypeException exception, it is likely you have misconfigured your
+            // return type in your expectation.  See the note below for more context.
             return thisExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
         }
 
-        // TODO: Would love to be able to guard against invalid returns being configured, but that would need
+        // NOTE:
+        // Would love to be able to guard against invalid returns being configured, but that would need
         // Salesforce to implement a dynamic 'instanceOf' method that uses Type, or similar to do that comparison.
         // At that point we could check "defaultMethodReturn instanceOf returnType", and similar above.
         // Until then, we're stuck with a System.TypeException that cannot be caught by the framework.  Sorry!
