@@ -238,6 +238,52 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method isFluent
+    * @case   when a specified method with no defined return is called
+    * @result will return null
+    */
+    @isTest
+    private static void isFluent_whenAnSpecifiedMethodWithNoDefinedReturnIsCalled_willReturnNull() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .isFluent()
+            .when( 'fluentMethod' );
+
+        Test.startTest();
+            AmossTest_ClassToDouble returnFromMethod = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromMethod, 'isFluent, when a specified method with no defined return is called, will return null' );
+    }
+
+    /**
+    * @method isFluent
+    * @case   when a specified method with a defined return is called
+    * @result will return the defined return
+    */
+    @isTest
+    private static void isFluent_whenAnSpecifiedMethodWithADefinedReturnIsCalled_willReturnTheDefinedReturn() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        AmossTest_ClassToDouble specifiedReturn = new AmossTest_ClassToDouble( 'unimportant' );
+        classToDoubleController
+            .isFluent()
+            .when( 'fluentMethod' )
+            .returns( specifiedReturn );
+
+        Test.startTest();
+            AmossTest_ClassToDouble returnFromMethod = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        System.assertEquals( specifiedReturn, returnFromMethod, 'isFluent, when a specified method with a defined return is called, will return the specified return' );
+    }
+
+    /**
     * @method byDefaultMethodsReturn
     * @case   when an unspecified, method is called
     * @result will return the specified value
@@ -7932,12 +7978,10 @@ public with sharing class AmossTest_InstanceTest {
         System.assertNotEquals( classToDouble1, classToDouble2, 'generateNewDouble, will return a different instance to getDouble' );
     }
 
-    // TODO: test the basic behaviours of the double when generateNewDouble has been called
-
     /**
     * @method generateNewDouble
     * @case   when isFluent has been called
-    * @result will return a different instance to getDouble, where the double's methods return differt instanstances too
+    * @result will return a different instance to getDouble, where the double's methods return differt instances too
     */
     @isTest
     private static void generateNewDouble_onAnIsFluent_returnsDifferentInstancesFromMethods() {
@@ -7956,6 +8000,99 @@ public with sharing class AmossTest_InstanceTest {
 
         System.assertEquals( classToDouble2, returnFromDouble2, 'generateNewDouble, against an isFluent double, will return a double that responds to method calls as per the original' );
         System.assertNotEquals( returnFromDouble1, returnFromDouble2, 'generateNewDouble, against an isFluent double, will return a double that responds to method calls with a different instance to the orignal one' );
+    }
+
+    /**
+    * @method when.returns.generateNewDouble
+    * @case   when the method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void generateNewDouble_whenReturnsGenerateNewDouble_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .when( 'methodUnderDouble' )
+            .returns( 'specifiedValue' );
+
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateNewDouble();
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        System.assertEquals( 'specifiedValue', returnFromDouble, 'when.returns.generateNewDouble, when the method is called, will return the stated value' );
+    }
+
+    /**
+    * @method expects.generateNewDouble.verify
+    * @case   when the method is called as expected on the original object
+    * @result will not fail
+    */
+    @isTest
+    private static void expectsGenerateNewDoubleVerify_whenMethodsCalledAsExpected_willNotFail() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .expects( 'methodUnderDouble' );
+
+        AmossTest_ClassToDouble classToDouble    = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+        AmossTest_ClassToDouble newClassToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateNewDouble();
+
+        Test.startTest();
+            String returnFromDouble  = classToDouble.methodUnderDouble( '1', 2 );
+            String returnFromDouble2 = newClassToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method createClone.expects.verify
+    * @case   when the method is called as expected on the objects
+    * @result will not fail
+    */
+    @isTest
+    private static void createCloneExpectsVerify_whenMethodsCalledAsExpected_willNotFail() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .expects( 'methodUnderDouble' );
+        AmossTest_ClassToDouble classToDouble    = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        Amoss_Instance newClassToDoubleController = classToDoubleController.createClone();
+        AmossTest_ClassToDouble newClassToDouble = (AmossTest_ClassToDouble)newClassToDoubleController.generateNewDouble();
+
+        Test.startTest();
+            String returnFromDouble  = classToDouble.methodUnderDouble( '1', 2 );
+            String returnFromDouble2 = newClassToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+        newClassToDoubleController.verify();
+    }
+
+    /**
+    * @method isFluent.when.returns.generateNewDouble
+    * @case   when the method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void generateNewDouble_isFluentWhenReturnsGenerateNewDouble_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .isFluent()
+            .when( 'methodUnderDouble' )
+            .returns( 'specifiedValue' );
+
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateNewDouble();
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        System.assertEquals( 'specifiedValue', returnFromDouble, 'isFluent.when.returns.generateNewDouble, when the method is called, will return the stated value' );
     }
 
     //

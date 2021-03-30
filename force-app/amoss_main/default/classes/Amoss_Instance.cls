@@ -67,8 +67,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     private Amoss_Instance( Amoss_Instance toClone ) {
+        // TODO: clone the expectations
         this.expectations                   = toClone.expectations;
+        // TODO: potentially clone the whens, just in case
         this.whens                          = toClone.whens;
+
         this.classType                      = toClone.classType;
         this.allowsAnyCall                  = toClone.allowsAnyCall;
         this.allowsAnyCallExplicitlyDefined = toClone.allowsAnyCallExplicitlyDefined;
@@ -119,7 +122,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * @return Amoss_Instance - The new instance of the controller
     */
-    // TODO: test
     public Amoss_Instance createClone() {
         return new Amoss_Instance( this );
     }
@@ -290,7 +292,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *   setDefaultMethodReturn( new Contact( Name='The default contact' ) )
     */
     public Amoss_Instance byDefaultMethodsReturn( Object defaultMethodReturn ) {
-        // TODO: if the default return is already set, then error
         this.defaultMethodReturn = defaultMethodReturn;
         return this;
     }
