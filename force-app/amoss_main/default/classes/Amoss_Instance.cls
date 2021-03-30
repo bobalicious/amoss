@@ -455,6 +455,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return thisExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
         }
 
+        // TODO: Would love to be able to guard against invalid returns being configured, but that would need
+        // Salesforce to implement a dynamic 'instanceOf' method that uses Type, or similar to do that comparison.
+        // At that point we could check "defaultMethodReturn instanceOf returnType", and similar above.
+        // Until then, we're stuck with a System.TypeException that cannot be caught by the framework.  Sorry!
         return defaultMethodReturn;
     }
 
