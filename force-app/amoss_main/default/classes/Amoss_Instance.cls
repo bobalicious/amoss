@@ -67,10 +67,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     private Amoss_Instance( Amoss_Instance toClone ) {
-        // TODO: clone the expectations
-        this.expectations                   = toClone.expectations;
-        // TODO: potentially clone the whens, just in case
-        this.whens                          = toClone.whens;
+
+        this.expectations                   = toClone.expectations.createClone().setMockControl( this );
+        this.whens                          = toClone.whens.createClone().setMockControl( this );
 
         this.classType                      = toClone.classType;
         this.allowsAnyCall                  = toClone.allowsAnyCall;
@@ -896,6 +895,30 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private class Amoss_Expectations {
 
         private List<Amoss_Expectation> expectations = new List<Amoss_Expectation>();
+
+        public Amoss_Expectations() {
+        }
+
+        private Amoss_Expectations( Amoss_Expectations toClone ) {
+            for ( Amoss_Expectation thisExpectation : toClone.expectations ) {
+                // individual Amoss_Expectation elements should not change once created
+                // This means we shouldn't need to clone them
+                this.add( thisExpectation );
+            }
+        }
+
+        // TODO: document
+        public Amoss_Expectations createClone() {
+            return new Amoss_Expectations( this );
+        }
+
+        // TODO: document
+        public Amoss_Expectations setMockControl( Amoss_Instance amossInstance ) {
+            for ( Amoss_Expectation thisExpectation : expectations ) {
+                thisExpectation.setMockControl( amossInstance );
+            }
+            return this;
+        }
 
         /**
         * Adds an expectation to the list of expectations
@@ -2422,8 +2445,15 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             this.mockControl = mockControl;
         }
 
+        // TODO: document
         public Amoss_Instance getMockControl() {
             return this.mockControl;
+        }
+
+        // TODO: document
+        public Amoss_Expectation setMockControl( Amoss_Instance mockControl ) {
+            this.mockControl = mockControl;
+            return this;
         }
 
         /**
