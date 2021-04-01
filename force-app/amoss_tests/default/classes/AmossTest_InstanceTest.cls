@@ -7966,7 +7966,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return a different instance to getDouble
     */
     @isTest
-    private static void generateDouble_willReturnADifferentInstanceTogetDouble() {
+    private static void generateDouble_willReturnADifferentInstanceToGetDouble() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
 
@@ -7981,7 +7981,7 @@ public with sharing class AmossTest_InstanceTest {
     /**
     * @method generateDouble
     * @case   when isFluent has been called
-    * @result will return a different instance to getDouble, where the double's methods return differt instances too
+    * @result will return a different instance to getDouble, where the double's methods return differentt instances too
     */
     @isTest
     private static void generateDouble_onAnIsFluent_returnsDifferentInstancesFromMethods() {
@@ -7998,6 +7998,7 @@ public with sharing class AmossTest_InstanceTest {
             AmossTest_ClassToDouble returnFromDouble2 = classToDouble2.fluentMethod();
         Test.stopTest();
 
+        System.assertEquals( classToDouble1, returnFromDouble1, 'generateDouble, against an isFluent double, will return a double that responds to method calls as per the original - the original will still behave as per normal' );
         System.assertEquals( classToDouble2, returnFromDouble2, 'generateDouble, against an isFluent double, will return a double that responds to method calls as per the original' );
         System.assertNotEquals( returnFromDouble1, returnFromDouble2, 'generateDouble, against an isFluent double, will return a double that responds to method calls with a different instance to the orignal one' );
     }
@@ -8025,6 +8026,27 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method getDouble.generateDouble.countOf
+    * @case   when the methods are called on the different instances
+    * @result will consolidate the calls into the one controller
+    */
+    @isTest
+    private static void getDoubleGenerateDoubleGetCount_whenMethodsCalledOnEachInstanceAsSpecified_willConsolidateThem() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        AmossTest_ClassToDouble classToDouble  = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            classToDouble.methodUnderDouble( '1', 2 );
+            classToDouble2.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        System.assertEquals( 2, classToDoubleController.countOf( 'methodUnderDouble' ), 'getDouble.generateDouble.countOf, when the methods are called on the different instances,  will consolidate the calls into the one controller' );
+    }
+
+    /**
     * @method expects.getDouble.generateDouble.verify
     * @case   when the methods are called on the different instances
     * @result will consolidate the calls into the one controller
@@ -8046,6 +8068,36 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         classToDoubleController.verify(); // both calls are registered against the same controller, and so this will pass
+    }
+
+    /**
+    * @method createClone.when.countOf
+    * @case   when the methods are called on the different instances
+    * @result will split the calls between the appropriate controllers
+    */
+    @isTest
+    private static void createCloneWhenCountOf_whenTheMethodsAreCalledOnTheDifferentInstances_willRouteToTheDifferentControllers() {
+
+        Amoss_Instance classToDoubleController1 = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble1  = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+
+        Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.generateDouble();
+
+        Test.startTest();
+            classToDouble1.methodUnderDouble( '1', 1 );
+            classToDouble1.methodUnderDouble( '1', 2 );
+            classToDouble1.methodUnderDouble( '1', 3 );
+
+            classToDouble2.methodUnderDouble( '1', 11 );
+            classToDouble2.methodUnderDouble( '1', 12 );
+        Test.stopTest();
+
+        System.assertEquals( 3, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the call count on the original' );
+        System.assertEquals( 2, classToDoubleController2.countOf( 'methodUnderDouble' ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the call count on the new controller' );
+
+        System.assertEquals(  1, classToDoubleController1.get().call(0).of( 'methodUnderDouble' ).parameter( 1 ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the parameter log on the original' );
+        System.assertEquals( 12, classToDoubleController2.get().call(1).of( 'methodUnderDouble' ).parameter( 1 ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the parameter log on the new controller' );
     }
 
     /**
@@ -8072,6 +8124,30 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController.verify();
         newClassToDoubleController.verify();
     }
+
+    /**
+    * @method createClone
+    * @case   when additional config is added to one of the controllers
+    * @result will not affect the other
+    */
+    @isTest
+    private static void createClone_whenAdditionalConfigIsAdded_willNotAffectTheOther() {
+
+        Amoss_Instance classToDoubleController1 = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble1  = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+
+        Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
+        classToDoubleController2.expectsNoCalls();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.generateDouble();
+
+        Test.startTest();
+            classToDouble1.methodUnderDouble( '1', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 1, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone, when when additional config is added to the new, will not affect the original' );
+    }
+
+    // TODO: more createClone behaviour tests
 
     /**
     * @method isFluent.when.returns.generateDouble
