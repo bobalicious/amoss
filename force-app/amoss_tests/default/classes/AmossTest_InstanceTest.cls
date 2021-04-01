@@ -8025,26 +8025,27 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method expects.generateDouble.verify
-    * @case   when the method is called as expected on the original object
-    * @result will not fail
+    * @method expects.getDouble.generateDouble.verify
+    * @case   when the methods are called on the different instances
+    * @result will consolidate the calls into the one controller
     */
     @isTest
-    private static void expectsGenerateDoubleVerify_whenMethodsCalledAsExpected_willNotFail() {
+    private static void expectsGetDoubleGenerateDoubleVerify_whenMethodsCalledOnEachInstanceAsSpecified_willConsolidateThemAndNotFail() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController
-            .expects( 'methodUnderDouble' );
+            .expects( 'methodUnderDouble' )
+            .then().expects( 'methodUnderDouble' );
 
-        AmossTest_ClassToDouble classToDouble    = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
-        AmossTest_ClassToDouble newClassToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble  = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
 
         Test.startTest();
             String returnFromDouble  = classToDouble.methodUnderDouble( '1', 2 );
-            String returnFromDouble2 = newClassToDouble.methodUnderDouble( '1', 2 );
+            String returnFromDouble2 = classToDouble2.methodUnderDouble( '1', 2 );
         Test.stopTest();
 
-        classToDoubleController.verify();
+        classToDoubleController.verify(); // both calls are registered against the same controller, and so this will pass
     }
 
     /**
