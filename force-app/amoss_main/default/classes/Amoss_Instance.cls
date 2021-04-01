@@ -68,7 +68,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     private Amoss_Instance( Amoss_Instance toClone ) {
 
-        this.generatedDouble = null;
+        this.latestGeneratedDouble = null;
 
         this.expectations = toClone.expectations.createClone().setMockControl( this );
         this.whens        = toClone.whens.createClone().setMockControl( this );
@@ -77,11 +77,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         this.allowsAnyCall                  = toClone.allowsAnyCall;
         this.allowsAnyCallExplicitlyDefined = toClone.allowsAnyCallExplicitlyDefined;
         this.expectsNoCalls                 = toClone.expectsNoCalls;
+        this.defaultMethodReturn            = toClone.defaultMethodReturn;
 
         if ( toClone.isFluent ) {
             this.isFluent();
-        } else {
-            this.defaultMethodReturn = toClone.defaultMethodReturn;
         }
     }
 
@@ -90,14 +89,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * @return Object  - The instance to use in your test
     */
-    private Object generatedDouble;
+    private Object latestGeneratedDouble;
     public Object getDouble() {
-        // Note that this is lazy loaded so that we can generate fluent interfaces generally.
-        // I.E. we always want getDouble to return the same object.
-        if ( generatedDouble == null ) {
-            generatedDouble = Test.createStub( classType, this );
+        if ( latestGeneratedDouble == null ) {
+            return generateDouble();
         }
-        return generatedDouble;
+        return latestGeneratedDouble;
     }
 
     /**
@@ -111,8 +108,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * @return Object  - The instance to use in your test
     */
-    public Object generateNewDouble() {
-        return this.createClone().getDouble();
+    public Object generateDouble() {
+        latestGeneratedDouble = Test.createStub( classType, this );
+        return latestGeneratedDouble;
     }
 
     /**
@@ -307,7 +305,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     */
     public Amoss_Instance isFluent() {
         this.isFluent = true;
-        this.byDefaultMethodsReturn( getDouble() );
         return this;
     }
 
@@ -464,6 +461,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         // Salesforce to implement a dynamic 'instanceOf' method that uses Type, or similar to do that comparison.
         // At that point we could check "defaultMethodReturn instanceOf returnType", and similar above.
         // Until then, we're stuck with a System.TypeException that cannot be caught by the framework.  Sorry!
+        if ( isFluent ) {
+            return mockedObject;
+        }
         return defaultMethodReturn;
     }
 
