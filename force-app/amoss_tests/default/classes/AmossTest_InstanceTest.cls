@@ -8058,10 +8058,10 @@ public with sharing class AmossTest_InstanceTest {
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController
             .expects( 'methodUnderDouble' );
-        AmossTest_ClassToDouble classToDouble    = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Amoss_Instance newClassToDoubleController = classToDoubleController.createClone();
-        AmossTest_ClassToDouble newClassToDouble = (AmossTest_ClassToDouble)newClassToDoubleController.generateNewDouble();
+        AmossTest_ClassToDouble newClassToDouble = (AmossTest_ClassToDouble)newClassToDoubleController.getDouble();
 
         Test.startTest();
             String returnFromDouble  = classToDouble.methodUnderDouble( '1', 2 );

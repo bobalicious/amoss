@@ -68,8 +68,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     private Amoss_Instance( Amoss_Instance toClone ) {
 
-        this.expectations                   = toClone.expectations.createClone().setMockControl( this );
-        this.whens                          = toClone.whens.createClone().setMockControl( this );
+        this.generatedDouble = null;
+
+        this.expectations = toClone.expectations.createClone().setMockControl( this );
+        this.whens        = toClone.whens.createClone().setMockControl( this );
 
         this.classType                      = toClone.classType;
         this.allowsAnyCall                  = toClone.allowsAnyCall;
