@@ -438,7 +438,7 @@ classController
 
 AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
 
-System.assertEquals( 'ThisDefaultValue', classDouble.methodUnderDouble() );
+System.assertEquals( 'ThisDefaultValue', classDouble.methodUnderDouble( '1', 2 ) );
 ```
 
 As with `isFluent`, the specification of any `when`, `allows` or `expects` against a method will override the return value of that method for the specified parameter configuration.  This is true whether a return is specified for the method or not.
@@ -454,7 +454,7 @@ classController
 
 AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
 
-System.assertEquals( null, classDouble.methodUnderDouble() );
+System.assertEquals( null, classDouble.methodUnderDouble( '1', 2 ) );
 ```
 
 ## Specifying parameters in different ways
@@ -800,7 +800,78 @@ It is valid to call `verify` against the controller at the end of the test, but 
 
 ### `getDouble` / `generateDouble` / `createClone`
 
-TODO: Describe
+There are two mechanisms for retrieving the Test Double from the controller:
+* `getDouble`
+* `generateDouble`
+
+In must situations, you will only ever retrieve a single double from a single controller, and in that instance there is no functional difference between `getDouble` and `generateDouble`.
+
+The functional difference only appears on the second and subsequent calls to these methods.
+
+#### `getDouble`
+
+Will return the same Test Double as the previous call to either `getDouble` or `generateDouble`.
+
+That is, the following is true:
+
+```java
+
+Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+System.assertEquals( classToDouble1, classToDouble2 );
+
+```
+
+There is not normally any reason to call `getDouble` multiple times, since you can, of course, store the result of the first `getDouble` call in a variable and use that variable multiple times.
+
+#### `generateDouble`
+
+Will return a new instance of the Test Double, tied to the same `Amoss_Instance` as any previously generated Test Doubles.
+
+That is, the following is true:
+
+```java
+
+Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+System.assertNotEquals( classToDouble1, classToDouble2 );
+
+classToDouble1.methodUnderDouble( '1', 2 );
+classToDouble2.methodUnderDouble( '1', 2 );
+
+System.assertEquals( 2, classToDoubleController.countOf( 'methodUnderDouble' ) );
+
+```
+
+#### `createClone`
+
+Any `Amoss_Instance` can be cloned in order to create an independent controller that can then generate its own Test Doubles.  Once cloned, there is no link between the original and the cloned controller and they do not interact in any way.
+
+That is, the following is true:
+
+```java
+
+Amoss_Instance classToDoubleController1 = new Amoss_Instance( AmossTest_ClassToDouble.class );
+Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
+
+AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.getDouble();
+
+System.assertNotEquals( classToDouble1, classToDouble2 );
+
+classToDouble1.methodUnderDouble( '1', 2 );
+classToDouble2.methodUnderDouble( '1', 2 );
+
+System.assertEquals( 1, classToDoubleController1.countOf( 'methodUnderDouble' ) );
+System.assertEquals( 1, classToDoubleController2.countOf( 'methodUnderDouble' ) );
+
+```
 
 ### Longer format .method definition
 
