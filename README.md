@@ -851,7 +851,9 @@ System.assertEquals( 2, classToDoubleController.countOf( 'methodUnderDouble' ) )
 
 #### `createClone`
 
-Any `Amoss_Instance` can be cloned in order to create an independent controller that can then generate its own Test Doubles.  Once cloned, there is no link between the original and the cloned controller and they do not interact in any way.
+Any `Amoss_Instance` can be cloned in order to create an independent controller that can then generate its own Test Doubles.  The cloned controller will have the same initial configuration as the controller it was cloned from, including any defined `when`, `allows` and `expects` behaviours.
+
+However, once cloned, there is no link between the original and the cloned controller and they do not interact in any way.
 
 That is, the following is true:
 
