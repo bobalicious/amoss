@@ -1,5 +1,6 @@
 .sfdx
 .vscode
 secrets.txt
+todo.txt
 articles
 force-app/main/

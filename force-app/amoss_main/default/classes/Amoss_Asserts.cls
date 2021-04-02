@@ -154,11 +154,11 @@ public with sharing class Amoss_Asserts {
             DateTime impossibleCast = (DateTime)o;
         } catch ( Exception e ) {
 
-            Matcher dataTypeMatcher = pattern.compile( 'Invalid conversion from runtime type (.*) to Datetime' ).matcher( e.getMessage() ); 
+            Matcher dataTypeMatcher = pattern.compile( 'Invalid conversion from runtime type (.*) to Datetime' ).matcher( e.getMessage() );
             if ( dataTypeMatcher.matches() ) {
                 String dataType = dataTypeMatcher.group( 1 );
                 // Don't like 'ANY' as a response - this exception is the only place you ever see it,
-                // so we replace it with Object - but since an object type could have 'ANY' in it, 
+                // so we replace it with Object - but since an object type could have 'ANY' in it,
                 // we have to only do it for places where it can appear and we are certain it's
                 // Salesforce's doing, not the developer's
                 return dataType.replace( ',ANY>', ',Object>' ).replace( '<ANY,', '<Object,' ).replace( '<ANY>', '<Object>' );
@@ -168,5 +168,5 @@ public with sharing class Amoss_Asserts {
         // I can't think of any reason why would reach here,
         // but just in case...
         return 'Object';
-    }    
+    }
 }

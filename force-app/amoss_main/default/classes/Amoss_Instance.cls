@@ -29,7 +29,7 @@ SOFTWARE.
 *
 * Is instantiated with a class Type, then configured with combinations of 'expect', 'when' and 'allows'.
 *
-* Once configured, is used to 'generateDouble', which can then be used in place of the class being doubled.
+* Once configured, is used to 'getDouble', which can then be used in place of the class being doubled.
 *
 * On completion, a call-log can be spied for parameter values, and mock the expected call stack can be
 * checked using 'verify'.
@@ -49,7 +49,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Amoss_Expectations whens        = new Amoss_Expectations();
     private Amoss_CallLog      callLog      = new Amoss_CallLog();
 
-    Type classType;
+    private Object  defaultMethodReturn;
+    private Boolean isFluent = false;
+
+    private Type classType;
 
     private Amoss_Asserts assertionMechanism = new Amoss_Asserts();
 
@@ -63,13 +66,63 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         this.classType = classType;
     }
 
+    private Amoss_Instance( Amoss_Instance toClone ) {
+
+        this.latestGeneratedDouble = null;
+
+        this.expectations = toClone.expectations.createClone().setAmossInstance( this );
+        this.whens        = toClone.whens.createClone().setAmossInstance( this );
+
+        this.classType                      = toClone.classType;
+        this.allowsAnyCall                  = toClone.allowsAnyCall;
+        this.allowsAnyCallExplicitlyDefined = toClone.allowsAnyCallExplicitlyDefined;
+        this.expectsNoCalls                 = toClone.expectsNoCalls;
+        this.defaultMethodReturn            = toClone.defaultMethodReturn;
+
+        if ( toClone.isFluent ) {
+            this.isFluent();
+        }
+    }
+
     /**
-    * Generates the instance of the class that you use in the application under test.
+    * Returns the instance of the class that you use in the application under test.
+    *
+    * @return Object  - The instance to use in your test
+    */
+    private Object latestGeneratedDouble;
+    public Object getDouble() {
+        if ( latestGeneratedDouble == null ) {
+            return generateDouble();
+        }
+        return latestGeneratedDouble;
+    }
+
+    /**
+    * Generates a new instance of the class that you use in the application under tests.
+    * Used to generate multiple objects that all behave in the same way when you do not require
+    * access to the conroller.
+    *
+    * Will clone the Amoss_Instance, although will not provide access to it.
+    *
+    * Is generally not required, and getDouble should be used in most cases.
     *
     * @return Object  - The instance to use in your test
     */
     public Object generateDouble() {
-        return Test.createStub( classType, this );
+        latestGeneratedDouble = Test.createStub( classType, this );
+        return latestGeneratedDouble;
+    }
+
+    /**
+    * Creates a clone of this instance, allowing multiple versions of the object being doubled to
+    * be created, along with access to the controller (as opposed to the behaviour of generateNewDouble)
+    *
+    * Is generally not required.
+    *
+    * @return Amoss_Instance - The new instance of the controller
+    */
+    public Amoss_Instance createClone() {
+        return new Amoss_Instance( this );
     }
 
     /**
@@ -232,6 +285,30 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
+    * States that when a method is called that does not have a return type defined, it will return the stated object
+    *
+    * Example usage:
+    *   setDefaultMethodReturn( new Contact( Name='The default contact' ) )
+    */
+    public Amoss_Instance byDefaultMethodsReturn( Object defaultMethodReturn ) {
+        this.defaultMethodReturn = defaultMethodReturn;
+        return this;
+    }
+
+    /**
+    * States that when a method is called that does not have a return type defined, it will return itself.
+    *
+    * I.E. the interface of the object being doubled implements a fluent interface
+    *
+    * Example usage:
+    *   isFluent()
+    */
+    public Amoss_Instance isFluent() {
+        this.isFluent = true;
+        return this;
+    }
+
+    /**
     * States that whatever mechanism is used to defined the 'expectations' or 'whens' against this
     * object, it will allow any call to a method to be successful and for those that are not defined
     * to return null.
@@ -282,7 +359,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Use in the following formats:
     *   get().call( 2 ).of( 'methodName' ).parameter( 1 )
-    *   get().latestCallOf( 'methodName' ).parameter( 1 )
+    *   get().latestCallOf( 'methodName' ).parameter( 'parameterName' )
     *
     */
     public Amoss_CallChecker get() {
@@ -296,8 +373,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * Use in the format:
     *   call( 2 ).of( 'methodName' ).parameter( 1 )
+    *   call( 2 ).of( 'methodName' ).parameter( 'parameterName' )
     *
-    * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+    * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last call.
     */
     public Amoss_CallChecker call( Integer callNumber ) {
         return new Amoss_CallChecker( callLog ).call( callNumber );
@@ -351,6 +429,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         if ( whens.hasExpectations() ) {
             Amoss_Expectation whenExpectation = whens.getMatchingExpectation( mockedMethod, parameterNames, parameters );
             if ( whenExpectation != null ) {
+                // If this throws a System.TypeException exception, it is likely you have misconfigured your
+                // return type in your when or allows.  See the note below for more context.
                 return whenExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
             }
         }
@@ -371,11 +451,20 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 } catch ( Amoss_Instance.Amoss_AssertionFailureException assertionFailure ) {
                     assertionFailure.issueAsserton( assertionMechanism );
                 }
-
+            // If this throws a System.TypeException exception, it is likely you have misconfigured your
+            // return type in your expectation.  See the note below for more context.
             return thisExpectation.getReturnValue( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
         }
 
-        return null;
+        // NOTE:
+        // Would love to be able to guard against invalid returns being configured, but that would need
+        // Salesforce to implement a dynamic 'instanceOf' method that uses Type, or similar to do that comparison.
+        // At that point we could check "defaultMethodReturn instanceOf returnType", and similar above.
+        // Until then, we're stuck with a System.TypeException that cannot be caught by the framework.  Sorry!
+        if ( isFluent ) {
+            return mockedObject;
+        }
+        return defaultMethodReturn;
     }
 
     /**
@@ -448,8 +537,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Use in the format:
         *   get().call( 2 ).of( 'methodName' ).parameter( 1 )
+        *   get().call( 2 ).of( 'methodName' ).parameter( 'parameterName' )
         *
-        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last call.
         */
         public Amoss_CallChecker call( Integer callNumber ) {
             this.callNumber = callNumber;
@@ -706,7 +796,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * If the method wasn't called, or called enough times, will throw an exception
         *
         * @param String  - The method to retrieve the call log entry for.
-        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param Integer - The number of the call of the stated method.  Indexed from 0.  Can be negative, -1 returning the last call.
         */
         public Amoss_CallLogEntry getCallLog( String method, Integer callNumber ) {
 
@@ -749,7 +839,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Gets the parameter at the stated position that was passed into the stated method at the stated call number in the stack.
         *
         * @param  String  - The method to retrieve the parameters for.
-        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last call.
         * @param  Integer - The position of the parameter in the call. Indexed from 0.
         * @return Object  - The requested parameter value.
         */
@@ -763,7 +853,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Gets the parameter at the stated position that was passed into the stated method at the stated call number in the stack.
         *
         * @param  String  - The method to retrieve the parameters for.
-        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @param  Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last call.
         * @param  Integer - The position of the parameter in the call. Indexed from 0.
         * @return Object  - The requested parameter value.
         */
@@ -777,7 +867,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Gets the parameters that were passed into the stated method at the stated call number in the stack.
         *
         * @param  String  - The method to retrieve the parameters for.
-        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last call.
         * @return List<Object> - The requested parameter values.
         */
         public List<Object> getCallLogParameters( String method, Integer callNumber ) {
@@ -790,7 +880,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Gets the parameters that were passed into the stated method at the stated call number in the stack.
         *
         * @param  String  - The method to retrieve the parameters for.
-        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last parameter.
+        * @return Integer - The position in the call stack to get the parameters for. Indexed from 0.  Can be negative, -1 returning the last call.
         * @return Map<String,Object> - The requested parameter values, indexed by their name.
         */
         public Map<String,Object> getCallLogParametersByName( String method, Integer callNumber ) {
@@ -807,6 +897,39 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private class Amoss_Expectations {
 
         private List<Amoss_Expectation> expectations = new List<Amoss_Expectation>();
+
+        public Amoss_Expectations() {
+        }
+
+        private Amoss_Expectations( Amoss_Expectations toClone ) {
+            for ( Amoss_Expectation thisExpectation : toClone.expectations ) {
+                // individual Amoss_Expectation elements should not change once created
+                // This means we shouldn't need to clone them
+                this.add( thisExpectation );
+            }
+        }
+
+        /**
+        * Creates a clone of this 'expectations' description
+        *
+        * @return Amoss_Expectations - The new Expectations
+        */
+        public Amoss_Expectations createClone() {
+            return new Amoss_Expectations( this );
+        }
+
+        /**
+        * Set the Amoss Instance that there Exceptions are for
+        *
+        * @param  Amoss_Instance - The Amoss Instance
+        * @return Amoss_Expectations - Itself, allowing for a fluent interface
+        */
+        public Amoss_Expectations setAmossInstance( Amoss_Instance amossInstance ) {
+            for ( Amoss_Expectation thisExpectation : expectations ) {
+                thisExpectation.setAmossInstance( amossInstance );
+            }
+            return this;
+        }
 
         /**
         * Adds an expectation to the list of expectations
@@ -951,7 +1074,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .returning( 'theValueItShouldReturn' )
         */
         public Amoss_Instance then() {
-            return expectation.getMockControl();
+            return expectation.getAmossInstance();
         }
 
         /**
@@ -2321,20 +2444,51 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         private Amoss_ExpectationParameters      expectedParameters = new Amoss_ExpectationAnyParameters();
         private Amoss_ExpectationReturnMechanism returnMechanism    = new Amoss_ExpectationValueReturn();
 
-        private Amoss_Instance mockControl;
+        private Amoss_Instance amossInstance;
 
         private String className {
             get {
-                return mockControl.getClassName();
+                return amossInstance.getClassName();
             }
         }
 
-        public Amoss_Expectation( Amoss_Instance mockControl ) {
-            this.mockControl = mockControl;
+        public Amoss_Expectation( Amoss_Instance amossInstance ) {
+            this.amossInstance = amossInstance;
         }
 
-        public Amoss_Instance getMockControl() {
-            return this.mockControl;
+        private Amoss_Expectation( Amoss_Expectation expectation ) {
+            this.expectedMethod     = expectation.expectedMethod;
+            this.expectedParameters = expectation.expectedParameters;
+            this.returnMechanism    = expectation.returnMechanism;
+        }
+
+        /**
+        * Creates a clone of this instance.
+        *
+        * @return Amoss_Expectation - The new instance of the exectation
+        */
+        public Amoss_Expectation createClone( Amoss_Expectation expectation ) {
+            return new Amoss_Expectation( expectation );
+        }
+
+        /**
+        * Get the Amoss Instance that this Exception is for
+        *
+        * @return  Amoss_Instance - The Amoss Instance
+        */
+        public Amoss_Instance getAmossInstance() {
+            return this.amossInstance;
+        }
+
+        /**
+        * Set the Amoss Instance that this Exception is for
+        *
+        * @param  Amoss_Instance - The Amoss Instance
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_Expectation setAmossInstance( Amoss_Instance amossInstance ) {
+            this.amossInstance = amossInstance;
+            return this;
         }
 
         /**

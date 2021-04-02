@@ -28,7 +28,7 @@ git tag -a $newversionname -m "Release $newversionnumber"
 echo ""
 echo Building unlocked package
 echo -----------------------------------------------------------------------
-sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname
+sfdx force:package:version:create -p amoss -d force-app --wait 10 -v amoss-dev-hub -x -n $newversionnumber -a $newversionname -t $newversionname -c
 echo ""
 echo Getting new package\'s Id and Alias
 echo -----------------------------------------------------------------------

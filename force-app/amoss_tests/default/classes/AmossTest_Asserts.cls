@@ -34,7 +34,7 @@ public with sharing class AmossTest_Asserts {
     */
     @isTest
     private static void getType_whenGivenAParameter_willReturnTheStringTypeOfIt() {
-        
+
         List<Map<String,Object>> testCases = new List<Map<String,Object>>{
             new Map<String,Object>{
                 'parameter' => true,
@@ -165,7 +165,7 @@ public with sharing class AmossTest_Asserts {
                 'parameter' => (Time)null,
                 'expected'  => 'Unknown (null)',
                 'case'      => 'a null Time'
-            },            
+            },
             new Map<String,Object>{
                 'parameter' => new Contact(),
                 'expected'  => 'Contact',
@@ -247,7 +247,7 @@ public with sharing class AmossTest_Asserts {
                 'case'      => 'a non-system class'
             },
             new Map<String,Object>{
-                'parameter' => new Amoss_Instance( AmossTest_ClassToDouble.class ).generateDouble(),
+                'parameter' => new Amoss_Instance( AmossTest_ClassToDouble.class ).getDouble(),
                 'expected'  => 'AmossTest_ClassToDouble',
                 'case'      => 'a test double of a class'
             }

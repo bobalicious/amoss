@@ -62,4 +62,8 @@ public with sharing class AmossExample_Order {
 
         return false;
     }
+
+    public AmossExample_Order fluentmethod() {
+        return this;
+    }
 }
