@@ -8147,7 +8147,35 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 1, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone, when when additional config is added to the new, will not affect the original' );
     }
 
-    // TODO: more createClone behaviour tests
+    /**
+    * @method createClone
+    * @case   when additional config is added to one of the controllers
+    * @result will not affect the other
+    */
+    @isTest
+    private static void createClone_whenAdditionalConfigIsAdded_willNotAffectTheOther2() {
+
+        Amoss_Instance classToDoubleController1 = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
+
+        classToDoubleController1
+            .when( 'methodUnderDouble' )
+            .returns( 'ReturnFrom1' );
+        AmossTest_ClassToDouble classToDouble1  = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+
+        classToDoubleController2
+            .when( 'methodUnderDouble' )
+            .returns( 'ReturnFrom2' );
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.generateDouble();
+
+        Test.startTest();
+            String returnFrom1 = classToDouble1.methodUnderDouble( '1', 1 );
+            String returnFrom2 = classToDouble2.methodUnderDouble( '1', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'ReturnFrom1', returnFrom1, 'createClone, when when additional config is added to the new, will not affect the original' );
+        System.assertEquals( 'ReturnFrom2', returnFrom2, 'createClone, when when additional config is added to the original, will not affect the new' );
+    }
 
     /**
     * @method isFluent.when.returns.generateDouble
