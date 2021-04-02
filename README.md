@@ -322,6 +322,112 @@ DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderCont
 
 This means that `canDeliver` and `scheduleDelivery` can be called in any order, and do not *have* to be called, but that *only* these two methods with these precise parameters can be called, and any other method called against the Test Double will result a test failure.
 
+## Specifying return values in different ways
+
+### `isFluent`
+
+Defining a controller as `isFluent` will ensure that all otherwise unspecified method calls will return an instance of the generated Test Double.
+
+For example, given that `AmossTest_ClassToDouble` has a method `fluentMethod` that has a return type of `AmossTest_ClassToDouble`, the following is true:
+
+```java
+
+Amoss_Instance classController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classController
+    .isFluent();
+
+AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
+
+System.assertEquals( classDouble, classDouble.fluentMethod() );
+```
+
+The specification of any `when`, `allows` or `expects` against a method will override the return value of that method for the specified parameter configuration.
+
+For example, the following is true:
+
+```java
+
+Amoss_Instance classController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classController
+    .isFluent()
+    .when( 'fluentMethod' )
+        .returns( null );
+
+AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
+
+System.assertEquals( null, classDouble.fluentMethod() );
+```
+
+This is the case even if no return is specified for the method.  For example, the following is true:
+
+```java
+
+Amoss_Instance classController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classController
+    .isFluent()
+    .when( 'fluentMethod' );
+
+AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
+
+System.assertEquals( null, classDouble.fluentMethod() );
+```
+
+It should be noted that if a method is called that has an incompatible type, then a "System.TypeException: Invalid conversion from runtime type..." exception will be thrown.  Currently, there is no way for Amoss to detect and stop this exception from occurring.  If Salesforce provides the capabiliy to stop this from occurring in the future, then the library will be updated to more helpfully describe the issue, or stop it from occurring.
+
+#### Behaviour with `createClone` and `generateDouble`
+
+If a new controller is cloned from a pre-existing one (I.E. by using `createClone`), or multiple Test Doubles are generated (I.E. by using multiple calls to `generateDouble` against the same controller), each instance will continue to return the appropriate `this` from each fluent method.
+
+For example, the following is true:
+
+```java
+
+Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classToDoubleController
+    .isFluent();
+
+AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+Test.startTest();
+    AmossTest_ClassToDouble returnFromDouble1 = classToDouble1.fluentMethod();
+    AmossTest_ClassToDouble returnFromDouble2 = classToDouble2.fluentMethod();
+Test.stopTest();
+
+System.assertEquals( classToDouble1, returnFromDouble1 );
+System.assertEquals( classToDouble2, returnFromDouble2 );
+System.assertNotEquals( returnFromDouble1, returnFromDouble2 );
+
+```
+
+And, the following is true:
+
+```java
+
+Amoss_Instance classToDoubleController1 = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classToDoubleController1
+    .isFluent();
+
+Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
+
+AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.getDouble();
+
+Test.startTest();
+    AmossTest_ClassToDouble returnFromDouble1 = classToDouble1.fluentMethod();
+    AmossTest_ClassToDouble returnFromDouble2 = classToDouble2.fluentMethod();
+Test.stopTest();
+
+System.assertEquals( classToDouble1, returnFromDouble1 );
+System.assertEquals( classToDouble2, returnFromDouble2 );
+System.assertNotEquals( returnFromDouble1, returnFromDouble2 );
+
+```
+
+### `byDefaultMethodsReturn`
+
+TODO - describe
+
 ## Specifying parameters in different ways
 
 All of the below can be used with either `withParameter` or `withParameterNamed`.
@@ -662,6 +768,10 @@ DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderCont
 ```
 
 It is valid to call `verify` against the controller at the end of the test, but this will always pass since the expected call stack will always be empty.
+
+### `getDouble` / `generateDouble` / `createClone`
+
+TODO: Describe
 
 ### Longer format .method definition
 

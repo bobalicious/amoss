@@ -8138,7 +8138,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
         classToDoubleController2.expectsNoCalls();
-        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.generateDouble();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.getDouble();
 
         Test.startTest();
             classToDouble1.methodUnderDouble( '1', 1 );
@@ -8161,12 +8161,12 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController1
             .when( 'methodUnderDouble' )
             .returns( 'ReturnFrom1' );
-        AmossTest_ClassToDouble classToDouble1  = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+        AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
 
         classToDoubleController2
             .when( 'methodUnderDouble' )
             .returns( 'ReturnFrom2' );
-        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.generateDouble();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.getDouble();
 
         Test.startTest();
             String returnFrom1 = classToDouble1.methodUnderDouble( '1', 1 );
