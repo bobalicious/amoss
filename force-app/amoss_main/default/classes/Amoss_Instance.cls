@@ -70,8 +70,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         this.latestGeneratedDouble = null;
 
-        this.expectations = toClone.expectations.createClone().setMockControl( this );
-        this.whens        = toClone.whens.createClone().setMockControl( this );
+        this.expectations = toClone.expectations.createClone().setAmossInstance( this );
+        this.whens        = toClone.whens.createClone().setAmossInstance( this );
 
         this.classType                      = toClone.classType;
         this.allowsAnyCall                  = toClone.allowsAnyCall;
@@ -909,15 +909,24 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             }
         }
 
-        // TODO: document
+        /**
+        * Creates a clone of this 'expectations' description
+        *
+        * @return Amoss_Expectations - The new Expectations
+        */
         public Amoss_Expectations createClone() {
             return new Amoss_Expectations( this );
         }
 
-        // TODO: document
-        public Amoss_Expectations setMockControl( Amoss_Instance amossInstance ) {
+        /**
+        * Set the Amoss Instance that there Exceptions are for
+        *
+        * @param  Amoss_Instance - The Amoss Instance
+        * @return Amoss_Expectations - Itself, allowing for a fluent interface
+        */
+        public Amoss_Expectations setAmossInstance( Amoss_Instance amossInstance ) {
             for ( Amoss_Expectation thisExpectation : expectations ) {
-                thisExpectation.setMockControl( amossInstance );
+                thisExpectation.setAmossInstance( amossInstance );
             }
             return this;
         }
@@ -1065,7 +1074,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .returning( 'theValueItShouldReturn' )
         */
         public Amoss_Instance then() {
-            return expectation.getMockControl();
+            return expectation.getAmossInstance();
         }
 
         /**
@@ -2435,26 +2444,50 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         private Amoss_ExpectationParameters      expectedParameters = new Amoss_ExpectationAnyParameters();
         private Amoss_ExpectationReturnMechanism returnMechanism    = new Amoss_ExpectationValueReturn();
 
-        private Amoss_Instance mockControl;
+        private Amoss_Instance amossInstance;
 
         private String className {
             get {
-                return mockControl.getClassName();
+                return amossInstance.getClassName();
             }
         }
 
-        public Amoss_Expectation( Amoss_Instance mockControl ) {
-            this.mockControl = mockControl;
+        public Amoss_Expectation( Amoss_Instance amossInstance ) {
+            this.amossInstance = amossInstance;
         }
 
-        // TODO: document
-        public Amoss_Instance getMockControl() {
-            return this.mockControl;
+        private Amoss_Expectation( Amoss_Expectation expectation ) {
+            this.expectedMethod     = expectation.expectedMethod;
+            this.expectedParameters = expectation.expectedParameters;
+            this.returnMechanism    = expectation.returnMechanism;
         }
 
-        // TODO: document
-        public Amoss_Expectation setMockControl( Amoss_Instance mockControl ) {
-            this.mockControl = mockControl;
+        /**
+        * Creates a clone of this instance.
+        *
+        * @return Amoss_Expectation - The new instance of the exectation
+        */
+        public Amoss_Expectation createClone( Amoss_Expectation expectation ) {
+            return new Amoss_Expectation( expectation );
+        }
+
+        /**
+        * Get the Amoss Instance that this Exception is for
+        *
+        * @return  Amoss_Instance - The Amoss Instance
+        */
+        public Amoss_Instance getAmossInstance() {
+            return this.amossInstance;
+        }
+
+        /**
+        * Set the Amoss Instance that this Exception is for
+        *
+        * @param  Amoss_Instance - The Amoss Instance
+        * @return Amoss_Expectation - Itself, allowing for a fluent interface
+        */
+        public Amoss_Expectation setAmossInstance( Amoss_Instance amossInstance ) {
+            this.amossInstance = amossInstance;
             return this;
         }
 
