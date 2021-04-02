@@ -426,7 +426,36 @@ System.assertNotEquals( returnFromDouble1, returnFromDouble2 );
 
 ### `byDefaultMethodsReturn`
 
-TODO - describe
+Stating that `byDefaultMethodsReturn` will set the default value of any method calls that are not otherwise specified against the controller.
+
+For example, given that `AmossTest_ClassToDouble` has a method `methodUnderDouble` that has a return type of `String`, the following is true:
+
+```java
+
+Amoss_Instance classController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classController
+    .byDefaultMethodsReturn( 'ThisDefaultValue' );
+
+AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
+
+System.assertEquals( 'ThisDefaultValue', classDouble.methodUnderDouble() );
+```
+
+As with `isFluent`, the specification of any `when`, `allows` or `expects` against a method will override the return value of that method for the specified parameter configuration.  This is true whether a return is specified for the method or not.
+
+For example, the following is true:
+
+```java
+
+Amoss_Instance classController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classController
+    .byDefaultMethodsReturn( 'ThisDefaultValue' );
+    .when( 'methodUnderDouble' );
+
+AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
+
+System.assertEquals( null, classDouble.methodUnderDouble() );
+```
 
 ## Specifying parameters in different ways
 
