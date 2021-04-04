@@ -2397,7 +2397,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         */
         public Amoss_PositionalParametersDefiner withAnyParameter() {
-            return withParameter.setTo( Amoss_Instance.Value.ANY_VALUE );
+            return withParameter().setTo( Amoss_Instance.Value.ANY_VALUE );
         }
 
         /**
