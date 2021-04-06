@@ -1336,6 +1336,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States that a parameter is expected to be set to a not null value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().set()
+        *       .andParameter().withAnyElement().set()
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_PositionalParametersDefiner set() {
+            return setTo( Amoss_Instance.Value.NOT_NULL );
+        }
+
+        /**
         * States the parameter value that is expected for the currently specified parameter.
         *
         * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
@@ -1530,6 +1546,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States that a parameter is expected to be set to a not null value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().set()
+        *       .andParameter().withAnyElement().set()
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_PositionalParametersDefiner set() {
+            return setTo( Amoss_Instance.Value.NOT_NULL );
         }
 
         /**
@@ -1830,6 +1862,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States that a parameter is expected to be set to a not null value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().set()
+        *       .andParameter().withAnyElement().set()
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_NamedParametersDefiner set() {
+            return setTo( Amoss_Instance.Value.NOT_NULL );
+        }
+
+        /**
         * States the parameter value that is expected for the currently specified parameter.
         *
         * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
@@ -2026,6 +2074,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States that a parameter is expected to be set to a not null value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).set()
+        *       .andParameterNamed( 'parmeterName1' ).withAnyElement().set()
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_NamedParameterAdditionalCollectionValueDefiner set() {
+            return setTo( Amoss_Instance.Value.NOT_NULL );
         }
 
         /**
@@ -2359,7 +2423,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_PositionalParametersDefiner withParameter( Object parameterValue ) {
             return withParameter().setTo( parameterValue );
         }
-
 
         /**
         * Sets the expected value of the first parameter in the list of parameters that are valid for this 'expection' or 'when'.
