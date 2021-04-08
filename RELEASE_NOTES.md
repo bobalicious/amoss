@@ -1,3 +1,14 @@
+# Version 1.0.1.0
+
+* Git Tag                : `v1.0.1.0`
+* SFDX Install           : `sfdx force:package:install --package "amoss@1.0.0-0"`
+* Unlocked Package Links :
+  * https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O1vJQAS
+  * https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002O1vJQAS
+
+
+Fixed test failures when running in a namespaced org.
+
 # Version 1.0.0.0
 
 * Git Tag                : `v1.0.0.0`
