@@ -2,10 +2,6 @@
 
 Apex Mock Objects, Spies and Stubs - A Simple Mocking framework for Apex (Salesforce)
 
-## Known Issue
-
-There is a known issue (#103) in using Amoss in a namespaced package - this appears to be caused by the way in which types are described in assertion texts.  It is possible that Amoss does actually work in this scenario, although at this point it cannot be guaranteed.
-
 ## Why use Amoss?
 
 Amoss provides a simple interface for implementing Mock, Test Spy and Stub objects (Test Doubles) for use in Unit Testing.
