@@ -243,12 +243,12 @@ public with sharing class AmossTest_Asserts {
             },
             new Map<String,Object>{
                 'parameter' => new AmossTest_ClassToDouble( 'param' ),
-                'expected'  => 'AmossTest_ClassToDouble',
+                'expected'  =>  AmossTest_ClassToDouble.class.getName(),
                 'case'      => 'a non-system class'
             },
             new Map<String,Object>{
                 'parameter' => new Amoss_Instance( AmossTest_ClassToDouble.class ).getDouble(),
-                'expected'  => 'AmossTest_ClassToDouble',
+                'expected'  =>  AmossTest_ClassToDouble.class.getName(),
                 'case'      => 'a test double of a class'
             }
         };

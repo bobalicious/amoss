@@ -1,10 +1,11 @@
-# packager
+# packager - execute from the root of the project, when you are on main, ideally with no changes in the workspace
+# Double check you don't have any files that are ignored in git
 echo ""
 echo Getting Latest Version Information
 sfdx force:package:version:list -p amoss -o CreatedDate | tail -1
 
 echo ""
-echo Enter new version number:
+echo Enter new version number - major.minor.patch.build
 read newversionnumber
 
 newversionname=v$newversionnumber
@@ -68,3 +69,6 @@ git reset
 
 echo ""
 echo Done
+echo ""
+echo When happy, release with:
+echo  sfdx force:package:version:promote --package "$newversionname"
