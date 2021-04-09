@@ -68,3 +68,6 @@ git reset
 
 echo ""
 echo Done
+echo ""
+echo When happy, release with:
+echo  sfdx force:package:version:promote --package "$newversionname"
