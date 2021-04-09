@@ -207,7 +207,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         System.assertEquals( true, exceptionThrown, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
-        System.assertEquals( 'Invalid conversion from runtime type AmossTest_ClassToDouble to String', exceptionMessage, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
+        System.assertEquals( 'Invalid conversion from runtime type ' + CLASS_TO_DOUBLE + ' to String', exceptionMessage, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
     }
 
     /**
