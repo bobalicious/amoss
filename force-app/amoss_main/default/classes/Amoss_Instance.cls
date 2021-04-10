@@ -3124,7 +3124,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( 'Not Null' )
                             .setActual( actualValue )
-                            .setAssertionMessage( 'The value was is "null" when it was expected not be be' );
+                            .setAssertionMessage( 'The value was "null" when it was expected not be be' );
             }
         }
 
