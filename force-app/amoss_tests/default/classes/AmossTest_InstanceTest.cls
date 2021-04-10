@@ -639,7 +639,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterSet_whenTheMethodIsCalledWithTheParaemeterSet_willReturnTheStatedValue() {
+    private static void whenMethodWithParameterSet_whenTheMethodIsCalledWithTheParameterSet_willReturnTheStatedValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
@@ -655,7 +655,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'SetValue', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with parameter set to not null, will return the stated value' );
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.set.willReturn, and the method called with parameter set to not null, will return the stated value' );
     }
 
     /**
@@ -664,7 +664,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterSet_whenTheMethodIsCalledWithTheParaemeterSetToNull_willNotReturnTheStatedValue() {
+    private static void whenMethodWithParameterSet_whenTheMethodIsCalledWithTheParameterSetToNull_willNotReturnTheStatedValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
@@ -680,7 +680,107 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the parameter set to null, will not return the stated value' );
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.set.willReturn, and the method called with the parameter set to null, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.containing.willReturn
+    * @case   when that method is called with the parameter set to a String that contains the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringThatContainsTheGiven_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().containing( 'match' )
+                .thenAnyParameter()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to a string containing the given value, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.containing.willReturn
+    * @case   when that method is called with the parameter set to a String that contains the given one, but in the wrong case
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringThatContainsTheGivenInWrongCase_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().containing( 'NoMatch' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to a string containing the given value in the wrong case, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.containing.willReturn
+    * @case   when that method is called with the parameter set to an empty string
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAnEmptyString_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().containing( 'NoMatch' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( '', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to an empty string, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.containing.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToNull_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().containing( 'NoMatch' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to null, will not return the stated value' );
     }
 
     /**
@@ -974,7 +1074,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedSet_whenTheMethodIsCalledWithTheParaemeterSet_willReturnTheStatedValue() {
+    private static void whenMethodWithParameterNamedSet_whenTheMethodIsCalledWithTheParameterSet_willReturnTheStatedValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
@@ -998,7 +1098,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedSet_whenTheMethodIsCalledWithTheParaemeterSetToNull_willNotReturnTheStatedValue() {
+    private static void whenMethodWithParameterNamedSet_whenTheMethodIsCalledWithTheParameterSetToNull_willNotReturnTheStatedValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();

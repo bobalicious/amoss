@@ -521,6 +521,23 @@ classToDoubleController
         .willReturn( 'theReturn' );
 ```
 
+### `containing`
+
+Attempts to check that the passed value is a String, which contains the given String - matching in a case sensitive way.
+
+Examples:
+```java
+classToDoubleController
+    .when( 'objectMethodUnderDouble' )
+        .withParameter().containing( 'AnExpectedString' )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).containing( 'AnExpectedString' )
+        .willReturn( 'theReturn' );
+```
+
 ### sObject Specific Comparisons
 
 #### `withFieldsSetLike` / `withFieldsSetTo`
