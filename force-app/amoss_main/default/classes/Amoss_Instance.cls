@@ -62,6 +62,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     public static Amoss_ValueVerifierBuilder valueVerifierBuilder = new Amoss_ValueVerifierBuilder();
 
+    public enum Value { NOT_NULL, ANY_VALUE }
+
     public Amoss_Instance( Type classType ) {
         this.classType = classType;
     }
@@ -1294,10 +1296,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         */
         public Amoss_PositionalParametersDefiner thenAnyParameter() {
-            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters())
-                .moveToNextParameter()
-                .addVerifierToCurrentParameter( valueVerifierBuilder.buildAnyVerifier() );
-            return this;
+            return thenParameter().setTo( Amoss_Instance.Value.ANY_VALUE );
         }
     }
 
@@ -1334,6 +1333,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States that a parameter is expected to be set to a not null value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().set()
+        *       .andParameter().withAnyElement().set()
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_PositionalParametersDefiner set() {
+            return setTo( Amoss_Instance.Value.NOT_NULL );
         }
 
         /**
@@ -1531,6 +1546,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States that a parameter is expected to be set to a not null value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().set()
+        *       .andParameter().withAnyElement().set()
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_PositionalParametersDefiner set() {
+            return setTo( Amoss_Instance.Value.NOT_NULL );
         }
 
         /**
@@ -1831,6 +1862,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States that a parameter is expected to be set to a not null value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().set()
+        *       .andParameter().withAnyElement().set()
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_NamedParametersDefiner set() {
+            return setTo( Amoss_Instance.Value.NOT_NULL );
+        }
+
+        /**
         * States the parameter value that is expected for the currently specified parameter.
         *
         * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
@@ -2027,6 +2074,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States that a parameter is expected to be set to a not null value.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).set()
+        *       .andParameterNamed( 'parmeterName1' ).withAnyElement().set()
+        *       .willReturn( 'theValueItShouldReturn' )
+        */
+        public Amoss_NamedParameterAdditionalCollectionValueDefiner set() {
+            return setTo( Amoss_Instance.Value.NOT_NULL );
         }
 
         /**
@@ -2361,7 +2424,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return withParameter().setTo( parameterValue );
         }
 
-
         /**
         * Sets the expected value of the first parameter in the list of parameters that are valid for this 'expection' or 'when'.
         *
@@ -2398,13 +2460,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         */
         public Amoss_PositionalParametersDefiner withAnyParameter() {
-
-            Amoss_ExpectationPositionalParameters expectedParameters = new Amoss_ExpectationPositionalParameters().moveToNextParameter();
-            expectation.setExpectationParameters( expectedParameters );
-
-            expectedParameters.addVerifierToCurrentParameter( valueVerifierBuilder.buildAnyVerifier() );
-
-            return new Amoss_PositionalParametersDefiner( expectation );
+            return withParameter().setTo( Amoss_Instance.Value.ANY_VALUE );
         }
 
         /**
@@ -3034,6 +3090,42 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param Object - The value to check
         */
         public void verify( Object actualValue ) {          //NOPMD - Amoss_ExpectationAnyParameter is a special case that behaves predominantly like a 'Null Object'
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public override String toString() {
+            return 'Any value';
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of 'any' parameter value that is expected to be passed into a mocked method call
+    *
+    */
+    class Amoss_NotNullValueVerifier implements Amoss_ValueVerifier {
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+            if ( actualValue == null ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'Not Null' )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'The value was "null" when it was expected not be be' );
+            }
         }
 
         /**
@@ -3699,6 +3791,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             // version.
             // As we only want to distinguish between a couple of types, this seems the
             // simplest way.
+            if ( value == Amoss_Instance.Value.ANY_VALUE ) {
+                return buildAnyVerifier();
+            }
+            if ( value == Amoss_Instance.Value.NOT_NULL ) {
+                return buildNotNullVerifier();
+            }
             if ( value instanceOf List<Object> ) {
                 return buildSameInstanceVerifier( (List<Object>)value );
             }
@@ -3835,6 +3933,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_ValueVerifier buildAnyVerifier() {
             return new Amoss_AnyValueVerifier();
+        }
+
+
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_NotNullValueVerifier
+        *
+        * @return Amoss_ValueVerifier - The Amoss_NotNullValueVerifier
+        */
+        public Amoss_ValueVerifier buildNotNullVerifier() {
+            return new Amoss_NotNullValueVerifier();
         }
     }
 

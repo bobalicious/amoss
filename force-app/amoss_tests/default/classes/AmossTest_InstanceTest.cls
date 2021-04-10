@@ -633,6 +633,55 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
+    /**
+    * @method when.method.withParameter.set.willReturn
+    * @case   when that method is called with the parameter set (not null)
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterSet_whenTheMethodIsCalledWithTheParaemeterSet_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().set()
+                .thenParameter().set()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'SetValue', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with parameter set to not null, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.set.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterSet_whenTheMethodIsCalledWithTheParaemeterSetToNull_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().set()
+                .thenParameter().set()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the parameter set to null, will not return the stated value' );
+    }
 
     /**
     * @method when.method.withParameter.noVerificationSet
@@ -917,6 +966,54 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.setTo.willReturn, and the method called with the different parameters, will return null' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.set.willReturn
+    * @case   when that method is called with the parameter set (not null)
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSet_whenTheMethodIsCalledWithTheParaemeterSet_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).set()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'SetValue', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.setTo.willReturn, and the method called with parameter set to not null, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.set.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterNamedSet_whenTheMethodIsCalledWithTheParaemeterSetToNull_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).set()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.setTo.willReturn, and the method called with the parameter set to null, will not return the stated value' );
     }
 
     /**
@@ -3204,6 +3301,222 @@ public with sharing class AmossTest_InstanceTest {
                                                     CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
                                                     'List<Object>', 'Unknown (null)',
                                                     'expects.method.withElementAt.returning, when the parameter is null' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.set.returning
+    * @case   when the list parameter passed has the element set to not null
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsMethodWithElementAtSetReturning_whenElementInTheParameterIsSet_willPass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).set()
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'set', 'set' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.set.returning, when the list parameter contains the element set to not null, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.set.returning
+    * @case   when the element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithElementAtSetReturning_whenElementIsNull_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).set();
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'set', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'Not Null', 'null',
+                                                    'expects.method.withElementAt.set returning, when the element is null' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.set.returning
+    * @case   when the list parameter passed has the element set to not null
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsMethodWithAllElementsSetReturning_whenElementInTheParameterIsSet_willPass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().set()
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'set', 'set' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAllElements.set.returning, when the list parameter contains the elements set to not null, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.set.returning
+    * @case   when an element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAllElementsSetReturning_whenElementIsNull_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().set();
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'set', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'Not Null', 'null',
+                                                    'expects.method.withElementAt.set returning, when the element is null' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.set.returning
+    * @case   when the list parameter passed has an element set to not null
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsMethodWithAnyElementSetReturning_whenElementInTheParameterIsSet_willPass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().set()
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'set', null } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAnyElement.set.returning, when the list parameter contains an elements set to not null, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.set.returning
+    * @case   when all elements are null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAnyElementSetReturning_whenAllElementsAreNull_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().set();
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ null, null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'Any value', '(null, null)',
+                                                    'expects.method.withAnyElement.set returning, when the element is null' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.set.returning
+    * @case   when the list is empty
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAnyElementSetReturning_whenNoElementsExist_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().set();
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>() );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'Any value', '()',
+                                                    'expects.method.withAnyElement.set returning, when the element is null' );
     }
 
     /**
