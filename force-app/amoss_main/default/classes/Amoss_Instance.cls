@@ -1372,6 +1372,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that contains the specified value
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().containing( 'a string' )
+        *       .andParameter().withAnyElement().containing( 'a string' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The String to search for in the parameter
+        */
+        public Amoss_PositionalParametersDefiner containing( String searchString ) {
+            return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
+        }
+
+        /**
         * States the shape of the SObject parameter value that is expected for the currently specified parameter.
         *
         * In order to match, the ultimately passed parameter must have the properties that are populated on the
@@ -1582,6 +1602,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner setToTheSameValueAs( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildSameValueAsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that contains the specified value
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().containing( 'a string' )
+        *       .andParameter().withAnyElement().containing( 'a string' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The String to search for in the parameter
+        */
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner containing( String searchString ) {
+            return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
         }
 
         /**
@@ -1898,6 +1938,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that contains the specified value
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).containing( 'a string' )
+        *       .withParameterNamed( 'parmeterName2' ).withAnyElement().containing( 'a string' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The String to search for in the parameter
+        */
+        public Amoss_NamedParametersDefiner containing( String searchString ) {
+            return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
+        }
+
+        /**
         * States the shape of the SObject parameter value that is expected for the currently specified parameter.
         *
         * In order to match, the ultimately passed parameter must have the properties that are populated on the
@@ -2110,6 +2170,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner setToTheSameValueAs( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildSameValueAsVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that contains the specified value
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).containing( 'a string' )
+        *       .withParameterNamed( 'parmeterName2' ).withAnyElement().containing( 'a string' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Object - The String to search for in the parameter
+        */
+        public Amoss_NamedParameterAdditionalCollectionValueDefiner containing( String searchString ) {
+            return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
         }
 
         /**
@@ -3107,7 +3187,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     /**
     * Internal class that should not be referenced directly in a test
     *
-    * Describes the specification of 'any' parameter value that is expected to be passed into a mocked method call
+    * Describes the specification of 'not null' parameter value that is expected to be passed into a mocked method call
     *
     */
     class Amoss_NotNullValueVerifier implements Amoss_ValueVerifier {
@@ -3152,7 +3232,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Sets the value that this parameter is expectd to be
+        * Sets the value that this parameter is expected to be
         *
         * @param  Object - The value that this parameter is expected to be
         * @return Amoss_EqualsValueVerifier - Itself, allowing for a fluent interface
@@ -3211,7 +3291,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Sets the value that this parameter is expectd to be
+        * Sets the value that this parameter is expected to be
         *
         * @param  Object - The value that this parameter is expected to be (actually an Sobject)
         * @return Amoss_SameInstanceVerifier - Itself, allowing for a fluent interface
@@ -3259,6 +3339,65 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     /**
     * Internal class that should not be referenced directly in a test
     *
+    * Describes the specification of String parameter value that is expected to contain the given string
+    *
+    */
+    class Amoss_ContainingVerifier implements Amoss_ValueVerifier {
+
+        String value;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the value that this parameter is expected to contain
+        *
+        * @param  String - The value that this parameter is expected to contain
+        * @return Amoss_ContainingVerifier - Itself, allowing for a fluent interface
+        */
+        public Amoss_ContainingVerifier setValueToVerifyAgainst( String value ) {
+            this.value = value;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+
+            if ( ! (actualValue instanceOf String) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'String' )
+                            .setActual( Amoss_Asserts.getType( actualValue ) )
+                            .setAssertionMessage( 'The value was expected to be a String, and was not' );
+            }
+
+            if ( !((String)actualValue).contains( value ) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'The value does not contain the expected String' );
+            }
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public override String toString() {
+            return 'Any value';
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
     * Describes the specification of a List Parameter that is expected to be
     * the same instance when passed into a mocked method call
     */
@@ -3269,7 +3408,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Sets the value that this parameter is expectd to be
+        * Sets the value that this parameter is expected to be
         *
         * @param  Object - The value that this parameter is expected to be (actually an Sobject)
         * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
@@ -3356,7 +3495,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Sets the value that this parameter is expectd to be
+        * Sets the value that this parameter is expected to be
         *
         * @param  Object - The value that this parameter is expected to be
         * @return Amoss_SameValueAsVerifier - Itself, allowing for a fluent interface
@@ -3406,7 +3545,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Sets the value that this parameter is expectd to be
+        * Sets the value that this parameter is expected to be
         *
         * @param  Sobject - The value that this parameter is expected to be
         * @return Amoss_FieldsSetLikeVerifier - Itself, allowing for a fluent interface
@@ -3486,7 +3625,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that should not be called directly in tests.
         *
-        * Sets the value that this parameter is expectd to be
+        * Sets the value that this parameter is expected to be
         *
         * @param  Sobject - The value that this parameter is expected to be
         * @return Amoss_FieldsSetToVerifier - Itself, allowing for a fluent interface
@@ -3830,7 +3969,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Constructs an instance of an Amoss_SameInstanceVerifier
         *
-        * @param  Sobject - The Sobject value value that is expected for the Amoss_ValueVerifier
+        * @param  Sobject - The Sobject value that is expected for the Amoss_ValueVerifier
         * @return Amoss_ValueVerifier - The appropriate value verifier instance for this value (actually a Amoss_SameInstanceVerifier)
         */
         public Amoss_ValueVerifier buildSameInstanceVerifier( Sobject value ) {
@@ -3842,7 +3981,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Constructs an instance of an Amoss_SameInstanceVerifier
         *
-        * @param  List<Object> - The List value value that is expected for the Amoss_ValueVerifier
+        * @param  List<Object> - The List value that is expected for the Amoss_ValueVerifier
         * @return Amoss_ValueVerifier - The appropriate value verifier instance for this value (actually a Amoss_SameInstanceVerifier)
         */
         public Amoss_ValueVerifier buildSameInstanceVerifier( List<Object> value ) {
@@ -3854,11 +3993,23 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Constructs an instance of an Amoss_SameValueAsVerifier
         *
-        * @param  Object - The Sobject value value that is expected for the Amoss_ValueVerifier
+        * @param  Object - The Sobject value that is expected for the Amoss_ValueVerifier
         * @return Amoss_ValueVerifier - The appropriate value verifier instance for this value (actually a Amoss_SameValueAsVerifier)
         */
         public Amoss_ValueVerifier buildSameValueAsVerifier( Object value ) {
             return new Amoss_SameValueAsVerifier().setValueToVerifyAgainst( value );
+        }
+
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ContainingVerifier
+        *
+        * @param  Object - The String value that is expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this value (actually a Amoss_ContainingVerifier)
+        */
+        public Amoss_ValueVerifier buildContainingStringVerifier( String value ) {
+            return new Amoss_ContainingVerifier().setValueToVerifyAgainst( value );
         }
 
         /**
