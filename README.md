@@ -504,6 +504,23 @@ classToDoubleController
         .willReturn( 'theReturn' );
 ```
 
+### `set`
+
+Attempts to check that the passed value is set to a not null value.
+
+Examples:
+```java
+classToDoubleController
+    .when( 'objectMethodUnderDouble' )
+        .withParameter().set()
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).set()
+        .willReturn( 'theReturn' );
+```
+
 ### sObject Specific Comparisons
 
 #### `withFieldsSetLike` / `withFieldsSetTo`
