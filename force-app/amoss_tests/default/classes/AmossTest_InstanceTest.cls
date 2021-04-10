@@ -3480,9 +3480,9 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         checkForWrongParameterInPositionAssertion( assertsDoubleController,
-                                                    'List element 1 does not match what was expected',
+                                                    'At least one element in the list should pass the described verification',
                                                     CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
-                                                    'Not Null', 'null',
+                                                    'Any value', '(null, null)',
                                                     'expects.method.withAnyElement.set returning, when the element is null' );
     }
 
