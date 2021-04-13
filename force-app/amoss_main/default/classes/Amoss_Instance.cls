@@ -3410,11 +3410,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Sets the value that this parameter is expected to be
         *
-        * @param  Object - The value that this parameter is expected to be (actually an Sobject)
+        * @param  List<Object> - The value that this parameter is expected to be
         * @return Amoss_ValueVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ListSameInstanceVerifier setValueToVerifyAgainst( Object value ) {
-            this.value = (List<Object>)value;
+        public Amoss_ListSameInstanceVerifier setValueToVerifyAgainst( List<Object> value ) {
+            this.value = value;
             return this;
         }
 
@@ -3714,11 +3714,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Sets the Element Verifier that the list parameter elements are expected to pass.
         *
-        * @param  Object - The Verifier that the passed value must pass.  Is actually an Amoss_ValueVerifier.
+        * @param  Amoss_ValueVerifier - The Verifier that the passed value must pass.
         * @return Amoss_ListElementsAllVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ListElementsAllVerifier setValueToVerifyAgainst( Object value ) {
-            this.elementVerifier = (Amoss_ValueVerifier)value;
+        public Amoss_ListElementsAllVerifier setValueToVerifyAgainst( Amoss_ValueVerifier value ) {
+            this.elementVerifier = value;
             return this;
         }
 
@@ -3776,11 +3776,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Sets the Element Verifier that at least one of the list parameter's element is expected to pass
         *
-        * @param  Object - The Verifier that one of the passed elements must pass.  Is actually an Amoss_ValueVerifier.
+        * @param  Amoss_ValueVerifier - The Verifier that one of the passed elements must pass.
         * @return Amoss_ListElementsAnyVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ListElementsAnyVerifier setValueToVerifyAgainst( Object value ) {
-            this.elementVerifier = (Amoss_ValueVerifier)value;
+        public Amoss_ListElementsAnyVerifier setValueToVerifyAgainst( Amoss_ValueVerifier value ) {
+            this.elementVerifier = value;
             return this;
         }
 
@@ -3856,11 +3856,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Sets the Element Verifier that the element is expected to pass
         *
-        * @param  Object - The Verifier that the congigured element must pass.  Is actually an Amoss_ValueVerifier.
+        * @param  Amoss_ValueVerifier - The Verifier that the congigured element must pass.
         * @return Amoss_ListElementAtVerifier - Itself, allowing for a fluent interface
         */
-        public Amoss_ListElementAtVerifier setValueToVerifyAgainst( Object value ) {
-            this.elementVerifier = (Amoss_ValueVerifier)value;
+        public Amoss_ListElementAtVerifier setValueToVerifyAgainst( Amoss_ValueVerifier value ) {
+            this.elementVerifier = value;
             return this;
         }
 
