@@ -3391,7 +3391,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return String - A clear description of the value's verification
         */
         public override String toString() {
-            return 'Any value';
+            return 'String value containing "' + value + '"';
         }
     }
 
