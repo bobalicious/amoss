@@ -3498,7 +3498,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( 'A valid regular expression as per https://docs.oracle.com/javase/1.5.0/docs/api/index.html?java/util/regex/Pattern.html' )
                             .setActual( value )
-                            .setAssertionMessage( 'The regular expression "' + value + '" does not appear to be valid' );
+                            .setAssertionMessage( 'The regular expression "' + value + '" does not appear to be valid: ' + e.getMessage() );
             }
             return this;
         }

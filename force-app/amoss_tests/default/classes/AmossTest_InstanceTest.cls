@@ -784,6 +784,108 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that matches the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringThatMatchesTheGiven_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 't.*m.*s' )
+                .thenAnyParameter()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that does not all match the expression
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringDoesNotWhileMatch_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'm.*s' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string that does not all match the given expression will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that does not match the given one
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringDoesNotMatch_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'Ma.*s' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string not matching the given value will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterMatchingg_whenTheMethodIsCalledWithTheParameterSetToNull_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'NoMatch' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to null, will not return the stated value' );
+    }
+
+///////////
+
+    /**
     * @method when.method.withParameter.noVerificationSet
     * @case   when that method is called
     * @result will fail
