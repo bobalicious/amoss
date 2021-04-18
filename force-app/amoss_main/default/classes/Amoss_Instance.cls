@@ -476,7 +476,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * @return - String - The name of the class
     */
-    public String getClassName() {
+    private String getClassName() {
         return String.valueOf( this.classType );
     }
 
@@ -497,6 +497,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Amoss_Instance setAsserts( Amoss_Asserts assertionMechanism ) {
         this.assertionMechanism = assertionMechanism;
         return this;
+    }
+
+    /**
+    * Internal method that should not be called directly in tests.
+    *
+    * Get the assertion mechanism for this mock object implementation.
+    *
+    * @return Amoss_Asserts - The assertionMechanism
+    */
+    private Amoss_Asserts getAssertionMechanism() {
+        return assertionMechanism;
     }
 
     /**
@@ -1407,7 +1418,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @param String - The Regular Expression to match against the parameter
         */
         public Amoss_PositionalParametersDefiner matching( String searchString ) {
-            return setParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( searchString ) );
+            try {
+                return setParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( searchString ) );
+            } catch ( Amoss_Instance.Amoss_AssertionFailureException assertionFailure ) {
+                assertionFailure.issueAsserton( expectation.getAssertionMechanism() );
+            }
+            return null;
         }
 
         /**
@@ -2757,6 +2773,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                                       List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
 
             return returnMechanism.getReturn( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Get the assertion mechanism for this mock object implementation.
+        *
+        * @return Amoss_Asserts - The assertionMechanism
+        */
+        public Amoss_Asserts getAssertionMechanism() {
+            return amossInstance.getAssertionMechanism();
         }
 
         /**

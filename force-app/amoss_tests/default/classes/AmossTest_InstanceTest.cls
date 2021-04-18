@@ -864,7 +864,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterMatchingg_whenTheMethodIsCalledWithTheParameterSetToNull_willNotReturnTheStatedValue() {
+    private static void whenMethodWithParameterMatching_whenTheMethodIsCalledWithTheParameterSetToNull_willNotReturnTheStatedValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
@@ -872,7 +872,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'methodUnderDouble' )
-                .withParameter().matching( 'NoMatch' )
+                .withParameter().matching( 'a*b' )
                 .thenAnyParameter()
                 .willReturn( 'notExpectedReturn' );
 
@@ -883,7 +883,46 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to null, will not return the stated value' );
     }
 
-///////////
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when the stated regular expression is not valid
+    * @result will fail the test
+    */
+    @isTest
+    private static void whenMethodWithParameterMatching_whenTheRegExpIsNotValid_willFailTheTest() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+
+        Test.startTest();
+            try {
+                classToDoubleController
+                    .when()
+                        .method( 'methodUnderDouble' )
+                        .withParameter().matching( '*' );
+                } catch( TestException e ) {}
+        Test.stopTest();
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, by calling assert with false' );
+
+        String expectedAssertion = 'The regular expression "*" does not appear to be valid: Invalid regex: Dangling meta character \'*\' near index 0';
+        String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        Amoss_Asserts.assertContains( expectedAssertion, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an assertion message that clearly describes the issue' );
+
+        String expectedExpected = 'Expected: A valid regular expression as per https://docs.oracle.com/javase/1.5.0/docs/api/index.html?java/util/regex/Pattern.html';
+
+        Amoss_Asserts.assertContains( expectedExpected, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an expected that clearly describes what was expected' );
+
+        String expectedActual = 'Actual: *';
+
+        Amoss_Asserts.assertContains( expectedActual, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an actual that contains the regular expression that was set' );
+    }
 
     /**
     * @method when.method.withParameter.noVerificationSet
