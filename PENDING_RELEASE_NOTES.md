@@ -1,7 +1,8 @@
 # Release Notes since Last Release
 Added the following methods for checking parameters:
-* `set` - Checks that the stated element is not 'null'
-* `containing` - Check that the stated element is a String and contains the given String
+* `set` - Checks that the stated element is not 'null'.
+* `containing` - Check that the stated element is a String and contains the given String.
+* `matching` - Check that the stated element is a String and matches the given Regular Expression.
 
 Added the following general methods:
 * `getDouble` - Returns the most recently generated double from this `Amoss_Instance`.

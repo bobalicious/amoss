@@ -784,6 +784,146 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that matches the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringThatMatchesTheGiven_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 't.*m.*s' )
+                .thenAnyParameter()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that does not all match the expression
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringDoesNotWhileMatch_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'm.*s' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string that does not all match the given expression will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that does not match the given one
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringDoesNotMatch_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'Ma.*s' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string not matching the given value will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterMatching_whenTheMethodIsCalledWithTheParameterSetToNull_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'a*b' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to null, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when the stated regular expression is not valid
+    * @result will fail the test
+    */
+    @isTest
+    private static void whenMethodWithParameterMatching_whenTheRegExpIsNotValid_willFailTheTest() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        Test.startTest();
+            try {
+                classToDoubleController
+                    .when()
+                        .method( 'methodUnderDouble' )
+                        .withParameter().matching( '*' );
+                } catch( TestException e ) {}
+        Test.stopTest();
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, by calling assert with false' );
+
+        String expectedAssertion = 'The regular expression "*" does not appear to be valid: Invalid regex: Dangling meta character \'*\' near index 0';
+        String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        Amoss_Asserts.assertContains( expectedAssertion, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an assertion message that clearly describes the issue' );
+
+        String expectedExpected = 'Expected: A valid regular expression as per https://docs.oracle.com/javase/1.5.0/docs/api/index.html?java/util/regex/Pattern.html';
+
+        Amoss_Asserts.assertContains( expectedExpected, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an expected that clearly describes what was expected' );
+
+        String expectedActual = 'Actual: *';
+
+        Amoss_Asserts.assertContains( expectedActual, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an actual that contains the regular expression that was set' );
+    }
+
+    /**
     * @method when.method.withParameter.noVerificationSet
     * @case   when that method is called
     * @result will fail
@@ -3701,7 +3841,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsContaiingReturning_whenElementDoesNotContain_willFail() {
+    private static void expectsMethodWithAllElementsContainingReturning_whenElementDoesNotContain_willFail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
@@ -3725,7 +3865,7 @@ public with sharing class AmossTest_InstanceTest {
                                                     'List element 1 does not match what was expected',
                                                     CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
                                                     'match', 'different',
-                                                    'expects.method.withAllElements.containng returning, when an element does not contain' );
+                                                    'expects.method.withAllElements.containing returning, when an element does not contain' );
     }
 
     /**
@@ -3734,7 +3874,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsContaiingReturning_whenElementIsNotAString_willFail() {
+    private static void expectsMethodWithAllElementsContainingReturning_whenElementIsNotAString_willFail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
@@ -3758,7 +3898,7 @@ public with sharing class AmossTest_InstanceTest {
                                                     'List element 1 does not match what was expected',
                                                     CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
                                                     'String', 'Integer',
-                                                    'expects.method.withAllElements.containng returning, when an element is not a String' );
+                                                    'expects.method.withAllElements.containing returning, when an element is not a String' );
     }
 
     /**
@@ -3767,7 +3907,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsContaiingReturning_whenElementIsNull_willFail() {
+    private static void expectsMethodWithAllElementsContainingReturning_whenElementIsNull_willFail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
         Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
@@ -3791,7 +3931,7 @@ public with sharing class AmossTest_InstanceTest {
                                                     'List element 1 does not match what was expected',
                                                     CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
                                                     'String', 'Unknown (null)',
-                                                    'expects.method.withAllElements.containng returning, when an element is not a String' );
+                                                    'expects.method.withAllElements.containing returning, when an element is not a String' );
     }
 
     /**
@@ -3825,6 +3965,166 @@ public with sharing class AmossTest_InstanceTest {
                                                     CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
                                                     'String value containing "match"', '(not the same, null)',
                                                     'expects.method.withAnyElement.containing returning, when no elements match' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.matching.returning
+    * @case   when the list parameter passed has the element set matches the value
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsMethodWithElementAtMatchingReturning_whenElementInTheParameterMatches_willPass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).matching( 'm.*h' )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'unimportant', 'match' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.matching.returning, when the list parameter contains the element set to match, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.matching.returning
+    * @case   when an element does not match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAllElementsMatchingReturning_whenAnElementDoesNotMatch_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().matching( 'm.*h' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'match', 'different', 'match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'm.*h', 'different',
+                                                    'expects.method.withAllElements.matching returning, when an element does not match' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.matching.returning
+    * @case   when an element is not a String
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAllElementsMatchingReturning_whenElementIsNotAString_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().matching( 'm.*h' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'match', 12, 'match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String', 'Integer',
+                                                    'expects.method.withAllElements.matching returning, when an element is not a String' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.matching.returning
+    * @case   when an element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAllElementsMatchingReturning_whenElementIsNull_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().matching( 'm.*h' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'match', null, 'match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String', 'Unknown (null)',
+                                                    'expects.method.withAllElements.matching returning, when an element is not a String' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.matching.returning
+    * @case   when no elements match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsMethodWithAnyElementSetMatching_whenNoElementsMatch_willFail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().matching( 'm.*h' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'not the same', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String value matching "m.*h"', '(not the same, null)',
+                                                    'expects.method.withAnyElement.matching returning, when no elements match' );
     }
 
     /**
@@ -6684,7 +6984,6 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
-        // TODO: why does this not include the namespace?
         String expectedCall      = 'methodUnderDouble( AmossTest_ClassToDouble:[], AmossTest_ClassToDouble:[] )';
 
         System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );

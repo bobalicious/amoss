@@ -476,7 +476,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     *
     * @return - String - The name of the class
     */
-    public String getClassName() {
+    private String getClassName() {
         return String.valueOf( this.classType );
     }
 
@@ -497,6 +497,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Amoss_Instance setAsserts( Amoss_Asserts assertionMechanism ) {
         this.assertionMechanism = assertionMechanism;
         return this;
+    }
+
+    /**
+    * Internal method that should not be called directly in tests.
+    *
+    * Get the assertion mechanism for this mock object implementation.
+    *
+    * @return Amoss_Asserts - The assertionMechanism
+    */
+    private Amoss_Asserts getAssertionMechanism() {
+        return assertionMechanism;
     }
 
     /**
@@ -1275,7 +1286,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .thenParameter().setTo( false )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The parameter value to add to the list of expected ones
         */
         public Amoss_PositionalParameterValueDefiner thenParameter() {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters())
@@ -1329,7 +1339,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().setTo( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Object - The value that the parameter should be set to
         */
         public Amoss_PositionalParametersDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
@@ -1365,7 +1375,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().setToTheSameValueAs( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Object - The value that the parameter should be evaluated against
         */
         public Amoss_PositionalParametersDefiner setToTheSameValueAs( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildSameValueAsVerifier( parameterValue ) );
@@ -1385,10 +1395,35 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().containing( 'a string' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The String to search for in the parameter
+        * @param String - The String to search for in the parameter
         */
         public Amoss_PositionalParametersDefiner containing( String searchString ) {
             return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that matches the specified regular expression
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().matching( 'a*b' )
+        *       .andParameter().withAnyElement().matching( 'a*b' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param String - The Regular Expression to match against the parameter
+        */
+        public Amoss_PositionalParametersDefiner matching( String searchString ) {
+            try {
+                return setParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( searchString ) );
+            } catch ( Amoss_Instance.Amoss_AssertionFailureException assertionFailure ) {
+                assertionFailure.issueAsserton( expectation.getAssertionMechanism() );
+            }
+            return null;
         }
 
         /**
@@ -1408,7 +1443,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().withFieldsSetLike( account )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Sobject - The SObject that the parameter should be checked against
         */
         public Amoss_PositionalParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetLikeVerifier( parameterValue ) );
@@ -1431,7 +1466,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().withFieldsSetTo( accountFieldsMap )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Map<String,Object> - The Map of values that the parameter should be checked against
         */
         public Amoss_PositionalParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
@@ -1448,7 +1483,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameter().verifiedBy( customVerifier )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Amoss_ValueVerifier - The verifier to add to the specification
+        * @param Amoss_ValueVerifier - The verifier that should be used to check the parameter
         */
         public Amoss_PositionalParametersDefiner verifiedBy( Amoss_ValueVerifier verifier ) {
             return setParameterVerifier( verifier );
@@ -1466,7 +1501,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameter().withAllElements().setTo( true )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalAllElementsInCollectionValueDefiner withAllElements() {
             return new Amoss_PositionalAllElementsInCollectionValueDefiner( expectation );
@@ -1484,7 +1518,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameter().withAnyElement().setTo( true )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_PositionalAnyElementInCollectionValueDefiner withAnyElement() {
             return new Amoss_PositionalAnyElementInCollectionValueDefiner( expectation );
@@ -1502,7 +1535,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameter().withElementAt( 2 ).setTo( true )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Integer - The position in the list to add the specification against
         */
         public Amoss_PositionalElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
             return new Amoss_PositionalElementAtPositionInCollectionValueDefiner( expectation, elementPosition );
@@ -1562,7 +1595,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().setTo( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Object - The value that the parameter should be set to
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
@@ -1598,7 +1631,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().setToTheSameValueAs( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Object - The value that the parameter should be evaluated against
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner setToTheSameValueAs( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildSameValueAsVerifier( parameterValue ) );
@@ -1618,10 +1651,30 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().containing( 'a string' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The String to search for in the parameter
+        * @param String - The String to search for in the parameter
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner containing( String searchString ) {
             return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that matches the specified regular expression
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().matching( 'a*b' )
+        *       .andParameter().withAnyElement().matching( 'a*b' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param String - The Regular Expression to match against the parameter
+        */
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner matching( String regularExpression ) {
+            return setParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( regularExpression ) );
         }
 
         /**
@@ -1641,7 +1694,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().withFieldsSetLike( account )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Sobject - The SObject that the parameter should be checked against
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner withFieldsSetLike( Sobject parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetLikeVerifier( parameterValue ) );
@@ -1664,7 +1717,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameter().withAnyElement().withFieldsSetTo( accountFieldsMap )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Map<String,Object> - The Map of values that the parameter should be checked against
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
@@ -1681,7 +1734,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameter().verifiedBy( customVerifier )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Amoss_ValueVerifier - The verifier to add to the specification
+        * @param Amoss_ValueVerifier - The verifier that should be used to check the parameter
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner verifiedBy( Amoss_ValueVerifier verifier ) {
             return setParameterVerifier( verifier );
@@ -1829,7 +1882,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameter().withElementAt( 2 ).setTo( true )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Integer - The position in the list to add the specification against
         */
         public Amoss_PositionalElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
             return new Amoss_PositionalElementAtPositionInCollectionValueDefiner( expectation, elementPosition );
@@ -1895,7 +1948,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setTo( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Object - The value that the parameter should be set to
         */
         public Amoss_NamedParametersDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
@@ -1931,7 +1984,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setToTheSameValueAs( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Object - The value that the parameter should be evaluated against
         */
         public Amoss_NamedParametersDefiner setToTheSameValueAs( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildSameValueAsVerifier( parameterValue ) );
@@ -1951,10 +2004,30 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameterNamed( 'parmeterName2' ).withAnyElement().containing( 'a string' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The String to search for in the parameter
+        * @param String - The String to search for in the parameter
         */
         public Amoss_NamedParametersDefiner containing( String searchString ) {
             return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that matches the specified regular expression
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).matching( 'a*b' )
+        *       .withParameterNamed( 'parmeterName2' ).withAnyElement().matching( 'a*b' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param String - The Regular Expression to match against the parameter
+        */
+        public Amoss_NamedParametersDefiner matching( String regularExpression ) {
+            return setParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( regularExpression ) );
         }
 
         /**
@@ -1974,7 +2047,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().withFieldsSetLike( account )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Sobject - The SObject that the parameter should be checked against
         */
         public Amoss_NamedParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetLikeVerifier( parameterValue ) );
@@ -1997,7 +2070,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().withFieldsSetTo( accountFieldsMap )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Map<String,Object> - The Map of values that the parameter should be checked against
         */
         public Amoss_NamedParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
@@ -2014,7 +2087,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameterNamed( 'parameterName1' ).verifiedBy( customVerifier )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Amoss_ValueVerifier - The verifier to add to the specification
+        * @param Amoss_ValueVerifier - The verifier that should be used to check the parameter
         */
         public Amoss_NamedParametersDefiner verifiedBy( Amoss_ValueVerifier verifier ) {
             return setParameterVerifier( verifier );
@@ -2032,7 +2105,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAllElements().setTo( true )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedAllElementsInCollectionValueDefiner withAllElements() {
             return new Amoss_NamedAllElementsInCollectionValueDefiner( expectation );
@@ -2050,7 +2122,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setTo( true )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
         */
         public Amoss_NamedAnyElementInCollectionValueDefiner withAnyElement() {
             return new Amoss_NamedAnyElementInCollectionValueDefiner( expectation );
@@ -2068,7 +2139,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withElementAt( 2 ).setTo( true )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Integer - The position in the list to add the specification against
         */
         public Amoss_NamedElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
             return new Amoss_NamedElementAtPositionInCollectionValueDefiner( expectation, elementPosition );
@@ -2130,7 +2201,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setTo( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Object - The value that the parameter should be set to
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner setTo( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildEqualsVerifier( parameterValue ) );
@@ -2166,7 +2237,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().setToTheSameValueAs( 'Parameter2' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Object - The value that the parameter should be evaluated against
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner setToTheSameValueAs( Object parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildSameValueAsVerifier( parameterValue ) );
@@ -2186,10 +2257,30 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameterNamed( 'parmeterName2' ).withAnyElement().containing( 'a string' )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The String to search for in the parameter
+        * @param String - The String to search for in the parameter
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner containing( String searchString ) {
             return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that matches the specified regular expression
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).matching( 'a*b' )
+        *       .withParameterNamed( 'parmeterName2' ).withAnyElement().matching( 'a*b' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param String - The String to search for in the parameter
+        */
+        public Amoss_NamedParameterAdditionalCollectionValueDefiner matching( String regularExpression ) {
+            return setParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( regularExpression ) );
         }
 
         /**
@@ -2209,7 +2300,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().withFieldsSetLike( account )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Sobject - The SObject that the parameter should be checked against
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner withFieldsSetLike( Sobject parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetLikeVerifier( parameterValue ) );
@@ -2232,7 +2323,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withAnyElement().withFieldsSetTo( accountFieldsMap )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Map<String,Object> - The Map of values that the parameter should be checked against
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
             return setParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
@@ -2249,7 +2340,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .withParameterNamed( 'parameterName1' ).verifiedBy( customVerifier )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Amoss_ValueVerifier - The verifier to add to the specification
+        * @param Amoss_ValueVerifier - The verifier that should be used to check the parameter
         */
         public Amoss_NamedParameterAdditionalCollectionValueDefiner verifiedBy( Amoss_ValueVerifier verifier ) {
             return setParameterVerifier( verifier );
@@ -2395,7 +2486,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .andParameterNamed( 'parmeterName2' ).withElementAt( 2 ).setTo( true )
         *       .willReturn( 'theValueItShouldReturn' )
         *
-        * @param Object - The value of the parameter to add to the specification
+        * @param Integer - The position in the list to add the specification against
         */
         public Amoss_NamedElementAtPositionInCollectionValueDefiner withElementAt( Integer elementPosition ) {
             return new Amoss_NamedElementAtPositionInCollectionValueDefiner( expectation, elementPosition );
@@ -2682,6 +2773,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                                       List<Type>   parameterTypes, List<String> parameterNames, List<Object> parameters  ) {
 
             return returnMechanism.getReturn( mockedObject, mockedMethod, returnType, parameterTypes, parameterNames, parameters );
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Get the assertion mechanism for this mock object implementation.
+        *
+        * @return Amoss_Asserts - The assertionMechanism
+        */
+        public Amoss_Asserts getAssertionMechanism() {
+            return amossInstance.getAssertionMechanism();
         }
 
         /**
@@ -3398,6 +3500,75 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     /**
     * Internal class that should not be referenced directly in a test
     *
+    * Describes the specification of String parameter value that is expected to match the given regular expression
+    *
+    */
+    class Amoss_MatchingVerifier implements Amoss_ValueVerifier {
+
+        String  value;
+        Pattern valuePattern;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the regular expression that this parameter is expected to match
+        *
+        * @param  String - The pattern that this parameter is expected to match
+        * @return Amoss_ContainingVerifier - Itself, allowing for a fluent interface
+        */
+        public Amoss_MatchingVerifier setValueToVerifyAgainst( String value ) {
+
+            this.value = value;
+            try {
+                valuePattern = Pattern.compile( value );
+            } catch ( Exception e ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'A valid regular expression as per https://docs.oracle.com/javase/1.5.0/docs/api/index.html?java/util/regex/Pattern.html' )
+                            .setActual( value )
+                            .setAssertionMessage( 'The regular expression "' + value + '" does not appear to be valid: ' + e.getMessage() );
+            }
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+
+            if ( ! (actualValue instanceOf String) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'String' )
+                            .setActual( Amoss_Asserts.getType( actualValue ) )
+                            .setAssertionMessage( 'The value was expected to be a String, and was not' );
+            }
+
+            if ( ! valuePattern.matcher( (String)actualValue ).matches() ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( value )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'The value does not match the expected Expression' );
+            }
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public override String toString() {
+            return 'String value matching "' + value + '"';
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
     * Describes the specification of a List Parameter that is expected to be
     * the same instance when passed into a mocked method call
     */
@@ -4005,11 +4176,23 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Constructs an instance of an Amoss_ContainingVerifier
         *
-        * @param  Object - The String value that is expected for the Amoss_ValueVerifier
+        * @param  String - The String value that is expected for the Amoss_ValueVerifier
         * @return Amoss_ValueVerifier - The appropriate value verifier instance for this value (actually a Amoss_ContainingVerifier)
         */
         public Amoss_ValueVerifier buildContainingStringVerifier( String value ) {
             return new Amoss_ContainingVerifier().setValueToVerifyAgainst( value );
+        }
+
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_MatchingVerifier
+        *
+        * @param  String - The Regular Expression value that is expected for the Amoss_ValueVerifier
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this value (actually a Amoss_MatchingVerifier)
+        */
+        public Amoss_ValueVerifier buildMatchingExpressionVerifier( String value ) {
+            return new Amoss_MatchingVerifier().setValueToVerifyAgainst( value );
         }
 
         /**
