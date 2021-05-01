@@ -898,7 +898,6 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController.setAsserts( assertsDouble );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
-
         Test.startTest();
             try {
                 classToDoubleController

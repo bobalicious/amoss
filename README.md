@@ -523,7 +523,7 @@ classToDoubleController
 
 ### `containing`
 
-Attempts to check that the passed value is a String, which contains the given String - matching in a case sensitive way.
+Checks that the passed value is a String, which contains the given String - matching in a case sensitive way.
 
 Examples:
 ```java
@@ -535,6 +535,25 @@ classToDoubleController
 classToDoubleController
     .when( 'objectMethodUnderDouble' )
         .withParameterNamed( 'parameterName' ).containing( 'AnExpectedString' )
+        .willReturn( 'theReturn' );
+```
+
+### `matching`
+
+Checks that the passed value is a String, which fully 'matches' the given regular expression - matching in a case sensitive way.
+
+Note that the whole of the String must match the regular expression, rather than a fragment of string matching, as per the behaviour of `Matcher.matches`.
+
+Examples:
+```java
+classToDoubleController
+    .when( 'objectMethodUnderDouble' )
+        .withParameter().matching( 'OPP-[0-9]+' )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).matching( 'OPP-[0-9]+' )
         .willReturn( 'theReturn' );
 ```
 
