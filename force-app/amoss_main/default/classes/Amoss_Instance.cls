@@ -1427,6 +1427,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the passed parameter needs to be a List of the specified length
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().aListOfLength( 3 )
+        *       .andParameter().withAnyElement().aListOfLength( 4 )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Integer - The expected length
+        */
+        public Amoss_PositionalParametersDefiner aListOfLength( Integer expectedLength ) {
+            return setParameterVerifier( valueVerifierBuilder.buildListOfLengthVerifier( expectedLength ) );
+        }
+
+        /**
         * States the shape of the SObject parameter value that is expected for the currently specified parameter.
         *
         * In order to match, the ultimately passed parameter must have the properties that are populated on the
@@ -1580,7 +1600,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * States the parameter value that is expected for the currently specified parameter.
         *
-        * In order to match an object, the passed parameter must:
+        * In order to match, the passed parameter must:
         *   * Be the same instance as that specified.
         *   * Implement the method 'equals', and return true when called with the specified parameter.
         *
@@ -1620,7 +1640,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * States the parameter value that is expected for the currently specified parameter.
         *
-        * In order to match an object, the passed parameter only needs to equate when serialised as a JSON string.
+        * In order to match, the passed parameter only needs to equate when serialised as a JSON string.
         *
         * Is used in combination with 'withParameter'.
         *
@@ -1640,7 +1660,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * States the parameter value that is expected for the currently specified parameter.
         *
-        * In order to match an object, the passed parameter needs to be a String that contains the specified value
+        * In order to match, the passed parameter needs to be a String that contains the specified value
         *
         * Is used in combination with 'withParameter'.
         *
@@ -1660,7 +1680,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * States the parameter value that is expected for the currently specified parameter.
         *
-        * In order to match an object, the passed parameter needs to be a String that matches the specified regular expression
+        * In order to match, the passed parameter needs to be a String that matches the specified regular expression
         *
         * Is used in combination with 'withParameter'.
         *
@@ -1675,6 +1695,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_PositionalParameterAdditionalCollectionValueDefiner matching( String regularExpression ) {
             return setParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( regularExpression ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the passed parameter needs to be a List of the specified length
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().aListOfLength( 3 )
+        *       .andParameter().withAnyElement().aListOfLength( 4 )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Integer - The expected length
+        */
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner aListOfLength( Integer expectedLength ) {
+            return setParameterVerifier( valueVerifierBuilder.buildListOfLengthVerifier( expectedLength ) );
         }
 
         /**
@@ -3873,6 +3913,66 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     /**
     * Internal class that should not be referenced directly in a test
     *
+    * Describes the specification of a List Parameter that must have the specified length
+    */
+    class Amoss_ListOfLengthVerifier implements Amoss_ValueVerifier {
+
+        Integer expectedLength;
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Sets the length that the specification expects the list to be.
+        *
+        * @param  Integer - The length that is expected
+        * @return Amoss_ListOfLengthVerifier - Itself, allowing for a fluent interface
+        */
+        public Amoss_ListOfLengthVerifier setExpectedLength( Integer expectedLength ) {
+            this.expectedLength = expectedLength;
+            return this;
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Describes the verification that this object to configured to make
+        *
+        * @return String - A clear description of the value's verification
+        */
+        public override String toString() {
+            return String.format( 'List of length {0}', new List<Object>{ expectedLength } );
+        }
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the verifier that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+
+            if ( ! (actualValue instanceOf List<Object>) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'List<Object>' )
+                            .setActual( Amoss_Asserts.getType( actualValue ) )
+                            .setAssertionMessage( 'The value is not what was expected - The types do not match' );
+            }
+
+            List<Object> actualList = (List<Object>)actualValue;
+
+            if ( this.expectedLength != actualList.size() ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( expectedLength )
+                            .setActual( actualList.size() )
+                            .setAssertionMessage( 'The value is not what was expected - The list is not the expected length' );
+            }
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
     * Describes the specification of a List Parameter that must contain elements that all pass
     * the verifier configured
     */
@@ -4217,6 +4317,19 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_ValueVerifier buildFieldsSetToVerifier( Map<String,Object> fields ) {
             return new Amoss_FieldsSetToVerifier().setValueToVerifyAgainst( fields );
+        }
+
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_ListOfLengthVerifier, which checks that a given value is a list that has the specified
+        * number of elements
+        *
+        * @param  Integer - The number of elements that are expected
+        * @return Amoss_ValueVerifier - The appropriate value verifier instance for this parameter (actually a Amoss_ListOfLengthVerifier)
+        */
+        public Amoss_ValueVerifier buildListOfLengthVerifier( Integer expectedLength ) {
+            return new Amoss_ListOfLengthVerifier().setExpectedLength( expectedLength );
         }
 
         /**

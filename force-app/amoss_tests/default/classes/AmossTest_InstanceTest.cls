@@ -789,7 +789,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringThatMatchesTheGiven_willReturnTheStatedValue() {
+    private static void whenMethodWithParameterMatching_whenTheMethodIsCalledWithTheParameterSetToAStringThatMatchesTheGiven_willReturnTheStatedValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
@@ -814,7 +814,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringDoesNotWhileMatch_willNotReturnTheStatedValue() {
+    private static void whenMethodWithParameterMatching_whenTheMethodIsCalledWithTheParameterSetToAStringDoesNotWhileMatch_willNotReturnTheStatedValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
@@ -839,7 +839,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterContaining_whenTheMethodIsCalledWithTheParameterSetToAStringDoesNotMatch_willNotReturnTheStatedValue() {
+    private static void whenMethodWithParameterMatchingwhenTheMethodIsCalledWithTheParameterSetToAStringDoesNotMatch_willNotReturnTheStatedValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
@@ -921,6 +921,79 @@ public with sharing class AmossTest_InstanceTest {
         String expectedActual = 'Actual: *';
 
         Amoss_Asserts.assertContains( expectedActual, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an actual that contains the regular expression that was set' );
+    }
+
+    /**
+    * @method when.method.withParameter.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to a List that is the stated length
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterAListOfLength_whenTheMethodIsCalledWithTheParameterListOfGivenLength_willReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().aListOfLength( 4 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter set to a List that is the stated length, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to a List that is a different length
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterAListOfLength_whenTheMethodIsCalledWithTheParameterListOfDifferentLength_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().aListOfLength( 10 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter set to a List that is not the stated length, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to something that is not a list
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenMethodWithParameterAListOfLength_whenTheMethodIsCalledWithTheParameterNotAList_willNotReturnTheStatedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().aListOfLength( 10 )
+                .thenAnyParameter()
+                .willReturn( 'return' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'Thing', 2 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter that is not a list, will not return the stated value' );
     }
 
     /**
