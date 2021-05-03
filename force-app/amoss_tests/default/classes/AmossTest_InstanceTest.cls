@@ -937,7 +937,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'methodWithListOfObjects' )
-                .withParameter().aListOfLength( 4 )
+                .withParameter().aListOfLength( 3 )
                 .willReturn( new List<String>{ 'return' } );
 
         Test.startTest();
