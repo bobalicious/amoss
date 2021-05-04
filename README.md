@@ -103,14 +103,14 @@ If a method has a return value, then `null` will be returned.
 
 You then use the Test Double as you would any other instance of the object.
 
-In this example, we're testing `scheduleDelivery` on the class `DeliveredOrder`.
+In this example, we're testing `scheduleDelivery` on the class `DeliveryOrder`.
 
 The method takes a `DeliveryProvider` as a parameter, calls methods against it and then returns `true` when the delivery is successfully scheduled:
 
 ```java
 
 Test.startTest();
-    DeliveredOrder order = new DeliveredOrder().setDeliveryDate( deliveryDate ).setDeliveryPostcode( deliveryPostcode );
+    DeliveryOrder order = new DeliveryOrder().setDeliveryDate( deliveryDate ).setDeliveryPostcode( deliveryPostcode );
     Boolean scheduled = order.scheduleDelivery( deliveryProviderDouble );
 Test.stopTest();
 
