@@ -4429,6 +4429,166 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method expects.method.withElementAt.aListOfLength.returning
+    * @case   when the list parameter passed has the element set matches the value
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsWithElementAtAListOfLengthReturning_whenElementInTheParameterMatches_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).aListOfLength( 2 )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Object>{ new List<Integer>{ 0, 1, 2 }, new List<Integer>{ 0, 1 } } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.aListOfLength.returning, when the list parameter contains the element set to match, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.aListOfLength.returning
+    * @case   when an element does not match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsAListOfLengthReturning_whenAnElementDoesNotMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ new List<Integer>{ 0, 1 }, new List<Integer>{ 0 }, new List<Integer>{ 0, 1 } } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    '2', '1',
+                                                    'expects.method.withAllElements.aListOfLength returning, when an element does not match' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.aListOfLength.returning
+    * @case   when an element is not a List
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsAListOfLengthReturning_whenElementIsNotAList_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ new List<Integer>{ 0, 1 }, 'no match', new List<Integer>{ 0, 1 } } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'List', 'String',
+                                                    'expects.method.withAllElements.aListOfLength returning, when an element is not a List' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.aListOfLength.returning
+    * @case   when an element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsAListOfLengthReturning_whenElementIsNull_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ new List<Integer>{ 0, 1 }, null, new List<Integer>{ 0, 1 }} );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'List', 'Unknown (null)',
+                                                    'expects.method.withAllElements.aListOfLength returning, when an element is not a List' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.aListOfLength.returning
+    * @case   when no elements match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAnyElementAListOfLength_whenNoElementsMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'not the same', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'List of length 2', '(not the same, null)',
+                                                    'expects.method.withAnyElement.aListOfLength returning, when no elements match' );
+    }
+
+    /**
     * @method expects.method.verifiedBy.returning
     * @case   when the verifier does not throw an exception
     * @result will pass the test
