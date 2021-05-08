@@ -1432,6 +1432,180 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.withParameterNamed.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that matches the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedMatching_whenCallWithParamSetToAStringThatMatchesTheGiven_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).matching( 't.*m.*s' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that does not match the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedMatching_whenCallWithParamSetToAStringThatNotMatchesTheGiven_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).matching( 't.*m.*s' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'does not match', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.matching.willReturn, and the method called with parameter set to a string that does not match the given value, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to a List that is the stated length
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLength_whenCallWithParamListOfGivenLength_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter set to a List that is the stated length, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to a List that is a different length
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLength_whenCallWithParamListOfDiffLength_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 10 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter set to a List that is not the stated length, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to something that is not a list
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLength_whenCallWithParamNotAList_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 10 )
+                .willReturn( 'return' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'Thing', 2 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter that is not a list, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.withElementAt.willReturn
+    * @case   when that method is called with the parameter set to a List that is the stated length, and other criteria met
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLengthWithElementAt_whenAllMet_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 3 )
+                    .withElementAt( 0 ).setTo( 1 )
+                    .withElementAt( 1 ).setTo( 2 )
+                    .withElementAt( 2 ).setTo( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.withElementAt.willReturn, when that method is called with all criteria met, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.withElementAt.willReturn
+    * @case   when not all criteria met
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLengthWithElementAt_whenNotAllMet_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 3 )
+                    .withElementAt( 0 ).setTo( 1 )
+                    .withElementAt( 1 ).setTo( 99 )
+                    .withElementAt( 2 ).setTo( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.withElementAt.willReturn, when that method is called with not all criteria met, will not return the stated value' );
+    }
+
+    /**
     * @method when.method.withParameters.setTo.willReturn (named)
     * @case   when that method is called with different parameters
     * @result will return null

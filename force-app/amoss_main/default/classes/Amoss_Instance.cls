@@ -2072,6 +2072,27 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the passed parameter needs to be a List of the specified length
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameterNamed( 'parmeterName1' ).aListOfLength( 3 )
+        *       .andParameterNamed( 'parmeterName2' ).withAnyElement().aListOfLength( 4 )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Integer - The expected length
+        */
+        public Amoss_NamedParameterAdditionalCollectionValueDefiner aListOfLength( Integer expectedLength ) {
+            setParameterVerifier( valueVerifierBuilder.buildListOfLengthVerifier( expectedLength ) );
+            return new Amoss_NamedParameterAdditionalCollectionValueDefiner( expectation );
+        }
+
+        /**
         * States the shape of the SObject parameter value that is expected for the currently specified parameter.
         *
         * In order to match, the ultimately passed parameter must have the properties that are populated on the
