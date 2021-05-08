@@ -585,6 +585,23 @@ classToDoubleController
 
 ### List Specific Comparisons
 
+#### `aListOfLength`
+
+Used to check that a parameter is a list that consists of the specified number of elements.
+
+Examples:
+```java
+classToDoubleController
+    .when( 'objectMethodUnderDouble' )
+        .withParameter().aListOfLength( 1 )
+        .willReturn( 'theReturn' );
+
+classToDoubleController
+    .when( 'objectMethodUnderDouble' )
+        .withParameterNamed( 'parameterName' ).aListOfLength( 2 )
+        .willReturn( 'theReturn' );
+```
+
 #### `withAnyElement`
 
 Used to check that a parameter is a list that contains *any* of the elements passing the specified condition.  It can be used with any of the matching methods that you can use directly on the parameter (e.g. `setTo`, `setToTheSameValueAs`, etc), with the exception of the other list comparisons (I.E. you cannot check a list within a list.  Yet).
