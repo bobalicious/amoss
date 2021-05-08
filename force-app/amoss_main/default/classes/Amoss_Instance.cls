@@ -1442,8 +1442,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @param Integer - The expected length
         */
-        public Amoss_PositionalParametersDefiner aListOfLength( Integer expectedLength ) {
-            return setParameterVerifier( valueVerifierBuilder.buildListOfLengthVerifier( expectedLength ) );
+        public Amoss_PositionalParameterAdditionalCollectionValueDefiner aListOfLength( Integer expectedLength ) {
+            setParameterVerifier( valueVerifierBuilder.buildListOfLengthVerifier( expectedLength ) );
+            return new Amoss_PositionalParameterAdditionalCollectionValueDefiner( expectation );
         }
 
         /**
