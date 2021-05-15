@@ -4589,6 +4589,39 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method expects.method.withParameterNamed.withAnyElement.aListOfLength.returning
+    * @case   when no elements match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithNamedAnyElementAListOfLength_whenNoElementsMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).withAnyElement().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'not the same', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterNamedAssertion( assertsDoubleController,
+                                                'At least one element in the list should pass the described verification',
+                                                CLASS_TO_DOUBLE + '.methodWithListOfObjects', 'parameter1',
+                                                'List of length 2', '(not the same, null)',
+                                                'expects.method.withParmeterNamed.withAnyElement.aListOfLength returning, when no elements match' );
+    }
+
+    /**
     * @method expects.method.verifiedBy.returning
     * @case   when the verifier does not throw an exception
     * @result will pass the test
