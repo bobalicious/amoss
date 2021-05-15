@@ -247,7 +247,7 @@ public with sharing class AmossTest_Asserts {
                 'case'      => 'a non-system class'
             },
             new Map<String,Object>{
-                'parameter' => new Amoss_Instance( AmossTest_ClassToDouble.class ).generateDouble(),
+                'parameter' => new Amoss_Instance( AmossTest_ClassToDouble.class ).getDouble(),
                 'expected'  =>  AmossTest_ClassToDouble.class.getName(),
                 'case'      => 'a test double of a class'
             }

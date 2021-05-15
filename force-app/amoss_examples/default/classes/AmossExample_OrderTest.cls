@@ -81,7 +81,7 @@ public with sharing class AmossExample_OrderTest {
                 .method( 'scheduleDelivery' )
                 .willReturn( true );
 
-        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.getDouble();
 
         Test.startTest();
 
@@ -146,7 +146,7 @@ public with sharing class AmossExample_OrderTest {
                 .andParameterNamed( 'deliveryDate' ).setTo( deliveryDate )
                 .returning( true );
 
-        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.getDouble();
 
         Test.startTest();
 
@@ -203,7 +203,7 @@ public with sharing class AmossExample_OrderTest {
                 .method( 'scheduleDelivery' )
                 .returning( true );
 
-        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.getDouble();
 
         Test.startTest();
 
@@ -274,7 +274,7 @@ public with sharing class AmossExample_OrderTest {
                 .thenParameter( deliveryDate )
                 .returning( true );
 
-        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.getDouble();
 
         Test.startTest();
 
@@ -321,7 +321,7 @@ public with sharing class AmossExample_OrderTest {
             .when()
                 .method( 'canDeliver' )
                 .willReturn( false );
-        AmossExample_DeliveryProvider cannotDeliverProvider = (AmossExample_DeliveryProvider)cannotDeliverController.generateDouble();
+        AmossExample_DeliveryProvider cannotDeliverProvider = (AmossExample_DeliveryProvider)cannotDeliverController.getDouble();
 
         // Configure a Test Double that can deliver
         //
@@ -333,12 +333,12 @@ public with sharing class AmossExample_OrderTest {
             .also().when()
                 .method( 'scheduleDelivery' )
                 .willReturn( true );
-        AmossExample_DeliveryProvider canDeliverProvider = (AmossExample_DeliveryProvider)canDeliverController.generateDouble();
+        AmossExample_DeliveryProvider canDeliverProvider = (AmossExample_DeliveryProvider)canDeliverController.getDouble();
 
         // Configure a Test Double that shouldn't be called
         //
         Amoss_Instance shouldntBeCalledController = new Amoss_Instance( AmossExample_DeliveryProvider.class );
-        AmossExample_DeliveryProvider shouldntBeCalledProvider = (AmossExample_DeliveryProvider)shouldntBeCalledController.generateDouble();
+        AmossExample_DeliveryProvider shouldntBeCalledProvider = (AmossExample_DeliveryProvider)shouldntBeCalledController.getDouble();
 
         Test.startTest();
 
@@ -399,7 +399,7 @@ public with sharing class AmossExample_OrderTest {
                 .withParameter( deliveryPostcode )
                 .thenParameter( deliveryDate )
                 .willReturn( false );
-        AmossExample_DeliveryProvider cannotDeliverProvider = (AmossExample_DeliveryProvider)cannotDeliverController.generateDouble();
+        AmossExample_DeliveryProvider cannotDeliverProvider = (AmossExample_DeliveryProvider)cannotDeliverController.getDouble();
 
         // Configure a Test Double that can deliver
         //
@@ -415,7 +415,7 @@ public with sharing class AmossExample_OrderTest {
                 .withParameter( deliveryPostcode )
                 .thenParameter( deliveryDate )
                 .willReturn( true );
-        AmossExample_DeliveryProvider canDeliverProvider = (AmossExample_DeliveryProvider)canDeliverController.generateDouble();
+        AmossExample_DeliveryProvider canDeliverProvider = (AmossExample_DeliveryProvider)canDeliverController.getDouble();
 
         // Configure a Test Double that shouldn't be called
         //
@@ -424,7 +424,7 @@ public with sharing class AmossExample_OrderTest {
             .allowsAnyCall( false );    // This switches off the behaviour that means that any call to a valid method is allowed.
                                         // With the lack of any when, allows or expects defined, this means that any call to any method
                                         // will result in a test failure
-        AmossExample_DeliveryProvider shouldntBeCalledProvider = (AmossExample_DeliveryProvider)shouldntBeCalledController.generateDouble();
+        AmossExample_DeliveryProvider shouldntBeCalledProvider = (AmossExample_DeliveryProvider)shouldntBeCalledController.getDouble();
 
         Test.startTest();
 
@@ -466,7 +466,7 @@ public with sharing class AmossExample_OrderTest {
                 .thenParameter( deliveryDate )
                 .throws( new AmossExample_DeliveryProvider.DeliveryProviderException( 'This is the exception thrown' ) );
 
-        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.generateDouble();
+        AmossExample_DeliveryProvider deliveryProvider = (AmossExample_DeliveryProvider)deliveryProviderController.getDouble();
 
         Test.startTest();
 

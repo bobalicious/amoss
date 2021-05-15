@@ -39,10 +39,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
+    private static void whenNoMethodsAreDefinedAndAMethodIsCalled_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
@@ -56,10 +56,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void forAnInterface_whenNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
+    private static void forAnInterface_whenNoMethodsAreDefinedAndAMethodIsCalled_returnNull() {
 
         Amoss_Instance interfaceUnderDoubleController = new Amoss_Instance( AmossTest_InterfaceToDouble.class );
-        AmossTest_InterfaceToDouble interfaceUnderDouble = (AmossTest_InterfaceToDouble)interfaceUnderDoubleController.generateDouble();
+        AmossTest_InterfaceToDouble interfaceUnderDouble = (AmossTest_InterfaceToDouble)interfaceUnderDoubleController.getDouble();
 
         Test.startTest();
             String returnFromDouble = interfaceUnderDouble.methodUnderDouble( 'OtherActualParam1', 1 );
@@ -74,10 +74,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWillReturn_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void whenMethodWillReturn_whenCalled_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -97,10 +97,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWillReturnShortcut_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void whenMethodWillReturnShortcut_whenCalled_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when( 'methodUnderDouble' )
@@ -119,10 +119,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodReturns_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void whenMethodReturns_whenCalled_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -142,10 +142,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodReturning_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void whenMethodReturning_whenCalled_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -160,15 +160,221 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method isFluent
+    * @case   when an unspecified, fluent method is called
+    * @result will return the generated double
+    */
+    @isTest
+    private static void isFluent_whenAnUnspecifiedFluentMethodIsCalled_returnTheGeneratedDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .isFluent();
+
+        Test.startTest();
+            AmossTest_ClassToDouble returnFromDouble = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        System.assertEquals( classToDouble, returnFromDouble, 'isFluent, when an unspecified, fluent method is called, will return the generated double' );
+    }
+
+    /**
+    * @method isFluent
+    * @case   when an unspecified, non fluent method is called
+    * @result will throw an exception
+    */
+    @isTest
+    private static void isFluent_whenAnUnspecifiedNonFluentMethodIsCalled_throwAnException() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .isFluent();
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDouble( '1', 2 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( true, exceptionThrown, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
+        System.assertEquals( 'Invalid conversion from runtime type ' + CLASS_TO_DOUBLE + ' to String', exceptionMessage, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
+    }
+
+    /**
+    * @method isFluent
+    * @case   when an unspecified, method with no return is called
+    * @result will not throw an exception
+    */
+    @isTest
+    private static void isFluent_whenAnUnspecifiedMethodWithNoReturnIsCalled_notThrowAnException() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .isFluent();
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDoubleWithNoReturn( '1', 2 );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( false, exceptionThrown, 'isFluent, when an unspecified, method with no return is called, will not throw an exception' );
+    }
+
+    /**
+    * @method isFluent
+    * @case   when a specified method with no defined return is called
+    * @result will return null
+    */
+    @isTest
+    private static void isFluent_whenAnSpecifiedMethodWithNoDefinedReturnIsCalled_returnNull() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .isFluent()
+            .when( 'fluentMethod' );
+
+        Test.startTest();
+            AmossTest_ClassToDouble returnFromMethod = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromMethod, 'isFluent, when a specified method with no defined return is called, will return null' );
+    }
+
+    /**
+    * @method isFluent
+    * @case   when a specified method with a defined return is called
+    * @result will return the defined return
+    */
+    @isTest
+    private static void isFluent_whenAnSpecifiedMethodWithADefinedReturnIsCalled_returnTheDefinedReturn() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        AmossTest_ClassToDouble specifiedReturn = new AmossTest_ClassToDouble( 'unimportant' );
+        classToDoubleController
+            .isFluent()
+            .when( 'fluentMethod' )
+            .returns( specifiedReturn );
+
+        Test.startTest();
+            AmossTest_ClassToDouble returnFromMethod = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        System.assertEquals( specifiedReturn, returnFromMethod, 'isFluent, when a specified method with a defined return is called, will return the specified return' );
+    }
+
+    /**
+    * @method byDefaultMethodsReturn
+    * @case   when an unspecified, method is called
+    * @result will return the specified value
+    */
+    @isTest
+    private static void isFluent_whenAnUnspecifiedMethodIsCalled_returnTheSpecifiedValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .byDefaultMethodsReturn( 'DefaultReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        System.assertEquals( 'DefaultReturn', returnFromDouble, 'byDefaultMethodsReturn,  when an unspecified, method is called, will return the specified value' );
+    }
+
+    /**
+    * @method byDefaultMethodsReturn
+    * @case   when an unspecified, method with a different return type is called
+    * @result will throw an exception
+    */
+    @isTest
+    private static void byDefaultMethodsReturn_whenAnUnspecifiedMethodWithADiffReturnTypeIsCalled_throwAnException() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .byDefaultMethodsReturn( 'DefaultReturn' );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( null );
+            } catch( Exception e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( true, exceptionThrown, 'byDefaultMethodsReturn, when an unspecified method with a different return type is called, will throw an exception' );
+        System.assertEquals( 'Invalid conversion from runtime type String to List<ANY>', exceptionMessage, 'byDefaultMethodsReturn, when an unspecified method with a different return type, will throw an exception' );
+    }
+
+    /**
+    * @method byDefaultMethodsReturn
+    * @case   when an unspecified, method with no return is called
+    * @result will not throw an exception
+    */
+    @isTest
+    private static void byDefaultMethodsReturn_whenAnUnspecifiedMethodWithNoReturnIsCalled_notThrowAnException() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .byDefaultMethodsReturn( 'DefaultReturn' );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                classToDouble.methodUnderDoubleWithNoReturn( '1', 2 );
+            } catch( DmlException e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( false, exceptionThrown, 'byDefaultMethodsReturn, when an unspecified, method with no return is called, will not throw an exception' );
+    }
+
+    /**
     * @method when.method.handledBy, StubProvider
     * @case   when that method is called
     * @result will call handleMethodCall on the specified object and return the result
     */
     @isTest
-    private static void whenMethodHandledByStubProvider_whenTheMethodIsCalled_willCallTheHandlerAndReturnTheResult() {
+    private static void whenMethodHandledByStubProvider_whenCalled_CallTheHandlerAndReturnTheResult() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         StubProvider methodHandler = new MethodHandlerUsingStubProvider();
 
@@ -204,10 +410,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will call handleMethodCall on the specified object and return the result
     */
     @isTest
-    private static void whenMethodHandledByAmossMethodHandler_whenTheMethodIsCalled_willCallTheHandlerAndReturnTheResult() {
+    private static void whenMethodHandledByAmossMethodHandler_whenCalled_CallTheHandlerAndReturnTheResult() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         // Generate a mock object version of an Amoss_MethodHandler to test handledBy with
         Amoss_Instance methodHandlerController = new Amoss_Instance( Amoss_MethodHandler.class );
@@ -217,7 +423,7 @@ public with sharing class AmossTest_InstanceTest {
                 .withParameter().setToTheSameValueAs( new List<Object>{ 'OtherActualParam1', 1 } )
                 .returns( 'expectedReturn' );
 
-        Amoss_MethodHandler methodHandler = (Amoss_MethodHandler)methodHandlerController.generateDouble();
+        Amoss_MethodHandler methodHandler = (Amoss_MethodHandler)methodHandlerController.getDouble();
 
         classToDoubleController
             .when()
@@ -241,10 +447,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will throw the stated exception
     */
     @isTest
-    private static void whenMethodThrows_whenTheMethodIsCalled_willThrowTheStatedException() {
+    private static void whenMethodThrows_whenCalled_throwTheStatedException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -273,10 +479,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will throw the stated exception
     */
     @isTest
-    private static void whenMethodThrowing_whenTheMethodIsCalled_willThrowTheStatedException() {
+    private static void whenMethodThrowing_whenCalled_throwTheStatedException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -305,10 +511,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will throw the stated exception
     */
     @isTest
-    private static void whenMethodWillThrow_whenTheMethodIsCalled_willThrowTheStatedException() {
+    private static void whenMethodWillThrow_whenCalled_throwTheStatedException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -337,10 +543,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWillReturn_forAnInterface_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void whenMethodWillReturn_forAnInterface_whenCalled_returnSetUpValue() {
 
         Amoss_Instance interfaceUnderDoubleController = new Amoss_Instance( AmossTest_InterfaceToDouble.class );
-        AmossTest_InterfaceToDouble interfaceUnderDouble = (AmossTest_InterfaceToDouble)interfaceUnderDoubleController.generateDouble();
+        AmossTest_InterfaceToDouble interfaceUnderDouble = (AmossTest_InterfaceToDouble)interfaceUnderDoubleController.getDouble();
 
         interfaceUnderDoubleController
             .when()
@@ -360,10 +566,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWillReturn_whenADifferentMethodIsCalled_willReturnNull() {
+    private static void whenMethodWillReturn_whenADiffMethodIsCalled_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -383,10 +589,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+    private static void whenWithParameterWillReturn_whenCallWithParams_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -408,10 +614,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterSetToWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+    private static void whenWithParameterSetToWillReturn_whenCallWithParams_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -427,6 +633,422 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
+    /**
+    * @method when.method.withParameter.set.willReturn
+    * @case   when that method is called with the parameter set (not null)
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterSet_whenCallWithParamSet_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().set()
+                .thenParameter().set()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'SetValue', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.set.willReturn, and the method called with parameter set to not null, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.set.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterSet_whenCallWithParamSetToNull_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().set()
+                .thenParameter().set()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.set.willReturn, and the method called with the parameter set to null, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.containing.willReturn
+    * @case   when that method is called with the parameter set to a String that contains the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterContaining_whenCallWithParamSetToAStringThatContainsTheGiven_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().containing( 'match' )
+                .thenAnyParameter()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to a string containing the given value, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.containing.willReturn
+    * @case   when that method is called with the parameter set to a String that contains the given one, but in the wrong case
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterContaining_whenCallWithParamSetToAStringThatContainsTheGivenInWrongCase_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().containing( 'NoMatch' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to a string containing the given value in the wrong case, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.containing.willReturn
+    * @case   when that method is called with the parameter set to an empty string
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterContaining_whenCallWithParamSetToAnEmptyString_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().containing( 'NoMatch' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( '', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to an empty string, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.containing.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterContaining_whenCallWithParamSetToNull_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().containing( 'NoMatch' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to null, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that matches the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterMatching_whenCallWithParamSetToAStringThatMatchesTheGiven_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 't.*m.*s' )
+                .thenAnyParameter()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that does not all match the expression
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterMatching_whenCallWithParamSetToAStringDoesNotWhileMatch_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'm.*s' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string that does not all match the given expression will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that does not match the given one
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterMatchingwhenTheMethodIsCalledWithParamSetToAStringDoesNotMatch_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'Ma.*s' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string not matching the given value will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterMatching_whenCallWithParamSetToNull_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 'a*b' )
+                .thenAnyParameter()
+                .willReturn( 'notExpectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to null, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when the stated regular expression is not valid
+    * @result will fail the test
+    */
+    @isTest
+    private static void whenWithParameterMatching_whenTheRegExpIsNotValid_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        Test.startTest();
+            try {
+                classToDoubleController
+                    .when()
+                        .method( 'methodUnderDouble' )
+                        .withParameter().matching( '*' );
+                } catch( TestException e ) {}
+        Test.stopTest();
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, by calling assert with false' );
+
+        String expectedAssertion = 'The regular expression "*" does not appear to be valid: Invalid regex: Dangling meta character \'*\' near index 0';
+        String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        Amoss_Asserts.assertContains( expectedAssertion, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an assertion message that clearly describes the issue' );
+
+        String expectedExpected = 'Expected: A valid regular expression as per https://docs.oracle.com/javase/1.5.0/docs/api/index.html?java/util/regex/Pattern.html';
+
+        Amoss_Asserts.assertContains( expectedExpected, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an expected that clearly describes what was expected' );
+
+        String expectedActual = 'Actual: *';
+
+        Amoss_Asserts.assertContains( expectedActual, actualAssertion, 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, will fail, by calling assert with an actual that contains the regular expression that was set' );
+    }
+
+    /**
+    * @method when.method.withParameter.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to a List that is the stated length
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterAListOfLength_whenCallWithParamListOfGivenLength_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().aListOfLength( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter set to a List that is the stated length, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to a List that is a different length
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterAListOfLength_whenCallWithParamListOfDiffLength_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().aListOfLength( 10 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter set to a List that is not the stated length, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to something that is not a list
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterAListOfLength_whenCallWithParamNotAList_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().aListOfLength( 10 )
+                .thenAnyParameter()
+                .willReturn( 'return' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'Thing', 2 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter that is not a list, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.aListOfLength.withElementAt.willReturn
+    * @case   when that method is called with the parameter set to a List that is the stated length, and other criteria met
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterAListOfLengthWithElementAt_whenAllMet_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().aListOfLength( 3 )
+                    .withElementAt( 0 ).setTo( 1 )
+                    .withElementAt( 1 ).setTo( 2 )
+                    .withElementAt( 2 ).setTo( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameter.aListOfLength.withElementAt.willReturn, when that method is called with all criteria met, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.aListOfLength.withElementAt.willReturn
+    * @case   when not all criteria met
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterAListOfLengthWithElementAt_whenNotAllMet_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().aListOfLength( 3 )
+                    .withElementAt( 0 ).setTo( 1 )
+                    .withElementAt( 1 ).setTo( 99 )
+                    .withElementAt( 2 ).setTo( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.aListOfLength.withElementAt.willReturn, when that method is called with not all criteria met, will not return the stated value' );
+    }
 
     /**
     * @method when.method.withParameter.noVerificationSet
@@ -434,14 +1056,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void whenMethodWithParameterNoVerificationSet_whenTheMethodIsCalled_willFailTheTest() {
+    private static void whenWithParameterNoVerificationSet_whenCalled_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -467,10 +1089,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParametersWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+    private static void whenWithParametersWillReturn_whenCallWithParams_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -493,10 +1115,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+    private static void whenWithParameterNamedSetToWillReturn_whenCallWithParams_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -518,10 +1140,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToWillReturn_whenNotAllSetAndTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+    private static void whenWithParameterNamedSetToWillReturn_whenNotAllSetAndTheMethodIsCalledWithParams_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -542,10 +1164,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParametersNamedWillReturn_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+    private static void whenWithParametersNamedWillReturn_whenCallWithParams_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -568,10 +1190,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParametersNamedWillReturn_whenNotAllSpecifiedAndTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+    private static void whenWithParametersNamedWillReturn_whenNotAllSpecifiedAndTheMethodIsCalledWithParams_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -594,10 +1216,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterWillReturn_forAnInterface_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValue() {
+    private static void whenWithParameterWillReturn_forAnInterface_whenCallWithParams_returnSetUpValue() {
 
         Amoss_Instance interfaceUnderDoubleController = new Amoss_Instance( AmossTest_InterfaceToDouble.class );
-        AmossTest_InterfaceToDouble interfaceUnderDouble = (AmossTest_InterfaceToDouble)interfaceUnderDoubleController.generateDouble();
+        AmossTest_InterfaceToDouble interfaceUnderDouble = (AmossTest_InterfaceToDouble)interfaceUnderDoubleController.getDouble();
 
         interfaceUnderDoubleController
             .when()
@@ -619,10 +1241,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParameterWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+    private static void whenWithParameterWillReturn_whenCallWithDiffParams_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -644,10 +1266,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParametersWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+    private static void whenWithParametersWillReturn_whenCallWithDiffParams_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -670,10 +1292,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParameterSetToWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+    private static void whenWithParameterSetToWillReturn_whenCallWithDiffParams_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -695,10 +1317,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+    private static void whenWithParameterNamedSetToWillReturn_whenCallWithDiffParams_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -714,15 +1336,285 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.withParameterNamed.set.willReturn
+    * @case   when that method is called with the parameter set (not null)
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedSet_whenCallWithParamSet_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).set()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'SetValue', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.set.willReturn, and the method called with parameter set to not null, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.set.willReturn
+    * @case   when that method is called with the parameter set to null
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedSet_whenCallWithParamSetToNull_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).set()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.set.willReturn, and the method called with the parameter set to null, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.containing.willReturn
+    * @case   when that method is called with the parameter containing
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedContaining_whenCallWithParamContaining_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).containing( 'will match' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this will match the config', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.containing.willReturn, and the method called with parameter set to a String containing, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.containing.willReturn
+    * @case   when that method is called with the parameter not containing
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedContaining_whenCallWithParamNotContaining_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).containing( 'will not match' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this will no match the config', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.containing.willReturn, and the method called with parameter set to a String not containing, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that matches the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedMatching_whenCallWithParamSetToAStringThatMatchesTheGiven_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).matching( 't.*m.*s' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.matching.willReturn
+    * @case   when that method is called with the parameter set to a String that does not match the given one
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedMatching_whenCallWithParamSetToAStringThatNotMatchesTheGiven_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).matching( 't.*m.*s' )
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'does not match', 1 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.matching.willReturn, and the method called with parameter set to a string that does not match the given value, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to a List that is the stated length
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLength_whenCallWithParamListOfGivenLength_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter set to a List that is the stated length, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to a List that is a different length
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLength_whenCallWithParamListOfDiffLength_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 10 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter set to a List that is not the stated length, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.willReturn
+    * @case   when that method is called with the parameter set to something that is not a list
+    * @result will not return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLength_whenCallWithParamNotAList_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 10 )
+                .willReturn( 'return' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'Thing', 2 );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter that is not a list, will not return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.withElementAt.willReturn
+    * @case   when that method is called with the parameter set to a List that is the stated length, and other criteria met
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLengthWithElementAt_whenAllMet_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 3 )
+                    .withElementAt( 0 ).setTo( 1 )
+                    .withElementAt( 1 ).setTo( 2 )
+                    .withElementAt( 2 ).setTo( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.withElementAt.willReturn, when that method is called with all criteria met, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameterNamed.aListOfLength.withElementAt.willReturn
+    * @case   when not all criteria met
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterNamedAListOfLengthWithElementAt_whenNotAllMet_notReturnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).aListOfLength( 3 )
+                    .withElementAt( 0 ).setTo( 1 )
+                    .withElementAt( 1 ).setTo( 99 )
+                    .withElementAt( 2 ).setTo( 3 )
+                .willReturn( new List<String>{ 'return' } );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
+        Test.stopTest();
+
+        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.withElementAt.willReturn, when that method is called with not all criteria met, will not return the stated value' );
+    }
+
+    /**
     * @method when.method.withParameters.setTo.willReturn (named)
     * @case   when that method is called with different parameters
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParametersNamedSetToWillReturn_whenTheMethodIsCalledWithDifferentParameters_willReturnNull() {
+    private static void whenWithParametersNamedSetToWillReturn_whenCallWithDiffParams_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -754,10 +1646,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+    private static void whenMethodWillReturn_whenSetWithObjAndPassed_returnThatValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -780,10 +1672,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnNull() {
+    private static void whenMethodWillReturn_whenSetWithObjAndDiffInstPassed_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -807,10 +1699,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenSetWithObjAndPassed_returnThatValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -833,10 +1725,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnTheStatedValue() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenSetWithObjAndDiffInstPassed_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -860,10 +1752,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassedWithDifferentProperties_willReturnNull() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenSetWithObjAndDiffInstPassedWithDiffProps_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -887,10 +1779,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+    private static void whenWithParameterNamedWillReturn_whenSetWithObjAndPassed_returnThatValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -913,10 +1805,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParameterNamedWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnNull() {
+    private static void whenWithParameterNamedWillReturn_whenSetWithObjAndDiffInstPassed_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -940,10 +1832,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndPassed_willReturnThatValue() {
+    private static void whenWithParameterNamedSetToTheSameValueAsWillReturn_whenSetWithObjAndPassed_returnThatValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -966,10 +1858,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassed_willReturnTheStatedValue() {
+    private static void whenWithParameterNamedSetToTheSameValueAsWillReturn_whenSetWithObjAndDiffInstPassed_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -993,10 +1885,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithObjectAndDifferentInstancePassedWithDifferentProperties_willReturnNull() {
+    private static void whenWithParameterNamedSetToTheSameValueAsWillReturn_whenSetWithObjAndDiffInstPassedWithDiffProps_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -1020,10 +1912,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+    private static void whenMethodWillReturn_whenIsSetWithSobjectAndPassed_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectPassed = new Contact( LastName = 'TheContact' );
 
@@ -1046,10 +1938,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willReturnNull() {
+    private static void whenMethodWillReturn_whenIsSetWithSobjectAndDiffInstPassed_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -1073,10 +1965,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndPassed_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectPassed = new Contact( LastName = 'TheContact' );
 
@@ -1099,10 +1991,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will still return the stated value
     */
     @isTest
-    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willStillReturnTheStatedValue() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDiffInstPassed_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -1126,10 +2018,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassedWithDifferentValues_willReturnNull() {
+    private static void whenMethodSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDiffInstPassedWithDiffValues_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -1153,10 +2045,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+    private static void whenWithParameterNamedWillReturn_whenIsSetWithSobjectAndPassed_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectPassed = new Contact( LastName = 'TheContact' );
 
@@ -1179,10 +2071,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParameterNamedWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willReturnNull() {
+    private static void whenWithParameterNamedWillReturn_whenIsSetWithSobjectAndDiffInstPassed_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -1206,10 +2098,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndPassed_willReturnTheStatedValue() {
+    private static void whenWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndPassed_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectPassed = new Contact( LastName = 'TheContact' );
 
@@ -1232,10 +2124,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will still return the stated value
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassed_willStillReturnTheStatedValue() {
+    private static void whenWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDiffInstPassed_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -1259,10 +2151,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return null
     */
     @isTest
-    private static void whenMethodWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDifferentInstancePassedWithDifferentValues_willReturnNull() {
+    private static void whenWithParameterNamedSetToTheSameValueAsWillReturn_whenIsSetWithSobjectAndDiffInstPassedWithDiffValues_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -1286,10 +2178,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value for each call
     */
     @isTest
-    private static void whenMethodWithParameterWillReturnMultiple_whenTheMethodIsCalledWithTheParameters_willReturnTheStatedValues() {
+    private static void whenWithParameterWillReturnMultiple_whenCallWithParams_returnSetUpValues() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -1318,10 +2210,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will always return the first value with parameters that match
     */
     @isTest
-    private static void whenMethodWithParameterWillReturnMultiple_whenSameParamsUsed_willAlwaysReturnTheFirstMatch() {
+    private static void whenWithParameterWillReturnMultiple_whenSameParamsUsed_alwaysReturnTheFirstMatch() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -1350,10 +2242,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will always return the first value with parameters that match
     */
     @isTest
-    private static void whenMethodWithParameterWillReturnMultiplePositionFirstThenNamed_whenSameParamsUsed_willAlwaysReturnTheFirstMatch() {
+    private static void whenWithParameterWillReturnMultiplePositionFirstThenNamed_whenSameParamsUsed_alwaysReturnTheFirstMatch() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -1382,10 +2274,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will always return the first value with parameters that match
     */
     @isTest
-    private static void whenMethodWithParameterWillReturnMultipleNamedFirstThenPosition_whenSameParamsUsed_willAlwaysReturnTheFirstMatch() {
+    private static void whenWithParameterWillReturnMultipleNamedFirstThenPosition_whenSameParamsUsed_alwaysReturnTheFirstMatch() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -1414,10 +2306,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value for each call, based on the method called
     */
     @isTest
-    private static void whenMethodWithParameterWillReturnMultiple_whenDifferentMethodsDefined_willReturnTheStatedValues() {
+    private static void whenWithParameterWillReturnMultiple_whenDiffMethodsDefined_returnSetUpValues() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -1446,10 +2338,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will match in order, returning the first definition that matches
     */
     @isTest
-    private static void whenMethodWithAnyParameterWillReturnMultiple_whenTheMethodIsCalledWithTheParameters_willReturnTheFirstMatching() {
+    private static void whenWithAnyParameterWillReturnMultiple_whenCallWithParams_returnTheFirstMatching() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .when()
@@ -1482,10 +2374,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void allowsMethodReturning_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void allowsMethodReturning_whenCalled_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allows()
@@ -1505,10 +2397,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void allowsMethodReturningShortcut_whenTheMethodIsCalled_willReturnTheStatedValue() {
+    private static void allowsMethodReturningShortcut_whenCalled_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allows( 'methodUnderDouble' )
@@ -1526,14 +2418,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void allowsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
+    private static void allowsMethodReturning_whenADiffMethodIsCalled_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allows()
@@ -1557,14 +2449,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsMethodReturning_whenCallWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allows()
@@ -1590,10 +2482,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value for each method
     */
     @isTest
-    private static void allowsMethodReturning_whenMultipleMethodsAreDefinedAndCalled_willReturnTheStatedValues() {
+    private static void allowsMethodReturning_whenMultipleMethodsAreDefinedAndCalled_returnSetUpValues() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allows()
@@ -1618,10 +2510,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value for the first matching
     */
     @isTest
-    private static void allowsMethodReturning_whenMethodIsDefinedWithMultipleParameters_willReturnTheFirstThatMatches() {
+    private static void allowsMethodReturning_whenMethodIsDefinedWithMultipleParams_returnTheFirstThatMatches() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allows()
@@ -1656,14 +2548,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsNoCalls_whenAMethodIsCalled_willFailTheTest() {
+    private static void expectsNoCalls_whenAMethodIsCalled_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expectsNoCalls();
@@ -1689,10 +2581,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass the test
     */
     @isTest
-    private static void expectsNoCalls_whenAMethodIsNotCalled_willPassTheTest() {
+    private static void expectsNoCalls_whenAMethodIsNotCalled_passTheTest() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expectsNoCalls();
@@ -1708,10 +2600,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void expectsMethodReturning_whenTheMethodIsCalledOnce_willReturnTheStatedValue() {
+    private static void expectsMethodReturning_whenCalledOnce_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -1731,10 +2623,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value
     */
     @isTest
-    private static void expectsMethodReturningShortcut_whenTheMethodIsCalledOnce_willReturnTheStatedValue() {
+    private static void expectsMethodReturningShortcut_whenCalledOnce_returnSetUpValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects( 'methodUnderDouble' )
@@ -1753,14 +2645,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
+    private static void expectsMethodReturning_whenADiffMethodIsCalled_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -1785,14 +2677,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void expectsMethodReturning_whenCallWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -1822,10 +2714,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectsIsSetWithObjectAndPassed_willNotFail() {
+    private static void expectsMethodReturning_whenExpectsObject_andPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectPassed = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -1848,14 +2740,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectsIsSetWithObjectAndDifferentInstancePassed_willFail() {
+    private static void expectsMethodReturning_whenExpectsObject_andDiffInstPassed_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -1881,10 +2773,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsIsSetWithObjectAndDifferentInstancePassed_willNotFail() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsObject_andDiffInstPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -1909,14 +2801,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsIsSetWithObjectAndDifferentInstancePassedWithDifferentProperties_willFail() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsObject_andDiffInstPassedWithDiffProps_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         AmossTest_ClassToDouble.PassableObject objectExpected = new AmossTest_ClassToDouble.PassableObject( 'TheObject' );
 
@@ -1942,10 +2834,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectAndPassed_willNotFail() {
+    private static void expectsMethodReturning_whenExpectsSobject_andPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectPassed = new Contact( LastName = 'TheContact' );
 
@@ -1968,14 +2860,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassed_willFail() {
+    private static void expectsMethodReturning_whenExpectsSobject_andDiffInstPassed_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -2001,10 +2893,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassed_willNotFail() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsSobject_andDiffInstPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -2028,14 +2920,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassedWithDifferentValues_willFail() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsSobject_andDiffInstPassedWithDiffValues_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -2061,10 +2953,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetLikeReturning_whenExpectsIsSetWithSobjectAndPassed_willNotFail() {
+    private static void expectsWithFieldsSetLikeReturning_whenExpectsSobject_andPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
 
@@ -2087,10 +2979,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetLikeReturning_whenDifferentInstancePassedWithSameProperties_willNotFail() {
+    private static void expectsWithFieldsSetLikeReturning_whenDiffInstPassedWithSameProps_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
 
@@ -2114,10 +3006,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetLikeReturning_whenDifferentInstancePassedWithExtraProperties_willNotFail() {
+    private static void expectsWithFieldsSetLikeReturning_whenDiffInstPassedWithExtraProps_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
 
@@ -2141,14 +3033,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetLikeReturning_whenDifferentInstancePassedWithDifferentProperties_willFail() {
+    private static void expectsWithFieldsSetLikeReturning_whenDiffInstPassedWithDiffProps_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
 
@@ -2174,14 +3066,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetLikeReturning_whenDifferentInstancePassedWithFewerProperties_willFail() {
+    private static void expectsWithFieldsSetLikeReturning_whenDiffInstPassedWithFewerProps_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
 
@@ -2207,14 +3099,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetLikeReturning_whenExpectsIsSetWithSobjectAndNullIsPassed_willFail() {
+    private static void expectsWithFieldsSetLikeReturning_whenExpectsSobject_andNullIsPassed_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
 
@@ -2241,14 +3133,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetLikeReturning_whenParameterPassedIsNotAnSobject_willFail() {
+    private static void expectsWithFieldsSetLikeReturning_whenParameterPassedIsNotAnSobject_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
 
@@ -2277,10 +3169,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetLikeReturning_whenExpectsIsSetWithNull_willFail() {
+    private static void expectsWithFieldsSetLikeReturning_whenExpectsIsSetWithNull_fail() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         String  exceptionMessage;
 
@@ -2305,10 +3197,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetToReturning_whenSobjectPassedWithSameProperties_willNotFail() {
+    private static void expectsWithFieldsSetToReturning_whenSobjectPassedWithSameProps_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
 
@@ -2332,10 +3224,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodWithParameterNamedWithFieldsSetToReturning_whenSobjectPassedWithSameProperties_willNotFail() {
+    private static void expectsWithParameterNamedWithFieldsSetToReturning_whenSobjectPassedWithSameProps_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
 
@@ -2359,10 +3251,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetToReturning_whenSobjectPassedWithExtraProperties_willNotFail() {
+    private static void expectsWithFieldsSetToReturning_whenSobjectPassedWithExtraProps_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
 
@@ -2386,14 +3278,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetToReturning_whenSobjectWithDifferentProperties_willFail() {
+    private static void expectsWithFieldsSetToReturning_whenSobjectWithDiffProps_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
 
@@ -2419,14 +3311,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetToReturning_whenSobjectPassedWithFewerProperties_willFail() {
+    private static void expectsWithFieldsSetToReturning_whenSobjectPassedWithFewerProps_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
 
@@ -2452,14 +3344,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetToReturning_whenExpectsIsSetAndNullIsPassed_willFail() {
+    private static void expectsWithFieldsSetToReturning_whenExpectsIsSetAndNullIsPassed_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
 
@@ -2486,10 +3378,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetToReturning_whenExpectsIsSetWithNull_willFail() {
+    private static void expectsWithFieldsSetToReturning_whenExpectsIsSetWithNull_fail() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         String  exceptionMessage;
 
@@ -2514,14 +3406,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetToReturning_whenExpectationIsSetWithAnInvalidField_willFail() {
+    private static void expectsWithFieldsSetToReturning_whenExpectIsSetWithAnInvalidField_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst', 'InvalidField' => 'A value' };
 
@@ -2550,14 +3442,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithFieldsSetToReturning_whenParameterPassedIsNotAnSobject_willFail() {
+    private static void expectsWithFieldsSetToReturning_whenParameterPassedIsNotAnSobject_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'LastName' => 'ExpectedLast', 'FirstName' => 'ExpectedFirst' };
 
@@ -2586,10 +3478,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsSetToReturning_whenAllElementsInTheParameterMatch_willPass() {
+    private static void expectsWithAllElementsSetToReturning_whenAllElementsInTheParameterMatch_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<String> expectedReturn = new List<String>{ 'expectedReturn' };
 
@@ -2614,14 +3506,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsSetToReturning_whenNotAllElementsInTheParameterMatch_willFail() {
+    private static void expectsWithAllElementsSetToReturning_whenNotAllElementsInTheParameterMatch_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -2647,14 +3539,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAllElementsSetToReturning_whenTheParameterPassedIsNotAList_willFail() {
+    private static void expectsWithAllElementsSetToReturning_whenTheParameterPassedIsNotAList_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -2682,10 +3574,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass the test
     */
     @isTest
-    private static void expectsMethodWithAnyElementSetToReturning_whenAnyElementsInTheParameterMatch_willPass() {
+    private static void expectsWithAnyElementSetToReturning_whenAnyElementsInTheParameterMatch_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<String> expectedReturn = new List<String>{ 'expectedReturn' };
 
@@ -2710,14 +3602,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAnyElementSetToReturning_whenNoElementsInTheParameterMatch_willFail() {
+    private static void expectsWithAnyElementSetToReturning_whenNoElementsInTheParameterMatch_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -2743,14 +3635,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithAnyElementSetToReturning_whenTheParameterPassedIsNotAList_willFail() {
+    private static void expectsWithAnyElementSetToReturning_whenTheParameterPassedIsNotAList_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -2778,10 +3670,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass the test
     */
     @isTest
-    private static void expectsMethodWithElementAtSetToReturning_whenElementInTheParameterMatches_willPass() {
+    private static void expectsWithElementAtSetToReturning_whenElementInTheParameterMatches_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<String> expectedReturn = new List<String>{ 'expectedReturn' };
 
@@ -2806,10 +3698,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass the test
     */
     @isTest
-    private static void expectsMethodWithElementAtSetToReturningMultipleTimes_whenElementInTheParameterMatches_willPass() {
+    private static void expectsWithElementAtSetToReturningMultipleTimes_whenElementInTheParameterMatches_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<String> expectedReturn = new List<String>{ 'expectedReturn' };
 
@@ -2837,14 +3729,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithElementAtSetToReturning_whenSpecifiedElementDoesNotMatch_willFail() {
+    private static void expectsWithElementAtSetToReturning_whenSpecifiedElementDoesNotMatch_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -2870,14 +3762,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithElementAtSetToReturningMultipleTimes_whenSpecifiedElementDoesNotMatch_willFail() {
+    private static void expectsWithElementAtSetToReturningMultipleTimes_whenSpecifiedElementDoesNotMatch_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -2906,14 +3798,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithElementAtSetToReturning_whenSpecifiedElementDoesNotExist_willFail() {
+    private static void expectsWithElementAtSetToReturning_whenSpecifiedElementDoesNotExist_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -2939,14 +3831,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithElementAtSetToReturning_whenParameterIsNotAList_willFail() {
+    private static void expectsWithElementAtSetToReturning_whenParameterIsNotAList_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -2973,14 +3865,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithElementAtSetToReturning_whenParameterIsNull_willFail() {
+    private static void expectsWithElementAtSetToReturning_whenParameterIsNull_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -3001,15 +3893,744 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method expects.method.withElementAt.set.returning
+    * @case   when the list parameter passed has the element set to not null
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsWithElementAtSetReturning_whenElementInTheParameterIsSet_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).set()
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'set', 'set' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.set.returning, when the list parameter contains the element set to not null, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.set.returning
+    * @case   when the element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithElementAtSetReturning_whenElementIsNull_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).set();
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'set', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'Not Null', 'null',
+                                                    'expects.method.withElementAt.set returning, when the element is null' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.set.returning
+    * @case   when the list parameter passed has the element set to not null
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsWithAllElementsSetReturning_whenElementInTheParameterIsSet_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().set()
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'set', 'set' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAllElements.set.returning, when the list parameter contains the elements set to not null, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.set.returning
+    * @case   when an element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsSetReturning_whenElementIsNull_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().set();
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'set', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'Not Null', 'null',
+                                                    'expects.method.withAllElements.set returning, when an element is null' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.set.returning
+    * @case   when the list parameter passed has an element set to not null
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsWithAnyElementSetReturning_whenElementInTheParameterIsSet_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().set()
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'set', null } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAnyElement.set.returning, when the list parameter contains an elements set to not null, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.set.returning
+    * @case   when all elements are null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAnyElementSetReturning_whenAllElementsAreNull_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().set();
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ null, null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'Any value', '(null, null)',
+                                                    'expects.method.withAnyElement.set returning, when the element is null' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.set.returning
+    * @case   when the list is empty
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAnyElementSetReturning_whenNoElementsExist_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().set();
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>() );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'Any value', '()',
+                                                    'expects.method.withAnyElement.set returning, when the element is null' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.containing.returning
+    * @case   when the list parameter passed has the element set contain the value
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsWithElementAtContainingReturning_whenElementInTheParameterContains_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).containing( 'match' )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'unimportant', 'match' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.containing.returning, when the list parameter contains the element set to contain, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.containing.returning
+    * @case   when an element does not contain
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsContainingReturning_whenElementDoesNotContain_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().containing( 'match' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'a match', 'different', 'another match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'match', 'different',
+                                                    'expects.method.withAllElements.containing returning, when an element does not contain' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.containing.returning
+    * @case   when an element is not a String
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsContainingReturning_whenElementIsNotAString_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().containing( 'match' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'a match', 12, 'another match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String', 'Integer',
+                                                    'expects.method.withAllElements.containing returning, when an element is not a String' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.containing.returning
+    * @case   when an element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsContainingReturning_whenElementIsNull_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().containing( 'match' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'a match', null, 'another match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String', 'Unknown (null)',
+                                                    'expects.method.withAllElements.containing returning, when an element is not a String' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.containing.returning
+    * @case   when no elements match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAnyElementSetContaining_whenNoElementsMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().containing( 'match' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'not the same', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String value containing "match"', '(not the same, null)',
+                                                    'expects.method.withAnyElement.containing returning, when no elements match' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.matching.returning
+    * @case   when the list parameter passed has the element set matches the value
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsWithElementAtMatchingReturning_whenElementInTheParameterMatches_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).matching( 'm.*h' )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<String>{ 'unimportant', 'match' } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.matching.returning, when the list parameter contains the element set to match, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.matching.returning
+    * @case   when an element does not match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsMatchingReturning_whenAnElementDoesNotMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().matching( 'm.*h' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'match', 'different', 'match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'm.*h', 'different',
+                                                    'expects.method.withAllElements.matching returning, when an element does not match' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.matching.returning
+    * @case   when an element is not a String
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsMatchingReturning_whenElementIsNotAString_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().matching( 'm.*h' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'match', 12, 'match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String', 'Integer',
+                                                    'expects.method.withAllElements.matching returning, when an element is not a String' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.matching.returning
+    * @case   when an element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsMatchingReturning_whenElementIsNull_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().matching( 'm.*h' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'match', null, 'match' } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String', 'Unknown (null)',
+                                                    'expects.method.withAllElements.matching returning, when an element is not a String' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.matching.returning
+    * @case   when no elements match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAnyElementSetMatching_whenNoElementsMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().matching( 'm.*h' );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'not the same', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'String value matching "m.*h"', '(not the same, null)',
+                                                    'expects.method.withAnyElement.matching returning, when no elements match' );
+    }
+
+    /**
+    * @method expects.method.withElementAt.aListOfLength.returning
+    * @case   when the list parameter passed has the element set matches the value
+    * @result will pass the test
+    */
+    @isTest
+    private static void expectsWithElementAtAListOfLengthReturning_whenElementInTheParameterMatches_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        List<String> expectedReturn = new List<String>{ 'expectedReturn' };
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withElementAt( 1 ).aListOfLength( 2 )
+                .returning( expectedReturn );
+
+        Test.startTest();
+            List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Object>{ new List<Integer>{ 0, 1, 2 }, new List<Integer>{ 0, 1 } } );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+
+        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.aListOfLength.returning, when the list parameter contains the element set to match, will return the specified value' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.aListOfLength.returning
+    * @case   when an element does not match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsAListOfLengthReturning_whenAnElementDoesNotMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ new List<Integer>{ 0, 1 }, new List<Integer>{ 0 }, new List<Integer>{ 0, 1 } } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    '2', '1',
+                                                    'expects.method.withAllElements.aListOfLength returning, when an element does not match' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.aListOfLength.returning
+    * @case   when an element is not a List
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsAListOfLengthReturning_whenElementIsNotAList_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ new List<Integer>{ 0, 1 }, 'no match', new List<Integer>{ 0, 1 } } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'List', 'String',
+                                                    'expects.method.withAllElements.aListOfLength returning, when an element is not a List' );
+    }
+
+    /**
+    * @method expects.method.withAllElements.aListOfLength.returning
+    * @case   when an element is null
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAllElementsAListOfLengthReturning_whenElementIsNull_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAllElements().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ new List<Integer>{ 0, 1 }, null, new List<Integer>{ 0, 1 }} );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'List element 1 does not match what was expected',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'List', 'Unknown (null)',
+                                                    'expects.method.withAllElements.aListOfLength returning, when an element is not a List' );
+    }
+
+    /**
+    * @method expects.method.withAnyElement.aListOfLength.returning
+    * @case   when no elements match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithAnyElementAListOfLength_whenNoElementsMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameter().withAnyElement().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'not the same', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterInPositionAssertion( assertsDoubleController,
+                                                    'At least one element in the list should pass the described verification',
+                                                    CLASS_TO_DOUBLE + '.methodWithListOfObjects', 0,
+                                                    'List of length 2', '(not the same, null)',
+                                                    'expects.method.withAnyElement.aListOfLength returning, when no elements match' );
+    }
+
+    /**
+    * @method expects.method.withParameterNamed.withAnyElement.aListOfLength.returning
+    * @case   when no elements match
+    * @result will fail the test
+    */
+    @isTest
+    private static void expectsWithNamedAnyElementAListOfLength_whenNoElementsMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController.setAsserts( assertsDouble );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .expects()
+                .method( 'methodWithListOfObjects' )
+                .withParameterNamed( 'parameter1' ).withAnyElement().aListOfLength( 2 );
+
+        Test.startTest();
+            try {
+                classToDouble.methodWithListOfObjects( new List<Object>{ 'not the same', null } );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        checkForWrongParameterNamedAssertion( assertsDoubleController,
+                                                'At least one element in the list should pass the described verification',
+                                                CLASS_TO_DOUBLE + '.methodWithListOfObjects', 'parameter1',
+                                                'List of length 2', '(not the same, null)',
+                                                'expects.method.withParmeterNamed.withAnyElement.aListOfLength returning, when no elements match' );
+    }
+
+    /**
     * @method expects.method.verifiedBy.returning
     * @case   when the verifier does not throw an exception
     * @result will pass the test
     */
     @isTest
-    private static void expectsMethodVerifiedByReturning_whenTheVerifierDoesNotThrowAnException_willPass() {
+    private static void expectsMethodVerifiedByReturning_whenTheVerifierDoesNotThrowAnException_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
         verifierToDoubleController
@@ -3019,7 +4640,7 @@ public with sharing class AmossTest_InstanceTest {
             .then().expects()
                 .method( 'verify' )
                 .withParameter().setTo( 1 );
-        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         String expectedReturn = 'theReturn';
         classToDoubleController
@@ -3044,10 +4665,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass the test
     */
     @isTest
-    private static void expectsMethodWithParameterNamedVerifiedByReturning_whenTheVerifierDoesNotThrowAnException_willPass() {
+    private static void expectsWithParameterNamedVerifiedByReturning_whenTheVerifierDoesNotThrowAnException_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
         verifierToDoubleController
@@ -3057,7 +4678,7 @@ public with sharing class AmossTest_InstanceTest {
             .then().expects()
                 .method( 'verify' )
                 .withParameter().setTo( 1 );
-        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         String expectedReturn = 'theReturn';
         classToDoubleController
@@ -3082,14 +4703,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodVerifiedByReturning_whenTheVerifierThrowsAnAssertException_willFail() {
+    private static void expectsMethodVerifiedByReturning_whenTheVerifierThrowsAnAssertException_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
         verifierToDoubleController
@@ -3102,7 +4723,7 @@ public with sharing class AmossTest_InstanceTest {
                                 .setActual( 'actualValue' )
                                 .setAssertionMessage( 'This is the failure' ) );
 
-        Amoss_ValueVerifier customVerifierThatFails = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifierThatFails = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         String expectedReturn = 'theReturn';
         classToDoubleController
@@ -3133,10 +4754,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will match the call and return the value
     */
     @isTest
-    private static void whenMethodVerifiedByReturning_whenTheVerifierDoesNotThrowAnException_willMatchAndReturnTheValue() {
+    private static void whenMethodVerifiedByReturning_whenTheVerifierDoesNotThrowAnException_matchAndReturnTheValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
         verifierToDoubleController
@@ -3146,7 +4767,7 @@ public with sharing class AmossTest_InstanceTest {
             .then().expects()
                 .method( 'verify' )
                 .withParameter().setTo( 1 );
-        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         String expectedReturn = 'theReturn';
         classToDoubleController
@@ -3172,10 +4793,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not match the call
     */
     @isTest
-    private static void whenMethodVerifiedByReturning_whenTheVerifierThrowsAnException_willNotMatchAndReturnTheValue() {
+    private static void whenMethodVerifiedByReturning_whenTheVerifierThrowsAnException_notMatchAndReturnTheValue() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
         verifierToDoubleController
@@ -3190,7 +4811,7 @@ public with sharing class AmossTest_InstanceTest {
                                 .setActual( 'actualValue' )
                                 .setAssertionMessage( 'This parameter does not match' ) );
 
-        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifierThatPasses = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         String expectedReturn = 'theReturn';
         classToDoubleController
@@ -3216,14 +4837,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectWithNamedSyntaxAndDifferentInstancePassed_willFail() {
+    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectWithNamedSyntaxAndDiffInstPassed_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -3249,14 +4870,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassedWithDifferentProperties_willFail() {
+    private static void expectsMethodReturning_whenExpectsSobject_andDiffInstPassedWithDiffProps_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheExpected' );
 
@@ -3282,10 +4903,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAList_andSameInstanceIsPassed_willPass() {
+    private static void expectsMethodReturning_whenExpectList_andSameInstanceIsPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3308,14 +4929,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAList_andSomethingNotAList_willFail() {
+    private static void expectsMethodReturning_whenExpectList_andSomethingNotAList_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3348,14 +4969,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAList_andADifferentInstanceContainingSameObjects_willFail() {
+    private static void expectsMethodReturning_whenExpectList_andADiffInstContainingSameObjects_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3387,14 +5008,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAList_andADifferentInstanceContainingDifferentObjectsWithTheSameValues() {
+    private static void expectsMethodReturning_whenExpectList_andADiffInstContainingDiffObjectsWithTheSameValues() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3425,14 +5046,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAList_andADifferentInstanceContainingDifferentObjectsWithDifferentValues() {
+    private static void expectsMethodReturning_whenExpectList_andADiffInstContainingDiffObjectsWithDiffValues() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3459,10 +5080,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAList_andSameInstanceIsPassed_willPass() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectList_andSameInstanceIsPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3485,10 +5106,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAList_andADifferentInstanceContainingSameObjects() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectList_andADiffInstContainingSameObjects() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3513,10 +5134,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAList_andADifferentInstanceContainingDifferentObjectsWithTheSameValues() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectList_andADiffInstContainingDiffObjectsWithTheSameValues() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3541,14 +5162,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAList_andADifferentInstanceContainingDifferentObjectsWithDifferentValues() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectList_andADiffInstContainingDiffObjectsWithDiffValues() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3575,10 +5196,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAList_andADifferentInstancesOfDifferentTypesContainingDifferentObjectsWithTheSameValues() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectList_andADiffInstsOfDiffTypesContainingDiffObjectsWithTheSameValues() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Object> objectExpected = new List<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3603,10 +5224,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAList_andADifferentInstanceOfDifferentTypesContainingDifferentObjectsWithTheSameValues_2() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectList_andADiffInstOfDiffTypesContainingDiffObjectsWithTheSameValues_2() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         List<Contact> objectExpected = new List<Contact>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -3631,10 +5252,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAMap_andSameInstanceIsPassed_willPass() {
+    private static void expectsMethodReturning_whenExpectMap_andSameInstanceIsPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Sobject> objectExpected = new Map<String,Sobject>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3657,14 +5278,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAMap_andADifferentInstanceContainingSameObjects_willFail() {
+    private static void expectsMethodReturning_whenExpectMap_andADiffInstContainingSameObjects_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Sobject> objectExpected = new Map<String,Sobject>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3691,14 +5312,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAMap_andADifferentInstanceContainingDifferentObjectsWithTheSameValues() {
+    private static void expectsMethodReturning_whenExpectMap_andADiffInstContainingDiffObjectsWithTheSameValues() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Sobject> objectExpected = new Map<String,Sobject>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3729,14 +5350,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAMap_andADifferentInstanceContainingDifferentObjectsWithDifferentValues() {
+    private static void expectsMethodReturning_whenExpectMap_andADiffInstContainingDiffObjectsWithDiffValues() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Sobject> objectExpected = new Map<String,Sobject>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3763,10 +5384,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAMap_andADifferentInstanceContainingSameObjects() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectMap_andADiffInstContainingSameObjects() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Sobject> objectExpected = new Map<String,Sobject>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3791,10 +5412,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAMap_andADifferentInstanceContainingDifferentObjectsWithTheSameValues() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectMap_andADiffInstContainingDiffObjectsWithTheSameValues() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Sobject> objectExpected = new Map<String,Sobject>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3819,14 +5440,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAMap_andADifferentInstanceContainingDifferentObjectsWithDifferentValues() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectMap_andADiffInstContainingDiffObjectsWithDiffValues() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Sobject> objectExpected = new Map<String,Sobject>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3853,14 +5474,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAMap_andADifferentInstanceContainingDifferentObjectsWithDifferentKeys() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectMap_andADiffInstContainingDiffObjectsWithDiffKeys() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Sobject> objectExpected = new Map<String,Sobject>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3887,10 +5508,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAMap_andADifferentInstancesOfDifferentTypesContainingDifferentObjectsWithTheSameValues() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectMap_andADiffInstsOfDiffTypesContainingDiffObjectsWithTheSameValues() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Object> objectExpected = new Map<String,Object>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3915,10 +5536,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithAMap_andADifferentInstanceOfDifferentTypesContainingDifferentObjectsWithTheSameValues_2() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectMap_andADiffInstOfDiffTypesContainingDiffObjectsWithTheSameValues_2() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<String,Contact> objectExpected = new Map<String,Contact>{ 'one' => new Contact( LastName = 'Contact1' ), 'two' => new Contact( LastName = 'Contact2' ) };
 
@@ -3943,10 +5564,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAMapById_andSameInstanceIsPassed_willPass() {
+    private static void expectsMethodReturning_whenExpectMapById_andSameInstanceIsPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<Id,Sobject> objectExpected = new Map<Id,Sobject>{ '003000000000001' => new Contact( LastName = 'Contact1' ), '003000000000002' => new Contact( LastName = 'Contact2' ) };
 
@@ -3969,10 +5590,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithAMapByDate_andSameInstanceIsPassed_willPass() {
+    private static void expectsMethodReturning_whenExpectMapByDate_andSameInstanceIsPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Map<Date,Sobject> objectExpected = new Map<Date,Sobject>{ Date.newInstance( 2019, 01, 05 ) => new Contact( LastName = 'Contact1' ), Date.newInstance( 2019, 01, 06 ) => new Contact( LastName = 'Contact2' ) };
 
@@ -3995,10 +5616,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithASet_andSameInstanceIsPassed_willPass() {
+    private static void expectsMethodReturning_whenExpectSetWithASet_andSameInstanceIsPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Set<Object> objectExpected = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -4021,14 +5642,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenExpectationSetWithASet_andDifferentInstanceWithSameValuesIsPassed_willFail() {
+    private static void expectsMethodReturning_whenExpectSetWithASet_andDiffInstWithSameValuesIsPassed_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Set<Object> objectExpected = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -4055,10 +5676,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will pass
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithASet_andDifferentInstanceWithSameValuesIsPassed_willPass() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectSetWithASet_andDiffInstWithSameValuesIsPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Set<Object> objectExpected = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -4083,14 +5704,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectationSetWithASet_andDifferentInstanceWithSameValuesIsPassed_willFail() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectSetWithASet_andDiffInstWithSameValuesIsPassed_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Set<Object> objectExpected = new Set<Object>{ new Contact( LastName = 'Contact1' ), new Contact( LastName = 'Contact2' ) };
 
@@ -4117,10 +5738,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not fail the test
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsIsSetWithSobjectWithNamedSyntaxAndDifferentInstancePassed_willNotFail() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsIsSetWithSobjectWithNamedSyntaxAndDiffInstPassed_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheObject' );
 
@@ -4144,14 +5765,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsIsSetWithSobjectAndDifferentInstancePassedWithDifferentProperties_willFail() {
+    private static void expectsMethodSetToTheSameValueAsReturning_whenExpectsSobject_andDiffInstPassedWithDiffProps_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Contact objectExpected = new Contact( LastName = 'TheExpected' );
 
@@ -4177,10 +5798,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will not the test
     */
     @isTest
-    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithTheStatedParameters_willNotFailTheTest() {
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithTheStatedParams_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4202,14 +5823,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4238,14 +5859,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithMoreParameters_willFailTheTest() {
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithMoreParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4268,14 +5889,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithFewerParameters_willFailTheTest() {
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsCalledWithFewerParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4300,10 +5921,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will match any appropriate version
     */
     @isTest
-    private static void expectsMethodReturning_whenAnOverloadedMethodIsSpecifiedWithoutAllParametersInPositional_willMatchAnyApppriateVersion() {
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsSpecifiedWithoutAllParametersInPositional_matchAnyApppriateVersion() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4331,10 +5952,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will match any appropriate version
     */
     @isTest
-    private static void expectsMethodReturning_whenAnOverloadedMethodIsSpecifiedWithoutAllParametersInNamed_willMatchAnyApppriateVersion() {
+    private static void expectsMethodReturning_whenAnOverloadedMethodIsSpecifiedWithoutAllParametersInNamed_matchAnyApppriateVersion() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4360,14 +5981,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenUsingNamedParametersAndTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void expectsMethodReturning_whenUsingNamedParametersAndTheMethodIsCalledWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4391,14 +6012,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenUsingNamedParametersAndTheMethodIsCalledWithFewerParameters_willFailTheTest() {
+    private static void expectsMethodReturning_whenUsingNamedParametersAndTheMethodIsCalledWithFewerParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4423,14 +6044,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenUsingNamedParametersAndTheMethodIsCalledWithDifferentlyNamedParameters_willFailTheTest() {
+    private static void expectsMethodReturning_whenUsingNamedParametersAndTheMethodIsCalledWithDifflyNamedParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4454,10 +6075,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value for each method
     */
     @isTest
-    private static void expectsMethodReturning_whenMultipleMethodsAreDefinedAndCalledInOrder_willReturnTheStatedValues() {
+    private static void expectsMethodReturning_whenMultipleMethodsAreDefinedAndCalledInOrder_returnSetUpValues() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4482,10 +6103,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value in the call order they are specified
     */
     @isTest
-    private static void expectsMethodReturning_whenMethodIsDefinedWithSameParametersAndCalledInOrder_willReturnTheResultsInOrder() {
+    private static void expectsMethodReturning_whenMethodIsDefinedAndCalledInOrder_returnTheResultsInOrder() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4521,10 +6142,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value in the call order they are specified
     */
     @isTest
-    private static void expectsMethodReturning_usingNamedParameters_whenMethodIsDefinedWithSameParametersAndCalledInOrder_willReturnTheResultsInOrder() {
+    private static void expectsMethodReturning_usingNamed_whenMethodIsDefinedAndCalledInOrder_returnTheResultsInOrder() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4560,10 +6181,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value in the call order they are specified
     */
     @isTest
-    private static void expectsMethodReturning_usingNamedParametersWithSomeNotSpecified_whenMethodIsDefinedWithSameParametersAndCalledInOrder_willReturnTheResultsInOrder() {
+    private static void expectsMethodReturning_usingNamedSomeNotSpecified_whenMethodIsDefinedAndCalledInOrder_returnTheResultsInOrder() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4597,10 +6218,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result will return the stated value in the call order they are specified
     */
     @isTest
-    private static void expectsMethodReturning_whenMethodIsDefinedWithAnyParametersAndCalledInOrder_willReturnTheResultsInOrder() {
+    private static void expectsMethodReturning_whenMethodIsDefinedWithAnyParamsAndCalledInOrder_returnTheResultsInOrder() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -4638,10 +6259,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the number of times that method was called
     */
     @isTest
-    private static void callCount_whenGivenAMethodCallThatHappened_willReturnTheNumberOfCalls() {
+    private static void callCount_whenGivenAMethodCallThatHappened_returnTheNumberOfCalls() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
@@ -4664,10 +6285,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return zero
     */
     @isTest
-    private static void callCount_whenGivenAMethodCallThatDidNotHappen_willReturnZero() {
+    private static void callCount_whenGivenAMethodCallThatDidNotHappen_returnZero() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             Integer returnedMethodCallCount = classToDoubleController.countOf( 'methodUnderDouble' );
@@ -4682,10 +6303,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of that call
     */
     @isTest
-    private static void callOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
+    private static void callOfParams_whenGivenACallThatHappened_returnTheParamsOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodUnderDouble( 'ActualParam', 2 );
@@ -4701,10 +6322,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of that call
     */
     @isTest
-    private static void callOfParameters_whenGivenACallOfMethodWithNoReturnThatHappened_willReturnTheParametersOfThatCall() {
+    private static void callOfParams_whenGivenACallOfMethodWithNoReturnThatHappened_returnTheParamsOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodUnderDoubleWithNoReturn( 'ActualParam', 2 );
@@ -4720,10 +6341,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of that call
     */
     @isTest
-    private static void callOfParameters_whenGivenACallThatHappenedAmongstMany_willReturnTheParametersOfThatCall() {
+    private static void callOfParams_whenGivenACallThatHappenedAmongstMany_returnTheParamsOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
@@ -4746,10 +6367,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of the last call
     */
     @isTest
-    private static void callOfParameters_whenGivenAMinusOneCallNumber_willReturnTheParametersOfTheLastCall() {
+    private static void callOfParams_whenGivenAMinusOneCallNumber_returnTheParamsOfTheLastCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
@@ -4773,10 +6394,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of the last call
     */
     @isTest
-    private static void latestCallOfParameters_whenTheMethodHasBeenCalled_willReturnTheParametersOfTheLastCall() {
+    private static void latestCallOfParams_whenTheMethodHasBeenCalled_returnTheParamsOfTheLastCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
@@ -4800,10 +6421,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of the call that many from the end
     */
     @isTest
-    private static void callOfParameters_whenGivenANegativeCallNumber_willReturnTheParametersOfTheCallThatManyFromTheEnd() {
+    private static void callOfParams_whenGivenANegativeCallNumber_returnTheParamsOfTheCallThatManyFromTheEnd() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
@@ -4826,10 +6447,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of that call
     */
     @isTest
-    private static void callOfParameters_whenGivenACallThatHappenedWithAnSobject_willReturnTheParametersOfThatCall() {
+    private static void callOfParams_whenGivenACallThatHappenedWithAnSobject_returnTheParamsOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             Contact passedContact = new Contact( FirstName = 'Person' );
@@ -4847,10 +6468,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return an empty list for that call
     */
     @isTest
-    private static void callOfParameters_whenGivenACallThatHappenedWithNoParameters_willReturnAnEmptyList() {
+    private static void callOfParams_whenGivenACallThatHappenedWithNoParams_returnAnEmptyList() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodWithNoParametersUnderDouble();
@@ -4866,10 +6487,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameters_whenGivenACallNumberThatDidNotHappen_willThrowAnException() {
+    private static void callOfParams_whenGivenACallNumberThatDidNotHappen_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -4898,10 +6519,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameters_whenGivenANegativeCallNumberThatDidNotHappen_willThrowAnException() {
+    private static void callOfParams_whenGivenANegativeCallNumberThatDidNotHappen_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -4929,10 +6550,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameters_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
+    private static void callOfParams_whenGivenAMethodThatWasNeverCalled_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -4958,10 +6579,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParametersByName_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
+    private static void callOfParametersByName_whenGivenAMethodThatWasNeverCalled_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -4987,10 +6608,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the stated parameter of that call
     */
     @isTest
-    private static void callOfParameter_whenGivenACallThatHappened_willReturnTheStatedParameterOfThatCall() {
+    private static void callOfParameter_whenGivenACallThatHappened_returnTheStatedParameterOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodUnderDouble( 'ActualParam', 2 );
@@ -5006,10 +6627,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the stated parameter of that call
     */
     @isTest
-    private static void callOfParameterString_whenGivenACallThatHappened_willReturnTheStatedParameterOfThatCall() {
+    private static void callOfParameterString_whenGivenACallThatHappened_returnTheStatedParameterOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodUnderDouble( 'ActualParam', 2 );
@@ -5025,10 +6646,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter of that call
     */
     @isTest
-    private static void callOfParameter_whenGivenACallThatHappenedAmongstMany_willReturnTheParameterOfThatCall() {
+    private static void callOfParameter_whenGivenACallThatHappenedAmongstMany_returnTheParameterOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
@@ -5051,10 +6672,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter of that call
     */
     @isTest
-    private static void callOfParameterString_whenGivenACallThatHappenedAmongstMany_willReturnTheParameterOfThatCall() {
+    private static void callOfParameterString_whenGivenACallThatHappenedAmongstMany_returnTheParameterOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
@@ -5077,10 +6698,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameter_whenGivenACallNumberThatDidNotHappen_willThrowAnException() {
+    private static void callOfParameter_whenGivenACallNumberThatDidNotHappen_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5108,10 +6729,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameterString_whenGivenACallNumberThatDidNotHappen_willThrowAnException() {
+    private static void callOfParameterString_whenGivenACallNumberThatDidNotHappen_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5139,10 +6760,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameter_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
+    private static void callOfParameter_whenGivenAMethodThatWasNeverCalled_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5168,10 +6789,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameterString_whenGivenAMethodThatWasNeverCalled_willThrowAnException() {
+    private static void callOfParameterString_whenGivenAMethodThatWasNeverCalled_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5197,10 +6818,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameter_whenGivenAParameterNumberThatIsOutOfRange_willThrowAnException() {
+    private static void callOfParameter_whenGivenAParameterNumberThatIsOutOfRange_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5228,10 +6849,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameter_whenGivenAParameterNumberThatIsNegative_willThrowAnException() {
+    private static void callOfParameter_whenGivenAParameterNumberThatIsNegative_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5259,10 +6880,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameter_whenGivenAParameterNameThatDoesNotExist_willThrowAnException() {
+    private static void callOfParameter_whenGivenAParameterNameThatDoesNotExist_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5290,10 +6911,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameter_whenGivenAParameterForAMethodThatHasNoParameters_willThrowAnException() {
+    private static void callOfParameter_whenGivenAParameterForAMethodThatHasNoParams_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5321,10 +6942,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void callOfParameterString_whenGivenAParameterForAMethodThatHasNoParameters_willThrowAnException() {
+    private static void callOfParameterString_whenGivenAParameterForAMethodThatHasNoParams_throwAnException() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
 
@@ -5352,10 +6973,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of that call
     */
     @isTest
-    private static void getCallOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
+    private static void getCallOfParams_whenGivenACallThatHappened_returnTheParamsOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodUnderDouble( 'ActualParam', 2 );
@@ -5371,10 +6992,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return an empty parameters list
     */
     @isTest
-    private static void getCallOfParameters_whenGivenACallThatHappenedWithNoParameters_willReturnAnEmptyParametersList() {
+    private static void getCallOfParams_whenGivenACallThatHappenedWithNoParams_returnAnEmptyParametersList() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodWithNoParametersUnderDouble();
@@ -5390,10 +7011,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of that call
     */
     @isTest
-    private static void getCallOfParametersByName_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
+    private static void getCallOfParametersByName_whenGivenACallThatHappened_returnTheParamsOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodUnderDouble( 'ActualParam', 2 );
@@ -5414,10 +7035,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return an empty parameters list
     */
     @isTest
-    private static void getCallOfParametersByName_whenGivenACallThatHappenedWithNoParameters_willReturnAnEmptyParametersList() {
+    private static void getCallOfParametersByName_whenGivenACallThatHappenedWithNoParams_returnAnEmptyParametersList() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodWithNoParametersUnderDouble();
@@ -5433,10 +7054,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameters of that call
     */
     @isTest
-    private static void getLatestCallOfParameters_whenGivenACallThatHappened_willReturnTheParametersOfThatCall() {
+    private static void getLatestCallOfParams_whenGivenACallThatHappened_returnTheParamsOfThatCall() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDouble.methodUnderDouble( 'ActualParam1', 2 );
@@ -5454,10 +7075,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter
     */
     @isTest
-    private static void parameter_whenAParameterIsAListOfObjects_willReturnTheParameter() {
+    private static void parameter_whenAParameterIsAListOfObjects_returnTheParameter() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
@@ -5475,10 +7096,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter
     */
     @isTest
-    private static void parameterString_whenAParameterIsAListOfObjects_willReturnTheParameter() {
+    private static void parameterString_whenAParameterIsAListOfObjects_returnTheParameter() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             List<Object> parameterPassed = new List<Object>{ 2, '3', new Account() };
@@ -5496,10 +7117,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter
     */
     @isTest
-    private static void parameter_whenAParameterIsASetOfObjects_willReturnTheParameter() {
+    private static void parameter_whenAParameterIsASetOfObjects_returnTheParameter() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
@@ -5517,10 +7138,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter
     */
     @isTest
-    private static void parameterString_whenAParameterIsASetOfObjects_willReturnTheParameter() {
+    private static void parameterString_whenAParameterIsASetOfObjects_returnTheParameter() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             Set<Object> parameterPassed = new Set<Object>{ 2, '3', new Account() };
@@ -5538,10 +7159,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter
     */
     @isTest
-    private static void parameter_whenAParameterIsAMapOfObjects_willReturnTheParameter() {
+    private static void parameter_whenAParameterIsAMapOfObjects_returnTheParameter() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             Map<String,Object> parameterPassed = new Map<String,Object>{ 'one' => 1, 'two' => '2', 'three' => new Contact() };
@@ -5559,10 +7180,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return the parameter
     */
     @isTest
-    private static void parameterString_whenAParameterIsAMapOfObjects_willReturnTheParameter() {
+    private static void parameterString_whenAParameterIsAMapOfObjects_returnTheParameter() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             Map<String,Object> parameterPassed = new Map<String,Object>{ 'one' => 1, 'two' => '2', 'three' => new Contact() };
@@ -5583,10 +7204,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail
     */
     @isTest
-    private static void expectsMethod_whenTheMethodIsCalled_willNotFail() {
+    private static void expectsMethod_whenCalled_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5605,14 +7226,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void expectsMethod_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+    private static void expectsMethod_whenCalledMoreThanOnce_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5637,10 +7258,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail
     */
     @isTest
-    private static void expectsMethod_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
+    private static void expectsMethod_whenTheMethodIsNotCalledButNeitherIsVerify_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5659,17 +7280,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail
     */
     @isTest
-    private static void expectsMethod_whenTheMethodIsNotCalledAndVerifyIs_willFail() {
+    private static void expectsMethod_whenTheMethodIsNotCalledAndVerifyIs_fail() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5692,17 +7313,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail
     */
     @isTest
-    private static void expectsMethodMultipleTimes_whenTheMethodsAreNotCalledAndVerifyIs_willFail() {
+    private static void expectsMethodMultipleTimes_whenTheMethodsAreNotCalledAndVerifyIs_fail() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5730,17 +7351,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameter_whenTheMethodIsNotCalledAndVerifyIs_willFailDescribingTheParameters() {
+    private static void expectsWithParameter_whenTheMethodIsNotCalledAndVerifyIs_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5765,17 +7386,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameter_whenTheMethodWithAnyParamDefinedIsNotCalledAndVerifyIs_willFailDescribingTheParameters() {
+    private static void expectsWithParameter_whenTheMethodWithAnyParamDefinedIsNotCalledAndVerifyIs_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5800,17 +7421,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterSetToTheSameValueAs_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterSetToTheSameValueAs_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5834,17 +7455,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterSetToTheSameValueAsWithObject_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterSetToTheSameValueAsWithObject_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5857,7 +7478,6 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
-        // TODO: why does this not include the namespace?
         String expectedCall      = 'methodUnderDouble( AmossTest_ClassToDouble:[], AmossTest_ClassToDouble:[] )';
 
         System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
@@ -5871,17 +7491,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterWithFieldsSetTo_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterWithFieldsSetTo_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5906,17 +7526,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterWithFieldsSetLike_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterWithFieldsSetLike_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5941,17 +7561,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterWithAllElements_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterWithAllElements_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -5976,17 +7596,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterWithAnyElement_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterWithAnyElement_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6011,17 +7631,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterWithElementAt_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterWithElementAt_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6046,17 +7666,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamed_whenTheMethodIsNotCalledAndVerifyIs_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamed_whenTheMethodIsNotCalledAndVerifyIs_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6082,17 +7702,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterSetToSet_whenTheMethodIsNotCalledAndVerifyIs_willFailDescribingTheParameters() {
+    private static void expectsWithParameterSetToSet_whenTheMethodIsNotCalledAndVerifyIs_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6117,17 +7737,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterSetToList_whenTheMethodIsNotCalledAndVerifyIs_willFailDescribingTheParameters() {
+    private static void expectsWithParameterSetToList_whenTheMethodIsNotCalledAndVerifyIs_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6152,17 +7772,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamedSetToTheSameValueAs_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamedSetToTheSameValueAs_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6187,17 +7807,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamedSetToTheSameValueAsWithObject_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamedSetToTheSameValueAsWithObject_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6223,17 +7843,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamedWithFieldsSetTo_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamedWithFieldsSetTo_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6259,17 +7879,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamedWithFieldsSetLike_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamedWithFieldsSetLike_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6294,17 +7914,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamedWithAllElements_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamedWithAllElements_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6329,10 +7949,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterWithElementsCombination_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterWithElementsCombination_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
@@ -6342,11 +7962,11 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'toString' )
                 .returning( 'VerifiedBy' );
-        Amoss_ValueVerifier customVerifier = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifier = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6377,10 +7997,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamedWithElementsCombination_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamedWithElementsCombination_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
@@ -6390,11 +8010,11 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'toString' )
                 .returning( 'VerifiedBy' );
-        Amoss_ValueVerifier customVerifier = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifier = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6425,17 +8045,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamedWithAnyElement_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamedWithAnyElement_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6460,17 +8080,17 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail and describe the parameters
     */
     @isTest
-    private static void expectsMethodWithParameterNamedWithElementAt_whenTheMethodIsNotCalled_willFailDescribingTheParameters() {
+    private static void expectsWithParameterNamedWithElementAt_whenTheMethodIsNotCalled_failDescribingTheParams() {
 
         Amoss_Instance assertsDoubleController = new Amoss_Instance( Amoss_Asserts.class );
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
         assertsDoubleController
             .allows()
                 .method( 'assertEquals' );
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6497,10 +8117,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail, and will return the stated result
     */
     @isTest
-    private static void expectsMethodReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
+    private static void expectsMethodReturning_whenCalled_passAndWillReturnTheStatedResult() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6520,14 +8140,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+    private static void expectsMethodReturning_whenCalledMoreThanOnce_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6553,10 +8173,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail
     */
     @isTest
-    private static void expectsMethodReturning_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
+    private static void expectsMethodReturning_whenTheMethodIsNotCalledButNeitherIsVerify_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6576,14 +8196,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail
     */
     @isTest
-    private static void expectsMethodReturning_whenTheMethodIsNotCalledAndVerifyIs_willFail() {
+    private static void expectsMethodReturning_whenTheMethodIsNotCalledAndVerifyIs_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6611,10 +8231,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail, and will return the stated result
     */
     @isTest
-    private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
+    private static void expectsWithAnyParametersReturning_whenCalled_passAndWillReturnTheStatedResult() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6635,14 +8255,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+    private static void expectsWithAnyParametersReturning_whenCalledMoreThanOnce_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6669,10 +8289,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail
     */
     @isTest
-    private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsNotCalledButNeitherIsVerify_willNotFail() {
+    private static void expectsWithAnyParametersReturning_whenTheMethodIsNotCalledButNeitherIsVerify_pass() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6693,14 +8313,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail
     */
     @isTest
-    private static void expectsMethodWithAnyParametersReturning_whenTheMethodIsNotCalledAndVerifyIs_willFail() {
+    private static void expectsWithAnyParametersReturning_whenTheMethodIsNotCalledAndVerifyIs_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6729,14 +8349,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test using the toString to form the description
     */
     @isTest
-    private static void expectsMethodVerifiedByReturning_whenTheMethodIsNotCalledAndVerifyIs_willFailAndUseToString() {
+    private static void expectsMethodVerifiedByReturning_whenTheMethodIsNotCalledAndVerifyIs_failAndUseToString() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
         verifierToDoubleController
@@ -6747,7 +8367,7 @@ public with sharing class AmossTest_InstanceTest {
                 .method( 'toString' )
                 .returning( 'The custom description for parameter 2' ); // since we use the verifier for two parameters, we expect 2 calls
 
-        Amoss_ValueVerifier customVerifierFails = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifierFails = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         String expectedReturn = 'theReturn';
         classToDoubleController
@@ -6777,14 +8397,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test using the toString to form the description
     */
     @isTest
-    private static void expectsMethodWithParameterNamedVerifiedByReturning_whenTheMethodIsNotCalledAndVerifyIs_willFailAndUseToString() {
+    private static void expectsWithParameterNamedVerifiedByReturning_whenTheMethodIsNotCalledAndVerifyIs_failAndUseToString() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Amoss_Instance verifierToDoubleController = new Amoss_Instance( Amoss_ValueVerifier.class );
         verifierToDoubleController
@@ -6795,7 +8415,7 @@ public with sharing class AmossTest_InstanceTest {
                 .method( 'toString' )
                 .returning( 'The custom description for parameter 2' ); // since we use the verifier for two parameters, we expect 2 calls
 
-        Amoss_ValueVerifier customVerifierFails = (Amoss_ValueVerifier)verifierToDoubleController.generateDouble();
+        Amoss_ValueVerifier customVerifierFails = (Amoss_ValueVerifier)verifierToDoubleController.getDouble();
 
         String expectedReturn = 'theReturn';
         classToDoubleController
@@ -6826,14 +8446,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result will fail the test
     */
     @isTest
-    private static void expectsMethodWithParameterVerifiedNoVerifierVerify_willAlwaysFailTheTest() {
+    private static void expectsWithParameterVerifiedNoVerifierVerify_alwaysFail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         String expectedReturn = 'theReturn';
         classToDoubleController
@@ -6861,10 +8481,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail, and will return the stated result
     */
     @isTest
-    private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalled_willNotFailAndWillReturnTheStatedResult() {
+    private static void expectsWithParameterAndThenParameterReturning_whenCalled_passAndWillReturnTheStatedResult() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6886,14 +8506,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void expectsMethodWithParameterAndThenParameterReturning_whenTheMethodIsCalledWithNonMatchingParameters_willFailTheTest() {
+    private static void expectsWithParameterAndThenParameterReturning_whenCallWithNonMatchingParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .expects()
@@ -6921,14 +8541,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will make the test fail
     */
     @isTest
-    private static void allowsAnyCall_whenGivenFalseAndNoMethodsAreDefinedAndAMethodIsCalled_willFailTheTest() {
+    private static void allowsAnyCall_whenGivenFalseAndNoMethodsAreDefinedAndAMethodIsCalled_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDoubleController
@@ -6950,10 +8570,10 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will return null
     */
     @isTest
-    private static void allowsAnyCall_whenGivenTrueAndAndNoMethodsAreDefinedAndAMethodIsCalled_willReturnNull() {
+    private static void allowsAnyCall_whenGivenTrueAndAndNoMethodsAreDefinedAndAMethodIsCalled_returnNull() {
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         Test.startTest();
             classToDoubleController
@@ -6970,14 +8590,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail the test
     */
     @isTest
-    private static void allowsAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willNotFailTheTest() {
+    private static void allowsAnyCall_true_expectsMethodReturning_whenCalledMoreThanOnce_pass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( true )
@@ -7002,14 +8622,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_false_expectsMethodReturning_whenTheMethodIsCalledMoreThanOnce_willFailTheTest() {
+    private static void allowsAnyCall_false_expectsMethodReturning_whenCalledMoreThanOnce_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( false )
@@ -7036,14 +8656,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail the test
     */
     @isTest
-    private static void allowsAnyCall_true_expectsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
+    private static void allowsAnyCall_true_expectsMethodReturning_whenADiffMethodIsCalled_pass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( true )
@@ -7068,14 +8688,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail the test
     */
     @isTest
-    private static void allowsAnyCallhortcut_true_expectsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
+    private static void allowsAnyCallhortcut_true_expectsMethodReturning_whenADiffMethodIsCalled_pass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall()
@@ -7100,14 +8720,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_false_expectsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
+    private static void allowsAnyCall_false_expectsMethodReturning_whenADiffMethodIsCalled_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( false )
@@ -7134,14 +8754,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail the test
     */
     @isTest
-    private static void allowsAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
+    private static void allowsAnyCall_true_expectsMethodReturning_whenCallWithDiffParams_pass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall()
@@ -7168,14 +8788,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_false_expectsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_false_expectsMethodReturning_whenCallWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( false )
@@ -7204,14 +8824,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_true_expectsMethodReturning_whenTheMethodIsCalledOnlyWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_true_expectsMethodReturning_whenCalledOnlyWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( true )
@@ -7241,14 +8861,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_false_expectsMethodReturning_whenTheMethodIsOnlyCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_false_expectsMethodReturning_whenTheMethodIsOnlyCalledWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( false )
@@ -7273,14 +8893,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail the test
     */
     @isTest
-    private static void allowsAnyCall_true_whenMethodWillReturn_whenADifferentMethodIsCalled_willNotFailTheTest() {
+    private static void allowsAnyCall_true_whenMethodWillReturn_whenADiffMethodIsCalled_pass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( true )
@@ -7304,14 +8924,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_false_whenMethodWillReturn_whenADifferentMethodIsCalled_willFailTheTest() {
+    private static void allowsAnyCall_false_whenMethodWillReturn_whenADiffMethodIsCalled_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( false )
@@ -7336,14 +8956,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail the test
     */
     @isTest
-    private static void allowsAnyCall_true_whenMethodWillReturn_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
+    private static void allowsAnyCall_true_whenMethodWillReturn_whenCallWithDiffParams_pass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( true )
@@ -7369,14 +8989,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_false_whenMethodWillReturn_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_false_whenMethodWillReturn_whenCallWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( false )
@@ -7403,14 +9023,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail the test
     */
     @isTest
-    private static void allowsAnyCall_true_allowsMethodReturning_whenADifferentMethodIsCalled_willNotFailTheTest() {
+    private static void allowsAnyCall_true_allowsMethodReturning_whenADiffMethodIsCalled_pass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( true )
@@ -7432,14 +9052,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_false_allowsMethodReturning_whenADifferentMethodIsCalled_willFailTheTest() {
+    private static void allowsAnyCall_false_allowsMethodReturning_whenADiffMethodIsCalled_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( false )
@@ -7464,14 +9084,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will not fail the test
     */
     @isTest
-    private static void allowsAnyCall_true_allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willNotFailTheTest() {
+    private static void allowsAnyCall_true_allowsMethodReturning_whenCallWithDiffParams_pass() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( true )
@@ -7495,14 +9115,14 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will fail the test
     */
     @isTest
-    private static void allowsAnyCall_false_allowsMethodReturning_whenTheMethodIsCalledWithDifferentParameters_willFailTheTest() {
+    private static void allowsAnyCall_false_allowsMethodReturning_whenCallWithDiffParams_fail() {
 
         Amoss_Instance assertsDoubleController = buildMockAssertionController();
-        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.generateDouble();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
 
         Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
         classToDoubleController.setAsserts( assertsDouble );
-        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
         classToDoubleController
             .allowsAnyCall( false )
@@ -7529,7 +9149,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void expectsNoCalls_whenAlreadyConfiguredWithExpects_willThrowAnException() {
+    private static void expectsNoCalls_whenAlreadyConfiguredWithExpects_throwAnException() {
 
         Boolean exceptionThrown = false;
         String  exceptionMessage;
@@ -7557,7 +9177,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void expectsNoCalls_whenAlreadyConfiguredWithAllows_willThrowAnException() {
+    private static void expectsNoCalls_whenAlreadyConfiguredWithAllows_throwAnException() {
 
         Boolean exceptionThrown = false;
         String  exceptionMessage;
@@ -7585,7 +9205,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void expectsNoCalls_whenAlreadyConfiguredWithWhen_willThrowAnException() {
+    private static void expectsNoCalls_whenAlreadyConfiguredWithWhen_throwAnException() {
 
         Boolean exceptionThrown = false;
         String  exceptionMessage;
@@ -7613,7 +9233,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void expectsNoCalls_whenAlreadyConfiguredWithAllowsAnyCall_willThrowAnException() {
+    private static void expectsNoCalls_whenAlreadyConfiguredWithAllowsAnyCall_throwAnException() {
 
         Boolean exceptionThrown = false;
         String  exceptionMessage;
@@ -7639,7 +9259,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void expects_whenAlreadyConfiguredAsExpectsNoCalls_willThrowAnException() {
+    private static void expects_whenAlreadyConfiguredAsExpectsNoCalls_throwAnException() {
 
         Boolean exceptionThrown = false;
         String  exceptionMessage;
@@ -7665,7 +9285,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void allows_whenAlreadyConfiguredAsExpectsNoCalls_willThrowAnException() {
+    private static void allows_whenAlreadyConfiguredAsExpectsNoCalls_throwAnException() {
 
         Boolean exceptionThrown = false;
         String  exceptionMessage;
@@ -7691,7 +9311,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void when_whenAlreadyConfiguredAsExpectsNoCalls_willThrowAnException() {
+    private static void when_whenAlreadyConfiguredAsExpectsNoCalls_throwAnException() {
 
         Boolean exceptionThrown = false;
         String  exceptionMessage;
@@ -7717,7 +9337,7 @@ public with sharing class AmossTest_InstanceTest {
     * @result  will throw an exception
     */
     @isTest
-    private static void allowsAnyCall_whenAlreadyConfiguredAsExpectsNoCalls_willThrowAnException() {
+    private static void allowsAnyCall_whenAlreadyConfiguredAsExpectsNoCalls_throwAnException() {
 
         Boolean exceptionThrown = false;
         String  exceptionMessage;
@@ -7738,16 +9358,276 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     //
+    // getDouble and generateDouble behaviours
+    //
+    /**
+    * @method getDouble
+    * @case   when called multiple times
+    * @result will return the same instance
+    */
+    @isTest
+    private static void getDouble_whenCalledMultipleTimes_returnTheSameInstance() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        Test.startTest();
+            AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+            AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+        Test.stopTest();
+
+        System.assertEquals( classToDouble1, classToDouble2, 'getDouble, when called multiple times, will return the same instance' );
+    }
+
+    /**
+    * @method generateDouble
+    * @result will return a different instance to getDouble
+    */
+    @isTest
+    private static void generateDouble_returnADiffInstToGetDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        Test.startTest();
+            AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+            AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+        Test.stopTest();
+
+        System.assertNotEquals( classToDouble1, classToDouble2, 'generateDouble, will return a different instance to getDouble' );
+    }
+
+    /**
+    * @method generateDouble
+    * @case   when isFluent has been called
+    * @result will return a different instance to getDouble, where the double's methods return differentt instances too
+    */
+    @isTest
+    private static void generateDouble_onAnIsFluent_returnsDiffInstsFromMethods() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .isFluent();
+
+        AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            AmossTest_ClassToDouble returnFromDouble1 = classToDouble1.fluentMethod();
+            AmossTest_ClassToDouble returnFromDouble2 = classToDouble2.fluentMethod();
+        Test.stopTest();
+
+        System.assertEquals( classToDouble1, returnFromDouble1, 'generateDouble, against an isFluent double, will return a double that responds to method calls as per the original - the original will still behave as per normal' );
+        System.assertEquals( classToDouble2, returnFromDouble2, 'generateDouble, against an isFluent double, will return a double that responds to method calls as per the original' );
+        System.assertNotEquals( returnFromDouble1, returnFromDouble2, 'generateDouble, against an isFluent double, will return a double that responds to method calls with a different instance to the orignal one' );
+    }
+
+    /**
+    * @method when.returns.generateDouble
+    * @case   when the method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void generateDouble_whenReturnsGenerateDouble_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .when( 'methodUnderDouble' )
+            .returns( 'specifiedValue' );
+
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        System.assertEquals( 'specifiedValue', returnFromDouble, 'when.returns.generateDouble, when the method is called, will return the stated value' );
+    }
+
+    /**
+    * @method getDouble.generateDouble.countOf
+    * @case   when the methods are called on the different instances
+    * @result will consolidate the calls into the one controller
+    */
+    @isTest
+    private static void getDoubleGenerateDoubleGetCount_whenMethodsCalledOnEachInstanceAsSpecified_consolidateThem() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+
+        AmossTest_ClassToDouble classToDouble  = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            classToDouble.methodUnderDouble( '1', 2 );
+            classToDouble2.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        System.assertEquals( 2, classToDoubleController.countOf( 'methodUnderDouble' ), 'getDouble.generateDouble.countOf, when the methods are called on the different instances,  will consolidate the calls into the one controller' );
+    }
+
+    /**
+    * @method expects.getDouble.generateDouble.verify
+    * @case   when the methods are called on the different instances
+    * @result will consolidate the calls into the one controller
+    */
+    @isTest
+    private static void expectsGetDoubleGenerateDoubleVerify_whenMethodsCalledOnEachInstanceAsSpecified_consolidateThemAndNotFail() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .expects( 'methodUnderDouble' )
+            .then().expects( 'methodUnderDouble' );
+
+        AmossTest_ClassToDouble classToDouble  = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            String returnFromDouble  = classToDouble.methodUnderDouble( '1', 2 );
+            String returnFromDouble2 = classToDouble2.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        classToDoubleController.verify(); // both calls are registered against the same controller, and so this will pass
+    }
+
+    /**
+    * @method createClone.when.countOf
+    * @case   when the methods are called on the different instances
+    * @result will split the calls between the appropriate controllers
+    */
+    @isTest
+    private static void createCloneWhenCountOf_whenTheMethodsAreCalledOnTheDiffInsts_RouteToTheDiffControllers() {
+
+        Amoss_Instance classToDoubleController1 = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble1  = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+
+        Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.generateDouble();
+
+        Test.startTest();
+            classToDouble1.methodUnderDouble( '1', 1 );
+            classToDouble1.methodUnderDouble( '1', 2 );
+            classToDouble1.methodUnderDouble( '1', 3 );
+
+            classToDouble2.methodUnderDouble( '1', 11 );
+            classToDouble2.methodUnderDouble( '1', 12 );
+        Test.stopTest();
+
+        System.assertEquals( 3, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the call count on the original' );
+        System.assertEquals( 2, classToDoubleController2.countOf( 'methodUnderDouble' ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the call count on the new controller' );
+
+        System.assertEquals(  1, classToDoubleController1.get().call(0).of( 'methodUnderDouble' ).parameter( 1 ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the parameter log on the original' );
+        System.assertEquals( 12, classToDoubleController2.get().call(1).of( 'methodUnderDouble' ).parameter( 1 ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the parameter log on the new controller' );
+    }
+
+    /**
+    * @method createClone.expects.verify
+    * @case   when the method is called as expected on the objects
+    * @result will not fail
+    */
+    @isTest
+    private static void createCloneExpectsVerify_whenMethodsCalledAsExpected_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .expects( 'methodUnderDouble' );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        Amoss_Instance newClassToDoubleController = classToDoubleController.createClone();
+        AmossTest_ClassToDouble newClassToDouble = (AmossTest_ClassToDouble)newClassToDoubleController.getDouble();
+
+        Test.startTest();
+            String returnFromDouble  = classToDouble.methodUnderDouble( '1', 2 );
+            String returnFromDouble2 = newClassToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+        newClassToDoubleController.verify();
+    }
+
+    /**
+    * @method createClone
+    * @case   when additional config is added to one of the controllers
+    * @result will not affect the other
+    */
+    @isTest
+    private static void createClone_whenAdditionalConfigIsAdded_notAffectTheOther() {
+
+        Amoss_Instance classToDoubleController1 = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble1  = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+
+        Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
+        classToDoubleController2.expectsNoCalls();
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.getDouble();
+
+        Test.startTest();
+            classToDouble1.methodUnderDouble( '1', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 1, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone, when when additional config is added to the new, will not affect the original' );
+    }
+
+    /**
+    * @method createClone
+    * @case   when additional config is added to one of the controllers
+    * @result will not affect the other
+    */
+    @isTest
+    private static void createClone_whenAdditionalConfigIsAdded_notAffectTheOther2() {
+
+        Amoss_Instance classToDoubleController1 = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone();
+
+        classToDoubleController1
+            .when( 'methodUnderDouble' )
+            .returns( 'ReturnFrom1' );
+        AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
+
+        classToDoubleController2
+            .when( 'methodUnderDouble' )
+            .returns( 'ReturnFrom2' );
+        AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.getDouble();
+
+        Test.startTest();
+            String returnFrom1 = classToDouble1.methodUnderDouble( '1', 1 );
+            String returnFrom2 = classToDouble2.methodUnderDouble( '1', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'ReturnFrom1', returnFrom1, 'createClone, when when additional config is added to the new, will not affect the original' );
+        System.assertEquals( 'ReturnFrom2', returnFrom2, 'createClone, when when additional config is added to the original, will not affect the new' );
+    }
+
+    /**
+    * @method isFluent.when.returns.generateDouble
+    * @case   when the method is called
+    * @result will return the stated value
+    */
+    @isTest
+    private static void generateDouble_isFluentWhenReturnsGenerateDouble_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        classToDoubleController
+            .isFluent()
+            .when( 'methodUnderDouble' )
+            .returns( 'specifiedValue' );
+
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
+        Test.stopTest();
+
+        System.assertEquals( 'specifiedValue', returnFromDouble, 'isFluent.when.returns.generateDouble, when the method is called, will return the stated value' );
+    }
+
+    //
     // Limitation tests - If any of these tests begin to fail, then an important limitation
     // has been removed and we may consider changing the functionality / documentation a little
     //
     /**
-    * @method generateDouble
+    * @method getDouble
     * @case   when given an Sobject to create a test double for
     * @result will throw an exception
     */
     @isTest
-    private static void generateDouble_whenGivenAnSobjectToCreateATestDoubleFor_willThrowAnException() {
+    private static void getDouble_whenGivenAnSobjectToCreateATestDoubleFor_throwAnException() {
 
         Amoss_Instance sobjectToDoubleController = new Amoss_Instance( Contact.class );
 
@@ -7755,22 +9635,22 @@ public with sharing class AmossTest_InstanceTest {
         String  exceptionMessage;
 
         try {
-            Contact classUnderDouble = (Contact)sobjectToDoubleController.generateDouble();
+            Contact classUnderDouble = (Contact)sobjectToDoubleController.getDouble();
         } catch ( Exception e ) {
             exceptionThrown = true;
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'generateDouble, when given an Sobject to create a test double for, will throw an exception' );
+        System.assert( exceptionThrown, 'getDouble, when given an Sobject to create a test double for, will throw an exception' );
     }
 
     /**
-    * @method generateDouble
+    * @method getDouble
     * @case   when given an inner class to create a test double for
     * @result will throw an exception
     */
     @isTest
-    private static void generateDouble_whenGivenAnInnerClassToCreateATestDoubleFor_willThrowAnException() {
+    private static void getDouble_whenGivenAnInnerClassToCreateATestDoubleFor_throwAnException() {
 
         Amoss_Instance innerClassToDoubleController = new Amoss_Instance( AmossTest_InstanceTest.InnerClassToDouble.class );
 
@@ -7778,23 +9658,23 @@ public with sharing class AmossTest_InstanceTest {
         String  exceptionMessage;
 
         try {
-            AmossTest_InstanceTest.InnerClassToDouble classUnderDouble = (AmossTest_InstanceTest.InnerClassToDouble)innerClassToDoubleController.generateDouble();
+            AmossTest_InstanceTest.InnerClassToDouble classUnderDouble = (AmossTest_InstanceTest.InnerClassToDouble)innerClassToDoubleController.getDouble();
             classUnderDouble.publicMethod( 'StringParameter' );
         } catch ( Exception e ) {
             exceptionThrown = true;
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'generateDouble, when given an inner class to create a test double for, will throw an exception' );
+        System.assert( exceptionThrown, 'getDouble, when given an inner class to create a test double for, will throw an exception' );
     }
 
     /**
-    * @method generateDouble
+    * @method getDouble
     * @case   when given a System Type to create a test double for
     * @result will throw an exception
     */
     @isTest
-    private static void generateDouble_whenGivenASystemTypeToCreateATestDoubleFor_willThrowAnException() {
+    private static void getDouble_whenGivenASystemTypeToCreateATestDoubleFor_throwAnException() {
 
         Amoss_Instance systemTypeToDoubleController = new Amoss_Instance( HttpRequest.class );
 
@@ -7802,22 +9682,22 @@ public with sharing class AmossTest_InstanceTest {
         String  exceptionMessage;
 
         try {
-            HttpRequest classUnderDouble = (HttpRequest)systemTypeToDoubleController.generateDouble();
+            HttpRequest classUnderDouble = (HttpRequest)systemTypeToDoubleController.getDouble();
         } catch ( Exception e ) {
             exceptionThrown = true;
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'generateDouble, when given an system type to create a test double for, will throw an exception' );
+        System.assert( exceptionThrown, 'getDouble, when given an system type to create a test double for, will throw an exception' );
     }
 
     /**
-    * @method generateDouble
+    * @method getDouble
     * @case   when given a class with no public constructors to create a test double for
     * @result will throw an exception
     */
     @isTest
-    private static void generateDouble_whenGivenAClassWithNoPublicConstructorToCreateATestDoubleFor_willThrowAnException() {
+    private static void getDouble_whenGivenAClassWithNoPublicConstructorToCreateATestDoubleFor_throwAnException() {
 
         Amoss_Instance singletonToDouble = new Amoss_Instance( AmossTest_SingletonToDouble.class );
 
@@ -7825,13 +9705,13 @@ public with sharing class AmossTest_InstanceTest {
         String  exceptionMessage;
 
         try {
-            AmossTest_SingletonToDouble classUnderDouble = (AmossTest_SingletonToDouble)singletonToDouble.generateDouble();
+            AmossTest_SingletonToDouble classUnderDouble = (AmossTest_SingletonToDouble)singletonToDouble.getDouble();
         } catch ( Exception e ) {
             exceptionThrown = true;
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'generateDouble, when given a class with no public constructor to create a test double for, will throw an exception' );
+        System.assert( exceptionThrown, 'getDouble, when given a class with no public constructor to create a test double for, will throw an exception' );
     }
 
     class InnerClassToDouble {
