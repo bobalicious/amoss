@@ -1,3 +1,13 @@
+# Version 1.1.0.1
+
+* Git Tag                : `v1.1.0.1`
+* SFDX Install           : `sfdx force:package:install --package "amoss@1.1.0-1"`
+* Unlocked Package Links :
+  * https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002CcPdQAK
+  * https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4K000002CcPdQAK
+
+Minor tidy of commits - no functional change
+
 # Version 1.1.0.0
 
 * Git Tag                : `v1.1.0.0`
