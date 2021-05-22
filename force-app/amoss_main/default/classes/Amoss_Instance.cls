@@ -1397,8 +1397,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @param String - The String to search for in the parameter
         */
-        public Amoss_PositionalParametersDefiner containing( String searchString ) {
-            return setParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
+        public Amoss_PositionalParameterAdditionalValueDefiner containing( String searchString ) {
+            return addParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
         }
 
         /**
@@ -1417,9 +1417,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @param String - The Regular Expression to match against the parameter
         */
-        public Amoss_PositionalParametersDefiner matching( String searchString ) {
+        public Amoss_PositionalParameterAdditionalValueDefiner matching( String searchString ) {
             try {
-                return setParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( searchString ) );
+                return addParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( searchString ) );
             } catch ( Amoss_Instance.Amoss_AssertionFailureException assertionFailure ) {
                 assertionFailure.issueAsserton( expectation.getAssertionMechanism() );
             }
@@ -1466,8 +1466,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @param Sobject - The SObject that the parameter should be checked against
         */
-        public Amoss_PositionalParametersDefiner withFieldsSetLike( Sobject parameterValue ) {
-            return setParameterVerifier( valueVerifierBuilder.buildFieldsSetLikeVerifier( parameterValue ) );
+        public Amoss_PositionalParameterAdditionalValueDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return addParameterVerifier( valueVerifierBuilder.buildFieldsSetLikeVerifier( parameterValue ) );
         }
 
         /**
@@ -1489,8 +1489,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * @param Map<String,Object> - The Map of values that the parameter should be checked against
         */
-        public Amoss_PositionalParametersDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
-            return setParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
+        public Amoss_PositionalParameterAdditionalValueDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return addParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
         }
 
         /**
@@ -1563,8 +1563,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * Internal method that sets the next parameter's verifier on the expectation to that specified
-        * and then returns the next definer in the allowed syntax
+        * Internal method that sets the verifier on the current expectation to that specified
+        * and then returns the next definer in the allowed  - basically moving onto specifying the next
+        * parameter.  Is used when the verifier could not possibly have a second verifier and make sense (e.g. setTo).
         *
         * @param  Amoss_ValueVerifier - The verifier to set on the expectation
         * @return Amoss_PositionalParametersDefiner - The next definer
@@ -1572,6 +1573,134 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         private Amoss_PositionalParametersDefiner setParameterVerifier( Amoss_ValueVerifier verifier ) {
             ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter( verifier );
             return new Amoss_PositionalParametersDefiner( expectation );
+        }
+
+        /**
+        * Internal method that adds a verifier to the current expectation and then returns itself, allowing
+        * more verifiers to be added.
+        *
+        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
+        * @return Amoss_PositionalParameterValueDefiner - The current definer
+        */
+        private Amoss_PositionalParameterAdditionalValueDefiner addParameterVerifier( Amoss_ValueVerifier verifier ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter( verifier );
+            return new Amoss_PositionalParameterAdditionalValueDefiner( expectation );
+        }
+    }
+
+    /**
+     * The part of the grammar that allows the specification of additional properties of a positional parameter.
+     *
+     * At this point in the syntax, you can define a value, move onto the next parameter, or the return of the method.
+     */
+    // TODO: replicate this for named parameters
+    public class Amoss_PositionalParameterAdditionalValueDefiner extends Amoss_PositionalParametersDefiner {
+
+        public Amoss_PositionalParameterAdditionalValueDefiner( Amoss_Expectation expectation ) {
+            super( expectation );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that contains the specified value
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().containing( 'a string' )
+        *       .andParameter().withAnyElement().containing( 'a string' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param String - The String to search for in the parameter
+        */
+        public Amoss_PositionalParameterAdditionalValueDefiner containing( String searchString ) {
+            return addParameterVerifier( valueVerifierBuilder.buildContainingStringVerifier( searchString ) );
+        }
+
+        /**
+        * States the parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match an object, the passed parameter needs to be a String that matches the specified regular expression
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().matching( 'a*b' )
+        *       .andParameter().withAnyElement().matching( 'a*b' )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param String - The Regular Expression to match against the parameter
+        */
+        public Amoss_PositionalParameterAdditionalValueDefiner matching( String searchString ) {
+            try {
+                return addParameterVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( searchString ) );
+            } catch ( Amoss_Instance.Amoss_AssertionFailureException assertionFailure ) {
+                assertionFailure.issueAsserton( expectation.getAssertionMechanism() );
+            }
+            return null;
+        }
+
+        /**
+        * States the shape of the SObject parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated on the
+        * specified sobject set to the same value.
+        *
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameterNamed'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withFieldsSetLike( contact )
+        *       .andParameter().withAnyElement().withFieldsSetLike( account )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Sobject - The SObject that the parameter should be checked against
+        */
+        public Amoss_PositionalParameterAdditionalValueDefiner withFieldsSetLike( Sobject parameterValue ) {
+            return addParameterVerifier( valueVerifierBuilder.buildFieldsSetLikeVerifier( parameterValue ) );
+        }
+
+        /**
+        * States the shape of the sobject parameter value that is expected for the currently specified parameter.
+        *
+        * In order to match, the ultimately passed parameter must have the properties that are populated in the
+        * specified map set to the same value.
+        *
+        * The ultimate parameter may have more properties set.
+        *
+        * Is used in combination with 'withParameter'.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .withParameter().withFieldsSetTo( contactFieldsMap )
+        *       .andParameter().withAnyElement().withFieldsSetTo( accountFieldsMap )
+        *       .willReturn( 'theValueItShouldReturn' )
+        *
+        * @param Map<String,Object> - The Map of values that the parameter should be checked against
+        */
+        public Amoss_PositionalParameterAdditionalValueDefiner withFieldsSetTo( Map<String,Object> parameterValue ) {
+            return addParameterVerifier( valueVerifierBuilder.buildFieldsSetToVerifier( parameterValue ) );
+        }
+
+        /**
+        * Internal method that adds a verifier to the current expectation and then returns itself, allowing
+        * more verifiers to be added.
+        *
+        * @param  Amoss_ValueVerifier - The verifier to set on the expectation
+        * @return Amoss_PositionalParameterValueDefiner - The current definer
+        */
+        private Amoss_PositionalParameterAdditionalValueDefiner addParameterVerifier( Amoss_ValueVerifier verifier ) {
+            ((Amoss_ExpectationPositionalParameters)expectation.getExpectationParameters()).addVerifierToCurrentParameter( verifier );
+            return new Amoss_PositionalParameterAdditionalValueDefiner( expectation );
         }
     }
 

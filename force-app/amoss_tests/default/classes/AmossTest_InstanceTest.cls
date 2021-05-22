@@ -697,7 +697,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'methodUnderDouble' )
-                .withParameter().containing( 'match' )
+                .withParameter().containing( 'match' ).containing( 'this' )
                 .thenAnyParameter()
                 .willReturn( 'expectedReturn' );
 
@@ -722,7 +722,7 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController
             .when()
                 .method( 'methodUnderDouble' )
-                .withParameter().containing( 'NoMatch' )
+                .withParameter().containing( 'match').containing( 'NoMatch' )
                 .thenAnyParameter()
                 .willReturn( 'notExpectedReturn' );
 
@@ -806,6 +806,31 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.withParameter.matching.willReturn
+    * @case   when multiple matchers are defined that match
+    * @result will return the stated value
+    */
+    @isTest
+    private static void whenWithParameterMatchingMatching_whenCallWithParamSetToAStringThatMatchesTheGiven_returnSetUpValue() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'methodUnderDouble' )
+                .withParameter().matching( 't.*m.*s' ).matching( '.*t.*' )
+                .thenAnyParameter()
+                .willReturn( 'expectedReturn' );
+
+        Test.startTest();
+            String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
+        Test.stopTest();
+
+        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.matching.willReturn, with multiple matchers defined and the method called with parameter set to a string matching the given value, will return the stated value' );
     }
 
     /**
@@ -3000,6 +3025,35 @@ public with sharing class AmossTest_InstanceTest {
         classToDoubleController.verify();
     }
 
+
+    /**
+    * @method expects.method.withFieldsSetLike.returning
+    * @case   when multiple withFieldsSetLike and object matches
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsWithFieldsSetLikeReturning_whenMultipleCalls_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        Contact objectExpected1 = new Contact( FirstName = 'ExpectedFirst' );
+        Contact objectExpected2 = new Contact( LastName = 'ExpectedLast' );
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetLike( objectExpected1 ).withFieldsSetLike( objectExpected2 )
+                .returning( 'expectedReturn' );
+
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
     /**
     * @method expects.method.withFieldsSetLike.returning
     * @case   when the expectation is set with an sobject, and a different instance is passed with extra properties
@@ -3208,6 +3262,34 @@ public with sharing class AmossTest_InstanceTest {
             .expects()
                 .method( 'sobjectMethodUnderDouble' )
                 .withParameter().withFieldsSetTo( objectExpected )
+                .returning( 'expectedReturn' );
+
+        Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
+        Test.startTest();
+            String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
+        Test.stopTest();
+
+        classToDoubleController.verify();
+    }
+
+    /**
+    * @method expects.method.withFieldsSetTo.returning
+    * @case   when multiple calls
+    * @result will not fail the test
+    */
+    @isTest
+    private static void expectsWithFieldsSetToReturning_whenMultipleCalls_pass() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        Map<String,Object> objectExpected1 = new Map<String,Object>{ 'LastName' => 'ExpectedLast' };
+        Map<String,Object> objectExpected2 = new Map<String,Object>{ 'FirstName' => 'ExpectedFirst' };
+
+        classToDoubleController
+            .expects()
+                .method( 'sobjectMethodUnderDouble' )
+                .withParameter().withFieldsSetTo( objectExpected1 ).withFieldsSetTo( objectExpected2 )
                 .returning( 'expectedReturn' );
 
         Contact objectPassed = new Contact( LastName = 'ExpectedLast', FirstName = 'ExpectedFirst' );
