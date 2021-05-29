@@ -99,6 +99,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         return latestGeneratedDouble;
     }
 
+    public Amoss_CalloutMockDefiner isACalloutMock() {
+        return new Amoss_CalloutMockDefiner( this );
+    }
+
     /**
     * Generates a new instance of the class that you use in the application under tests.
     * Used to generate multiple objects that all behave in the same way when you do not require
@@ -1934,7 +1938,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of parameters based on their
      * names.  I.E. expected parameters are defined in a name and value pairing.
      */
-    public virtual class Amoss_NamedParametersDefiner extends Amoss_ReturnsDefiner {
+    public virtual class Amoss_NamedParametersDefiner extends Amoss_ReturnsDefiner implements Amoss_NamedParameterEntryPoint {
         public Amoss_NamedParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
@@ -1956,6 +1960,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_NamedParameterValueDefiner andParameterNamed( String parameterName ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).moveToParameter( parameterName );
             return new Amoss_NamedParameterValueDefiner( expectation );
+        }
+
+        // TODO: test
+        public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
+            return andParameterNamed( parameterName );
         }
     }
 
@@ -2575,13 +2584,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    public interface Amoss_NamedParameterEntryPoint {
+        Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName );
+    }
+
     /**
      * The part of the grammar that allows the first specification of a parameter.
      *
      * The choice of parameter specification method at this point defines the syntax that will
      * be used for the remainder of the specification - Any, Positional or Named.
      */
-    public class Amoss_ParametersDefiner extends Amoss_ReturnsDefiner {
+    public class Amoss_ParametersDefiner extends Amoss_ReturnsDefiner implements Amoss_NamedParameterEntryPoint {
         public Amoss_ParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
@@ -4519,6 +4532,174 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public String getCallDescription( String method, List<Object> parameters ) {
             return String.format( '{0}({1})', new List<String>{ method, String.join( parameters, ', ' ) } );
+        }
+    }
+
+
+
+    // Callout Mock grammer and verifiers
+    // TODO: consider grammer interfaces on Amoss - 'thenable' may be one
+
+    public class Amoss_NotAnHttpCalloutMockException extends Exception {}
+
+
+    public class Amoss_CalloutMockDefiner {
+
+        Amoss_Instance instance;
+
+        public Amoss_CalloutMockDefiner( Amoss_Instance instance ) {
+            this.instance = instance;
+            // TODO: move the specification of the class into here
+            try {
+                Test.setMock( HttpCalloutMock.class, (HttpCalloutMock)this.instance.generateDouble() );
+            } catch( Exception e ) {
+                throw new Amoss_NotAnHttpCalloutMockException( 'Attempted to create an Http Callout Mock when the Amoss_Instance is not a test double of a class or interface that implements HttpCalloutMock\n' + e.getMessage(), e );
+            }
+        }
+
+        // TODO: replace this with whatever is needed to implement 'then'
+        public Amoss_CalloutMockDefiner() {
+
+        }
+
+        public Amoss_CalloutMockRequestDefiner expects() {
+            return new Amoss_CalloutMockRequestDefiner( instance.expects( 'respond' ) );
+        }
+
+        public Amoss_CalloutMockRequestDefiner when() {
+            return new Amoss_CalloutMockRequestDefiner( instance.when( 'respond' ) );
+        }
+
+        public Amoss_CalloutMockRequestDefiner allows() {
+            return new Amoss_CalloutMockRequestDefiner( instance.allows( 'respond' ) );
+        }
+    }
+
+    // TODO: some class shenanigans here...
+    public virtual class Amoss_CalloutMockNextCallDefiner {
+
+        public Amoss_CalloutMockDefiner then() {
+            return new Amoss_CalloutMockDefiner();
+        }
+    }
+
+    public virtual class Amoss_CalloutMockRespondsWithEntryDefiner extends Amoss_CalloutMockNextCallDefiner {
+
+        public Amoss_CalloutMockResponseDefiner respondsWith() {
+            return new Amoss_CalloutMockResponseDefiner();
+        }
+    }
+
+    public class Amoss_CalloutMockRequestDefiner extends Amoss_CalloutMockRespondsWithEntryDefiner {
+
+        Amoss_NamedParameterEntryPoint parametersDefiner;
+
+        public Amoss_CalloutMockRequestDefiner( Amoss_NamedParameterEntryPoint parametersDefiner ) {
+            this.parametersDefiner = parametersDefiner;
+        }
+
+        public Amoss_CalloutMockRequestDefiner method( String expectedHttpMethod ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpMethodVerifier( expectedHttpMethod ) )
+            );
+        }
+/*
+        public Amoss_CalloutMockRequestHeaderValueDefiner header( String expectedHttpHeader ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpHeaderVerifier( expectedHttpHeader ) )
+            );
+        }
+*/
+        public Amoss_CalloutMockRequestDefiner endpoint( String expectedEndpoint ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpEndpointVerifier( expectedEndpoint ) )
+            );
+        }
+        // TODO: endpoint().setTo() style grammer
+
+    }
+/*
+    public class Amoss_CalloutMockRequestHeaderValueDefiner {
+
+        // TODO: more options in here
+        public Amoss_CalloutMockRequestDefiner setTo( String expectedValue ) {
+            return new Amoss_CalloutMockRequestDefiner();
+        }
+    }
+*/
+    public class Amoss_CalloutMockResponseDefiner extends Amoss_CalloutMockNextCallDefiner {
+
+        public Amoss_CalloutMockResponseDefiner statusCode( Integer statusCode ) {
+            return new Amoss_CalloutMockResponseDefiner();
+        }
+
+        public Amoss_CalloutMockResponseDefiner status( String status ) {
+            return new Amoss_CalloutMockResponseDefiner();
+        }
+
+        public Amoss_CalloutMockResponseDefiner body( String body ) {
+            return new Amoss_CalloutMockResponseDefiner();
+        }
+
+        public Amoss_CalloutMockResponseDefiner bodyAsJson( Object body ) {
+            return new Amoss_CalloutMockResponseDefiner();
+        }
+    }
+
+    private class Amoss_CalloutMockHttpMethodVerifier implements Amoss_ValueVerifier {
+
+        String expectedMethod;
+
+        public Amoss_CalloutMockHttpMethodVerifier( String expectedMethod ) {
+            this.expectedMethod = expectedMethod;
+        }
+
+        public override String toString() {
+            return 'To be implemented';
+        }
+
+        public void verify( Object value ) {
+            // TODO: implement'
+        }
+    }
+
+    private class Amoss_CalloutMockHttpHeaderVerifier implements Amoss_ValueVerifier {
+
+        String expectedHttpHeader;
+
+        public Amoss_CalloutMockHttpHeaderVerifier( String expectedHttpHeader ) {
+            this.expectedHttpHeader = expectedHttpHeader;
+        }
+
+        public override String toString() {
+            return 'To be implemented';
+        }
+
+        public void verify( Object value ) {
+            // TODO: implement'
+        }
+    }
+
+    private class Amoss_CalloutMockHttpEndpointVerifier implements Amoss_ValueVerifier {
+
+        String expectedEndpoint;
+
+        public Amoss_CalloutMockHttpEndpointVerifier( String expectedMeexpectedEndpointthod ) {
+            this.expectedEndpoint = expectedEndpoint;
+        }
+
+        public override String toString() {
+            return 'To be implemented';
+        }
+
+        public void verify( Object value ) {
+            // TODO: implement'
         }
     }
 }
