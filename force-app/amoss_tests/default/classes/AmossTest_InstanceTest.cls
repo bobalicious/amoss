@@ -9820,4 +9820,51 @@ public with sharing class AmossTest_InstanceTest {
         Amoss_Asserts.assertContains( 'Expected: ' + expected, actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the expected parameter value' );
         Amoss_Asserts.assertContains( 'Actual: '   + actual  , actualAssertion, message + ', will fail, by calling assert with an assertion message that clearly stating the actual parameter value' );
     }
+
+    @isTest
+    private static void test() {
+        Amoss_Instance mockHttp = new Amoss_Instance( Amoss_HttpCalloutMock.class );
+
+        // TODO: setting an expected property of a request wipes out the old expected property - Amoss_Instance needs work for that
+        // TODO: review what else we can reasonably add to the request properties
+        // TODO: double check the body as a blob
+        // TODO: consider what we want to check on endpoint (contains / matching / etc)
+        // TODO: implement header checking
+
+        mockHttp
+            .isACalloutMock()
+                .expects()
+                    .method( 'GET' )
+                    .endpoint( 'http://api.example.com/accounts' )
+//                    .header( 'Authorization' ).setTo( 'value' )
+                .respondsWith()
+                    .statusCode( 200 )
+                    .status( 'Complete' )
+                    .body( '[{"Name":"sForceTest1"}]' )
+                .then().expects()
+                    .method( 'POST' )
+                    .endpoint( 'http://api.example.com/accounts' )
+//                    .header( 'Authorization' ).setTo( 'value' )
+                .respondsWith()
+                    .statusCode( 500 )
+                    .status( 'Error' )
+                    .body( '[{"Name":"sForceTest1"}]' );
+
+        HttpRequest request = new HttpRequest();
+        request.setMethod( 'GET' );
+        request.setEndpoint( 'http://api.example.com/accounts' );
+
+        Http transport = new Http();
+        HttpResponse response = transport.send( request );
+
+        System.assertEquals( 200, response.getStatusCode() );
+        System.assertEquals( 'Complete', response.getStatus() );
+
+        response = transport.send( request );
+
+        System.assertEquals( 500, response.getStatusCode() );
+        System.assertEquals( 'Error', response.getStatus() );
+
+    }
+
 }
