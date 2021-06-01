@@ -3067,11 +3067,19 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         Amoss_CompositeValueVerifier currentParameterVerifier;
 
         /**
-        * Build a new 'current parameter verifier' and apply that as the nw current one so we can add
+        * Build a new 'current parameter verifier' and apply that as the new current one so we can add
         * new value verifiers to it.
         */
         public Amoss_CompositeValueVerifier buildCurrentParameterVerifier() {
             currentParameterVerifier = new Amoss_CompositeValueVerifier();
+            return currentParameterVerifier;
+        }
+
+        /**
+        * Sets the 'current parameter verifier' to be the one specified so we can add new value verifiers to it.
+        */
+        public Amoss_CompositeValueVerifier setCurrentParameterVerifier( Amoss_CompositeValueVerifier currentParameterVerifier ) {
+            this.currentParameterVerifier = currentParameterVerifier;
             return currentParameterVerifier;
         }
 
@@ -3220,9 +3228,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that moves the current specification on to the parameter named, so that any further
         * parameter specifications apply to that parameter.
+        *
+        * If that parameter has previously been specified, will return the existing parameter verifier so more verifications can be
+        * added to it.  Otherwise ensures a new one is created.
         */
         Amoss_ExpectationNamedParameters moveToParameter( String parameterName ) {
-            expectedParameters.put( parameterName, buildCurrentParameterVerifier() );
+
+            if ( !expectedParameters.containsKey( parameterName ) ) {
+                expectedParameters.put( parameterName, buildCurrentParameterVerifier() );
+            } else {
+                setCurrentParameterVerifier( expectedParameters.get( parameterName ) );
+            }
+
             return this;
         }
 
