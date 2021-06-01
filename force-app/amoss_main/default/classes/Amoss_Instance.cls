@@ -3078,9 +3078,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Sets the 'current parameter verifier' to be the one specified so we can add new value verifiers to it.
         */
-        public Amoss_CompositeValueVerifier setCurrentParameterVerifier( Amoss_CompositeValueVerifier currentParameterVerifier ) {
-            this.currentParameterVerifier = currentParameterVerifier;
-            return currentParameterVerifier;
+        public Amoss_ExpectationParameters setCurrentParameterVerifier( Amoss_ValueVerifier currentParameterVerifier ) {
+            this.currentParameterVerifier = (Amoss_CompositeValueVerifier)currentParameterVerifier;
+            return this;
         }
 
         /**
@@ -4711,7 +4711,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         protected override void verifyRequest( HttpRequest actualRequest ) {
-            if ( actualRequest.getEndpoint() != expectedMethod ) {
+            if ( actualRequest.getMethod() != expectedMethod ) {
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( expectedMethod )
                             .setActual( actualRequest.getMethod() )
