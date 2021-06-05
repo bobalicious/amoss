@@ -66,7 +66,7 @@ public interface Amoss_ValueVerifier {
     * without the intention of reporting assertion failures to the user, and unexpected behaviours may result, particularly when using
     * the 'when' and 'allows' syntax.
     *
-    * @param Objet - The value to verify
+    * @param Object - The value to verify
     */
     void verify( Object value );
 }

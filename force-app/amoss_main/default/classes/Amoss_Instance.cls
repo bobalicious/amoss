@@ -4604,7 +4604,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return new Amoss_CalloutMockRequestDefiner(
                 parametersDefiner
                     .withParameterNamed( 'request' )
-                    .verifiedBy( new Amoss_CalloutMockHttpMethodVerifier( expectedHttpMethod ) )
+                    .verifiedBy( new Amoss_CalloutMockHttpMethodVerifier( valueVerifierBuilder.buildSameValueAsVerifier( expectedHttpMethod ) ) )
             );
         }
 /*
@@ -4620,10 +4620,12 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return new Amoss_CalloutMockRequestDefiner(
                 parametersDefiner
                     .withParameterNamed( 'request' )
-                    .verifiedBy( new Amoss_CalloutMockHttpEndpointVerifier( expectedEndpoint ) )
+                    .verifiedBy( new Amoss_CalloutMockHttpEndpointVerifier( valueVerifierBuilder.buildSameValueAsVerifier( expectedEndpoint ) ) )
             );
         }
-        // TODO: endpoint().setTo() style grammer
+
+        // TODO: endpoint().setTo() style grammar
+        // TODO: body().setTo() style grammar
 
         public Amoss_CalloutMockResponseDefiner respondsWith() {
             return new Amoss_CalloutMockResponseDefiner( parametersDefiner );
@@ -4683,7 +4685,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     private abstract class Amoss_CalloutMockRequestVerifier implements Amoss_ValueVerifier {
 
-        protected abstract void verifyRequest( HttpRequest actualRequest );
+        protected Amoss_ValueVerifier verifier;
+
+        public Amoss_CalloutMockRequestVerifier( Amoss_ValueVerifier verifier ) {
+            this.verifier = verifier;
+        }
+
+        protected abstract  void verifyValue( HttpRequest actualRequest );
 
         public void verify( Object actualValue ) {
 
@@ -4694,52 +4702,44 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                             .setAssertionMessage( 'The value is not what was expected - The types do not match' );
             }
 
-            verifyRequest( (HttpRequest)actualValue );
+            verifyValue( (HttpRequest)actualValue );
         }
     }
 
     private class Amoss_CalloutMockHttpMethodVerifier extends Amoss_CalloutMockRequestVerifier {
 
-        String expectedMethod;
-
-        public Amoss_CalloutMockHttpMethodVerifier( String expectedMethod ) {
-            this.expectedMethod = expectedMethod;
+        public Amoss_CalloutMockHttpMethodVerifier( Amoss_ValueVerifier verifier ) {
+            super( verifier );
         }
 
         public override String toString() {
-            return 'To be implemented';
+            return 'HttpRequest with the method ' + verifier.toString();
         }
 
-        protected override void verifyRequest( HttpRequest actualRequest ) {
-            if ( actualRequest.getMethod() != expectedMethod ) {
-                throw new Amoss_EqualsAssertionFailureException()
-                            .setExpected( expectedMethod )
-                            .setActual( actualRequest.getMethod() )
-                            .setAssertionMessage( 'The request method is not what was expected' );
-
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getMethod() );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Method is not what was expected' );
             }
         }
     }
 
     private class Amoss_CalloutMockHttpEndpointVerifier extends Amoss_CalloutMockRequestVerifier {
 
-        String expectedEndpoint;
-
-        public Amoss_CalloutMockHttpEndpointVerifier( String expectedEndpoint ) {
-            this.expectedEndpoint = expectedEndpoint;
+        public Amoss_CalloutMockHttpEndpointVerifier( Amoss_ValueVerifier verifier ) {
+            super( verifier );
         }
 
         public override String toString() {
-            return 'To be implemented';
+            return 'HttpRequest with the endpoint ' + verifier.toString();
         }
 
-        protected override void verifyRequest( HttpRequest actualRequest ) {
-            if ( actualRequest.getEndpoint() != expectedEndpoint ) {
-                throw new Amoss_EqualsAssertionFailureException()
-                            .setExpected( expectedEndpoint )
-                            .setActual( actualRequest.getEndpoint() )
-                            .setAssertionMessage( 'The request endpoint is not what was expected' );
-
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getEndpoint() );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Endpoint is not what was expected' );
             }
         }
     }

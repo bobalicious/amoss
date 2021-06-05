@@ -9823,14 +9823,8 @@ public with sharing class AmossTest_InstanceTest {
 
     @isTest
     private static void test() {
+
         Amoss_Instance mockHttp = new Amoss_Instance( Amoss_HttpCalloutMock.class );
-
-        // TODO: test that we can add multiple verifiers to the same parameter
-        // TODO: review what else we can reasonably add to the request properties
-        // TODO: double check the body as a blob
-        // TODO: consider what we want to check on endpoint (contains / matching / etc)
-        // TODO: implement header checking
-
         mockHttp
             .isACalloutMock()
                 .expects()
