@@ -9830,7 +9830,7 @@ public with sharing class AmossTest_InstanceTest {
                 .expects()
                     .method( 'GET' )
                     .endpoint( 'http://api.example.com/accounts' )
-//                    .header( 'Authorization' ).setTo( 'value' )
+                    .header( 'Authorization' ).setTo( 'value' )
                 .respondsWith()
                     .statusCode( 200 )
                     .status( 'Complete' )
@@ -9838,7 +9838,7 @@ public with sharing class AmossTest_InstanceTest {
                 .then().expects()
                     .method( 'GET' )
                     .endpoint( 'http://api.example.com/accounts' )
-//                    .header( 'Authorization' ).setTo( 'value' )
+                    .header( 'Authorization' ).setTo( 'value' )
                 .respondsWith()
                     .statusCode( 500 )
                     .status( 'Error' )
@@ -9847,6 +9847,7 @@ public with sharing class AmossTest_InstanceTest {
         HttpRequest request = new HttpRequest();
         request.setMethod( 'GET' );
         request.setEndpoint( 'http://api.example.com/accounts' );
+        request.setHeader( 'Authorization', 'value' );
 
         Http transport = new Http();
         HttpResponse response = transport.send( request );

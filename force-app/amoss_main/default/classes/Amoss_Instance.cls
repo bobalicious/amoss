@@ -4607,15 +4607,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                     .verifiedBy( new Amoss_CalloutMockHttpMethodVerifier( valueVerifierBuilder.buildSameValueAsVerifier( expectedHttpMethod ) ) )
             );
         }
-/*
-        public Amoss_CalloutMockRequestHeaderValueDefiner header( String expectedHttpHeader ) {
-            return new Amoss_CalloutMockRequestDefiner(
-                parametersDefiner
-                    .withParameterNamed( 'request' )
-                    .verifiedBy( new Amoss_CalloutMockHttpHeaderVerifier( expectedHttpHeader ) )
-            );
+
+        public Amoss_CalloutMockRequestHeaderValueDefiner header( String expectedHeaderKey ) {
+            return new Amoss_CalloutMockRequestHeaderValueDefiner( parametersDefiner, expectedHeaderKey );
         }
-*/
+
         public Amoss_CalloutMockRequestDefiner endpoint( String expectedEndpoint ) {
             return new Amoss_CalloutMockRequestDefiner(
                 parametersDefiner
@@ -4631,15 +4627,28 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return new Amoss_CalloutMockResponseDefiner( parametersDefiner );
         }
     }
-/*
+
     public class Amoss_CalloutMockRequestHeaderValueDefiner {
+
+        Amoss_NamedParametersMethodDefiner parametersDefiner;
+        String expectedHeaderKey;
+
+        public Amoss_CalloutMockRequestHeaderValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner, String expectedHeaderKey ) {
+            this.parametersDefiner = parametersDefiner;
+            this.expectedHeaderKey = expectedHeaderKey;
+        }
 
         // TODO: more options in here
         public Amoss_CalloutMockRequestDefiner setTo( String expectedValue ) {
-            return new Amoss_CalloutMockRequestDefiner();
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpHeaderVerifier( expectedHeaderKey, valueVerifierBuilder.buildSameValueAsVerifier( expectedValue ) ) )
+
+            );
         }
     }
-*/
+
     public class Amoss_CalloutMockResponseDefiner {
 
         HttpResponse response;
@@ -4740,6 +4749,29 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 verifier.verify( actualRequest.getEndpoint() );
             } catch ( Amoss_AssertionFailureException e ) {
                 throw e.addContextToMessage( 'Endpoint is not what was expected' );
+            }
+        }
+    }
+
+    private class Amoss_CalloutMockHttpHeaderVerifier extends Amoss_CalloutMockRequestVerifier {
+
+        String headerKey;
+
+        public Amoss_CalloutMockHttpHeaderVerifier( String headerKey, Amoss_ValueVerifier verifier ) {
+            super( verifier );
+            headerKey = this.headerKey;
+        }
+
+        public override String toString() {
+            return 'HttpRequest with the header "' + headerKey + '" ' + verifier.toString();
+        }
+
+        // TODO: null pointer here to fix
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getHeader( headerKey ) );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Header "' + headerKey + '" is not what was expected' );
             }
         }
     }
