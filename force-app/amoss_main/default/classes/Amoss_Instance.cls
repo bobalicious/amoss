@@ -4691,7 +4691,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             this.verifier = verifier;
         }
 
-        protected abstract  void verifyValue( HttpRequest actualRequest );
+        protected abstract void verifyValue( HttpRequest actualRequest );
 
         public void verify( Object actualValue ) {
 
