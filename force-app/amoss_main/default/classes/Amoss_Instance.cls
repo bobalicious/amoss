@@ -4759,7 +4759,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         public Amoss_CalloutMockHttpHeaderVerifier( String headerKey, Amoss_ValueVerifier verifier ) {
             super( verifier );
-            headerKey = this.headerKey;
+            this.headerKey = headerKey;
         }
 
         public override String toString() {
