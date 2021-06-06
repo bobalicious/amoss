@@ -4628,40 +4628,53 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
-    // TODO - this may becode an abstract that includes a template for the construction of the verifier
-    public class Amoss_CalloutMockRequestHeaderValueDefiner {
+    public abstract class Amoss_CalloutMockRequestStringPropertyDefiner {
 
-        Amoss_CalloutMockRequestDefiner     requestDefiner;
+        Amoss_NamedParametersMethodDefiner  parametersDefiner;
         Amoss_CalloutMockHttpHeaderVerifier verifier;
 
-        public Amoss_CalloutMockRequestHeaderValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner, String expectedHeaderKey ) {
-            this.verifier = new Amoss_CalloutMockHttpHeaderVerifier( expectedHeaderKey );
+        public Amoss_CalloutMockRequestStringPropertyDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
+            this.parametersDefiner = parametersDefiner;
+        }
 
-            requestDefiner = new Amoss_CalloutMockRequestDefiner(
+        private Amoss_CalloutMockRequestDefiner define( Amoss_ValueVerifier propertyVerifier ) {
+            return new Amoss_CalloutMockRequestDefiner(
                 parametersDefiner
                     .withParameterNamed( 'request' )
-                    .verifiedBy( verifier )
+                    .verifiedBy( buildBaseVerifier().setVerifier( propertyVerifier ) )
             );
         }
 
+        protected abstract Amoss_CalloutMockRequestVerifier buildBaseVerifier();
+
         public Amoss_CalloutMockRequestDefiner set() {
-            verifier.setVerifier( valueVerifierBuilder.buildNotNullVerifier() );
-            return requestDefiner;
+            return define( valueVerifierBuilder.buildNotNullVerifier() );
         }
 
         public Amoss_CalloutMockRequestDefiner setTo( String expectedValue ) {
-            verifier.setVerifier( valueVerifierBuilder.buildSameValueAsVerifier( expectedValue ) );
-            return requestDefiner;
+            return define( valueVerifierBuilder.buildSameValueAsVerifier( expectedValue ) );
         }
 
         public Amoss_CalloutMockRequestDefiner containing( String expectedValue ) {
-            verifier.setVerifier( valueVerifierBuilder.buildContainingStringVerifier( expectedValue ) );
-            return requestDefiner;
+            return define( valueVerifierBuilder.buildContainingStringVerifier( expectedValue ) );
         }
 
         public Amoss_CalloutMockRequestDefiner matching( String expectedValue ) {
-            verifier.setVerifier( valueVerifierBuilder.buildMatchingExpressionVerifier( expectedValue ) );
-            return requestDefiner;
+            return define( valueVerifierBuilder.buildMatchingExpressionVerifier( expectedValue ) );
+        }
+    }
+
+    public class Amoss_CalloutMockRequestHeaderValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
+
+        String expectedHeaderKey;
+
+        public Amoss_CalloutMockRequestHeaderValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner, String expectedHeaderKey ) {
+            super( parametersDefiner );
+            this.expectedHeaderKey = expectedHeaderKey;
+        }
+
+        protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
+            return new Amoss_CalloutMockHttpHeaderVerifier( expectedHeaderKey );
         }
     }
 
