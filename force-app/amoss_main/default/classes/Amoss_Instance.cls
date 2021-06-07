@@ -4613,15 +4613,36 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         public Amoss_CalloutMockRequestDefiner endpoint( String expectedEndpoint ) {
+            return endpoint().setTo( expectedEndpoint );
+        }
+
+        public Amoss_CalloutMockRequestEndpointValueDefiner endpoint() {
+            return new Amoss_CalloutMockRequestEndpointValueDefiner( parametersDefiner );
+        }
+
+        public Amoss_CalloutMockRequestDefiner body( String expectedBody ) {
+            return body().setTo( expectedBody );
+        }
+
+        public Amoss_CalloutMockRequestBodyValueDefiner body() {
+            return new Amoss_CalloutMockRequestBodyValueDefiner( parametersDefiner );
+        }
+
+        public Amoss_CalloutMockRequestDefiner compressed() {
             return new Amoss_CalloutMockRequestDefiner(
                 parametersDefiner
                     .withParameterNamed( 'request' )
-                    .verifiedBy( new Amoss_CalloutMockHttpEndpointVerifier().setVerifier( valueVerifierBuilder.buildSameValueAsVerifier( expectedEndpoint ) ) )
+                    .verifiedBy( new Amoss_CalloutMockHttpCompressedVerifier().setVerifier( valueVerifierBuilder.buildSameValueAsVerifier( true ) ) )
             );
         }
 
-        // TODO: endpoint().setTo() style grammar
-        // TODO: body().setTo() style grammar
+        public Amoss_CalloutMockRequestDefiner notCompressed() {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpCompressedVerifier().setVerifier( valueVerifierBuilder.buildSameValueAsVerifier( false ) ) )
+            );
+        }
 
         public Amoss_CalloutMockResponseDefiner respondsWith() {
             return new Amoss_CalloutMockResponseDefiner( parametersDefiner );
@@ -4675,6 +4696,28 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
             return new Amoss_CalloutMockHttpHeaderVerifier( expectedHeaderKey );
+        }
+    }
+
+    public class Amoss_CalloutMockRequestEndpointValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
+
+        public Amoss_CalloutMockRequestEndpointValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
+            super( parametersDefiner );
+        }
+
+        protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
+            return new Amoss_CalloutMockHttpEndpointVerifier();
+        }
+    }
+
+    public class Amoss_CalloutMockRequestBodyValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
+
+        public Amoss_CalloutMockRequestBodyValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
+            super( parametersDefiner );
+        }
+
+        protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
+            return new Amoss_CalloutMockHttpBodyVerifier();
         }
     }
 
@@ -4755,7 +4798,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             try {
                 verifier.verify( actualRequest.getMethod() );
             } catch ( Amoss_AssertionFailureException e ) {
-                throw e.addContextToMessage( 'Method is not what was expected' );
+                throw e.addContextToMessage( 'Method is not what was expected: {0}' );
             }
         }
     }
@@ -4770,7 +4813,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             try {
                 verifier.verify( actualRequest.getEndpoint() );
             } catch ( Amoss_AssertionFailureException e ) {
-                throw e.addContextToMessage( 'Endpoint is not what was expected' );
+                throw e.addContextToMessage( 'Endpoint is not what was expected: {0}' );
+            }
+        }
+    }
+
+    private class Amoss_CalloutMockHttpBodyVerifier extends Amoss_CalloutMockRequestVerifier {
+
+        public override String toString() {
+            return 'HttpRequest with the body ' + verifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getBody() );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Body is not what was expected: {0}' );
             }
         }
     }
@@ -4795,4 +4853,21 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             }
         }
     }
+
+    private class Amoss_CalloutMockHttpCompressedVerifier extends Amoss_CalloutMockRequestVerifier {
+
+        public override String toString() {
+            return 'HttpRequest with the compressed ' + verifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getCompressed() );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Compressed is not what was expected: {0}' );
+            }
+        }
+    }
+
+
 }
