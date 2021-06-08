@@ -358,7 +358,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Example usage:
     *   expectsNoCalls()
     */
-    public Amoss_Instance expectsNoCalls() {
+    public void expectsNoCalls() {
 
         if ( !expectations.isEmpty() || !whens.isEmpty() ) {
             throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double expectsNoCalls when expectations or whens have been defined' );
@@ -369,7 +369,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         this.expectsNoCalls = true;
-        return this;
     }
 
     /**
@@ -4606,6 +4605,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         public Amoss_CalloutMockRequestDefiner allows() {
             return new Amoss_CalloutMockRequestDefiner( instance.allows( 'respond' ) );
+        }
+
+        public void expectsNoCalls() {
+            instance.expectsNoCalls();
         }
     }
 

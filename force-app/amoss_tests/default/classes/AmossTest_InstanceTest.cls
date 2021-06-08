@@ -9267,7 +9267,9 @@ public with sharing class AmossTest_InstanceTest {
 
             Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
             classToDoubleController
-                .expectsNoCalls()
+                .expectsNoCalls();
+
+            classToDoubleController
                 .expects();
 
         } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
@@ -9293,7 +9295,9 @@ public with sharing class AmossTest_InstanceTest {
 
             Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
             classToDoubleController
-                .expectsNoCalls()
+                .expectsNoCalls();
+
+            classToDoubleController
                 .allows();
 
         } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
@@ -9319,7 +9323,9 @@ public with sharing class AmossTest_InstanceTest {
 
             Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
             classToDoubleController
-                .expectsNoCalls()
+                .expectsNoCalls();
+
+            classToDoubleController
                 .when();
 
         } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {
@@ -9345,7 +9351,9 @@ public with sharing class AmossTest_InstanceTest {
 
             Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
             classToDoubleController
-                .expectsNoCalls()
+                .expectsNoCalls();
+
+            classToDoubleController
                 .allowsAnyCall( true );
 
         } catch ( Amoss_Instance.Amoss_ExpectsNoCallsAndCallsConfiguredException e ) {

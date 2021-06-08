@@ -1,4 +1,6 @@
 # Release Notes since Last Release
+* expectsNoCalls no longer retuns an the instance of Amoss_Instance, reducing the chances of bad configurations.  I.E. if 'expectsNoCalls' is set on an instance you would not expect any other method behaviour definitions to be made.
+
 * Added the ability to specify HttpCalloutMock implementations using the Amoss grammar directly.  E.g.
 ```
 Amoss_Instance mockHttp = new Amoss_Instance( Amoss_HttpCalloutMock.class );
