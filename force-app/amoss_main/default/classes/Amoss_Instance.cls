@@ -2609,6 +2609,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     public interface Amoss_NamedParametersMethodDefiner {
         Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName );
         Amoss_NextExpectationDefiner returns( Object returnValue );
+        Amoss_NextExpectationDefiner throws( Exception exceptionToThrow );
         Amoss_Instance then();
     }
 
@@ -4667,6 +4668,16 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_CalloutMockResponseDefiner respondsWith() {
             return new Amoss_CalloutMockResponseDefiner( parametersDefiner );
         }
+
+        public Amoss_CalloutMockNextExpectationDefiner throws( Exception exceptionToThrow ) {
+            return new Amoss_CalloutMockNextExpectationDefiner(
+                parametersDefiner.throws( exceptionToThrow )
+            );
+        }
+
+        public Amoss_CalloutMockNextExpectationDefiner throwing( Exception exceptionToThrow ) {
+            return throws( exceptionToThrow );
+        }
     }
 
     public abstract class Amoss_CalloutMockRequestStringPropertyDefiner {
@@ -4738,6 +4749,24 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
             return new Amoss_CalloutMockHttpBodyVerifier();
+        }
+    }
+
+    // TODO: Why is there duplication between this and the next class?
+    public virtual class Amoss_CalloutMockNextExpectationDefiner {
+
+        protected Amoss_NextExpectationDefiner nextExpectationDefiner;
+
+        public Amoss_CalloutMockNextExpectationDefiner( Amoss_NextExpectationDefiner nextExpectationDefiner ) {
+            this.nextExpectationDefiner = nextExpectationDefiner;
+        }
+
+        public Amoss_CalloutMockDefiner then() {
+            return new Amoss_CalloutMockDefiner( nextExpectationDefiner.then() );
+        }
+
+        public Amoss_CalloutMockDefiner also() {
+            return then();
         }
     }
 
