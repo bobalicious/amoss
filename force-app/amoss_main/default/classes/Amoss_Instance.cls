@@ -41,6 +41,8 @@ SOFTWARE.
 @isTest
 public without sharing class Amoss_Instance implements StubProvider { //NOPMD - Is a single class library, hence the requirement for a significant number of public methods
 
+    public class Amoss_ClassTypeNotDefinedException extends Exception {}
+    public class Amoss_ClassTypeAlreadyDefinedException extends Exception {}
     public class Amoss_CallLogException extends Exception {}
     public class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
     public class Amoss_ExpectedObjectCannotBeNullException extends Exception {}
@@ -64,6 +66,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     public enum Value { NOT_NULL, ANY_VALUE }
 
+    // TODO: document
+    // TODO: test
+    public Amoss_Instance() {
+    }
+
     public Amoss_Instance( Type classType ) {
         this.classType = classType;
     }
@@ -86,6 +93,16 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    // TODO: document
+    // TODO: test
+    public Amoss_Instance setClass( Type classType ) {
+        if ( this.classType != null ) {
+            throw new Amoss_ClassTypeAlreadyDefinedException( 'The class type on this Amoss_Instance has already been set to ' + this.classType );
+        }
+        this.classType = classType;
+        return this;
+    }
+
     /**
     * Returns the instance of the class that you use in the application under test.
     *
@@ -100,6 +117,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     public Amoss_CalloutMockDefiner isACalloutMock() {
+        if ( this.classType == null ) {
+            this.setClass( Amoss_HttpCalloutMock.class );
+        }
         return new Amoss_CalloutMockDefiner( this );
     }
 
@@ -115,6 +135,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * @return Object  - The instance to use in your test
     */
     public Object generateDouble() {
+        if ( classType == null ) {
+            throw new Amoss_ClassTypeNotDefinedException( 'The class type on this Amoss_Instance has not been defined.  Either set it on construction, or by calling setClass' );
+        }
         latestGeneratedDouble = Test.createStub( classType, this );
         return latestGeneratedDouble;
     }
@@ -4559,24 +4582,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     public class Amoss_NotAnHttpCalloutMockException extends Exception {}
 
-
     public class Amoss_CalloutMockDefiner {
 
         Amoss_Instance instance;
 
         public Amoss_CalloutMockDefiner( Amoss_Instance instance ) {
+
             this.instance = instance;
-            // TODO: move the specification of the class into here
             try {
                 Test.setMock( HttpCalloutMock.class, (HttpCalloutMock)this.instance.generateDouble() );
             } catch( Exception e ) {
                 throw new Amoss_NotAnHttpCalloutMockException( 'Attempted to create an Http Callout Mock when the Amoss_Instance is not a test double of a class or interface that implements HttpCalloutMock\n' + e.getMessage(), e );
             }
-        }
-
-        // TODO: replace this with whatever is needed to implement 'then'
-        public Amoss_CalloutMockDefiner() {
-
         }
 
         public Amoss_CalloutMockRequestDefiner expects() {
@@ -4736,6 +4753,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return new Amoss_CalloutMockDefiner( returnsDefiner.then() );
         }
 
+        public Amoss_CalloutMockDefiner also() {
+            return then();
+        }
+
         public Amoss_CalloutMockResponseDefiner statusCode( Integer statusCode ) {
             response.setStatusCode( statusCode );
             return this;
@@ -4868,6 +4889,4 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             }
         }
     }
-
-
 }

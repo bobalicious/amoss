@@ -9824,7 +9824,7 @@ public with sharing class AmossTest_InstanceTest {
     @isTest
     private static void test() {
 
-        Amoss_Instance mockHttp = new Amoss_Instance( Amoss_HttpCalloutMock.class );
+        Amoss_Instance mockHttp = new Amoss_Instance();
         mockHttp
             .isACalloutMock()
                 .expects()
