@@ -46,6 +46,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     public class Amoss_CallLogException extends Exception {}
     public class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
     public class Amoss_ExpectedObjectCannotBeNullException extends Exception {}
+    public class Amoss_NotAnHttpCalloutMockException extends Exception {}
 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
@@ -1203,7 +1204,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
         *
-        * @param Object - The Exception to throw when this expectation is met.
+        * @param Exception - The Exception to throw when this expectation is met.
         */
         public Amoss_NextExpectationDefiner throws( Exception exceptionToThrow ) {
             expectation.setExpectionReturns( new Amoss_ExpectationExceptionThrower().setExceptionToThrow( exceptionToThrow ) );
@@ -1220,7 +1221,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Has 'throwing' and 'throws' as synonyms, and these methods are entirely interchangeable based on preference.
         *
-        * @param Object - The Exception to throw when this expectation is met.
+        * @param Exception - The Exception to throw when this expectation is met.
         */
         public Amoss_NextExpectationDefiner willThrow( Exception exceptionToThrow ) {
             return this.throws( exceptionToThrow );
@@ -1236,7 +1237,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Has 'throws'and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
         *
-        * @param Object - The Exception to throw when this expectation is met.
+        * @param Exception - The Exception to throw when this expectation is met.
         */
         public Amoss_NextExpectationDefiner throwing( Exception exceptionToThrow ) {
             return this.throws( exceptionToThrow );
@@ -4577,11 +4578,16 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    //
     // Callout Mock grammer and verifiers
-    // TODO: consider grammer interfaces on Amoss - 'thenable' may be one
-
-    public class Amoss_NotAnHttpCalloutMockException extends Exception {}
-
+    //
+    //
+    /**
+     * The part of the grammar that allows the specification of the behaviour of a Mock Http Callout instance,
+     * defining whether requests are expected / allowed, and allow entry into the part of the grammer that
+     * defines what should happen in what situation.
+     *
+     */
     public class Amoss_CalloutMockDefiner {
 
         Amoss_Instance instance;
@@ -4596,23 +4602,71 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             }
         }
 
+        /**
+        * States that a request of the provided shape is 'expected' and that the test should fail
+        * if it does not happen, or a different request is made.
+        *
+        * For example:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .endpoint().containing( 'account/xxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        */
         public Amoss_CalloutMockRequestDefiner expects() {
             return new Amoss_CalloutMockRequestDefiner( instance.expects( 'respond' ) );
         }
 
+        /**
+        * States that what should happen 'when' a request of the provided shape is sent.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .endpoint().containing( 'account/xxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        */
         public Amoss_CalloutMockRequestDefiner when() {
             return new Amoss_CalloutMockRequestDefiner( instance.when( 'respond' ) );
         }
 
+        /**
+        * States that a request of the provided shape is 'allowed', implying that requests of shapes that are
+        * not specified are *not* allowed.  Allows the definition of what should happen when a request of the provided shape is sent.
+        *
+        * For example:
+        *   .allows()
+        *       .method( 'GET' )
+        *       .endpoint().containing( 'account/xxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        */
         public Amoss_CalloutMockRequestDefiner allows() {
             return new Amoss_CalloutMockRequestDefiner( instance.allows( 'respond' ) );
         }
 
+        /**
+        * States that this double does not expect any calls against it, and that if a call is made, the test should fail.
+        *
+        * Example usage:
+        *    new Amoss_Instance()
+        *        .isACalloutMock()
+        *        .expectsNoCalls();
+        *
+        */
         public void expectsNoCalls() {
             instance.expectsNoCalls();
         }
     }
 
+    /**
+     * The part of the grammar that allows the specification of the expected shape of a callout request
+     *
+     */
     public class Amoss_CalloutMockRequestDefiner {
 
         Amoss_NamedParametersMethodDefiner parametersDefiner;
@@ -4621,6 +4675,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             this.parametersDefiner = parametersDefiner;
         }
 
+        /**
+        * States the expected HTTP method of the call that this specification is describing.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        * @param String - The HTTP method that is expected to be used
+        */
         public Amoss_CalloutMockRequestDefiner method( String expectedHttpMethod ) {
             return new Amoss_CalloutMockRequestDefiner(
                 parametersDefiner
@@ -4629,26 +4694,105 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             );
         }
 
+        /**
+        * States that the given header has the specified expected properties.
+        * Is immediately followed by a specification of the expected header shape.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .header( 'Authorisation' ).set()
+        *       .header( 'SessionId' ).matches( '[0-9a-z]*' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        * @param String - The key of the header that is to be specified
+        */
         public Amoss_CalloutMockRequestHeaderValueDefiner header( String expectedHeaderKey ) {
             return new Amoss_CalloutMockRequestHeaderValueDefiner( parametersDefiner, expectedHeaderKey );
         }
 
+        /**
+        * States that the call's endpoint is expected to be the same value as the given string.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .endpoint( 'https://api.example.com/account/xxxxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        * @param String - The endpoint that is expected to be called
+        */
         public Amoss_CalloutMockRequestDefiner endpoint( String expectedEndpoint ) {
             return endpoint().setTo( expectedEndpoint );
         }
 
+        /**
+        * States that the call's endpoint is expected to have the specified properties.
+        * Is immediately followed by a specification of the expected endpoint shape.
+        *
+        * Multiple specifications can be provided.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .endpoint().contains( 'https://' )
+        *       .endpoint().contains( '/account/xxxxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        */
         public Amoss_CalloutMockRequestEndpointValueDefiner endpoint() {
             return new Amoss_CalloutMockRequestEndpointValueDefiner( parametersDefiner );
         }
 
+        /**
+        * States that the call's body is expected to be the same value as the given string.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .body( '{some JSON}' )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        * @param String - The String body that is expected to be passed
+        */
         public Amoss_CalloutMockRequestDefiner body( String expectedBody ) {
             return body().setTo( expectedBody );
         }
 
+        /**
+        * States that the call's body is expected to have the specified properties.
+        * Is immediately followed by a specification of the expected body shape.
+        *
+        * Multiple specifications can be provided.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .body.contains( '"param1":"value1"' )
+        *       .body.contains( '"param2":"value2"' )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
         public Amoss_CalloutMockRequestBodyValueDefiner body() {
             return new Amoss_CalloutMockRequestBodyValueDefiner( parametersDefiner );
         }
 
+        /**
+        * States that the call's request is expected to be compressed
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .compressed()
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
         public Amoss_CalloutMockRequestDefiner compressed() {
             return new Amoss_CalloutMockRequestDefiner(
                 parametersDefiner
@@ -4657,6 +4801,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             );
         }
 
+        /**
+        * States that the call's request is expected to be not compressed
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .notCompressed()
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
         public Amoss_CalloutMockRequestDefiner notCompressed() {
             return new Amoss_CalloutMockRequestDefiner(
                 parametersDefiner
@@ -4665,16 +4820,66 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             );
         }
 
+        /**
+        * Switches the mode of the specification over to defning how the call will respond
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
         public Amoss_CalloutMockResponseDefiner respondsWith() {
             return new Amoss_CalloutMockResponseDefiner( parametersDefiner );
         }
 
+        /**
+        * States that when this 'expectation' or 'when' is met, the call show throw the given exception.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'GET' )
+        *       .throws( new CalloutException( 'Unable to tunnel through proxy. Proxy returns "HTTP/1.1 503 Service Unavailable"' ) );
+        *
+        * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Exception - The Exception to throw when this expectation is met.
+        */
         public Amoss_CalloutMockNextExpectationDefiner throws( Exception exceptionToThrow ) {
             return new Amoss_CalloutMockNextExpectationDefiner(
                 parametersDefiner.throws( exceptionToThrow )
             );
         }
 
+        /**
+        * States that when this 'expectation' or 'when' is met, the call show throw the given exception.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'GET' )
+        *       .willThrow( new CalloutException( 'Unable to tunnel through proxy. Proxy returns "HTTP/1.1 503 Service Unavailable"' ) );
+        *
+        * Has 'throws' and 'throwing' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Exception - The Exception to throw when this expectation is met.
+        */
+        public Amoss_CalloutMockNextExpectationDefiner willThrow( Exception exceptionToThrow ) {
+            return throws( exceptionToThrow );
+        }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the call show throw the given exception.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .throwing( new CalloutException( 'Unable to tunnel through proxy. Proxy returns "HTTP/1.1 503 Service Unavailable"' ) );
+        *
+        * Has 'throws' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Exception - The Exception to throw when this expectation is met.
+        */
         public Amoss_CalloutMockNextExpectationDefiner throwing( Exception exceptionToThrow ) {
             return throws( exceptionToThrow );
         }
