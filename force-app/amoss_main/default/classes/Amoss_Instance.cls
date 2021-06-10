@@ -67,8 +67,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     public enum Value { NOT_NULL, ANY_VALUE }
 
-    // TODO: document
-    // TODO: test
     public Amoss_Instance() {
     }
 
@@ -94,8 +92,15 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
-    // TODO: document
-    // TODO: test
+    /**
+    * Allows the setting of the class that this Amoss Instance should generate test doubles for.s
+    *
+    * In general, the constructor that takes a class Type should be used over this, unless you particularly require
+    * the need to defer the setting of the class type (e.g. you have a templated instance that can be used for different types)
+    *
+    * @param  Type - The class type that this instance should generate test doubles for.
+    * @return Amoss_Instance - The instance to use in your test
+    */
     public Amoss_Instance setClass( Type classType ) {
         if ( this.classType != null ) {
             throw new Amoss_ClassTypeAlreadyDefinedException( 'The class type on this Amoss_Instance has already been set to ' + this.classType );
@@ -1985,7 +1990,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return new Amoss_NamedParameterValueDefiner( expectation );
         }
 
-        // TODO: test
         public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
             return andParameterNamed( parameterName );
         }
@@ -2686,12 +2690,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
 
             Amoss_NamedParametersDefiner parameterDefiner;
-            // Yep, the difference between the first call (withParameterNamed) and later ones (andParameterNamed) came back to bite me
+
             for ( String thisParameterName : parameters.keySet() ) {
+
+                // TODO: is there a way of removing the if from here.  Feels uncomfortable
                 if ( parameterDefiner == null ) {
                     parameterDefiner = withParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
                 } else {
-                    parameterDefiner = parameterDefiner.andParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
+                    parameterDefiner = parameterDefiner.withParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
                 }
             }
             return new Amoss_ReturnsDefiner( expectation );
@@ -4664,7 +4670,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
-     * The part of the grammar that allows the specification of the expected shape of a callout request
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a callout request
      *
      */
     public class Amoss_CalloutMockRequestDefiner {
@@ -4885,6 +4891,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    /**
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a string property.
+     * For example, a header.
+     *
+     * Is sub-classed for particular properties, so that the verifier used to specify the
+     * property being checked can be specified.
+     */
     public abstract class Amoss_CalloutMockRequestStringPropertyDefiner {
 
         Amoss_NamedParametersMethodDefiner  parametersDefiner;
@@ -4904,23 +4917,69 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         protected abstract Amoss_CalloutMockRequestVerifier buildBaseVerifier();
 
+        /**
+        * States that the specified property should be 'set' in order to match the specified expectation.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .endpoint().set()
+        */
         public Amoss_CalloutMockRequestDefiner set() {
             return define( valueVerifierBuilder.buildNotNullVerifier() );
         }
 
+        /**
+        * States the value that the specified property should be 'setTo' in order to match the specified expectation.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .endpoint().setTo( 'https://api.example.com/account/12345' )
+        *
+        * @param String - The value that the property is expected to be
+        */
         public Amoss_CalloutMockRequestDefiner setTo( String expectedValue ) {
             return define( valueVerifierBuilder.buildSameValueAsVerifier( expectedValue ) );
         }
 
+        /**
+        * States a value that the specified property should 'contain' in order to match the specified expectation.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .endpoint().containing( '/account/12345' )
+        *
+        * @param String - The value that the property is expected to contain
+        */
         public Amoss_CalloutMockRequestDefiner containing( String expectedValue ) {
             return define( valueVerifierBuilder.buildContainingStringVerifier( expectedValue ) );
         }
 
+        /**
+        * States a regular expression that the specified property should 'match' in order to match the specified expectation.
+        *
+        * Note, in line with Apex and Java's regular expression 'match' method, the *whole* of the property is required to match.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .endpoint().matching( 'http.*account/[0-9]*' )
+        *
+        * @param String - The regular expression that the property is expected to match
+        */
         public Amoss_CalloutMockRequestDefiner matching( String expectedValue ) {
             return define( valueVerifierBuilder.buildMatchingExpressionVerifier( expectedValue ) );
         }
     }
 
+    /**
+     * The part of the grammar http mock callout that allows the specification of the expected shape of a given header
+     * For example, a header.
+     *
+     * Is sub-classed for particular properties, so that the verifier used to specify the
+     * property being checked can be specified.
+     */
     public class Amoss_CalloutMockRequestHeaderValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
 
         String expectedHeaderKey;
@@ -4957,7 +5016,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
-    // TODO: Why is there duplication between this and the next class?
     public virtual class Amoss_CalloutMockNextExpectationDefiner {
 
         protected Amoss_NextExpectationDefiner nextExpectationDefiner;
