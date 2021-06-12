@@ -5076,6 +5076,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    /**
+     * The part of the http mock callout grammar that allows the specification of the response that is to be returned.
+     */
     public class Amoss_CalloutMockResponseDefiner {
 
         HttpResponse response;
@@ -5087,40 +5090,103 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             returnsDefiner.returns( response );
         }
 
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Http Callout Mock
+        *
+        * Is actually synonymous with 'also'.
+        *
+        * For example:
+        * .then().expects()
+        *       .method( 'GET' )
+        */
         public Amoss_CalloutMockDefiner then() {
             return new Amoss_CalloutMockDefiner( returnsDefiner.then() );
         }
 
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Http Callout Mock
+        *
+        * Is actually synonymous with 'then'.
+        *
+        * For example:
+        * .also().expects()
+        *       .method( 'GET' )
+        */
         public Amoss_CalloutMockDefiner also() {
             return then();
         }
 
+        /**
+        * Specifies the status code that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .statusCode( 404 )
+        */
         public Amoss_CalloutMockResponseDefiner statusCode( Integer statusCode ) {
             response.setStatusCode( statusCode );
             return this;
         }
 
+        /**
+        * Specifies the status that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .status( 'Complete' )
+        */
         public Amoss_CalloutMockResponseDefiner status( String status ) {
             response.setStatus( status );
             return this;
         }
 
+        /**
+        * Specifies the body that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .body( 'the body' )
+        */
         public Amoss_CalloutMockResponseDefiner body( String body ) {
             response.setBody( body );
             return this;
         }
 
+       /**
+        * Specifies the blob value of the body that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .body( blobValue )
+        */
         public Amoss_CalloutMockResponseDefiner body( Blob body ) {
             response.setBodyAsBlob( body );
             return this;
         }
 
+       /**
+        * Specifies the body that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * The body will be JSON serialized at the point the method is called.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .body( objectValue )
+        */
         public Amoss_CalloutMockResponseDefiner body( Object body ) {
             response.setBody( JSON.serialize( body ) );
             return this;
         }
-
-        // TODO: setHeader
     }
 
     private abstract class Amoss_CalloutMockRequestVerifier implements Amoss_ValueVerifier {
