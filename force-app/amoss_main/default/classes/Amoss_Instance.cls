@@ -4974,8 +4974,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
-     * The part of the grammar http mock callout that allows the specification of the expected shape of a given header
-     * For example, a header.
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a given request's header
      *
      * Is sub-classed for particular properties, so that the verifier used to specify the
      * property being checked can be specified.
@@ -4989,33 +4988,59 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             this.expectedHeaderKey = expectedHeaderKey;
         }
 
+        /**
+         * Builds the verifier that is used to verify the Header on an HttpRequest object
+         */
         protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
             return new Amoss_CalloutMockHttpHeaderVerifier( expectedHeaderKey );
         }
     }
 
+    /**
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a given request's endpoint
+     *
+     * Is sub-classed for particular properties, so that the verifier used to specify the
+     * property being checked can be specified.
+     */
     public class Amoss_CalloutMockRequestEndpointValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
 
         public Amoss_CalloutMockRequestEndpointValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
             super( parametersDefiner );
         }
 
+        /**
+         * Builds the verifier that is used to verify the Endpoint on an HttpRequest object
+         */
         protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
             return new Amoss_CalloutMockHttpEndpointVerifier();
         }
     }
 
+    /**
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a given request's body
+     *
+     * Is sub-classed for particular properties, so that the verifier used to specify the
+     * property being checked can be specified.
+     */
     public class Amoss_CalloutMockRequestBodyValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
 
         public Amoss_CalloutMockRequestBodyValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
             super( parametersDefiner );
         }
 
+        /**
+         * Builds the verifier that is used to verify the Body on an HttpRequest object
+         */
         protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
             return new Amoss_CalloutMockHttpBodyVerifier();
         }
     }
 
+    /**
+     * The part of the http mock callout grammar that allows the specification that another expectation is about to be defined.
+     *
+     * Is sub-classed so it can be used at different points of the overall grammar
+     */
     public virtual class Amoss_CalloutMockNextExpectationDefiner {
 
         protected Amoss_NextExpectationDefiner nextExpectationDefiner;
@@ -5024,10 +5049,28 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             this.nextExpectationDefiner = nextExpectationDefiner;
         }
 
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Http Callout Mock
+        *
+        * Is actually synonymous with 'also'.
+        *
+        * For example:
+        * .then().expects()
+        *       .method( 'GET' )
+        */
         public Amoss_CalloutMockDefiner then() {
             return new Amoss_CalloutMockDefiner( nextExpectationDefiner.then() );
         }
 
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Http Callout Mock
+        *
+        * Is actually synonymous with 'then'.
+        *
+        * For example:
+        * .also().expects()
+        *       .method( 'GET' )
+        */
         public Amoss_CalloutMockDefiner also() {
             return then();
         }
