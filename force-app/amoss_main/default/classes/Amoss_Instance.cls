@@ -5189,6 +5189,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    /**
+     * Verifier that can be used to check the properties of an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     * Is subclassed, with the method 'verifyValue' overridden in order to retrieve the correct property from the request.
+     */
     private abstract class Amoss_CalloutMockRequestVerifier implements Amoss_ValueVerifier {
 
         protected Amoss_ValueVerifier verifier;
