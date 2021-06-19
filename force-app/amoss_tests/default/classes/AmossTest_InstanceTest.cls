@@ -9722,6 +9722,161 @@ public with sharing class AmossTest_InstanceTest {
         System.assert( exceptionThrown, 'getDouble, when given a class with no public constructor to create a test double for, will throw an exception' );
     }
 
+    //
+    //
+    // HttpCalloutMock tests
+    //
+    //
+    /**
+    * @method isACalloutMock
+    * @case   when called
+    * @result will generate an HttpCalloutMock and register it
+    */
+    @isTest
+    private static void isACalloutMock_willGenerateAnHttpCalloutMockAndRegisterIt() {
+
+        // TODO: this should not need the when / responds with specified
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when().respondsWith();
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assert( true, 'isACalloutMock will generate an HttpCalloutMock and register it, meaning HTTP requests can be made in the test without exceptions' );
+    }
+
+    /**
+    * @method isACalloutMock.respondsWith.statusCode
+    * @case   when called
+    * @result will set the status code that is returned
+    */
+    @isTest
+    private static void isACalloutMockRespondsWithStatusCode_willSetTheStatusCodeThatIsReturned() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .respondsWith()
+                    .statusCode( 404 );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.respondsWith.statusCode, will set the status code that is returned on the generated HttpResponse' );
+    }
+
+    /**
+    * @method isACalloutMock.respondsWith.status
+    * @case   when called
+    * @result will set the status that is returned
+    */
+    @isTest
+    private static void isACalloutMockRespondsWithStatus_willSetTheStatusThatIsReturned() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .respondsWith()
+                    .status( 'Complete' );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 'Complete', response.getStatus(), 'isACalloutMock.respondsWith.status, will set the status that is returned on the generated HttpResponse' );
+    }
+
+    /**
+    * @method isACalloutMock.respondsWith.body (string)
+    * @case   when called
+    * @result will set the body that is returned
+    */
+    @isTest
+    private static void isACalloutMockRespondsWithBodyString_willSetTheBodyThatIsReturned() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .respondsWith()
+                    .body( 'The body' );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.respondsWith.body( String ), will set the body that is returned on the generated HttpResponse' );
+    }
+
+    /**
+    * @method isACalloutMock.respondsWith.body (Object)
+    * @case   when called
+    * @result will serialise the object and set the body that is returned
+    */
+    @isTest
+    private static void isACalloutMockRespondsWithBodyObject_willSerialiseAndSetTheBodyThatIsReturned() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .respondsWith()
+                    .body( new Map<String,Object>{ 'parameter' => 'value' } );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( '{"parameter":"value"}', response.getBody(), 'isACalloutMock.respondsWith.body( Object ), will serialise the object and set the body that is returned on the generated HttpResponse' );
+    }
+
+    /**
+    * @method isACalloutMock.respondsWith.body (blob)
+    * @case   when called
+    * @result will set the body that is returned
+    */
+    @isTest
+    private static void isACalloutMockRespondsWithBodyBlob_willSetTheBodyThatIsReturned() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .respondsWith()
+                    .body( Blob.valueOf( 'The body' ) );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.respondsWith.body( Blob ), will set the body that is returned on the generated HttpResponse' );
+    }
+
+    /**
+    * @method isACalloutMock.respondsWith
+    * @case   when multiple properties are set
+    * @result will set all of them on the response that is returned
+    */
+    @isTest
+    private static void isACalloutMockRespondsWith_whenMultipleProperties_willSetThemAll() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .respondsWith()
+                    .statusCode( 200 )
+                    .status( 'Complete' )
+                    .body( 'A body' );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 200       , response.getStatusCode(), 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
+        System.assertEquals( 'Complete', response.getStatus()    , 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
+        System.assertEquals( 'A body'  , response.getBody()      , 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
+    }
+
     class InnerClassToDouble {
         public String publicMethod( String parameterOne ) {
             return 'returnString';

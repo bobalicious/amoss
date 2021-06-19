@@ -5221,6 +5221,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    /**
+     * Verifier that can be used to check the properties of the method on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
     private class Amoss_CalloutMockHttpMethodVerifier extends Amoss_CalloutMockRequestVerifier {
 
         public override String toString() {
@@ -5236,6 +5243,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    /**
+     * Verifier that can be used to check the properties of the endpoint on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
     private class Amoss_CalloutMockHttpEndpointVerifier extends Amoss_CalloutMockRequestVerifier {
 
         public override String toString() {
@@ -5251,6 +5265,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    /**
+     * Verifier that can be used to check the properties of the body on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
     private class Amoss_CalloutMockHttpBodyVerifier extends Amoss_CalloutMockRequestVerifier {
 
         public override String toString() {
@@ -5266,6 +5287,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    /**
+     * Verifier that can be used to check the properties of a header on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
     private class Amoss_CalloutMockHttpHeaderVerifier extends Amoss_CalloutMockRequestVerifier {
 
         String headerKey;
@@ -5287,6 +5315,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    /**
+     * Verifier that can be used to check the properties of the 'compressed' property on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
     private class Amoss_CalloutMockHttpCompressedVerifier extends Amoss_CalloutMockRequestVerifier {
 
         public override String toString() {
