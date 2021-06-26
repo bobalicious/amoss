@@ -10851,15 +10851,179 @@ public with sharing class AmossTest_InstanceTest {
         Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.header.matching, when called without matching header, will fail the test, with a message that contains the request' );
     }
 
-    // compressed
-    // notCompressed
+    /**
+    * @method isACalloutMock.when.compressed
+    * @case   when called with compressed request
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenCompressed_whenCompressed_returnAsSpecified() {
 
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .compressed()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setCompressed( true );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.compressed, when the request is compressed, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.compressed
+    * @case   when called with a non compressed request
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenCompressed_whenNotCompressed_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .compressed()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setCompressed( false );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.compressed, when called with request that is not compressed, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.compressed, when called with request that is not compressed, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.compressed, when called with request that is not compressed, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.compressed
+    * @case   when called with a request with compression not set
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenCompressed_whenCompressedNotSet_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .compressed()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.compressed, when called with request with compressed not set, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.compressed, when called with request with compressed not set, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.compressed, when called with request with compressed not set, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.notCompressed
+    * @case   when called with non compressed request
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenNotCompressed_whenNotCompressed_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .notCompressed()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setCompressed( false );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when the request is not compressed, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.notCompressed
+    * @case   when called with a compressed request
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenNotCompressed_whenCompressed_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .notCompressed()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setCompressed( true );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.notCompressed, when called with request that is compressed, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.notCompressed, when called with request that is compressed, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.notCompressed, when called with request that is compressed, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.notCompressed
+    * @case   when called with request with compressed not set
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenNotCompressed_whenCompressedNotSet_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .notCompressed()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when the request does not have compressed set, will return as specified' );
+    }
 
     // combination - matches
     // combinatin - does not match
 
     // when, multiple specified, one matches
-
 
     // expects - matches
     // expects - does not match
