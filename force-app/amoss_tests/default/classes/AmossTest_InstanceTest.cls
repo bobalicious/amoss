@@ -9880,6 +9880,68 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method isACalloutMock.handledBy (Amoss_MethodHandler)
+    * @case   when call is made
+    * @result will be handled by the object specified
+    */
+    @isTest
+    private static void isACalloutMockHandledByMethodHandler_whenHandledByAndCallIsMade_willBeHandledByObject() {
+
+        HttpResponse mockResponse = new HttpResponse();
+        mockResponse.setBody( 'FromTheHandler' );
+
+        Amoss_Instance methodHandlerController = new Amoss_Instance( Amoss_MethodHandler.class );
+        methodHandlerController
+            .expects()
+                .method( 'handleMethodCall' )
+                .returning( mockResponse );
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .handledBy( (Amoss_MethodHandler)methodHandlerController.generateDouble() );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (Amoss_MethodHandler), when a call is made, will be handled by the object specified' );
+    }
+
+    /**
+    * @method isACalloutMock.handledBy (StubProvider)
+    * @case   when call is made
+    * @result will be handled by the object specified
+    */
+    @isTest
+    private static void isACalloutMockHandledByStubProvider_whenHandledByAndCallIsMade_willBeHandledByObject() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .handledBy( new MockHttpMethodHandlerUsingStubProvider() );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (StubProvider), when a call is made, will be handled by the object specified' );
+    }
+
+    class MockHttpMethodHandlerUsingStubProvider implements StubProvider {
+        public Object handleMethodCall( Object       mockedObject,
+                                        String       mockedMethod,
+                                        Type         returnType,
+                                        List<Type>   parameterTypes,
+                                        List<String> parameterNames,
+                                        List<Object> parameters ) {
+            HttpResponse response = new HttpResponse();
+            response.setBody( 'FromTheHandler' );
+            return response;
+        }
+    }
+
+    /**
     * @method isACalloutMock.throws
     * @case   when called
     * @result will throw the stated exception
@@ -11198,10 +11260,6 @@ public with sharing class AmossTest_InstanceTest {
 
     // allows - matches
     // allows - does not match
-
-    // expectsNoCalls
-
-    // building a composite version of the mock
 
     class InnerClassToDouble {
         public String publicMethod( String parameterOne ) {

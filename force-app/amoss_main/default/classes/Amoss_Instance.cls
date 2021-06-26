@@ -2627,6 +2627,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     public interface Amoss_NamedParametersMethodDefiner {
         Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName );
         Amoss_NextExpectationDefiner returns( Object returnValue );
+        Amoss_NextExpectationDefiner handledBy( StubProvider returnHandler );
+        Amoss_NextExpectationDefiner handledBy( Amoss_MethodHandler returnHandler );
         Amoss_NextExpectationDefiner throws( Exception exceptionToThrow );
         Amoss_Instance then();
     }
@@ -4704,19 +4706,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_CalloutMockRequestDefiner allows() {
             return new Amoss_CalloutMockRequestDefiner( instance.allows( 'respond' ) );
         }
-
-        /**
-        * States that this double does not expect any calls against it, and that if a call is made, the test should fail.
-        *
-        * Example usage:
-        *    new Amoss_Instance()
-        *        .isACalloutMock()
-        *        .expectsNoCalls();
-        *
-        */
-        public void expectsNoCalls() {
-            instance.expectsNoCalls();
-        }
     }
 
     /**
@@ -4888,6 +4877,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_CalloutMockResponseDefiner respondsWith() {
             return new Amoss_CalloutMockResponseDefiner( parametersDefiner );
+        }
+
+        // TODO: document
+        // TODO: test
+        public Amoss_CalloutMockNextExpectationDefiner handledBy( Amoss_MethodHandler returnHandler ) {
+            return new Amoss_CalloutMockNextExpectationDefiner(
+                 parametersDefiner.handledBy( returnHandler )
+            );
+        }
+
+        // TODO: document
+        // TODO: test
+        public Amoss_CalloutMockNextExpectationDefiner handledBy( StubProvider returnHandler ) {
+            return new Amoss_CalloutMockNextExpectationDefiner(
+                 parametersDefiner.handledBy( returnHandler )
+            );
         }
 
         /**
