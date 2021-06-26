@@ -10590,16 +10590,267 @@ public with sharing class AmossTest_InstanceTest {
         Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.body.matching, when called without matching body, will fail the test, with a message that contains the request' );
     }
 
-    // body
-    // body.set
-    // body.setTo
-    // body.containing
-    // body.matching
+    /**
+    * @method isACalloutMock.when.header.setTo
+    * @case   when called with matching header.setTo
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderSetTo_whenTheHeaderMatches_returnAsSpecified() {
 
-    // header.set
-    // header.setTo
-    // header.containing
-    // header.matching
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).setTo( 'The header text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setHeader( 'Header', 'The header text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.header.setTo, when the header matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.header.setTo
+    * @case   when called without matching header
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderSetTo_whenCalledWithoutMatchingHeader_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).setTo( 'The header text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setHeader( 'Header', 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.header.setTo, when called without matching header, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.header.setTo, when called without matching header, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.header.setTo, when called without matching header, will fail the test, with a message that contains the request' );
+    }
+
+
+    /**
+    * @method isACalloutMock.when.header.setTo
+    * @case   when called without matching header set at all
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderSetTo_whenCalledWithoutMatchingHeaderSetAtAll_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).setTo( 'The header text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setHeader( 'Authorization', 'The header text' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.header.setTo, when called without matching header set at all, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.header.setTo, when called without matching header set at all, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.header.setTo, when called without matching header set at all, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.header.set
+    * @case   when called with matching header.set
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderSet_whenTheHeaderIsSet_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).set()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setHeader( 'Header', 'The header text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.header.set, when the header set, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.header.set
+    * @case   when called without header
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderSet_whenCalledWithoutHeader_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).set()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.header.set, when called without matching header, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.header.set, when called without matching header, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.header.set, when called without matching header, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.header.containing
+    * @case   when called with matching header.containing
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderContaining_whenTheHeaderMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).containing( 'text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setHeader( 'Header', 'The header text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.header.containing, when the header matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.header.containing
+    * @case   when called without matching header
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderContaining_whenCalledWithoutMatchingHeader_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).containing( 'example' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setHeader( 'Header', 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.header.containing, when called without matching header, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.header.containing, when called without matching header, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.header.containing, when called without matching header, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.header.matching
+    * @case   when called with matching header.matching
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderMatching_whenTheHeaderMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).matching( 'T.*t' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setHeader( 'Header', 'The header text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.header.matching, when the header matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.header.matching
+    * @case   when called without matching header
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenHeaderMatching_whenCalledWithoutMatchingHeader_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .header( 'Header' ).matching( 'The.*text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setHeader( 'Header', 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.header.matching, when called without matching header, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.header.matching, when called without matching header, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.header.matching, when called without matching header, will fail the test, with a message that contains the request' );
+    }
+
     // compressed
     // notCompressed
 
