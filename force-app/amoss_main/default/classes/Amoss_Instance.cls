@@ -65,7 +65,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     public static Amoss_ValueVerifierBuilder valueVerifierBuilder = new Amoss_ValueVerifierBuilder();
 
-    public enum Value { NOT_NULL, ANY_VALUE }
+    public enum Value { NOT_NULL, ANY_VALUE, NOT_EMPTY }
 
     public Amoss_Instance() {
     }
@@ -124,7 +124,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     public Amoss_CalloutMockDefiner isACalloutMock() {
         if ( this.classType == null ) {
-            this.setClass( Amoss_HttpCalloutMock.class );
+            setClass( Amoss_HttpCalloutMock.class );
+            setMoreCallsThanExpectedMessage( 'More HTTP Callouts were made than expected' );
+            allowsAnyCall( false );
         }
         return new Amoss_CalloutMockDefiner( this );
     }
@@ -440,6 +442,16 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         return callLog.numberOfCalls( method );
     }
 
+    // TODO: document
+    private String moreCallsThanExpectedMessage = '{0}.{1} was called more times than was expected';
+
+    // TODO: document
+    private Amoss_Instance setMoreCallsThanExpectedMessage( String message ) {
+        this.moreCallsThanExpectedMessage = message;
+        return this;
+    }
+
+
     /**
     * Internal method that should not be called directly in tests.
     *
@@ -470,10 +482,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         if ( allowsAnyCall == false && expectations.isEmpty() ) {
+            // TODO: simplify slightly
             if ( !whens.isEmpty() ) {
-                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected, and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
+                assertionMechanism.assert( false, String.format( moreCallsThanExpectedMessage + ', and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
             } else {
-                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
+                assertionMechanism.assert( false, String.format(moreCallsThanExpectedMessage, new List<String>{ getClassName(), mockedMethod } ) );
             }
         }
 
@@ -3433,6 +3446,31 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     /**
     * Internal class that should not be referenced directly in a test
     *
+    * Describes the specification of 'non empty String' parameter value that is expected to be passed into a mocked method call
+    *
+    */
+    class Amoss_NotEmptyStringValueVerifier implements Amoss_ValueVerifier {
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+            if ( String.isEmpty( (String)actualValue ) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'Non Empty' )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'The value was "empty" when it was expected not be be' );
+            }
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
     * Describes the specification of 'not null' parameter value that is expected to be passed into a mocked method call
     *
     */
@@ -4311,6 +4349,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             if ( value == Amoss_Instance.Value.NOT_NULL ) {
                 return buildNotNullVerifier();
             }
+            if ( value == Amoss_Instance.Value.NOT_EMPTY ) {
+                return buildNotEmptyStringVerifier();
+            }
             if ( value instanceOf List<Object> ) {
                 return buildSameInstanceVerifier( (List<Object>)value );
             }
@@ -4486,7 +4527,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return new Amoss_AnyValueVerifier();
         }
 
-
         /**
         * Internal method that should not be refenced in tests.
         *
@@ -4496,6 +4536,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_ValueVerifier buildNotNullVerifier() {
             return new Amoss_NotNullValueVerifier();
+        }
+
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_NotEmptyStringValueVerifier
+        *
+        * @return Amoss_ValueVerifier - The Amoss_NotEmptyStringValueVerifier
+        */
+        public Amoss_ValueVerifier buildNotEmptyStringVerifier() {
+            return new Amoss_NotEmptyStringValueVerifier();
         }
     }
 
@@ -4586,7 +4637,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     //
     // Callout Mock grammer and verifiers
-    //
     //
     /**
      * The part of the grammar that allows the specification of the behaviour of a Mock Http Callout instance,
@@ -4918,14 +4968,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         protected abstract Amoss_CalloutMockRequestVerifier buildBaseVerifier();
 
         /**
-        * States that the specified property should be 'set' in order to match the specified expectation.
+        * States that the specified property should be 'set' (meaning not empty) in order to match the specified expectation.
         *
         * For example, to specify:
         *   .expects()
         *       .endpoint().set()
         */
         public Amoss_CalloutMockRequestDefiner set() {
-            return define( valueVerifierBuilder.buildNotNullVerifier() );
+            return define( valueVerifierBuilder.buildNotEmptyStringVerifier() );
         }
 
         /**

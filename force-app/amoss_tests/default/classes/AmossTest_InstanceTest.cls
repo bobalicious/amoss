@@ -30,6 +30,7 @@ public with sharing class AmossTest_InstanceTest {
     class TestException extends Exception {}
 
     private static final String CLASS_TO_DOUBLE = AmossTest_ClassToDouble.class.getName();
+    private static final String HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT = 'More HTTP Callouts were made than expected, and no matching "when" or "allows" exists';
 
     //
     // Method definition tests
@@ -9876,6 +9877,749 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 'Complete', response.getStatus()    , 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
         System.assertEquals( 'A body'  , response.getBody()      , 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
     }
+
+    /**
+    * @method isACalloutMock.throws
+    * @case   when called
+    * @result will throw the stated exception
+    */
+    @isTest
+    private static void isACalloutMockThrows_whenCalled_willThrow() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .throws( new CalloutException( 'An Exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                HttpResponse response  = new Http().send( new HttpRequest() );
+            } catch( CalloutException e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( true, exceptionThrown, 'isACalloutMock.throws, when called, will throw the stated exception' );
+        System.assertEquals( 'An Exception', exceptionMessage, 'isACalloutMock.throws, when called, will throw the stated exception' );
+    }
+
+    /**
+    * @method isACalloutMock.throwing
+    * @case   when called
+    * @result will throw the stated exception
+    */
+    @isTest
+    private static void isACalloutMockThrowing_whenCalled_willThrow() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .throwing( new CalloutException( 'An Exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                HttpResponse response  = new Http().send( new HttpRequest() );
+            } catch( CalloutException e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( true, exceptionThrown, 'isACalloutMock.throwing, when called, will throw the stated exception' );
+        System.assertEquals( 'An Exception', exceptionMessage, 'isACalloutMock.throwing, when called, will throw the stated exception' );
+    }
+
+    /**
+    * @method isACalloutMock.willThrow
+    * @case   when called
+    * @result will throw the stated exception
+    */
+    @isTest
+    private static void isACalloutMockWillThrow_whenCalled_willThrow() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when() // TODO: would be good to not need the 'when' here
+                .willThrow( new CalloutException( 'An Exception' ) );
+
+        Boolean exceptionThrown = false;
+        String  exceptionMessage;
+
+        Test.startTest();
+            try {
+                HttpResponse response  = new Http().send( new HttpRequest() );
+            } catch( CalloutException e ) {
+                exceptionThrown = true;
+                exceptionMessage = e.getMessage();
+            }
+        Test.stopTest();
+
+        System.assertEquals( true, exceptionThrown, 'isACalloutMock.willThrow, when called, will throw the stated exception' );
+        System.assertEquals( 'An Exception', exceptionMessage, 'isACalloutMock.willThrow, when called, will throw the stated exception' );
+    }
+
+    /**
+    * @method isACalloutMock.when.method
+    * @case   when called with matching method
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenMethod_whenTheMethodMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .method( 'GET' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setMethod( 'GET' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.method, when the method matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.method
+    * @case   when called without matching method
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenMethod_whenCalledWithoutMatchingMethod_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .method( 'GET' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setMethod( 'POST' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.method, when called without matching method, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.method, when called without matching method, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=POST]', exceptionMessage, 'isACalloutMock.when.method, when called without matching method, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint
+    * @case   when called with matching endpoint
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpoint_whenTheEndpointMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .endpoint( 'http://www.example.com' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint( 'http://www.example.com' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint, when the endpoint matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint
+    * @case   when called without matching endpoint
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpoint_whenCalledWithoutMatchingEndpoint_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .endpoint( 'http://www.example.com' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setEndpoint( 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.endpoint, when called without matching endpoint, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.endpoint, when called without matching endpoint, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=different, Method=null]', exceptionMessage, 'isACalloutMock.when.endpoint, when called without matching endpoint, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint.setTo
+    * @case   when called with matching endpoint.setTo
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpointSetTo_whenTheEndpointMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .endpoint().setTo( 'http://www.example.com' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint( 'http://www.example.com' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.setTo, when the endpoint matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint.setTo
+    * @case   when called without matching endpoint
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpointSetTo_whenCalledWithoutMatchingEndpoint_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .endpoint().setTo( 'http://www.example.com' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setEndpoint( 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.endpoint.setTo, when called without matching endpoint, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.endpoint.setTo, when called without matching endpoint, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=different, Method=null]', exceptionMessage, 'isACalloutMock.when.endpoint.setTo, when called without matching endpoint, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint.set
+    * @case   when called with matching endpoint.set
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpointSet_whenTheEndpointIsSet_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .endpoint().set()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint( 'http://www.example.com' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.set, when the endpoint set, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint.set
+    * @case   when called without endpoint
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpointSet_whenCalledWithoutEndpoint_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .endpoint().set()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.endpoint.set, when called without matching endpoint, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.endpoint.set, when called without matching endpoint, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.endpoint.set, when called without matching endpoint, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint.containing
+    * @case   when called with matching endpoint.containing
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpointContaining_whenTheEndpointMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .endpoint().containing( 'example' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint( 'http://www.example.com' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.containing, when the endpoint matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint.containing
+    * @case   when called without matching endpoint
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpointContaining_whenCalledWithoutMatchingEndpoint_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .endpoint().containing( 'example' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setEndpoint( 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.endpoint.containing, when called without matching endpoint, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.endpoint.containing, when called without matching endpoint, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=different, Method=null]', exceptionMessage, 'isACalloutMock.when.endpoint.containing, when called without matching endpoint, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint.matching
+    * @case   when called with matching endpoint.matching
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpointMatching_whenTheEndpointMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .endpoint().matching( 'http.*com' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint( 'http://www.example.com' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.matching, when the endpoint matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.endpoint.matching
+    * @case   when called without matching endpoint
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenEndpointMatching_whenCalledWithoutMatchingEndpoint_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .endpoint().matching( 'http.*com' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setEndpoint( 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.endpoint.matching, when called without matching endpoint, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.endpoint.matching, when called without matching endpoint, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=different, Method=null]', exceptionMessage, 'isACalloutMock.when.endpoint.matching, when called without matching endpoint, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body
+    * @case   when called with matching body
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenBody_whenTheBodyMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .body( 'The body text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setBody( 'The body text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body, when the body matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body
+    * @case   when called without matching body
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenBody_whenCalledWithoutMatchingBody_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .body( 'The body text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setBody( 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.body, when called without matching body, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.body, when called without matching body, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.body, when called without matching body, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body.setTo
+    * @case   when called with matching body.setTo
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenBodySetTo_whenTheBodyMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .body().setTo( 'The body text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setBody( 'The body text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body.setTo, when the body matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body.setTo
+    * @case   when called without matching body
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenBodySetTo_whenCalledWithoutMatchingBody_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .body().setTo( 'The body text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setBody( 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.body.setTo, when called without matching body, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.body.setTo, when called without matching body, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.body.setTo, when called without matching body, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body.set
+    * @case   when called with matching body.set
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenBodySet_whenTheBodyIsSet_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .body().set()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setBody( 'The body text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body.set, when the body set, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body.set
+    * @case   when called without body
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenBodySet_whenCalledWithoutBody_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .body().set()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.body.set, when called without matching body, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.body.set, when called without matching body, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.body.set, when called without matching body, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body.containing
+    * @case   when called with matching body.containing
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenBodyContaining_whenTheBodyMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .body().containing( 'text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setBody( 'The body text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body.containing, when the body matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body.containing
+    * @case   when called without matching body
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenBodyContaining_whenCalledWithoutMatchingBody_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .body().containing( 'example' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setBody( 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.body.containing, when called without matching body, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.body.containing, when called without matching body, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.body.containing, when called without matching body, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body.matching
+    * @case   when called with matching body.matching
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenBodyMatching_whenTheBodyMatches_returnAsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .body().matching( 'T.*t' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setBody( 'The body text' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body.matching, when the body matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.body.matching
+    * @case   when called without matching body
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockWhenBodyMatching_whenCalledWithoutMatchingBody_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .body().matching( 'The.*text' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setBody( 'different' );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when.body.matching, when called without matching body, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.when.body.matching, when called without matching body, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=null]', exceptionMessage, 'isACalloutMock.when.body.matching, when called without matching body, will fail the test, with a message that contains the request' );
+    }
+
+    // body
+    // body.set
+    // body.setTo
+    // body.containing
+    // body.matching
+
+    // header.set
+    // header.setTo
+    // header.containing
+    // header.matching
+    // compressed
+    // notCompressed
+
+
+    // combination - matches
+    // combinatin - does not match
+
+    // when, multiple specified, one matches
+
+
+    // expects - matches
+    // expects - does not match
+    // expects - two in a row
+
+    // allows - matches
+    // allows - does not match
+
+    // expectsNoCalls
+
+    // building a composite version of the mock
 
     class InnerClassToDouble {
         public String publicMethod( String parameterOne ) {
