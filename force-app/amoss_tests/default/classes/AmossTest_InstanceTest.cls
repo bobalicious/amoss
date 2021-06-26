@@ -30,6 +30,7 @@ public with sharing class AmossTest_InstanceTest {
     class TestException extends Exception {}
 
     private static final String CLASS_TO_DOUBLE = AmossTest_ClassToDouble.class.getName();
+    private static final String HTTP_CALLOUT_MOCK_UNEXPECTED_SHORT_EXCEPTION_TEXT = 'More HTTP Callouts were made than expected';
     private static final String HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT = 'More HTTP Callouts were made than expected, and no matching "when" or "allows" exists';
 
     //
@@ -9966,6 +9967,32 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method isACalloutMock
+    * @case   when no calls specified and a call is made
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMock_whenNoCallsSpecifiedAndCallMade_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock();
+
+        Test.startTest();
+            try {
+                HttpResponse response  = new Http().send( new HttpRequest() );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock, when no calls specified and call made, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_SHORT_EXCEPTION_TEXT, exceptionMessage , 'isACalloutMock, when no calls specified and call made, will fail the test, with a message that explains the issue' );
+    }
+
+    /**
     * @method isACalloutMock.when.method
     * @case   when called with matching method
     * @result will return as specified
@@ -11020,10 +11047,150 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when the request does not have compressed set, will return as specified' );
     }
 
-    // combination - matches
-    // combinatin - does not match
+    /**
+    * @method isACalloutMock.when
+    * @case   when multiple properties set, and the call matches
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhen_multiplePropertiesAndCallMatches_willReturnAsSpecified() {
 
-    // when, multiple specified, one matches
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .endpoint().setTo( 'end' )
+                .body().setTo( 'The Body' )
+                .header( 'Header' ).setTo( 'The Header' )
+                .compressed()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint( 'end' );
+            request.setBody( 'The Body' );
+            request.setHeader( 'Header', 'The Header' );
+            request.setCompressed( true );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when, when multiple properties set, and the call matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when
+    * @case   when multiple properties set, and the call matches
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhen_multiplePropertiesAndCallDoesNotMatch_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+
+        new Amoss_Instance()
+            .setAsserts( (Amoss_Asserts)assertsDoubleController.getDouble() )
+            .isACalloutMock()
+            .when()
+                .method( 'GET' )
+                .endpoint().setTo( 'end' )
+                .body().setTo( 'The Body' )
+                .header( 'Header' ).setTo( 'The Header' )
+                .compressed()
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            try {
+                HttpRequest request = new HttpRequest();
+                request.setMethod( 'GET' );
+                request.setEndpoint( 'end' );
+                request.setBody( 'Different Body' );
+                request.setHeader( 'Header', 'The Header' );
+                request.setCompressed( true );
+                HttpResponse response  = new Http().send( request );
+            } catch ( TestException e ) {}
+        Test.stopTest();
+
+        String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.when, when multiple properties set, and the call does not match, will fail the test' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage,  'isACalloutMock.when, when multiple properties set, and the call does not match, will fail the test, with a message that explains the issue' );
+        Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=end, Method=GET]', exceptionMessage,  'isACalloutMock.when, when multiple properties set, and the call does not match, will fail the test, with a message that contains the request' );
+    }
+
+    /**
+    * @method isACalloutMock.when
+    * @case   when multiple definitions set, and call matches one
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhen_multipleDefinitionsAndCallMatchesOne_returnsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .endpoint().setTo( 'return200' )
+                .respondsWith()
+                    .statusCode( 200 )
+            .also().when()
+                .endpoint().setTo( 'return404' )
+                .respondsWith()
+                    .statusCode( 404 )
+            .also().when()
+                .endpoint().setTo( 'return500' )
+                .respondsWith()
+                    .statusCode( 500 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint( 'return404' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and a call matches one, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when
+    * @case   when multiple definitions set, and multiple calls match
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhen_multipleDefinitionsAndMultipleCallsMatch_returnsSpecified() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .endpoint().setTo( 'return200' )
+                .respondsWith()
+                    .statusCode( 200 )
+            .also().when()
+                .endpoint().setTo( 'return404' )
+                .respondsWith()
+                    .statusCode( 404 )
+            .also().when()
+                .endpoint().setTo( 'return500' )
+                .respondsWith()
+                    .statusCode( 500 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+
+            request.setEndpoint( 'return404' );
+            HttpResponse response404  = new Http().send( request );
+
+            request.setEndpoint( 'return500' );
+            HttpResponse response500  = new Http().send( request );
+
+            request.setEndpoint( 'return200' );
+            HttpResponse response200  = new Http().send( request );
+
+        Test.stopTest();
+
+        System.assertEquals( 404, response404.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 0' );
+        System.assertEquals( 500, response500.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 1' );
+        System.assertEquals( 200, response200.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 2' );
+    }
 
     // expects - matches
     // expects - does not match
