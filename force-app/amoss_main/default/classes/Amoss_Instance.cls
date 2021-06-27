@@ -126,7 +126,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         if ( this.classType == null ) {
             setClass( Amoss_HttpCalloutMock.class );
             setMoreCallsThanExpectedMessage( 'More HTTP Callouts were made than expected' );
-            allowsAnyCall( false );
+            byDefaultMethodsReturn( new HttpResponse() );
         }
         return new Amoss_CalloutMockDefiner( this );
     }
@@ -300,8 +300,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     /**
     * States that whatever mechanism is used to defined the 'expectations' or 'whens' against this
-    * object, it will allow any call to a method to be successful and for those that are not defined
-    * to return null.
+    * object, it will either:
+    *   * True  - Allow any call to a method to be successful and for those that are not defined to return null.
+    *   * False - Fail the test
     *
     * Example usage:
     *   allowsAnyCall( false )
@@ -482,12 +483,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         if ( allowsAnyCall == false && expectations.isEmpty() ) {
-            // TODO: simplify slightly
-            if ( !whens.isEmpty() ) {
-                assertionMechanism.assert( false, String.format( moreCallsThanExpectedMessage + ', and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
-            } else {
-                assertionMechanism.assert( false, String.format(moreCallsThanExpectedMessage, new List<String>{ getClassName(), mockedMethod } ) );
-            }
+            assertionMechanism.assert( false, String.format( moreCallsThanExpectedMessage + ', and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
         }
 
         if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameterNames, parameters ) ) {
@@ -4705,6 +4701,41 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_CalloutMockRequestDefiner allows() {
             return new Amoss_CalloutMockRequestDefiner( instance.allows( 'respond' ) );
+        }
+
+        /**
+        * States that this double does not expect any calls against it, and that if a call is made, the test should fail.
+        *
+        * Example usage:
+        *    new Amoss_Instance()
+        *        .isACalloutMock()
+        *        .expectsNoCalls();
+        *
+        */
+        public void expectsNoCalls() {
+            instance.expectsNoCalls();
+        }
+
+        /**
+        * States that whatever mechanism is used to defined the 'expectations' or 'whens' against this
+        * object, it will either:
+        *   * True  - Allow any call to a method to be successful and for those that are not defined to return null.
+        *   * False - Fail the test
+        *
+        * Example usage:
+        *    new Amoss_Instance()
+        *        .isACalloutMock()
+        *        .allowsAnyCall( false )
+        *        .when()
+        *            .method( 'GET' )
+        *            .endpoint().containing( 'account/xxxxx' )
+        *            .respondsWith()
+        *                .body( '{some JSON}' )
+        *
+        */
+        public Amoss_CalloutMockDefiner allowsAnyCall( Boolean allowsAnyCall ) {
+            instance.allowsAnyCall( allowsAnyCall );
+            return this;
         }
     }
 
