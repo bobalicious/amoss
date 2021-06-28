@@ -63,6 +63,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Boolean allowsAnyCallExplicitlyDefined = false;
     private Boolean expectsNoCalls                 = false;
 
+    private String moreCallsThanExpectedMessage = '{0}.{1} was called more times than was expected';
+
     public static Amoss_ValueVerifierBuilder valueVerifierBuilder = new Amoss_ValueVerifierBuilder();
 
     public enum Value { NOT_NULL, ANY_VALUE, NOT_EMPTY }
@@ -122,7 +124,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         return latestGeneratedDouble;
     }
 
-    // TODO: document
+    /**
+    * States that this controller is an HttpCalloutMock, registering it as the mock callout and
+    * switching the grammar to that required for specifying expected callouts and their responses.
+    *
+    * Example usage:
+    *    new Amoss_Instance()
+    *        .isACalloutMock()
+    *        .when()
+    *            .method( 'GET' )
+    *            .respondsWith()
+    *                .body( '{some JSON}' )
+    */
     public Amoss_CalloutMockDefiner isACalloutMock() {
         if ( this.classType == null ) {
             setClass( Amoss_HttpCalloutMock.class );
@@ -444,15 +457,16 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         return callLog.numberOfCalls( method );
     }
 
-    // TODO: document
-    private String moreCallsThanExpectedMessage = '{0}.{1} was called more times than was expected';
-
-    // TODO: document
+    /**
+    * Defines the base content of the assertion message to use when more, or unspecified calls
+    * are made against a generated Test Double.
+    *
+    * @param String - The message
+    */
     private Amoss_Instance setMoreCallsThanExpectedMessage( String message ) {
         this.moreCallsThanExpectedMessage = message;
         return this;
     }
-
 
     /**
     * Internal method that should not be called directly in tests.
@@ -4921,7 +4935,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
-        * Switches the mode of the specification over to defning how the call will respond
+        * Switches the mode of the specification over to defining how the call will respond
         *
         * For example:
         *   .when()
@@ -4936,16 +4950,30 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return new Amoss_CalloutMockResponseDefiner( parametersDefiner, response );
         }
 
-        // TODO: document
-        // TODO: test
+        /**
+        * Defines the object that should be used to handle the call made in the specification, defining the
+        * response that will be generated.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .handledBy( new CustomRequestHandler() )
+        */
         public Amoss_CalloutMockNextExpectationDefiner handledBy( Amoss_MethodHandler returnHandler ) {
             return new Amoss_CalloutMockNextExpectationDefiner(
                  parametersDefiner.handledBy( returnHandler )
             );
         }
 
-        // TODO: document
-        // TODO: test
+        /**
+        * Defines the object that should be used to handle the call made in the specification, defining the
+        * response that will be generated.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .handledBy( new CustomRequestHandler() )
+        */
         public Amoss_CalloutMockNextExpectationDefiner handledBy( StubProvider returnHandler ) {
             return new Amoss_CalloutMockNextExpectationDefiner(
                  parametersDefiner.handledBy( returnHandler )
