@@ -2620,13 +2620,16 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
-    public interface Amoss_NamedParametersMethodDefiner {
+    public interface Amoss_Thenable {
+        Amoss_Instance then();
+    }
+
+    public interface Amoss_NamedParametersMethodDefiner extends Amoss_Thenable {
         Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName );
         Amoss_NextExpectationDefiner returns( Object returnValue );
         Amoss_NextExpectationDefiner handledBy( StubProvider returnHandler );
         Amoss_NextExpectationDefiner handledBy( Amoss_MethodHandler returnHandler );
         Amoss_NextExpectationDefiner throws( Exception exceptionToThrow );
-        Amoss_Instance then();
     }
 
     /**
@@ -4737,6 +4740,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             instance.allowsAnyCall( allowsAnyCall );
             return this;
         }
+
+        // TODO: document
+        // TODO: test
+        public Amoss_CalloutMockResponseDefiner byDefaultRespondsWith() {
+            HttpResponse response = new HttpResponse();
+            instance.byDefaultMethodsReturn( response );
+            return new Amoss_CalloutMockResponseDefiner( instance, response );
+        }
     }
 
     /**
@@ -4907,7 +4918,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         */
         public Amoss_CalloutMockResponseDefiner respondsWith() {
-            return new Amoss_CalloutMockResponseDefiner( parametersDefiner );
+            HttpResponse response = new HttpResponse();
+            parametersDefiner.returns( response );
+            return new Amoss_CalloutMockResponseDefiner( parametersDefiner, response );
         }
 
         // TODO: document
@@ -5168,12 +5181,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     public class Amoss_CalloutMockResponseDefiner {
 
         HttpResponse response;
-        Amoss_NamedParametersMethodDefiner returnsDefiner;
+        Object returnsDefiner;
 
-        public Amoss_CalloutMockResponseDefiner( Amoss_NamedParametersMethodDefiner returnsDefiner ) {
+        public Amoss_CalloutMockResponseDefiner( Object returnsDefiner, HttpResponse response ) {
             this.returnsDefiner = returnsDefiner;
-            this.response = new HttpResponse();
-            returnsDefiner.returns( response );
+            this.response       = response;
         }
 
         /**
@@ -5186,7 +5198,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .method( 'GET' )
         */
         public Amoss_CalloutMockDefiner then() {
-            return new Amoss_CalloutMockDefiner( returnsDefiner.then() );
+            Amoss_Instance nextDefiner;
+            // TODO: should be cleaned up - probably a class structure
+            if ( returnsDefiner instanceOf Amoss_Instance ) {
+                nextDefiner = (Amoss_Instance)returnsDefiner;
+            } else {
+                nextDefiner = ((Amoss_Thenable)returnsDefiner).then();
+            }
+            return new Amoss_CalloutMockDefiner( nextDefiner );
         }
 
         /**
