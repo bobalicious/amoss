@@ -122,6 +122,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         return latestGeneratedDouble;
     }
 
+    // TODO: document
     public Amoss_CalloutMockDefiner isACalloutMock() {
         if ( this.classType == null ) {
             setClass( Amoss_HttpCalloutMock.class );
@@ -4741,8 +4742,20 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return this;
         }
 
-        // TODO: document
-        // TODO: test
+        /**
+        * States that when a request is made against this mock, it will return a response in the described state.
+        *
+        * Example usage:
+        *    new Amoss_Instance()
+        *        .isACalloutMock()
+        *        .byDefaultRespondsWith( false )
+        *            .statusCode( 404 )
+        *            .status( 'Not Found' )
+        *        .also().when()
+        *            .method( 'GET' )
+        *            .respondsWith()
+        *                .body( '{some JSON}' )
+        */
         public Amoss_CalloutMockResponseDefiner byDefaultRespondsWith() {
             HttpResponse response = new HttpResponse();
             instance.byDefaultMethodsReturn( response );
