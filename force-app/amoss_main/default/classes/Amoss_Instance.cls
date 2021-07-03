@@ -4762,15 +4762,33 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Example usage:
         *    new Amoss_Instance()
         *        .isACalloutMock()
-        *        .byDefaultRespondsWith( false )
-        *            .statusCode( 404 )
-        *            .status( 'Not Found' )
+        *        .byDefault()
+        *            .respondsWith()
+        *               .statusCode( 404 )
+        *               .status( 'Not Found' )
         *        .also().when()
         *            .method( 'GET' )
         *            .respondsWith()
         *                .body( '{some JSON}' )
         */
-        public Amoss_CalloutMockResponseDefiner byDefaultRespondsWith() {
+        public Amoss_CalloutMockByDefaultDefiner byDefault() {
+            return new Amoss_CalloutMockByDefaultDefiner( instance );
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of the default behaviour when calling
+     *
+     */
+    public class Amoss_CalloutMockByDefaultDefiner {
+
+        Amoss_Instance instance;
+
+        public Amoss_CalloutMockByDefaultDefiner( Amoss_Instance instance ) {
+            this.instance = instance;
+        }
+
+        public Amoss_CalloutMockResponseDefiner respondsWith() {
             HttpResponse response = new HttpResponse();
             instance.byDefaultMethodsReturn( response );
             return new Amoss_CalloutMockResponseDefiner( instance, response );

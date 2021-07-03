@@ -9877,7 +9877,7 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method isACalloutMock.byDefaultRespondsWith.status
+    * @method isACalloutMock.byDefault.respondsWith.status
     * @case   when called and doesn't match anything else
     * @result will set the status that is returned
     */
@@ -9886,8 +9886,9 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .byDefaultRespondsWith()
-                .statusCode( 200 )
+            .byDefault()
+                .respondsWith()
+                    .statusCode( 200 )
             .also().when()
                 .method( 'GET' )
                 .respondsWith()
@@ -9897,11 +9898,11 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.byDefaultRespondsWith.statusCode, and does not match a defined call, will set the status that is returned on the generated HttpResponse' );
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.byDefault.respondsWith.statusCode, and does not match a defined call, will set the status that is returned on the generated HttpResponse' );
     }
 
     /**
-    * @method isACalloutMock.byDefaultRespondsWith.status
+    * @method isACalloutMock.byDefault.respondsWith.status
     * @case   when called and doesn't match anything else
     * @result will set the status that is returned
     */
@@ -9910,8 +9911,9 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .byDefaultRespondsWith()
-                .status( 'Complete' )
+            .byDefault()
+                .respondsWith()
+                    .status( 'Complete' )
             .also().when()
                 .method( 'GET' )
                 .respondsWith()
@@ -9921,7 +9923,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'Complete', response.getStatus(), 'isACalloutMock.byDefaultRespondsWith.status, and does not match a defined call, will set the status that is returned on the generated HttpResponse' );
+        System.assertEquals( 'Complete', response.getStatus(), 'isACalloutMock.byDefault.respondsWith.status, and does not match a defined call, will set the status that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9934,8 +9936,9 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .byDefaultRespondsWith()
-                .body( 'The body' )
+            .byDefault()
+                .respondsWith()
+                    .body( 'The body' )
             .also().when()
                 .method( 'GET' )
                 .respondsWith()
@@ -9945,7 +9948,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.byDefaultRespondsWith.body( String ), and does not match a defined call, will set the body that is returned on the generated HttpResponse' );
+        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( String ), and does not match a defined call, will set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9958,8 +9961,9 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .byDefaultRespondsWith()
-                .body( new Map<String,Object>{ 'parameter' => 'value' } )
+            .byDefault()
+                .respondsWith()
+                    .body( new Map<String,Object>{ 'parameter' => 'value' } )
             .also().when()
                 .method( 'GET' )
                 .respondsWith()
@@ -9969,7 +9973,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( '{"parameter":"value"}', response.getBody(), 'isACalloutMock.byDefaultRespondsWith.body( Object ), and does not match a defined call, will serialise the object and set the body that is returned on the generated HttpResponse' );
+        System.assertEquals( '{"parameter":"value"}', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( Object ), and does not match a defined call, will serialise the object and set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9982,8 +9986,9 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .byDefaultRespondsWith()
-                .body( Blob.valueOf( 'The body' ) )
+            .byDefault()
+                .respondsWith()
+                    .body( Blob.valueOf( 'The body' ) )
             .also().when()
                 .method( 'GET' )
                 .respondsWith()
@@ -9993,7 +9998,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.byDefaultRespondsWith.body( Blob ), and does not match a defined call, will set the body that is returned on the generated HttpResponse' );
+        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( Blob ), and does not match a defined call, will set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -10006,7 +10011,8 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .byDefaultRespondsWith()
+            .byDefault()
+                .respondsWith()
                     .statusCode( 200 )
                     .status( 'Complete' )
                     .body( 'A body' )
@@ -10021,9 +10027,9 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 200       , response.getStatusCode(), 'isACalloutMock.byDefaultRespondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'Complete', response.getStatus()    , 'isACalloutMock.byDefaultRespondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'A body'  , response.getBody()      , 'isACalloutMock.byDefaultRespondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        System.assertEquals( 200       , response.getStatusCode(), 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        System.assertEquals( 'Complete', response.getStatus()    , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        System.assertEquals( 'A body'  , response.getBody()      , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
     }
 
     /**
@@ -10036,7 +10042,8 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .byDefaultRespondsWith()
+            .byDefault()
+                .respondsWith()
                     .statusCode( 200 )
                     .status( 'Complete' )
                     .body( 'A body' )
@@ -10053,9 +10060,9 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 404        , response.getStatusCode(), 'isACalloutMock.byDefaultRespondsWith, when the call matches a defined one, will return the defined response instead' );
-        System.assertEquals( 'Not Found', response.getStatus()    , 'isACalloutMock.byDefaultRespondsWith, when the call matches a defined one, will return the defined response instead' );
-        System.assertEquals( 'No body'  , response.getBody()      , 'isACalloutMock.byDefaultRespondsWith, when the call matches a defined one, will return the defined response instead' );
+        System.assertEquals( 404        , response.getStatusCode(), 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        System.assertEquals( 'Not Found', response.getStatus()    , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        System.assertEquals( 'No body'  , response.getBody()      , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
     }
 
     /**
@@ -10077,7 +10084,7 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .when() // TODO: would be good to not need the 'when' here
+            .when()
                 .handledBy( (Amoss_MethodHandler)methodHandlerController.generateDouble() );
 
         Test.startTest();
@@ -10097,7 +10104,7 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .when() // TODO: would be good to not need the 'when' here
+            .when()
                 .handledBy( new MockHttpMethodHandlerUsingStubProvider() );
 
         Test.startTest();
@@ -10130,7 +10137,7 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .when() // TODO: would be good to not need the 'when' here
+            .when()
                 .throws( new CalloutException( 'An Exception' ) );
 
         Boolean exceptionThrown = false;
@@ -10159,7 +10166,7 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .when() // TODO: would be good to not need the 'when' here
+            .when()
                 .throwing( new CalloutException( 'An Exception' ) );
 
         Boolean exceptionThrown = false;
@@ -10188,7 +10195,7 @@ public with sharing class AmossTest_InstanceTest {
 
         new Amoss_Instance()
             .isACalloutMock()
-            .when() // TODO: would be good to not need the 'when' here
+            .when()
                 .willThrow( new CalloutException( 'An Exception' ) );
 
         Boolean exceptionThrown = false;
