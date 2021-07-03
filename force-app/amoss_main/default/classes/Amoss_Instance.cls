@@ -5545,6 +5545,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
         public Object handleMethodCall( List<Object> parameters ) {
 
+            // I'm really not sure how any of these error conditions could ever occur.
+            // I certainly can't think of a way of unit testing them without making the class public
+            // or testVisible, neither of which do I think is appropriate.
+            // That said, it seems that this is a sensible chunk of checking, just in case I've missed
+            // something.
             if ( parameters.size() != 1 ) {
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( '1 parameter, being an HttpRequest' )

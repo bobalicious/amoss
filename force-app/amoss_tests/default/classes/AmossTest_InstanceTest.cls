@@ -10156,11 +10156,6 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (HttpCalloutMock), when a call is made, will be handled by the object specified' );
     }
 
-    // TODO: test for calling with something that's
-    //  * Not an HttpRequest
-    //  * Has too many parameters
-    //  * Is a null HttpRequest
-
     /**
     * @method isACalloutMock.throws
     * @case   when called
