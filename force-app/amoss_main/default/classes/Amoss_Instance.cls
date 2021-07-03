@@ -5381,6 +5381,49 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             response.setBody( JSON.serialize( body ) );
             return this;
         }
+
+       /**
+        * Specifies a header that will be set on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .header( 'Authorised' ).setTo( 'true' )
+        */
+        public Amoss_CalloutMockResponseHeaderDefiner header( String key ) {
+            return new Amoss_CalloutMockResponseHeaderDefiner( this, response, key );
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of a header on the response that is to be returned.
+     */
+    public class Amoss_CalloutMockResponseHeaderDefiner {
+
+        String headerKey;
+        HttpResponse response;
+        Amoss_CalloutMockResponseDefiner responseDefiner;
+
+        public Amoss_CalloutMockResponseHeaderDefiner( Amoss_CalloutMockResponseDefiner responseDefiner, HttpResponse response, String headerKey ) {
+            this.headerKey       = headerKey;
+            this.response        = response;
+            this.responseDefiner = responseDefiner;
+        }
+
+        /**
+        * Specifies a value that the specified header will be set on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .header( 'Authorised' ).setTo( 'true' )
+        */
+        public Amoss_CalloutMockResponseDefiner setTo( String headerValue ) {
+            response.setHeader( headerKey, headerValue );
+            return responseDefiner;
+        }
     }
 
     /**

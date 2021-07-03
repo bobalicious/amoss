@@ -9852,6 +9852,29 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method isACalloutMock.respondsWith.header.setTo
+    * @case   when called
+    * @result will set the headers that are returned
+    */
+    @isTest
+    private static void isACalloutMockRespondsWithHeaderSetTo_willSetTheHeadersThatAreReturned() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .respondsWith()
+                    .header( 'one' ).setTo( 'oneValue' )
+                    .header( 'two' ).setTo( 'twoValue' );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 'oneValue', response.getHeader( 'one' ), 'isACalloutMock.respondsWith.header.setTo, will set the headers that are returned on the generated HttpResponse' );
+        System.assertEquals( 'twoValue', response.getHeader( 'two' ), 'isACalloutMock.respondsWith.header.setTo, will set the headers that are returned on the generated HttpResponse' );
+    }
+
+    /**
     * @method isACalloutMock.respondsWith
     * @case   when multiple properties are set
     * @result will set all of them on the response that is returned
@@ -9927,7 +9950,7 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method isACalloutMock.respondsWith.body (string)
+    * @method isACalloutMock.byDefault.respondsWith.body (string)
     * @case   when called and doesn't match anything else
     * @result will set the body that is returned
     */
@@ -9952,7 +9975,7 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method isACalloutMock.respondsWith.body (Object)
+    * @method isACalloutMock.byDefault.respondsWith.body (Object)
     * @case   when called and doesn't match anything else
     * @result will serialise the object and set the body that is returned
     */
@@ -9977,7 +10000,7 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
-    * @method isACalloutMock.respondsWith.body (blob)
+    * @method isACalloutMock.byDefault.respondsWith.body (blob)
     * @case   when called and doesn't match anything else
     * @result will set the body that is returned
     */
@@ -10002,6 +10025,31 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method isACalloutMock.byDefault.respondsWith.header.setTo
+    * @case   when called and doesn't match anything else
+    * @result will set the header that is returned
+    */
+    @isTest
+    private static void isACalloutMockByDefaultRespondsWithHeaderSetTo_willSetTheHeaderThatIsReturned() {
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .byDefault()
+                .respondsWith()
+                    .header( 'Authorised' ).setTo( 'default' )
+            .also().when()
+                .method( 'GET' )
+                .respondsWith()
+                .header( 'Authorised' ).setTo( 'non-default' );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 'default', response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith.header.setTo, and does not match a defined call, will set the header that is returned on the generated HttpResponse' );
+    }
+
+    /**
     * @method isACalloutMock.respondsWith
     * @case   when multiple properties are set, is called and doesn't match anything else
     * @result will set all of them on the response that is returned
@@ -10016,20 +10064,23 @@ public with sharing class AmossTest_InstanceTest {
                     .statusCode( 200 )
                     .status( 'Complete' )
                     .body( 'A body' )
+                    .header( 'Authorised' ).setTo( 'true' )
             .also().when()
                 .method( 'GET' )
                 .respondsWith()
                     .statusCode( 404 )
                     .status( 'Not Found' )
-                    .body( 'No body' );
+                    .body( 'No body' )
+                    .header( 'Authorised' ).setTo( 'false' );
 
         Test.startTest();
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 200       , response.getStatusCode(), 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'Complete', response.getStatus()    , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'A body'  , response.getBody()      , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        System.assertEquals( 200       , response.getStatusCode()          , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        System.assertEquals( 'Complete', response.getStatus()              , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        System.assertEquals( 'A body'  , response.getBody()                , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        System.assertEquals( 'true'    , response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
     }
 
     /**
@@ -10047,12 +10098,14 @@ public with sharing class AmossTest_InstanceTest {
                     .statusCode( 200 )
                     .status( 'Complete' )
                     .body( 'A body' )
+                    .header( 'Authorised' ).setTo( 'true' )
             .also().when()
                 .method( 'GET' )
                 .respondsWith()
                     .statusCode( 404 )
                     .status( 'Not Found' )
-                    .body( 'No body' );
+                    .body( 'No body' )
+                    .header( 'Authorised' ).setTo( 'false' );
 
         Test.startTest();
             HttpRequest request = new HttpRequest();
@@ -10060,9 +10113,10 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 404        , response.getStatusCode(), 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
-        System.assertEquals( 'Not Found', response.getStatus()    , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
-        System.assertEquals( 'No body'  , response.getBody()      , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        System.assertEquals( 404        , response.getStatusCode()          , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        System.assertEquals( 'Not Found', response.getStatus()              , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        System.assertEquals( 'No body'  , response.getBody()                , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        System.assertEquals( 'false'    , response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
     }
 
     /**
