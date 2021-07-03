@@ -4972,6 +4972,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Defines the object that should be used to handle the call made in the specification, defining the
         * response that will be generated.
         *
+        * Can be passed an implementation of any of the following:
+        *   * Amoss_MethodHandler
+        *   * StubProvider
+        *   * HttpCalloutMock
+        *
         * For example:
         *   .when()
         *       .method( 'POST' )
@@ -4987,6 +4992,11 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * Defines the object that should be used to handle the call made in the specification, defining the
         * response that will be generated.
         *
+        * Can be passed an implementation of any of the following:
+        *   * Amoss_MethodHandler
+        *   * StubProvider
+        *   * HttpCalloutMock
+        *
         * For example:
         *   .when()
         *       .method( 'POST' )
@@ -4995,6 +5005,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_CalloutMockNextExpectationDefiner handledBy( StubProvider returnHandler ) {
             return new Amoss_CalloutMockNextExpectationDefiner(
                  parametersDefiner.handledBy( returnHandler )
+            );
+        }
+
+        /**
+        * Defines the object that should be used to handle the call made in the specification, defining the
+        * response that will be generated.
+        *
+        * Can be passed an implementation of any of the following:
+        *   * Amoss_MethodHandler
+        *   * StubProvider
+        *   * HttpCalloutMock
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .handledBy( new CustomRequestHandler() )
+        */
+        public Amoss_CalloutMockNextExpectationDefiner handledBy( HttpCalloutMock returnHandler ) {
+            return new Amoss_CalloutMockNextExpectationDefiner(
+                 parametersDefiner.handledBy( new Amoss_CalloutMockHttpHandlerAdaptor( returnHandler ) )
             );
         }
 
@@ -5498,6 +5528,45 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             } catch ( Amoss_AssertionFailureException e ) {
                 throw e.addContextToMessage( 'Compressed is not what was expected: {0}' );
             }
+        }
+    }
+
+    /**
+     * An adaptor for making the HttpCalloutMock compatible with Amoss as an Amoss_MethodHandler
+     *
+     */
+    private class Amoss_CalloutMockHttpHandlerAdaptor implements Amoss_MethodHandler {
+
+        HttpCalloutMock standardHandler;
+
+        public Amoss_CalloutMockHttpHandlerAdaptor( HttpCalloutMock standardHandler ) {
+            this.standardHandler = standardHandler;
+        }
+
+        public Object handleMethodCall( List<Object> parameters ) {
+
+            if ( parameters.size() != 1 ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( '1 parameter, being an HttpRequest' )
+                            .setActual( parameters )
+                            .setAssertionMessage( 'HttpCalloutMock handler was called with the wrong number of parameters' );
+            }
+
+            if ( parameters[0] == null ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'HttpRequest' )
+                            .setActual( 'null' )
+                            .setAssertionMessage( 'HttpCalloutMock handler was called with a null first parameter' );
+            }
+
+            if ( ! ( parameters[0] instanceOf HttpRequest ) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'HttpRequest' )
+                            .setActual( parameters[0] )
+                            .setAssertionMessage( 'HttpCalloutMock handler was called with an object that was not an HttpCalloutMock' );
+            }
+
+            return standardHandler.respond( (HttpRequest)parameters[0] );
         }
     }
 }

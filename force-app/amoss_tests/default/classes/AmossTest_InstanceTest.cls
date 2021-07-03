@@ -10128,6 +10128,40 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method isACalloutMock.handledBy (HttpCalloutMock)
+    * @case   when call is made
+    * @result will be handled by the object specified
+    */
+    @isTest
+    private static void isACalloutMockHandledByHttpCalloutMock_whenHandledByAndCallIsMade_willBeHandledByObject() {
+
+        HttpResponse mockResponse = new HttpResponse();
+        mockResponse.setBody( 'FromTheHandler' );
+
+        Amoss_Instance methodHandlerController = new Amoss_Instance( Amoss_HttpCalloutMock.class );
+        methodHandlerController
+            .expects()
+                .method( 'respond' )
+                .returning( mockResponse );
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .when()
+                .handledBy( (HttpCalloutMock)methodHandlerController.generateDouble() );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( new HttpRequest() );
+        Test.stopTest();
+
+        System.assertEquals( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (HttpCalloutMock), when a call is made, will be handled by the object specified' );
+    }
+
+    // TODO: test for calling with something that's
+    //  * Not an HttpRequest
+    //  * Has too many parameters
+    //  * Is a null HttpRequest
+
+    /**
     * @method isACalloutMock.throws
     * @case   when called
     * @result will throw the stated exception
