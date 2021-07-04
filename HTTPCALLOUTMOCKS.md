@@ -20,7 +20,8 @@ httpCalloutMock
     .isACalloutMock();
 ```
 
-Calling `isACalloutMock` will tell the Amoss_Instance to create a Test Double of the HttpCalloutMock interface, and the register it as the Callout Mock.  I/I.E. There is no need to call `Test.setMock`, Amoss does this for you.
+Calling `isACalloutMock` will tell the Amoss_Instance to create a Test Double of the HttpCalloutMock interface, and the register it as the Callout Mock.
+I.E. There is no need to call `Test.setMock`, Amoss does this for you.
 
 In general, this is unlikely to be useful, since our code will rely on the callout returning some data in our response.  At the very least, we probably need status codes.
 
@@ -44,15 +45,15 @@ httpCalloutMock
 
 The above defines the full shape of the `HttpResponse` object that is returned whenever a callout is made, and the majority will be entirely self evident.
 
-### respondsWith().status( value )
+### `respondsWith().status( value )`
 
 Sets the status of the response that will be returned.  I.E. calls `HttpResponse.setStatus( value )`.
 
-### respondsWith().statucCode( value )
+### `respondsWith().statucCode( value )`
 
 Sets the status code of the response that will be returned.  I.E. calls `HttpResponse.setStatusCode( value )`.
 
-### respondsWith().body( value )
+### `respondsWith().body( value )`
 
 Sets the contents of the body that will be returned.  I.E. calls the appropriate variation of `HttpResponse.setBody...`.
 
@@ -62,11 +63,11 @@ That is,
 * If `value` is a `Blob`, will call `HttpResponse.setBodyAsBlob( value )`
 * If `value` is any other type of `Object`, will JSON serialize the contents of `value` before passsing it into `HttpResponse.setBody`
 
-### respondsWith().header( key ).setTo( value )
+### `respondsWith().header( key ).setTo( value )`
 
 Sets the value of the specified header on the response that will be returned.  I.E. calls `HttpResponse.setHeader( key, value )`.
 
-### throws( exception ) / willThrow( exception ) / throwing( exception )
+### `throws( exception )` / `willThrow( exception )` / `throwing( exception )`
 
 TBD
 
@@ -118,7 +119,11 @@ TBD
 
 TBD
 
-### `when()` / `allows()` / `expects()`
+## `when()` / `allows()` / `expects()`
+
+TBD
+
+## Test Spy Behaviours
 
 TBD
 
