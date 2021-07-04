@@ -49,6 +49,8 @@ httpCalloutMock
             .statusCode( 404 );
 ```
 
+This documetation page covers the fundamentals of building Test Doubles.  For documentation on creating HttpCalloutMocks, see [here](HTTPCALLOUTMOCKS.md).
+
 ### Installating it
 
 #### git clone / copy / deploy
