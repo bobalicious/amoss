@@ -38,12 +38,12 @@ httpCalloutMock
     .byDefault()
         .respondsWith()
             .status( 'Complete' )
-            .statucCode( 200 )
+            .statusCode( 200 )
             .body( Map<String,Object>{ 'parameter' => 'value' } )
             .header( 'ResponseHeaderKey' ).setTo( 'value' )
 ```
 
-The above defines the full shape of the `HttpResponse` object that is returned whenever a callout is made, and the majority will be entirely self evident.
+The above defines the full shape of the `HttpResponse` object that is returned whenever a callout is made, and the majority will hopefully be self evident.
 
 ### `respondsWith().status( value )`
 
@@ -69,63 +69,261 @@ Sets the value of the specified header on the response that will be returned.  I
 
 ### `throws( exception )` / `willThrow( exception )` / `throwing( exception )`
 
-TBD
+Instructs the HttpCalloutMock to throw the given exception when a matching call is made.
 
 ## Defining a conditional return
 
-TBD
+Obviously, some of the time we do not want the HttpCalloutMock to *always* behave in the same way - often we will:
+* Want to make several calls to the service and have it return in different ways for each of the calls.
+* Want to use the HttpCalloutMock to ensure that we call it in the appropriate way.
+
+For those situations, we can specify the conditions under which the specified response will be returned.
+
+For example:
+
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .when()
+        .method( 'GET' )
+        .endpoint().contains( '/account/' )
+        .header( 'Authorization' ).isSet()
+        .compressed()
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 )
+            .body( Map<String,Object>{ 'parameter' => 'value' } )
+            .header( 'ResponseHeaderKey' ).setTo( 'value' );
+```
+
+In this situation, the service will return a 200 status code and the body if, and only if the stated conditions are met:
+* The HTTP Method is 'GET'
+* The Endpoint that is called contains the string `/account/`
+* The Header with the key `Authorization` is set to a non blank value
+* The `HttpRequest` is 'compressed'
+
+If the above conditions aren't met, then the default - in this case an empty `HttpResponse` is returned.
+
+Multiple conditions can be defined, alongside a default.  So, the following is valid:
+
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .when()
+        .method( 'GET' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 )
+            .body( Map<String,Object>{ 'parameter' => 'value' } )
+    .also().when()
+        .method( 'POST' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 )
+    .byDefault()
+        .respondsWith()
+            .status( 'Not Found' )
+            .statusCode( 404 )
+```
+
+And so:
+* All GET and POST requests will get a 200 - Complete
+* GET requests will also have a body set
+* Any other method will result in a 404 - Not Found
 
 ### `method( httpMethod )`
 
-TBD
+Verifies that the given `HttpRequest` has the specified Method defined.
 
 ### `endpoint( uri )`
 
-TBD
+Verifies that the given `HttpRequest` has the endpoint set to the precise URI provided.
 
 ### `header( key ).setTo( value )`
 
-TBD
+Verifies that the given `HttpRequest` has the specifed header set to the value provided.
 
 ### `body( value )`
 
-TBD
+Verifies that the given `HttpRequest` has the body set to the value provided.
 
 ### `compressed()` / `notCompressed()`
 
-TBD
+Verifies that the given `HttpRequest` is, or is not compressed.
 
 ## Different Verifiers
 
-TBD
+As is described in the example above, some of the properties can be checked for different properties.
+
+This is true of the following:
+* endpoint
+* body
+* header
+
+The following options are available:
 
 ### `setTo( value )`
 
-TBD
+Verifies that the given property is set to the given value.
 
-### `set`
+For example:
 
-TBD
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .when()
+        .endpoint().setTo( 'http://example.com/account/12345' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 );
+```
+
+### `set()`
+
+Verifies that the given property is set to a non empty String.
+
+For example:
+
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .when()
+        .header( 'Authorization' ).setTo()
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 );
+```
 
 ### `containing( value )`
 
-TBD
+Verifies that the given property contains the given value.
+
+For example:
+
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .when()
+        .endpoint().contains( 'account/12345' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 );
+```
 
 ### `matching( expression )`
 
-TBD
+Verifies that the given property matches the given regular expression.
 
-## Defining multiple returns
+Note that this follows the Apex standard of requiring that the *whole* of the String matches
 
-TBD
+For example:
+
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .when()
+        .endpoint().matches( '.*/account/12345' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 );
+```
 
 ## `when()` / `allows()` / `expects()`
 
-TBD
+As described in an above example, multiple behaviours can be defined by stringing together definitions using the `also().when()` notation.
+
+In addition, Amoss provides other syntaxes for defining more strict behaviours.  This is in line with the core Amoss capabilities.
+
+The following describes them in simple terms, though the documentation for the core of Amoss describes the precise behaviour and gives descriptions of when you would decide to use one over another.  It is strongly recommended that you read the core documentation to understand these concepts.
+
+### `allows()`
+
+Defines that the only calls that are allowed against the service are those defined in against the HttpCalloutMock.
+
+Any other call against the service will result in the test failing.
+
+For example:
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .allows()
+        .method( 'GET' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 )
+    .also().allows()
+        .method( 'POST' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 );
+```
+
+States that:
+* All GET and POST requests will get a 200 - Complete
+* GET requests will also have a body set
+* Any other method will result in the test failing.
+
+### `expects()`
+
+States that the only calls that are expected against the service are those specified, and that they are expected to occur in the given order.
+
+If any other call is made, the test will fail.
+
+If any call is made out of sequence, the test will fail.
+
+Once test is complete, `verify` may be called against the mock controller in order to ensure that *every* expected call was made
+
+For example:
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .expects()
+        .method( 'GET' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 )
+    .then().expects()
+        .method( 'POST' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 );
+
+Test.startTest();
+    // Do the stuff that is tested
+Test.stopTest();
+
+// Then verify that everything that was expected was called
+httpCalloutMock.verify();
+
+```
 
 ## Test Spy Behaviours
 
-TBD
+As with core
 
 ## Custom verifiers - `verifiedBy( verifier )`
 
