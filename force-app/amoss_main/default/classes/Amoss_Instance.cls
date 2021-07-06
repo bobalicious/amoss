@@ -4953,6 +4953,42 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States that the call's request should be verified by the given verifier
+        *
+        * For example:
+        *   .when()
+        *       .verifiedBy( customVerifier )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner verifiedBy( Amoss_ValueVerifier customVerifier ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( customVerifier )
+            );
+        }
+
+        /**
+        * States that the call's request should be verified by the given verifier
+        *
+        * For example:
+        *   .when()
+        *       .verifiedBy( customVerifier )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner verifiedBy( Amoss_HttpRequestVerifier customVerifier ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpRequestVerifierAdaptor().setRequestVerifier( customVerifier ) )
+            );
+        }
+
+        /**
         * Switches the mode of the specification over to defining how the call will respond
         *
         * For example:
@@ -5449,12 +5485,33 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
             if ( ! (actualValue instanceOf HttpRequest) ) {
                 throw new Amoss_EqualsAssertionFailureException()
-                            .setExpected( 'Request' )
+                            .setExpected( 'HttpRequest' )
                             .setActual( Amoss_Asserts.getType( actualValue ) )
                             .setAssertionMessage( 'The value is not what was expected - The types do not match' );
             }
 
             verifyValue( (HttpRequest)actualValue );
+        }
+    }
+
+    /**
+     * An adaptor for Amoss_HttpRequestVerifier that allows it to operate as an Amoss_ValueVerifier
+     */
+    private class Amoss_CalloutMockHttpRequestVerifierAdaptor extends Amoss_CalloutMockRequestVerifier {
+
+        protected Amoss_HttpRequestVerifier requestVerifier;
+
+        public Amoss_CalloutMockHttpRequestVerifierAdaptor setRequestVerifier( Amoss_HttpRequestVerifier requestVerifier ) {
+            this.requestVerifier = requestVerifier;
+            return this;
+        }
+
+        public override String toString() {
+            return requestVerifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            requestVerifier.verify( actualRequest );
         }
     }
 

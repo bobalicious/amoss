@@ -11425,6 +11425,159 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 200, response200.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 2' );
     }
 
+    /**
+    * @method isACalloutMock.when.verifiedBy (Amoss_ValueVerifier)
+    * @case   when called with request that matches the verification
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenVerifiedByValueVerifier_whenMatchesVerification_returnAsSpecified() {
+
+        HttpRequest request = new HttpRequest();
+
+        Amoss_Instance customVerifierController = new Amoss_Instance( Amoss_ValueVerifier.class );
+        customVerifierController
+            .expects( 'verify' )
+                .withParameter().setTo( request );
+
+        Amoss_ValueVerifier customVerifier = (Amoss_ValueVerifier)customVerifierController.getDouble();
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .byDefault()
+                .respondsWith()
+                    .statusCode( 404 )
+            .also().when()
+                .verifiedBy( customVerifier )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        customVerifierController.verify();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_ValueVerifier), when the verifier matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.verifiedBy (Amoss_ValueVerifier)
+    * @case   when called with request that does not match the verification
+    * @result will not return that specification
+    */
+    @isTest
+    private static void isACalloutMockWhenVerifiedByValueVerifier_whenDoesNotMatch_returnOther() {
+
+        HttpRequest request = new HttpRequest();
+
+        Amoss_Instance customVerifierController = new Amoss_Instance( Amoss_ValueVerifier.class );
+        customVerifierController
+            .expects( 'verify' )
+                .withParameter().setTo( request )
+                .throws( new Amoss_Instance.Amoss_EqualsAssertionFailureException()
+                                .setExpected( 'expectedValue' )
+                                .setActual( 'actualValue' )
+                                .setAssertionMessage( 'Not the same value' ) );
+
+        Amoss_ValueVerifier customVerifier = (Amoss_ValueVerifier)customVerifierController.getDouble();
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .byDefault()
+                .respondsWith()
+                    .statusCode( 404 )
+            .also().when()
+                .verifiedBy( customVerifier )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        customVerifierController.verify();
+
+        System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_ValueVerifier), when the verifier does not match, will not return what was specified for that call' );
+    }
+
+
+    /**
+    * @method isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier)
+    * @case   when called with request that matches the verification
+    * @result will return as specified
+    */
+    @isTest
+    private static void isACalloutMockWhenVerifiedByHttpRequestVerifier_whenMatchesVerification_returnAsSpecified() {
+
+        HttpRequest request = new HttpRequest();
+
+        Amoss_Instance customVerifierController = new Amoss_Instance( Amoss_HttpRequestVerifier.class );
+        customVerifierController
+            .expects( 'verify' )
+                .withParameter().setTo( request );
+
+        Amoss_HttpRequestVerifier customVerifier = (Amoss_HttpRequestVerifier)customVerifierController.getDouble();
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .byDefault()
+                .respondsWith()
+                    .statusCode( 404 )
+            .also().when()
+                .verifiedBy( customVerifier )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        customVerifierController.verify();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier), when the verifier matches, will return as specified' );
+    }
+
+    /**
+    * @method isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier)
+    * @case   when called with request that does not match the verification
+    * @result will not return that specification
+    */
+    @isTest
+    private static void isACalloutMockWhenVerifiedByHttpRequestVerifier_whenDoesNotMatch_returnOther() {
+
+        HttpRequest request = new HttpRequest();
+
+        Amoss_Instance customVerifierController = new Amoss_Instance( Amoss_HttpRequestVerifier.class );
+        customVerifierController
+            .expects( 'verify' )
+                .withParameter().setTo( request )
+                .throws( new Amoss_Instance.Amoss_EqualsAssertionFailureException()
+                                .setExpected( 'expectedValue' )
+                                .setActual( 'actualValue' )
+                                .setAssertionMessage( 'Not the same value' ) );
+
+        Amoss_HttpRequestVerifier customVerifier = (Amoss_HttpRequestVerifier)customVerifierController.getDouble();
+
+        new Amoss_Instance()
+            .isACalloutMock()
+            .byDefault()
+                .respondsWith()
+                    .statusCode( 404 )
+            .also().when()
+                .verifiedBy( customVerifier )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        customVerifierController.verify();
+
+        System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier), when the verifier does not match, will not return what was specified for that call' );
+    }
+
     // expects - matches
     // expects - does not match
     // expects - two in a row

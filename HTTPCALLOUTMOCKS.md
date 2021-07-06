@@ -1,16 +1,16 @@
 # Amoss for HttpCalloutMocks
 
-Apex Mock Objects, Spies and Stubs can be used to create HttpCalloutMocks using a syntax that is very similar to that which is used to create other Test Doubles.
+Apex Mock Objects, Spies and Stubs can be used to create `HttpCalloutMocks` using a syntax that is very similar to that which is used to create other Test Doubles.
 
-Because the HttpCalloutMock capabilities are built on top of the core of Amoss, it can take advantage of most of the capabilities of that core, including conditional behaviours and true mock object behaviours and verifications.
+Because the `HttpCalloutMock` capabilities are built on top of the core of Amoss, it can take advantage of most of the capabilities of that core, including conditional behaviours and true mock object behaviours and verifications.
 
-Whilst you do not need to understand everything about the core of Amoss to use it to build HttpCalloutMocks - it is built to be as simple as possible to use, understanding core Amoss is recommended and will make using it in this way simpler and explain some of the more advanced capabilities.  Therefore it is recommended that you read and understand [that documentation](README.md) before you start using Amoss.
+Whilst you do not need to understand everything about the core of Amoss to use it to build `HttpCalloutMocks` - it is built to be as simple as possible to use - understanding core Amoss is recommended and will make using it to generate `HttpCalloutMocks` simpler and explain some of the more advanced capabilities.  Therefore it is recommended that you read and understand [that documentation](README.md) before you start using Amoss.
 
-That said - if you're comfortable with what you see here, why not give it a try anyway!
+That said - if you're comfortable with what you see here, why not give it a try...
 
-## Building a simple HttpCalloutMock
+## Building a simple `HttpCalloutMock`
 
-The simplest HttpCalloutMock that can be created is one that will always return the same result - an empty HttpResponse object.
+The simplest `HttpCalloutMock` that can be created is one that will always return the same result - an empty `HttpResponse` object.
 
 ```java
 
@@ -20,10 +20,12 @@ httpCalloutMock
     .isACalloutMock();
 ```
 
-Calling `isACalloutMock` will tell the Amoss_Instance to create a Test Double of the HttpCalloutMock interface, and the register it as the Callout Mock.
-I.E. There is no need to call `Test.setMock`, Amoss does this for you.
+Calling `isACalloutMock` will:
+* Tell the Amoss_Instance to create a Test Double of the `HttpCalloutMock` interface
+* Register the generated Test Double as the Callout Mock.
+** I.E. There is no need to call `Test.setMock`, Amoss does this for you.
 
-In general, this is unlikely to be useful, since our code will rely on the callout returning some data in our response.  At the very least, we probably need status codes.
+In general, this is unlikely to be useful, since our code will rely on the callout returning some data in our response.  At the very least, we probably need status codes to be returned
 
 ## Defining a default return
 
@@ -47,15 +49,18 @@ The above defines the full shape of the `HttpResponse` object that is returned w
 
 ### `respondsWith().status( value )`
 
-Sets the status of the response that will be returned.  I.E. calls `HttpResponse.setStatus( value )`.
+Sets the status of the response that will be returned.
+I.E. calls `HttpResponse.setStatus( value )`.
 
-### `respondsWith().statucCode( value )`
+### `respondsWith().statusCode( value )`
 
-Sets the status code of the response that will be returned.  I.E. calls `HttpResponse.setStatusCode( value )`.
+Sets the status code of the response that will be returned.
+I.E. calls `HttpResponse.setStatusCode( value )`.
 
 ### `respondsWith().body( value )`
 
-Sets the contents of the body that will be returned.  I.E. calls the appropriate variation of `HttpResponse.setBody...`.
+Sets the contents of the body that will be returned.
+I.E. calls the appropriate variation of `HttpResponse.setBody...`.
 
 That is,
 
@@ -69,13 +74,13 @@ Sets the value of the specified header on the response that will be returned.  I
 
 ### `throws( exception )` / `willThrow( exception )` / `throwing( exception )`
 
-Instructs the HttpCalloutMock to throw the given exception when a matching call is made.
+Instructs the `HttpCalloutMock` to throw the given exception when a matching call is made.
 
 ## Defining a conditional return
 
-Obviously, some of the time we do not want the HttpCalloutMock to *always* behave in the same way - often we will:
-* Want to make several calls to the service and have it return in different ways for each of the calls.
-* Want to use the HttpCalloutMock to ensure that we call it in the appropriate way.
+Obviously, for some tests, we do not want the `HttpCalloutMock` to *always* behave in the same way - often we will:
+* Want to make several calls to the service and have it return in different ways for each of the calls so we can check dependent behaviours.
+* Want to use the `HttpCalloutMock` to check that services are called it in the appropriate way.
 
 For those situations, we can specify the conditions under which the specified response will be returned.
 
@@ -105,7 +110,7 @@ In this situation, the service will return a 200 status code and the body if, an
 * The Header with the key `Authorization` is set to a non blank value
 * The `HttpRequest` is 'compressed'
 
-If the above conditions aren't met, then the default - in this case an empty `HttpResponse` is returned.
+If the above conditions aren't met, then the default - in this case an empty `HttpResponse` - is returned.
 
 Multiple conditions can be defined, alongside a default.  So, the following is valid:
 
@@ -137,36 +142,40 @@ And so:
 * GET requests will also have a body set
 * Any other method will result in a 404 - Not Found
 
-### `method( httpMethod )`
+## Common Verification Methods
+
+The above example uses some of the common mechanisms for verifying the properties of the passed `HttpRequest` object.
+
+#### `method( httpMethod )`
 
 Verifies that the given `HttpRequest` has the specified Method defined.
 
-### `endpoint( uri )`
+#### `endpoint( uri )`
 
 Verifies that the given `HttpRequest` has the endpoint set to the precise URI provided.
 
-### `header( key ).setTo( value )`
+#### `header( key ).setTo( value )`
 
 Verifies that the given `HttpRequest` has the specifed header set to the value provided.
 
-### `body( value )`
+#### `body( value )`
 
 Verifies that the given `HttpRequest` has the body set to the value provided.
 
-### `compressed()` / `notCompressed()`
+#### `compressed()` / `notCompressed()`
 
 Verifies that the given `HttpRequest` is, or is not compressed.
 
-## Different Verifiers
+## Verifier Variations
 
-As is described in the example above, some of the properties can be checked for different properties.
+In addition to these core verifications, certain `String` properties can also be checked in more advanced ways.
 
 This is true of the following:
 * endpoint
 * body
 * header
 
-The following options are available:
+For those properties, the following options are available:
 
 ### `setTo( value )`
 
@@ -256,7 +265,7 @@ The following describes them in simple terms, though the documentation for the c
 
 ### `allows()`
 
-Defines that the only calls that are allowed against the service are those defined in against the HttpCalloutMock.
+Defines that the only calls that are allowed against the service are those defined in against the `HttpCalloutMock`.
 
 Any other call against the service will result in the test failing.
 
@@ -321,9 +330,53 @@ httpCalloutMock.verify();
 
 ```
 
+## `expectsNoCalls()`
+
+When specified as `expectsNoCalls()`, the generated Mock will fail the test if any call is made to a service.
+
+For example:
+
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+new Amoss_Instance()
+    .isACalloutMock()
+    .expectsNoCalls();
+
+```
+
+This useful for ensuring that services are not called - for example checking that guard clauses work correctly.
+
+## `allowsAnyCall( false )`
+
+In addition, you can specify responses using the `when()` syntax, and still have the mock fail tests if any other calls are made, by specifying `allowsAnyCall( false )`.
+
+For example:
+
+
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+new Amoss_Instance()
+    .isACalloutMock()
+    .allowsAnyCall( false )
+    .when()
+        .method( 'GET' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 );
+
+```
+
+The above will allow GET requests to be made, but will fail the test if any other method is used.
+
+This is generally synonymous with using `allows()` in place of `when()`.
+
 ## Test Spy Behaviours
 
-As with core, after a test has performed its actions, you can access the parameters that were passed into calls against the HttpCalloutMock.
+As with core, after a test has performed its actions, you can access the parameters that were passed into calls against the `HttpCalloutMock`.
 
 So, for example, you can:
 
@@ -393,13 +446,13 @@ The `verify` method should then check the passed parameter to see if it matches 
 
 ### `Amoss_HttpRequestVerifier`
 
-Particular to the HttpCalloutMock implementation is an interface specifically designed for testing HttpRequests.
+Particular to the `HttpCalloutMock` implementation is an interface specifically designed for testing `HttpRequests`.
 
 It is defined in the same way as the `Amoss_ValueVerifier` other than the fact that the `verify` method is defined as receiving an `HttpRequest` object.  This makes the implementation a little simpler.
 
 ## Custom handlers - `handledBy( handler )`
 
-Similar to the verification scenraio, it is possible that the response to the call cannot be generated by Amoss's methods.  For example, if you require the `HttpResponse` to be built using some data from the `HttpRequest`.  Generally this is only required if you have a series of callouts that you need to mock and absolutely require a sequence of data that makes sense.
+Similar to the verification scenraio, it is possible that the response to the call cannot be generated by Amoss's methods.  For example, if you require the `HttpResponse` to be built using some data from the `HttpRequest`.  Generally this is only required if you have a series of callouts that you need to mock and absolutely require a sequence of data that links together.
 
 If that's the case, it is possible to inject an object that implements one of the method handler interfaces.
 

@@ -27,7 +27,7 @@ SOFTWARE.
 /**
 * Public interface for the specification of a mechanism for checking the value of a parameter.
 *
-* Can be used to extend the functionality of the core Amoss framework and allow for compelx parameter checking
+* Can be used to extend the functionality of the core Amoss framework and allow for complex parameter checking
 * to take place that is specific to a particular system's implementation.
 *
 * Of particular use when trying to verify the values of parameters that contains Maps and Sets, since the casting rules makes

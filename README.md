@@ -25,7 +25,7 @@ deliveryProviderController
 DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.getDouble();
 ```
 
-It also provides an interface for creating and registering an HttpCalloutMock in a simple and easy to read format.
+It also provides an interface for creating and registering an `HttpCalloutMock` in a simple and easy to read format.
 
 For example:
 
@@ -49,7 +49,7 @@ httpCalloutMock
             .statusCode( 404 );
 ```
 
-This documetation page covers the fundamentals of building Test Doubles.  For documentation on creating HttpCalloutMocks, see [here](HTTPCALLOUTMOCKS.md).
+This documetation page covers the fundamentals of building Test Doubles.  [For documentation on creating `HttpCalloutMocks`, see here.](HTTPCALLOUTMOCKS.md).
 
 ### Installating it
 
