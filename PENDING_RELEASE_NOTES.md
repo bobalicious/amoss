@@ -3,8 +3,8 @@
 
 * Added the ability to specify HttpCalloutMock implementations using the Amoss grammar directly.  E.g.
 ```
-Amoss_Instance mockHttp = new Amoss_Instance( Amoss_HttpCalloutMock.class );
-mockHttp
+Amoss_Instance mockHttpCallout = new Amoss_Instance();
+mockHttpCallout
     .isACalloutMock()
         .expects()
             .method( 'GET' )

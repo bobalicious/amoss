@@ -64,6 +64,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Boolean expectsNoCalls                 = false;
 
     private String moreCallsThanExpectedMessage = '{0}.{1} was called more times than was expected';
+    private String expectedNoCallsMessage = '{0} did not expect any methods to be called';
 
     public static Amoss_ValueVerifierBuilder valueVerifierBuilder = new Amoss_ValueVerifierBuilder();
 
@@ -140,6 +141,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         if ( this.classType == null ) {
             setClass( Amoss_HttpCalloutMock.class );
             setMoreCallsThanExpectedMessage( 'More HTTP Callouts were made than expected' );
+            setExpectedNoCallsMessage( 'HttpCalloutMock did not expect any services to be called' );
             byDefaultMethodsReturn( new HttpResponse() );
         }
         return new Amoss_CalloutMockDefiner( this );
@@ -469,6 +471,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
+    * Defines the base content of the assertion message to use when more, or unspecified calls
+    * are made against a generated Test Double.
+    *
+    * @param String - The message
+    */
+    private Amoss_Instance setExpectedNoCallsMessage( String message ) {
+        this.expectedNoCallsMessage = message;
+        return this;
+    }
+
+    /**
     * Internal method that should not be called directly in tests.
     *
     * Is the StubProvider.handleMethodCall method that handles the resulting method calls to the mock object.
@@ -485,7 +498,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
 
         if ( expectsNoCalls ) {
-            assertionMechanism.assertEquals( '', callDescription, String.format( '{0} did not expect any methods to be called', new List<String>{ getClassName() } ) );
+            assertionMechanism.assertEquals( '', callDescription, String.format( expectedNoCallsMessage, new List<String>{ getClassName() } ) );
         }
 
         if ( whens.hasExpectations() ) {

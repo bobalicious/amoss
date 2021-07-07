@@ -11578,14 +11578,188 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier), when the verifier does not match, will not return what was specified for that call' );
     }
 
-    // expects - matches
-    // expects - does not match
-    // expects - two in a row
+    /**
+    * @method isACalloutMock.expectsNoCalls
+    * @case   when a callout is made is called
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockExpectsNoCalls_whenACalloutIsMade_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance mockHttpController = new Amoss_Instance();
+        mockHttpController.setAsserts( assertsDouble );
+
+        mockHttpController
+            .isACalloutMock()
+            .expectsNoCalls();
+
+        Test.startTest();
+            try {
+                HttpResponse response  = new Http().send( new HttpRequest() );
+            } catch( TestException e ) {}
+        Test.stopTest();
+
+        System.assertEquals( '' , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with an empty string as expected' );
+
+        String expectedMethodCall = 'respond(System.HttpRequest[Endpoint=null, Method=null])';
+        System.assertEquals( expectedMethodCall, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with the method called as actual' );
+
+        String expectedAssertion = 'HttpCalloutMock did not expect any services to be called';
+        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+    /**
+    * @method isACalloutMock.expects
+    * @case   when request made that matches
+    * @result will return the specified
+    */
+    @isTest
+    private static void isACalloutMockExpectsVerify_whenMatches_returns() {
+
+        Amoss_Instance customVerifierController = new Amoss_Instance();
+
+        customVerifierController
+            .isACalloutMock()
+            .expects()
+                .method( 'GET' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setMethod( 'GET' );
+            HttpResponse response  = new Http().send( request );
+        Test.stopTest();
+
+        customVerifierController.verify();
+
+        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.expects.verify, when a call matches, returns' );
+    }
+
+    /**
+    * @method isACalloutMock.expects
+    * @case   when request made that does not match
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockExpects_whenDoesNoMatch_fails() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance customVerifierController = new Amoss_Instance();
+
+        customVerifierController
+            .setAsserts( assertsDouble )
+            .isACalloutMock()
+            .expects()
+                .method( 'GET' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setMethod( 'POST' );
+
+            try {
+                HttpResponse response  = new Http().send( request );
+            } catch ( Exception e ) {} // NOPMD: catching the exception thrown by the mock assert
+        Test.stopTest();
+
+        checkForWrongParameterNamedAssertion( assertsDoubleController, 'respond', 'request', 'GET', 'POST',
+                                            'isACalloutMock.expects, when a request made that does not match' );
+    }
+
+    /**
+    * @method isACalloutMock.expects.expects.verify
+    * @case   when requests made in line with the expectations
+    * @result will pass
+    */
+    @isTest
+    private static void isACalloutMockExpectsExpectsVerify_whenMultipleCallsAndMatches_passes() {
+
+        Amoss_Instance customVerifierController = new Amoss_Instance();
+
+        customVerifierController
+            .isACalloutMock()
+            .expects()
+                .method( 'GET' )
+                .respondsWith()
+                    .statusCode( 200 )
+            .then().expects()
+                .method( 'POST' )
+                .respondsWith()
+                    .statusCode( 404 );
+
+        Test.startTest();
+            HttpRequest request1 = new HttpRequest();
+            request1.setMethod( 'GET' );
+            HttpResponse response1  = new Http().send( request1 );
+
+            HttpRequest request2 = new HttpRequest();
+            request2.setMethod( 'POST' );
+            HttpResponse response2  = new Http().send( request2 );
+        Test.stopTest();
+
+        customVerifierController.verify();
+
+        System.assertEquals( 200, response1.getStatusCode(), 'isACalloutMock.expects.verify, when the calls match, returns - call 1' );
+        System.assertEquals( 404, response2.getStatusCode(), 'isACalloutMock.expects.verify, when the calls match, returns - call 2' );
+    }
+
+    /**
+    * @method isACalloutMock.expects.expects.verify
+    * @case   when only one call made
+    * @result will fail
+    */
+    @isTest
+    private static void isACalloutMockExpectsExpectsVerify_whenOneCallMade_fail() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance customVerifierController = new Amoss_Instance();
+
+        customVerifierController
+            .setAsserts( assertsDouble )
+            .isACalloutMock()
+            .expects()
+                .method( 'GET' )
+                .respondsWith()
+                    .statusCode( 200 )
+            .then().expects()
+                .method( 'POST' )
+                .respondsWith()
+                    .statusCode( 404 );
+
+        Test.startTest();
+
+            HttpRequest request = new HttpRequest();
+            request.setMethod( 'GET' );
+            HttpResponse response  = new Http().send( request );
+
+            try {
+                customVerifierController.verify();
+            } catch ( Exception e ) {} // NOPMD: catching the exception thrown by the mock assert
+
+        Test.stopTest();
+
+        String expectedAssertion = 'Expected call stack for Amoss_HttpCalloutMock should be empty, and it is not';
+        String expectedCall      = 'respond( request => HttpRequest with the method POST )';
+
+        System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with an expected empty call stack' );
+        System.assertEquals( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with a call stack description that contains a message stating the calls that were expected' );
+        System.assertEquals( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
+
+
+
 
     // allows - matches
     // allows - does not match
-
-    // expectsNoCalls
 
     class InnerClassToDouble {
         public String publicMethod( String parameterOne ) {
