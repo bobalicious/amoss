@@ -65,6 +65,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     private String moreCallsThanExpectedMessage = '{0}.{1} was called more times than was expected';
     private String expectedNoCallsMessage = '{0} did not expect any methods to be called';
+    private String expectedEmptyCallStackMessage = 'Expected call stack for {0} should be empty, and it is not';
 
     public static Amoss_ValueVerifierBuilder valueVerifierBuilder = new Amoss_ValueVerifierBuilder();
 
@@ -141,7 +142,8 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         if ( this.classType == null ) {
             setClass( Amoss_HttpCalloutMock.class );
             setMoreCallsThanExpectedMessage( 'More HTTP Callouts were made than expected' );
-            setExpectedNoCallsMessage( 'HttpCalloutMock did not expect any services to be called' );
+            setExpectedNoCallsMessage( 'Did not expect any HTTP Callouts to be made' );
+            setExpectedEmptyCallStackMessage( 'Expected more HTTP Callouts to be made' );
             byDefaultMethodsReturn( new HttpResponse() );
         }
         return new Amoss_CalloutMockDefiner( this );
@@ -402,7 +404,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Generally called immediately prior to the test's assertions.
     */
     public void verify() {
-        assertionMechanism.assertEquals( new List<String>(), expectations.getRemainingCallsDescriptions(), String.format( 'Expected call stack for {0} should be empty, and it is not', new List<String>{ getClassName() } ) );
+        assertionMechanism.assertEquals( new List<String>(), expectations.getRemainingCallsDescriptions(), String.format( expectedEmptyCallStackMessage, new List<String>{ getClassName() } ) );
     }
 
     /**
@@ -454,6 +456,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Allows the object to be used as a Test Spy.
     *
     * @param String - The method to get the count of calls of
+    * @return Integer - The count of the number calls that were made
     */
     public Integer countOf( String method ) {
         return callLog.numberOfCalls( method );
@@ -464,6 +467,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * are made against a generated Test Double.
     *
     * @param String - The message
+    * @return Amoss_Instance - Itself, allowing for a fluent interface
     */
     private Amoss_Instance setMoreCallsThanExpectedMessage( String message ) {
         this.moreCallsThanExpectedMessage = message;
@@ -475,9 +479,22 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * are made against a generated Test Double.
     *
     * @param String - The message
+    * @return Amoss_Instance - Itself, allowing for a fluent interface
     */
     private Amoss_Instance setExpectedNoCallsMessage( String message ) {
         this.expectedNoCallsMessage = message;
+        return this;
+    }
+
+    /**
+    * Defines the base content of the assertion message to use when verify is called and
+    * the expected call stack is not empty
+    *
+    * @param String - The message
+    * @return Amoss_Instance - Itself, allowing for a fluent interface
+    */
+    private Amoss_Instance setExpectedEmptyCallStackMessage( String message ) {
+        this.expectedEmptyCallStackMessage = message;
         return this;
     }
 

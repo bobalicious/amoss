@@ -11607,7 +11607,7 @@ public with sharing class AmossTest_InstanceTest {
         String expectedMethodCall = 'respond(System.HttpRequest[Endpoint=null, Method=null])';
         System.assertEquals( expectedMethodCall, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with the method called as actual' );
 
-        String expectedAssertion = 'HttpCalloutMock did not expect any services to be called';
+        String expectedAssertion = 'Did not expect any HTTP Callouts to be made';
         System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
@@ -11747,7 +11747,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        String expectedAssertion = 'Expected call stack for Amoss_HttpCalloutMock should be empty, and it is not';
+        String expectedAssertion = 'Expected more HTTP Callouts to be made';
         String expectedCall      = 'respond( request => HttpRequest with the method POST )';
 
         System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with an expected empty call stack' );
