@@ -25,6 +25,32 @@ deliveryProviderController
 DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderController.getDouble();
 ```
 
+It also provides an interface for creating and registering an `HttpCalloutMock` in a simple and easy to read format.
+
+For example:
+
+```java
+
+Amoss_Instance httpCalloutMock = new Amoss_Instance();
+
+httpCalloutMock
+    .isACalloutMock()
+    .when()
+        .method( 'GET' )
+        .endpoint().containing( 'account/' )
+        .respondsWith()
+            .status( 'Complete' )
+            .statusCode( 200 )
+            .body( new Map<String,Object>{ 'Name' => 'The account name' } )
+    .also().when()
+        .method( 'POST' )
+        .respondsWith()
+            .status( 'Not Found' )
+            .statusCode( 404 );
+```
+
+This documetation page covers the fundamentals of building Test Doubles.  [For documentation on creating `HttpCalloutMocks`, see here.](HTTPCALLOUTMOCKS.md).
+
 ### Installating it
 
 #### git clone / copy / deploy

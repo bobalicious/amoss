@@ -41,9 +41,12 @@ SOFTWARE.
 @isTest
 public without sharing class Amoss_Instance implements StubProvider { //NOPMD - Is a single class library, hence the requirement for a significant number of public methods
 
+    public class Amoss_ClassTypeNotDefinedException extends Exception {}
+    public class Amoss_ClassTypeAlreadyDefinedException extends Exception {}
     public class Amoss_CallLogException extends Exception {}
     public class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
     public class Amoss_ExpectedObjectCannotBeNullException extends Exception {}
+    public class Amoss_NotAnHttpCalloutMockException extends Exception {}
 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
@@ -60,9 +63,16 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     private Boolean allowsAnyCallExplicitlyDefined = false;
     private Boolean expectsNoCalls                 = false;
 
+    private String moreCallsThanExpectedMessage = '{0}.{1} was called more times than was expected';
+    private String expectedNoCallsMessage = '{0} did not expect any methods to be called';
+    private String expectedEmptyCallStackMessage = 'Expected call stack for {0} should be empty, and it is not';
+
     public static Amoss_ValueVerifierBuilder valueVerifierBuilder = new Amoss_ValueVerifierBuilder();
 
-    public enum Value { NOT_NULL, ANY_VALUE }
+    public enum Value { NOT_NULL, ANY_VALUE, NOT_EMPTY }
+
+    public Amoss_Instance() {
+    }
 
     public Amoss_Instance( Type classType ) {
         this.classType = classType;
@@ -87,6 +97,23 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     }
 
     /**
+    * Allows the setting of the class that this Amoss Instance should generate test doubles for.s
+    *
+    * In general, the constructor that takes a class Type should be used over this, unless you particularly require
+    * the need to defer the setting of the class type (e.g. you have a templated instance that can be used for different types)
+    *
+    * @param  Type - The class type that this instance should generate test doubles for.
+    * @return Amoss_Instance - The instance to use in your test
+    */
+    public Amoss_Instance setClass( Type classType ) {
+        if ( this.classType != null ) {
+            throw new Amoss_ClassTypeAlreadyDefinedException( 'The class type on this Amoss_Instance has already been set to ' + this.classType );
+        }
+        this.classType = classType;
+        return this;
+    }
+
+    /**
     * Returns the instance of the class that you use in the application under test.
     *
     * @return Object  - The instance to use in your test
@@ -97,6 +124,29 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return generateDouble();
         }
         return latestGeneratedDouble;
+    }
+
+    /**
+    * States that this controller is an HttpCalloutMock, registering it as the mock callout and
+    * switching the grammar to that required for specifying expected callouts and their responses.
+    *
+    * Example usage:
+    *    new Amoss_Instance()
+    *        .isACalloutMock()
+    *        .when()
+    *            .method( 'GET' )
+    *            .respondsWith()
+    *                .body( '{some JSON}' )
+    */
+    public Amoss_CalloutMockDefiner isACalloutMock() {
+        if ( this.classType == null ) {
+            setClass( Amoss_HttpCalloutMock.class );
+            setMoreCallsThanExpectedMessage( 'More HTTP Callouts were made than expected' );
+            setExpectedNoCallsMessage( 'Did not expect any HTTP Callouts to be made' );
+            setExpectedEmptyCallStackMessage( 'Expected more HTTP Callouts to be made' );
+            byDefaultMethodsReturn( new HttpResponse() );
+        }
+        return new Amoss_CalloutMockDefiner( this );
     }
 
     /**
@@ -111,6 +161,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * @return Object  - The instance to use in your test
     */
     public Object generateDouble() {
+        if ( classType == null ) {
+            throw new Amoss_ClassTypeNotDefinedException( 'The class type on this Amoss_Instance has not been defined.  Either set it on construction, or by calling setClass' );
+        }
         latestGeneratedDouble = Test.createStub( classType, this );
         return latestGeneratedDouble;
     }
@@ -265,8 +318,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     /**
     * States that whatever mechanism is used to defined the 'expectations' or 'whens' against this
-    * object, it will allow any call to a method to be successful and for those that are not defined
-    * to return null.
+    * object, it will either:
+    *   * True  - Allow any call to a method to be successful and for those that are not defined to return null.
+    *   * False - Fail the test
     *
     * Example usage:
     *   allowsAnyCall( false )
@@ -331,7 +385,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Example usage:
     *   expectsNoCalls()
     */
-    public Amoss_Instance expectsNoCalls() {
+    public void expectsNoCalls() {
 
         if ( !expectations.isEmpty() || !whens.isEmpty() ) {
             throw new Amoss_ExpectsNoCallsAndCallsConfiguredException( 'Cannot state the double expectsNoCalls when expectations or whens have been defined' );
@@ -342,7 +396,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         this.expectsNoCalls = true;
-        return this;
     }
 
     /**
@@ -351,7 +404,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Generally called immediately prior to the test's assertions.
     */
     public void verify() {
-        assertionMechanism.assertEquals( new List<String>(), expectations.getRemainingCallsDescriptions(), String.format( 'Expected call stack for {0} should be empty, and it is not', new List<String>{ getClassName() } ) );
+        assertionMechanism.assertEquals( new List<String>(), expectations.getRemainingCallsDescriptions(), String.format( expectedEmptyCallStackMessage, new List<String>{ getClassName() } ) );
     }
 
     /**
@@ -403,9 +456,46 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     * Allows the object to be used as a Test Spy.
     *
     * @param String - The method to get the count of calls of
+    * @return Integer - The count of the number calls that were made
     */
     public Integer countOf( String method ) {
         return callLog.numberOfCalls( method );
+    }
+
+    /**
+    * Defines the base content of the assertion message to use when more, or unspecified calls
+    * are made against a generated Test Double.
+    *
+    * @param String - The message
+    * @return Amoss_Instance - Itself, allowing for a fluent interface
+    */
+    private Amoss_Instance setMoreCallsThanExpectedMessage( String message ) {
+        this.moreCallsThanExpectedMessage = message;
+        return this;
+    }
+
+    /**
+    * Defines the base content of the assertion message to use when more, or unspecified calls
+    * are made against a generated Test Double.
+    *
+    * @param String - The message
+    * @return Amoss_Instance - Itself, allowing for a fluent interface
+    */
+    private Amoss_Instance setExpectedNoCallsMessage( String message ) {
+        this.expectedNoCallsMessage = message;
+        return this;
+    }
+
+    /**
+    * Defines the base content of the assertion message to use when verify is called and
+    * the expected call stack is not empty
+    *
+    * @param String - The message
+    * @return Amoss_Instance - Itself, allowing for a fluent interface
+    */
+    private Amoss_Instance setExpectedEmptyCallStackMessage( String message ) {
+        this.expectedEmptyCallStackMessage = message;
+        return this;
     }
 
     /**
@@ -425,7 +515,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         callLog.addEntry( new Amoss_CallLogEntry().setMethod( mockedMethod ).setParameters( parameterTypes, parameterNames, parameters ) );
 
         if ( expectsNoCalls ) {
-            assertionMechanism.assertEquals( '', callDescription, String.format( '{0} did not expect any methods to be called', new List<String>{ getClassName() } ) );
+            assertionMechanism.assertEquals( '', callDescription, String.format( expectedNoCallsMessage, new List<String>{ getClassName() } ) );
         }
 
         if ( whens.hasExpectations() ) {
@@ -438,11 +528,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         if ( allowsAnyCall == false && expectations.isEmpty() ) {
-            if ( !whens.isEmpty() ) {
-                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected, and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
-            } else {
-                assertionMechanism.assert( false, String.format( '{0}.{1} was called more times than was expected', new List<String>{ getClassName(), mockedMethod } ) );
-            }
+            assertionMechanism.assert( false, String.format( moreCallsThanExpectedMessage + ', and no matching "when" or "allows" exists.  Was: {2}', new List<String>{ getClassName(), mockedMethod, callDescription } ) );
         }
 
         if ( allowsAnyCall == false || expectations.matchesNext( mockedMethod, parameterNames, parameters ) ) {
@@ -1177,7 +1263,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
         *
-        * @param Object - The Exception to throw when this expectation is met.
+        * @param Exception - The Exception to throw when this expectation is met.
         */
         public Amoss_NextExpectationDefiner throws( Exception exceptionToThrow ) {
             expectation.setExpectionReturns( new Amoss_ExpectationExceptionThrower().setExceptionToThrow( exceptionToThrow ) );
@@ -1194,7 +1280,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Has 'throwing' and 'throws' as synonyms, and these methods are entirely interchangeable based on preference.
         *
-        * @param Object - The Exception to throw when this expectation is met.
+        * @param Exception - The Exception to throw when this expectation is met.
         */
         public Amoss_NextExpectationDefiner willThrow( Exception exceptionToThrow ) {
             return this.throws( exceptionToThrow );
@@ -1210,7 +1296,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *
         * Has 'throws'and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
         *
-        * @param Object - The Exception to throw when this expectation is met.
+        * @param Exception - The Exception to throw when this expectation is met.
         */
         public Amoss_NextExpectationDefiner throwing( Exception exceptionToThrow ) {
             return this.throws( exceptionToThrow );
@@ -1934,7 +2020,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
      * The part of the grammar that allows the specification of parameters based on their
      * names.  I.E. expected parameters are defined in a name and value pairing.
      */
-    public virtual class Amoss_NamedParametersDefiner extends Amoss_ReturnsDefiner {
+    public virtual class Amoss_NamedParametersDefiner extends Amoss_ReturnsDefiner implements Amoss_NamedParametersMethodDefiner {
         public Amoss_NamedParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
@@ -1956,6 +2042,10 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_NamedParameterValueDefiner andParameterNamed( String parameterName ) {
             ((Amoss_ExpectationNamedParameters)expectation.getExpectationParameters()).moveToParameter( parameterName );
             return new Amoss_NamedParameterValueDefiner( expectation );
+        }
+
+        public Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName ) {
+            return andParameterNamed( parameterName );
         }
     }
 
@@ -2575,13 +2665,25 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
     }
 
+    public interface Amoss_Thenable {
+        Amoss_Instance then();
+    }
+
+    public interface Amoss_NamedParametersMethodDefiner extends Amoss_Thenable {
+        Amoss_NamedParameterValueDefiner withParameterNamed( String parameterName );
+        Amoss_NextExpectationDefiner returns( Object returnValue );
+        Amoss_NextExpectationDefiner handledBy( StubProvider returnHandler );
+        Amoss_NextExpectationDefiner handledBy( Amoss_MethodHandler returnHandler );
+        Amoss_NextExpectationDefiner throws( Exception exceptionToThrow );
+    }
+
     /**
      * The part of the grammar that allows the first specification of a parameter.
      *
      * The choice of parameter specification method at this point defines the syntax that will
      * be used for the remainder of the specification - Any, Positional or Named.
      */
-    public class Amoss_ParametersDefiner extends Amoss_ReturnsDefiner {
+    public class Amoss_ParametersDefiner extends Amoss_ReturnsDefiner implements Amoss_NamedParametersMethodDefiner {
         public Amoss_ParametersDefiner( Amoss_Expectation expectation ) {
             super( expectation );
         }
@@ -2647,12 +2749,14 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_ReturnsDefiner withParameters( Map<String,Object> parameters ) {
 
             Amoss_NamedParametersDefiner parameterDefiner;
-            // Yep, the difference between the first call (withParameterNamed) and later ones (andParameterNamed) came back to bite me
+
             for ( String thisParameterName : parameters.keySet() ) {
+
+                // TODO: is there a way of removing the if from here.  Feels uncomfortable
                 if ( parameterDefiner == null ) {
                     parameterDefiner = withParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
                 } else {
-                    parameterDefiner = parameterDefiner.andParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
+                    parameterDefiner = parameterDefiner.withParameterNamed( thisParameterName ).setTo( parameters.get( thisParameterName ) );
                 }
             }
             return new Amoss_ReturnsDefiner( expectation );
@@ -3052,12 +3156,20 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         Amoss_CompositeValueVerifier currentParameterVerifier;
 
         /**
-        * Build a new 'current parameter verifier' and apply that as the nw current one so we can add
+        * Build a new 'current parameter verifier' and apply that as the new current one so we can add
         * new value verifiers to it.
         */
         public Amoss_CompositeValueVerifier buildCurrentParameterVerifier() {
             currentParameterVerifier = new Amoss_CompositeValueVerifier();
             return currentParameterVerifier;
+        }
+
+        /**
+        * Sets the 'current parameter verifier' to be the one specified so we can add new value verifiers to it.
+        */
+        public Amoss_ExpectationParameters setCurrentParameterVerifier( Amoss_ValueVerifier currentParameterVerifier ) {
+            this.currentParameterVerifier = (Amoss_CompositeValueVerifier)currentParameterVerifier;
+            return this;
         }
 
         /**
@@ -3205,9 +3317,18 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         /**
         * Internal method that moves the current specification on to the parameter named, so that any further
         * parameter specifications apply to that parameter.
+        *
+        * If that parameter has previously been specified, will return the existing parameter verifier so more verifications can be
+        * added to it.  Otherwise ensures a new one is created.
         */
         Amoss_ExpectationNamedParameters moveToParameter( String parameterName ) {
-            expectedParameters.put( parameterName, buildCurrentParameterVerifier() );
+
+            if ( !expectedParameters.containsKey( parameterName ) ) {
+                expectedParameters.put( parameterName, buildCurrentParameterVerifier() );
+            } else {
+                setCurrentParameterVerifier( expectedParameters.get( parameterName ) );
+            }
+
             return this;
         }
 
@@ -3365,6 +3486,31 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public override String toString() {
             return 'Any value';
+        }
+    }
+
+    /**
+    * Internal class that should not be referenced directly in a test
+    *
+    * Describes the specification of 'non empty String' parameter value that is expected to be passed into a mocked method call
+    *
+    */
+    class Amoss_NotEmptyStringValueVerifier implements Amoss_ValueVerifier {
+
+        /**
+        * Internal method that should not be called directly in tests.
+        *
+        * Checks if this parameter is correct for the value that is passed into it, throwing an assertion failure expectation if not.
+        *
+        * @param Object - The value to check
+        */
+        public void verify( Object actualValue ) {
+            if ( String.isEmpty( (String)actualValue ) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'Non Empty' )
+                            .setActual( actualValue )
+                            .setAssertionMessage( 'The value was "empty" when it was expected not be be' );
+            }
         }
     }
 
@@ -3632,7 +3778,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                 throw new Amoss_EqualsAssertionFailureException()
                             .setExpected( value )
                             .setActual( actualValue )
-                            .setAssertionMessage( 'The value does not match the expected Expression' );
+                            .setAssertionMessage( 'The value does not match the expected expression' );
             }
         }
 
@@ -4249,6 +4395,9 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             if ( value == Amoss_Instance.Value.NOT_NULL ) {
                 return buildNotNullVerifier();
             }
+            if ( value == Amoss_Instance.Value.NOT_EMPTY ) {
+                return buildNotEmptyStringVerifier();
+            }
             if ( value instanceOf List<Object> ) {
                 return buildSameInstanceVerifier( (List<Object>)value );
             }
@@ -4424,7 +4573,6 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return new Amoss_AnyValueVerifier();
         }
 
-
         /**
         * Internal method that should not be refenced in tests.
         *
@@ -4434,6 +4582,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public Amoss_ValueVerifier buildNotNullVerifier() {
             return new Amoss_NotNullValueVerifier();
+        }
+
+        /**
+        * Internal method that should not be refenced in tests.
+        *
+        * Constructs an instance of an Amoss_NotEmptyStringValueVerifier
+        *
+        * @return Amoss_ValueVerifier - The Amoss_NotEmptyStringValueVerifier
+        */
+        public Amoss_ValueVerifier buildNotEmptyStringVerifier() {
+            return new Amoss_NotEmptyStringValueVerifier();
         }
     }
 
@@ -4519,6 +4678,1030 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         */
         public String getCallDescription( String method, List<Object> parameters ) {
             return String.format( '{0}({1})', new List<String>{ method, String.join( parameters, ', ' ) } );
+        }
+    }
+
+    //
+    // Callout Mock grammer and verifiers
+    //
+    /**
+     * The part of the grammar that allows the specification of the behaviour of a Mock Http Callout instance,
+     * defining whether requests are expected / allowed, and allow entry into the part of the grammer that
+     * defines what should happen in what situation.
+     *
+     */
+    public class Amoss_CalloutMockDefiner {
+
+        Amoss_Instance instance;
+
+        public Amoss_CalloutMockDefiner( Amoss_Instance instance ) {
+
+            this.instance = instance;
+            try {
+                Test.setMock( HttpCalloutMock.class, (HttpCalloutMock)this.instance.generateDouble() );
+            } catch( Exception e ) {
+                throw new Amoss_NotAnHttpCalloutMockException( 'Attempted to create an Http Callout Mock when the Amoss_Instance is not a test double of a class or interface that implements HttpCalloutMock\n' + e.getMessage(), e );
+            }
+        }
+
+        /**
+        * States that a request of the provided shape is 'expected' and that the test should fail
+        * if it does not happen, or a different request is made.
+        *
+        * For example:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .endpoint().containing( 'account/xxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner expects() {
+            return new Amoss_CalloutMockRequestDefiner( instance.expects( 'respond' ) );
+        }
+
+        /**
+        * States that what should happen 'when' a request of the provided shape is sent.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .endpoint().containing( 'account/xxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner when() {
+            return new Amoss_CalloutMockRequestDefiner( instance.when( 'respond' ) );
+        }
+
+        /**
+        * States that a request of the provided shape is 'allowed', implying that requests of shapes that are
+        * not specified are *not* allowed.  Allows the definition of what should happen when a request of the provided shape is sent.
+        *
+        * For example:
+        *   .allows()
+        *       .method( 'GET' )
+        *       .endpoint().containing( 'account/xxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner allows() {
+            return new Amoss_CalloutMockRequestDefiner( instance.allows( 'respond' ) );
+        }
+
+        /**
+        * States that this double does not expect any calls against it, and that if a call is made, the test should fail.
+        *
+        * Example usage:
+        *    new Amoss_Instance()
+        *        .isACalloutMock()
+        *        .expectsNoCalls();
+        *
+        */
+        public void expectsNoCalls() {
+            instance.expectsNoCalls();
+        }
+
+        /**
+        * States that whatever mechanism is used to defined the 'expectations' or 'whens' against this
+        * object, it will either:
+        *   * True  - Allow any call to a method to be successful and for those that are not defined to return null.
+        *   * False - Fail the test
+        *
+        * Example usage:
+        *    new Amoss_Instance()
+        *        .isACalloutMock()
+        *        .allowsAnyCall( false )
+        *        .when()
+        *            .method( 'GET' )
+        *            .endpoint().containing( 'account/xxxxx' )
+        *            .respondsWith()
+        *                .body( '{some JSON}' )
+        *
+        */
+        public Amoss_CalloutMockDefiner allowsAnyCall( Boolean allowsAnyCall ) {
+            instance.allowsAnyCall( allowsAnyCall );
+            return this;
+        }
+
+        /**
+        * States that when a request is made against this mock, it will return a response in the described state.
+        *
+        * Example usage:
+        *    new Amoss_Instance()
+        *        .isACalloutMock()
+        *        .byDefault()
+        *            .respondsWith()
+        *               .statusCode( 404 )
+        *               .status( 'Not Found' )
+        *        .also().when()
+        *            .method( 'GET' )
+        *            .respondsWith()
+        *                .body( '{some JSON}' )
+        */
+        public Amoss_CalloutMockByDefaultDefiner byDefault() {
+            return new Amoss_CalloutMockByDefaultDefiner( instance );
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of the default behaviour when calling
+     *
+     */
+    public class Amoss_CalloutMockByDefaultDefiner {
+
+        Amoss_Instance instance;
+
+        public Amoss_CalloutMockByDefaultDefiner( Amoss_Instance instance ) {
+            this.instance = instance;
+        }
+
+        public Amoss_CalloutMockResponseDefiner respondsWith() {
+            HttpResponse response = new HttpResponse();
+            instance.byDefaultMethodsReturn( response );
+            return new Amoss_CalloutMockResponseDefiner( instance, response );
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a callout request
+     *
+     */
+    public class Amoss_CalloutMockRequestDefiner {
+
+        Amoss_NamedParametersMethodDefiner parametersDefiner;
+
+        public Amoss_CalloutMockRequestDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
+            this.parametersDefiner = parametersDefiner;
+        }
+
+        /**
+        * States the expected HTTP method of the call that this specification is describing.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        * @param String - The HTTP method that is expected to be used
+        */
+        public Amoss_CalloutMockRequestDefiner method( String expectedHttpMethod ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpMethodVerifier().setVerifier( valueVerifierBuilder.buildSameValueAsVerifier( expectedHttpMethod ) ) )
+            );
+        }
+
+        /**
+        * States that the given header has the specified expected properties.
+        * Is immediately followed by a specification of the expected header shape.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .header( 'Authorisation' ).set()
+        *       .header( 'SessionId' ).matches( '[0-9a-z]*' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        * @param String - The key of the header that is to be specified
+        */
+        public Amoss_CalloutMockRequestHeaderValueDefiner header( String expectedHeaderKey ) {
+            return new Amoss_CalloutMockRequestHeaderValueDefiner( parametersDefiner, expectedHeaderKey );
+        }
+
+        /**
+        * States that the call's endpoint is expected to be the same value as the given string.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .endpoint( 'https://api.example.com/account/xxxxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        * @param String - The endpoint that is expected to be called
+        */
+        public Amoss_CalloutMockRequestDefiner endpoint( String expectedEndpoint ) {
+            return endpoint().setTo( expectedEndpoint );
+        }
+
+        /**
+        * States that the call's endpoint is expected to have the specified properties.
+        * Is immediately followed by a specification of the expected endpoint shape.
+        *
+        * Multiple specifications can be provided.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .endpoint().contains( 'https://' )
+        *       .endpoint().contains( '/account/xxxxxxx' )
+        *   .respondsWith()
+        *       .body( '{some JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestEndpointValueDefiner endpoint() {
+            return new Amoss_CalloutMockRequestEndpointValueDefiner( parametersDefiner );
+        }
+
+        /**
+        * States that the call's body is expected to be the same value as the given string.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .body( '{some JSON}' )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        * @param String - The String body that is expected to be passed
+        */
+        public Amoss_CalloutMockRequestDefiner body( String expectedBody ) {
+            return body().setTo( expectedBody );
+        }
+
+        /**
+        * States that the call's body is expected to have the specified properties.
+        * Is immediately followed by a specification of the expected body shape.
+        *
+        * Multiple specifications can be provided.
+        *
+        * For example:
+        *   .when()
+        *       .method( 'GET' )
+        *       .body.contains( '"param1":"value1"' )
+        *       .body.contains( '"param2":"value2"' )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestBodyValueDefiner body() {
+            return new Amoss_CalloutMockRequestBodyValueDefiner( parametersDefiner );
+        }
+
+        /**
+        * States that the call's request is expected to be compressed
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .compressed()
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner compressed() {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpCompressedVerifier().setVerifier( valueVerifierBuilder.buildSameValueAsVerifier( true ) ) )
+            );
+        }
+
+        /**
+        * States that the call's request is expected to be not compressed
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .notCompressed()
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner notCompressed() {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpCompressedVerifier().setVerifier( valueVerifierBuilder.buildSameValueAsVerifier( false ) ) )
+            );
+        }
+
+        /**
+        * States that the call's request should be verified by the given verifier
+        *
+        * For example:
+        *   .when()
+        *       .verifiedBy( customVerifier )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner verifiedBy( Amoss_ValueVerifier customVerifier ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( customVerifier )
+            );
+        }
+
+        /**
+        * States that the call's request should be verified by the given verifier
+        *
+        * For example:
+        *   .when()
+        *       .verifiedBy( customVerifier )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
+        public Amoss_CalloutMockRequestDefiner verifiedBy( Amoss_HttpRequestVerifier customVerifier ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( new Amoss_CalloutMockHttpRequestVerifierAdaptor().setRequestVerifier( customVerifier ) )
+            );
+        }
+
+        /**
+        * Switches the mode of the specification over to defining how the call will respond
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *   .respondsWith()
+        *       .body( '{some other JSON}' )
+        *
+        */
+        public Amoss_CalloutMockResponseDefiner respondsWith() {
+            HttpResponse response = new HttpResponse();
+            parametersDefiner.returns( response );
+            return new Amoss_CalloutMockResponseDefiner( parametersDefiner, response );
+        }
+
+        /**
+        * Defines the object that should be used to handle the call made in the specification, defining the
+        * response that will be generated.
+        *
+        * Can be passed an implementation of any of the following:
+        *   * Amoss_MethodHandler
+        *   * StubProvider
+        *   * HttpCalloutMock
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .handledBy( new CustomRequestHandler() )
+        */
+        public Amoss_CalloutMockNextExpectationDefiner handledBy( Amoss_MethodHandler returnHandler ) {
+            return new Amoss_CalloutMockNextExpectationDefiner(
+                 parametersDefiner.handledBy( returnHandler )
+            );
+        }
+
+        /**
+        * Defines the object that should be used to handle the call made in the specification, defining the
+        * response that will be generated.
+        *
+        * Can be passed an implementation of any of the following:
+        *   * Amoss_MethodHandler
+        *   * StubProvider
+        *   * HttpCalloutMock
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .handledBy( new CustomRequestHandler() )
+        */
+        public Amoss_CalloutMockNextExpectationDefiner handledBy( StubProvider returnHandler ) {
+            return new Amoss_CalloutMockNextExpectationDefiner(
+                 parametersDefiner.handledBy( returnHandler )
+            );
+        }
+
+        /**
+        * Defines the object that should be used to handle the call made in the specification, defining the
+        * response that will be generated.
+        *
+        * Can be passed an implementation of any of the following:
+        *   * Amoss_MethodHandler
+        *   * StubProvider
+        *   * HttpCalloutMock
+        *
+        * For example:
+        *   .when()
+        *       .method( 'POST' )
+        *       .handledBy( new CustomRequestHandler() )
+        */
+        public Amoss_CalloutMockNextExpectationDefiner handledBy( HttpCalloutMock returnHandler ) {
+            return new Amoss_CalloutMockNextExpectationDefiner(
+                 parametersDefiner.handledBy( new Amoss_CalloutMockHttpHandlerAdaptor( returnHandler ) )
+            );
+        }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the call show throw the given exception.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'GET' )
+        *       .throws( new CalloutException( 'Unable to tunnel through proxy. Proxy returns "HTTP/1.1 503 Service Unavailable"' ) );
+        *
+        * Has 'throwing' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Exception - The Exception to throw when this expectation is met.
+        */
+        public Amoss_CalloutMockNextExpectationDefiner throws( Exception exceptionToThrow ) {
+            return new Amoss_CalloutMockNextExpectationDefiner(
+                parametersDefiner.throws( exceptionToThrow )
+            );
+        }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the call show throw the given exception.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'GET' )
+        *       .willThrow( new CalloutException( 'Unable to tunnel through proxy. Proxy returns "HTTP/1.1 503 Service Unavailable"' ) );
+        *
+        * Has 'throws' and 'throwing' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Exception - The Exception to throw when this expectation is met.
+        */
+        public Amoss_CalloutMockNextExpectationDefiner willThrow( Exception exceptionToThrow ) {
+            return throws( exceptionToThrow );
+        }
+
+        /**
+        * States that when this 'expectation' or 'when' is met, the call show throw the given exception.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .throwing( new CalloutException( 'Unable to tunnel through proxy. Proxy returns "HTTP/1.1 503 Service Unavailable"' ) );
+        *
+        * Has 'throws' and 'willThrow' as synonyms, and these methods are entirely interchangeable based on preference.
+        *
+        * @param Exception - The Exception to throw when this expectation is met.
+        */
+        public Amoss_CalloutMockNextExpectationDefiner throwing( Exception exceptionToThrow ) {
+            return throws( exceptionToThrow );
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a string property.
+     * For example, a header.
+     *
+     * Is sub-classed for particular properties, so that the verifier used to specify the
+     * property being checked can be specified.
+     */
+    public abstract class Amoss_CalloutMockRequestStringPropertyDefiner {
+
+        Amoss_NamedParametersMethodDefiner  parametersDefiner;
+        Amoss_CalloutMockHttpHeaderVerifier verifier;
+
+        public Amoss_CalloutMockRequestStringPropertyDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
+            this.parametersDefiner = parametersDefiner;
+        }
+
+        private Amoss_CalloutMockRequestDefiner define( Amoss_ValueVerifier propertyVerifier ) {
+            return new Amoss_CalloutMockRequestDefiner(
+                parametersDefiner
+                    .withParameterNamed( 'request' )
+                    .verifiedBy( buildBaseVerifier().setVerifier( propertyVerifier ) )
+            );
+        }
+
+        protected abstract Amoss_CalloutMockRequestVerifier buildBaseVerifier();
+
+        /**
+        * States that the specified property should be 'set' (meaning not empty) in order to match the specified expectation.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .endpoint().set()
+        */
+        public Amoss_CalloutMockRequestDefiner set() {
+            return define( valueVerifierBuilder.buildNotEmptyStringVerifier() );
+        }
+
+        /**
+        * States the value that the specified property should be 'setTo' in order to match the specified expectation.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .endpoint().setTo( 'https://api.example.com/account/12345' )
+        *
+        * @param String - The value that the property is expected to be
+        */
+        public Amoss_CalloutMockRequestDefiner setTo( String expectedValue ) {
+            return define( valueVerifierBuilder.buildSameValueAsVerifier( expectedValue ) );
+        }
+
+        /**
+        * States a value that the specified property should 'contain' in order to match the specified expectation.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .endpoint().containing( '/account/12345' )
+        *
+        * @param String - The value that the property is expected to contain
+        */
+        public Amoss_CalloutMockRequestDefiner containing( String expectedValue ) {
+            return define( valueVerifierBuilder.buildContainingStringVerifier( expectedValue ) );
+        }
+
+        /**
+        * States a regular expression that the specified property should 'match' in order to match the specified expectation.
+        *
+        * Note, in line with Apex and Java's regular expression 'match' method, the *whole* of the property is required to match.
+        *
+        * For example, to specify:
+        *   .expects()
+        *       .method( 'GET' )
+        *       .endpoint().matching( 'http.*account/[0-9]*' )
+        *
+        * @param String - The regular expression that the property is expected to match
+        */
+        public Amoss_CalloutMockRequestDefiner matching( String expectedValue ) {
+            return define( valueVerifierBuilder.buildMatchingExpressionVerifier( expectedValue ) );
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a given request's header
+     *
+     * Is sub-classed for particular properties, so that the verifier used to specify the
+     * property being checked can be specified.
+     */
+    public class Amoss_CalloutMockRequestHeaderValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
+
+        String expectedHeaderKey;
+
+        public Amoss_CalloutMockRequestHeaderValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner, String expectedHeaderKey ) {
+            super( parametersDefiner );
+            this.expectedHeaderKey = expectedHeaderKey;
+        }
+
+        /**
+         * Builds the verifier that is used to verify the Header on an HttpRequest object
+         */
+        protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
+            return new Amoss_CalloutMockHttpHeaderVerifier( expectedHeaderKey );
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a given request's endpoint
+     *
+     * Is sub-classed for particular properties, so that the verifier used to specify the
+     * property being checked can be specified.
+     */
+    public class Amoss_CalloutMockRequestEndpointValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
+
+        public Amoss_CalloutMockRequestEndpointValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
+            super( parametersDefiner );
+        }
+
+        /**
+         * Builds the verifier that is used to verify the Endpoint on an HttpRequest object
+         */
+        protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
+            return new Amoss_CalloutMockHttpEndpointVerifier();
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of the expected shape of a given request's body
+     *
+     * Is sub-classed for particular properties, so that the verifier used to specify the
+     * property being checked can be specified.
+     */
+    public class Amoss_CalloutMockRequestBodyValueDefiner extends Amoss_CalloutMockRequestStringPropertyDefiner {
+
+        public Amoss_CalloutMockRequestBodyValueDefiner( Amoss_NamedParametersMethodDefiner parametersDefiner ) {
+            super( parametersDefiner );
+        }
+
+        /**
+         * Builds the verifier that is used to verify the Body on an HttpRequest object
+         */
+        protected override Amoss_CalloutMockRequestVerifier buildBaseVerifier() {
+            return new Amoss_CalloutMockHttpBodyVerifier();
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification that another expectation is about to be defined.
+     *
+     * Is sub-classed so it can be used at different points of the overall grammar
+     */
+    public virtual class Amoss_CalloutMockNextExpectationDefiner {
+
+        protected Amoss_NextExpectationDefiner nextExpectationDefiner;
+
+        public Amoss_CalloutMockNextExpectationDefiner( Amoss_NextExpectationDefiner nextExpectationDefiner ) {
+            this.nextExpectationDefiner = nextExpectationDefiner;
+        }
+
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Http Callout Mock
+        *
+        * Is actually synonymous with 'also'.
+        *
+        * For example:
+        * .then().expects()
+        *       .method( 'GET' )
+        */
+        public Amoss_CalloutMockDefiner then() {
+            return new Amoss_CalloutMockDefiner( nextExpectationDefiner.then() );
+        }
+
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Http Callout Mock
+        *
+        * Is actually synonymous with 'then'.
+        *
+        * For example:
+        * .also().expects()
+        *       .method( 'GET' )
+        */
+        public Amoss_CalloutMockDefiner also() {
+            return then();
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of the response that is to be returned.
+     */
+    public class Amoss_CalloutMockResponseDefiner {
+
+        HttpResponse response;
+        Object returnsDefiner;
+
+        public Amoss_CalloutMockResponseDefiner( Object returnsDefiner, HttpResponse response ) {
+            this.returnsDefiner = returnsDefiner;
+            this.response       = response;
+        }
+
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Http Callout Mock
+        *
+        * Is actually synonymous with 'also'.
+        *
+        * For example:
+        * .then().expects()
+        *       .method( 'GET' )
+        */
+        public Amoss_CalloutMockDefiner then() {
+            Amoss_Instance nextDefiner;
+            // TODO: should be cleaned up - probably a class structure
+            if ( returnsDefiner instanceOf Amoss_Instance ) {
+                nextDefiner = (Amoss_Instance)returnsDefiner;
+            } else {
+                nextDefiner = ((Amoss_Thenable)returnsDefiner).then();
+            }
+            return new Amoss_CalloutMockDefiner( nextDefiner );
+        }
+
+        /**
+        * Allows another 'expectation' or 'when' to be defined against the Http Callout Mock
+        *
+        * Is actually synonymous with 'then'.
+        *
+        * For example:
+        * .also().expects()
+        *       .method( 'GET' )
+        */
+        public Amoss_CalloutMockDefiner also() {
+            return then();
+        }
+
+        /**
+        * Specifies the status code that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .statusCode( 404 )
+        */
+        public Amoss_CalloutMockResponseDefiner statusCode( Integer statusCode ) {
+            response.setStatusCode( statusCode );
+            return this;
+        }
+
+        /**
+        * Specifies the status that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .status( 'Complete' )
+        */
+        public Amoss_CalloutMockResponseDefiner status( String status ) {
+            response.setStatus( status );
+            return this;
+        }
+
+        /**
+        * Specifies the body that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .body( 'the body' )
+        */
+        public Amoss_CalloutMockResponseDefiner body( String body ) {
+            response.setBody( body );
+            return this;
+        }
+
+       /**
+        * Specifies the blob value of the body that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .body( blobValue )
+        */
+        public Amoss_CalloutMockResponseDefiner body( Blob body ) {
+            response.setBodyAsBlob( body );
+            return this;
+        }
+
+       /**
+        * Specifies the body that will be returned on the HttpResponse when the current expectation is matched.
+        *
+        * The body will be JSON serialized at the point the method is called.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .body( objectValue )
+        */
+        public Amoss_CalloutMockResponseDefiner body( Object body ) {
+            response.setBody( JSON.serialize( body ) );
+            return this;
+        }
+
+       /**
+        * Specifies a header that will be set on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .header( 'Authorised' ).setTo( 'true' )
+        */
+        public Amoss_CalloutMockResponseHeaderDefiner header( String key ) {
+            return new Amoss_CalloutMockResponseHeaderDefiner( this, response, key );
+        }
+    }
+
+    /**
+     * The part of the http mock callout grammar that allows the specification of a header on the response that is to be returned.
+     */
+    public class Amoss_CalloutMockResponseHeaderDefiner {
+
+        String headerKey;
+        HttpResponse response;
+        Amoss_CalloutMockResponseDefiner responseDefiner;
+
+        public Amoss_CalloutMockResponseHeaderDefiner( Amoss_CalloutMockResponseDefiner responseDefiner, HttpResponse response, String headerKey ) {
+            this.headerKey       = headerKey;
+            this.response        = response;
+            this.responseDefiner = responseDefiner;
+        }
+
+        /**
+        * Specifies a value that the specified header will be set on the HttpResponse when the current expectation is matched.
+        *
+        * For example:
+        * .when()
+        *   .method( 'GET' )
+        *   .respondsWith()
+        *       .header( 'Authorised' ).setTo( 'true' )
+        */
+        public Amoss_CalloutMockResponseDefiner setTo( String headerValue ) {
+            response.setHeader( headerKey, headerValue );
+            return responseDefiner;
+        }
+    }
+
+    /**
+     * Verifier that can be used to check the properties of an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     * Is subclassed, with the method 'verifyValue' overridden in order to retrieve the correct property from the request.
+     */
+    private abstract class Amoss_CalloutMockRequestVerifier implements Amoss_ValueVerifier {
+
+        protected Amoss_ValueVerifier verifier;
+
+        public Amoss_CalloutMockRequestVerifier setVerifier( Amoss_ValueVerifier verifier ) {
+            this.verifier = verifier;
+            return this;
+        }
+
+        protected abstract void verifyValue( HttpRequest actualRequest );
+
+        public void verify( Object actualValue ) {
+
+            if ( ! (actualValue instanceOf HttpRequest) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'HttpRequest' )
+                            .setActual( Amoss_Asserts.getType( actualValue ) )
+                            .setAssertionMessage( 'The value is not what was expected - The types do not match' );
+            }
+
+            verifyValue( (HttpRequest)actualValue );
+        }
+    }
+
+    /**
+     * An adaptor for Amoss_HttpRequestVerifier that allows it to operate as an Amoss_ValueVerifier
+     */
+    private class Amoss_CalloutMockHttpRequestVerifierAdaptor extends Amoss_CalloutMockRequestVerifier {
+
+        protected Amoss_HttpRequestVerifier requestVerifier;
+
+        public Amoss_CalloutMockHttpRequestVerifierAdaptor setRequestVerifier( Amoss_HttpRequestVerifier requestVerifier ) {
+            this.requestVerifier = requestVerifier;
+            return this;
+        }
+
+        public override String toString() {
+            return requestVerifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            requestVerifier.verify( actualRequest );
+        }
+    }
+
+    /**
+     * Verifier that can be used to check the properties of the method on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
+    private class Amoss_CalloutMockHttpMethodVerifier extends Amoss_CalloutMockRequestVerifier {
+
+        public override String toString() {
+            return 'HttpRequest with the method ' + verifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getMethod() );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Method is not what was expected: {0}' );
+            }
+        }
+    }
+
+    /**
+     * Verifier that can be used to check the properties of the endpoint on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
+    private class Amoss_CalloutMockHttpEndpointVerifier extends Amoss_CalloutMockRequestVerifier {
+
+        public override String toString() {
+            return 'HttpRequest with the endpoint ' + verifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getEndpoint() );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Endpoint is not what was expected: {0}' );
+            }
+        }
+    }
+
+    /**
+     * Verifier that can be used to check the properties of the body on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
+    private class Amoss_CalloutMockHttpBodyVerifier extends Amoss_CalloutMockRequestVerifier {
+
+        public override String toString() {
+            return 'HttpRequest with the body ' + verifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getBody() );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Body is not what was expected: {0}' );
+            }
+        }
+    }
+
+    /**
+     * Verifier that can be used to check the properties of a header on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
+    private class Amoss_CalloutMockHttpHeaderVerifier extends Amoss_CalloutMockRequestVerifier {
+
+        String headerKey;
+
+        public Amoss_CalloutMockHttpHeaderVerifier( String headerKey ) {
+            this.headerKey = headerKey;
+        }
+
+        public override String toString() {
+            return 'HttpRequest with the header "' + headerKey + '" ' + verifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getHeader( headerKey ) );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Header "' + headerKey + '" is not what was expected: {0}' );
+            }
+        }
+    }
+
+    /**
+     * Verifier that can be used to check the properties of the 'compressed' property on an HttpRequest object.
+     *
+     * Verification of the property is actually performed by a verifer that is set as a member variable, allowing for
+     * any type of verification to be performed (e.g. set / setTo / contains )
+     *
+     */
+    private class Amoss_CalloutMockHttpCompressedVerifier extends Amoss_CalloutMockRequestVerifier {
+
+        public override String toString() {
+            return 'HttpRequest with the compressed ' + verifier.toString();
+        }
+
+        protected override void verifyValue( HttpRequest actualRequest ) {
+            try {
+                verifier.verify( actualRequest.getCompressed() );
+            } catch ( Amoss_AssertionFailureException e ) {
+                throw e.addContextToMessage( 'Compressed is not what was expected: {0}' );
+            }
+        }
+    }
+
+    /**
+     * An adaptor for making the HttpCalloutMock compatible with Amoss as an Amoss_MethodHandler
+     *
+     */
+    private class Amoss_CalloutMockHttpHandlerAdaptor implements Amoss_MethodHandler {
+
+        HttpCalloutMock standardHandler;
+
+        public Amoss_CalloutMockHttpHandlerAdaptor( HttpCalloutMock standardHandler ) {
+            this.standardHandler = standardHandler;
+        }
+
+        public Object handleMethodCall( List<Object> parameters ) {
+
+            // I'm really not sure how any of these error conditions could ever occur.
+            // I certainly can't think of a way of unit testing them without making the class public
+            // or testVisible, neither of which do I think is appropriate.
+            // That said, it seems that this is a sensible chunk of checking, just in case I've missed
+            // something.
+            if ( parameters.size() != 1 ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( '1 parameter, being an HttpRequest' )
+                            .setActual( parameters )
+                            .setAssertionMessage( 'HttpCalloutMock handler was called with the wrong number of parameters' );
+            }
+
+            if ( parameters[0] == null ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'HttpRequest' )
+                            .setActual( 'null' )
+                            .setAssertionMessage( 'HttpCalloutMock handler was called with a null first parameter' );
+            }
+
+            if ( ! ( parameters[0] instanceOf HttpRequest ) ) {
+                throw new Amoss_EqualsAssertionFailureException()
+                            .setExpected( 'HttpRequest' )
+                            .setActual( parameters[0] )
+                            .setAssertionMessage( 'HttpCalloutMock handler was called with an object that was not an HttpCalloutMock' );
+            }
+
+            return standardHandler.respond( (HttpRequest)parameters[0] );
         }
     }
 }
