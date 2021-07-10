@@ -30,7 +30,7 @@ public with sharing class AmossTest_InstanceTest {
     class TestException extends Exception {}
 
     private static final String CLASS_TO_DOUBLE = AmossTest_ClassToDouble.class.getName();
-    private static final String HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT = 'More HTTP Callouts were made than expected, and no matching "when" or "allows" exists';
+    private static final String HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT = 'More HTTP Callouts were made than expected, and no matching "when" or "allows" exists.';
 
     //
     // Method definition tests
@@ -11755,11 +11755,70 @@ public with sharing class AmossTest_InstanceTest {
         System.assertEquals( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
+    /**
+    * @method isACalloutMock.allows
+    * @case   when multple requests made that match
+    * @result will return the specified
+    */
+    @isTest
+    private static void isACalloutMockAllows_whenMultipleCallsThatMatch_returns() {
 
+        Amoss_Instance customVerifierController = new Amoss_Instance();
 
+        customVerifierController
+            .isACalloutMock()
+            .allows()
+                .method( 'GET' )
+                .respondsWith()
+                    .statusCode( 200 );
 
-    // allows - matches
-    // allows - does not match
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setMethod( 'GET' );
+            HttpResponse response1  = new Http().send( request );
+            HttpResponse response2  = new Http().send( request );
+            HttpResponse response3  = new Http().send( request );
+        Test.stopTest();
+
+        System.assertEquals( 200, response1.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (1)' );
+        System.assertEquals( 200, response2.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (2)' );
+        System.assertEquals( 200, response3.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (3)' );
+    }
+
+    /**
+    * @method isACalloutMock.allows
+    * @case   when request made that does not match
+    * @result will fail the test
+    */
+    @isTest
+    private static void isACalloutMockAllows_whenDoesNotMatch_fails() {
+
+        Amoss_Instance assertsDoubleController = buildMockAssertionController();
+        Amoss_Asserts assertsDouble = (Amoss_Asserts)assertsDoubleController.getDouble();
+
+        Amoss_Instance customVerifierController = new Amoss_Instance();
+
+        customVerifierController
+            .setAsserts( assertsDouble )
+            .isACalloutMock()
+            .allows()
+                .method( 'GET' )
+                .respondsWith()
+                    .statusCode( 200 );
+
+        Test.startTest();
+            HttpRequest request = new HttpRequest();
+            request.setMethod( 'POST' );
+
+            try {
+                HttpResponse response  = new Http().send( request );
+            } catch ( Exception e ) {} // NOPMD: catching the exception thrown by the mock assert
+        Test.stopTest();
+
+        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.allows, when request made that does not match, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'isACalloutMock.allows, when request made that does not match, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Amoss_Asserts.assertContains( 'respond(System.HttpRequest[Endpoint=null, Method=POST])', assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'isACalloutMock.allows, when request made that does not match, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+    }
 
     class InnerClassToDouble {
         public String publicMethod( String parameterOne ) {
