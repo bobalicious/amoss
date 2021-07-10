@@ -20,9 +20,6 @@ echo ""
 
 echo Resetting GIT workspace
 echo ------------------------------------------------------------------------------------------------------
-git stash push --message tmp-packager
-git reset --hard
-
 rm -rf ./force-app/amoss_examples
 
 # We do this first in case we're accidentally releasing the same version number again
@@ -68,12 +65,13 @@ git push origin $newversionname
 echo ""
 echo Reverting GIT workspace
 echo ------------------------------------------------------------------------------------------------------
-git reset --hard
-git merge --squash stash
 git reset
 
 echo ""
 echo Done
 echo ""
+echo Test be creating a new scratch org:
+echo  sfdx force:org:create -f config/default-scratch-def.json -a testamossrelease --setdefaultusername
+echo And then release to it with the sfdx force:package:install command from the release notes
 echo When happy, release with:
-echo  sfdx force:package:version:promote --package "$newversionname"
+echo  sfdx force:package:version:promote --package "$newversionalias"
