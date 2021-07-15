@@ -10,7 +10,7 @@
     ],
     "namespace": "",
     "sfdcLoginUrl": "https://login.salesforce.com",
-    "sourceApiVersion": "50.0",
+    "sourceApiVersion": "52.0",
     "packageAliases": {
         "amoss": "0Ho4K000000fxv4SAA",
         "amoss@0.1.0-1": "04t4K000002O0GLQA0",
