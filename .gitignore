@@ -4,3 +4,5 @@ secrets.txt
 todo.txt
 articles
 force-app/main/
+.pmdCache
+.DS_Store
