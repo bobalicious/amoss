@@ -48,10 +48,10 @@ public with sharing class Amoss_Asserts {
     public void assertEquals( Object expectedObject, Object actualObject, String assertionMessage ) {
 
         if ( expectedObject != null && actualObject != null ) {
-            System.assertEquals( getType( expectedObject ), getType( actualObject ), assertionMessage + ' - Types do not match' );
+            Assert.areEqual( getType( expectedObject ), getType( actualObject ), assertionMessage + ' - Types do not match' );
         }
 
-        System.assertEquals( expectedObject, actualObject, assertionMessage );
+        Assert.areEqual( expectedObject, actualObject, assertionMessage );
     }
 
     /**
@@ -60,7 +60,7 @@ public with sharing class Amoss_Asserts {
      * Is a non-static method so that it can be mocked in the test for Amoss_Instance
      */
     public void assert( Boolean result, String assertionMessage ) {
-        System.assert( result, assertionMessage );
+        Assert.isTrue( result, assertionMessage );
     }
 
     /**
@@ -74,7 +74,7 @@ public with sharing class Amoss_Asserts {
      * @param String - The assertion message
      */
     public static void assertContains( String expectedString, Object actualString, String assertionMessage ) {
-        System.assert( ((String)actualString).contains( expectedString ), assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
+        Assert.isTrue( ((String)actualString).contains( expectedString ), assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
     }
 
     /**
@@ -88,7 +88,7 @@ public with sharing class Amoss_Asserts {
      * @param String - The assertion message
      */
     public static void assertDoesNotContain( String expectedString, String actualString, String assertionMessage ) {
-        System.assert( ! actualString.contains( expectedString ), assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
+        Assert.isTrue( ! actualString.contains( expectedString ), assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
     }
 
     /**

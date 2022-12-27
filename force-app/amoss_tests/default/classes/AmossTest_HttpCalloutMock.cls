@@ -11,6 +11,6 @@ public with sharing class AmossTest_HttpCalloutMock {
             new Amoss_HttpCalloutMock().respond( null );
         Test.stopTest();
 
-        System.assert( true, 'respond, when always, will do nothing' );
+        Assert.isTrue( true, 'respond, when always, will do nothing' );
     }
 }

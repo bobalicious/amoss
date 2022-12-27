@@ -140,7 +140,7 @@ Test.startTest();
     Boolean scheduled = order.scheduleDelivery( deliveryProviderDouble );
 Test.stopTest();
 
-System.assert( scheduled, 'scheduleDelivery, when called for a DeliveryOrder that can be delivered, will check the passed provider if it can deliver, and return true if the order can be' );
+Assert.isTrue( scheduled, 'scheduleDelivery, when called for a DeliveryOrder that can be delivered, will check the passed provider if it can deliver, and return true if the order can be' );
 
 ```
 
@@ -247,10 +247,10 @@ The controller can then be used as a Test Spy, allowing us to find out what valu
 
 ```java
 
-System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'canDeliver' ).parameter( 0 )
+Assert.areEqual( deliveryPostcode, deliveryProviderController.latestCallOf( 'canDeliver' ).parameter( 0 )
                     , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the postcode required, to find out if it can deliver' );
 
-System.assertEquals( deliveryDate, deliveryProviderController.call( 0 ).of( 'canDeliver' ).parameter( 1 )
+Assert.areEqual( deliveryDate, deliveryProviderController.call( 0 ).of( 'canDeliver' ).parameter( 1 )
                     , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the date required, to find out if it can deliver' );
 
 ```
@@ -259,10 +259,10 @@ Much like when we set the expected parameters, we can also name the parameters:
 
 ```java
 
-System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'canDeliver' ).parameter( 'postcode' )
+Assert.areEqual( deliveryPostcode, deliveryProviderController.latestCallOf( 'canDeliver' ).parameter( 'postcode' )
                     , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the postcode required, to find out if it can deliver' );
 
-System.assertEquals( deliveryDate, deliveryProviderController.call( 0 ).of( 'canDeliver' ).parameter( 'deliveryDate' )
+Assert.areEqual( deliveryDate, deliveryProviderController.call( 0 ).of( 'canDeliver' ).parameter( 'deliveryDate' )
                     , 'scheduling a delivery, will call canDeliver against the deliveryProvider, passing the date required, to find out if it can deliver' );
 
 ```
@@ -318,7 +318,7 @@ DeliveryProvider deliveryProviderDouble = (DeliveryProvider)deliveryProviderCont
 
 deliveryProviderController.verify();
 
-System.assertEquals( deliveryPostcode, deliveryProviderController.latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )
+Assert.areEqual( deliveryPostcode, deliveryProviderController.latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )
                     , 'scheduling a delivery, will call scheduleDelivery against the deliveryProvider, passing the postcode required' );
 ```
 
@@ -364,7 +364,7 @@ classController
 
 AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
 
-System.assertEquals( classDouble, classDouble.fluentMethod() );
+Assert.areEqual( classDouble, classDouble.fluentMethod() );
 ```
 
 The specification of any `when`, `allows` or `expects` against a method will override the return value of that method for the specified parameter configuration.
@@ -381,7 +381,7 @@ classController
 
 AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
 
-System.assertEquals( null, classDouble.fluentMethod() );
+Assert.areEqual( null, classDouble.fluentMethod() );
 ```
 
 This is the case even if no return is specified for the method.  For example, the following is true:
@@ -395,7 +395,7 @@ classController
 
 AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
 
-System.assertEquals( null, classDouble.fluentMethod() );
+Assert.areEqual( null, classDouble.fluentMethod() );
 ```
 
 It should be noted that if a method is called that has an incompatible type, then a "System.TypeException: Invalid conversion from runtime type..." exception will be thrown.  Currently, there is no way for Amoss to detect and stop this exception from occurring.  If Salesforce provides the capabiliy to stop this from occurring in the future, then the library will be updated to more helpfully describe the issue, or stop it from occurring.
@@ -420,9 +420,9 @@ Test.startTest();
     AmossTest_ClassToDouble returnFromDouble2 = classToDouble2.fluentMethod();
 Test.stopTest();
 
-System.assertEquals( classToDouble1, returnFromDouble1 );
-System.assertEquals( classToDouble2, returnFromDouble2 );
-System.assertNotEquals( returnFromDouble1, returnFromDouble2 );
+Assert.areEqual( classToDouble1, returnFromDouble1 );
+Assert.areEqual( classToDouble2, returnFromDouble2 );
+Assert.areNotEqual( returnFromDouble1, returnFromDouble2 );
 
 ```
 
@@ -444,9 +444,9 @@ Test.startTest();
     AmossTest_ClassToDouble returnFromDouble2 = classToDouble2.fluentMethod();
 Test.stopTest();
 
-System.assertEquals( classToDouble1, returnFromDouble1 );
-System.assertEquals( classToDouble2, returnFromDouble2 );
-System.assertNotEquals( returnFromDouble1, returnFromDouble2 );
+Assert.areEqual( classToDouble1, returnFromDouble1 );
+Assert.areEqual( classToDouble2, returnFromDouble2 );
+Assert.areNotEqual( returnFromDouble1, returnFromDouble2 );
 
 ```
 
@@ -464,7 +464,7 @@ classController
 
 AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
 
-System.assertEquals( 'ThisDefaultValue', classDouble.methodUnderDouble( '1', 2 ) );
+Assert.areEqual( 'ThisDefaultValue', classDouble.methodUnderDouble( '1', 2 ) );
 ```
 
 As with `isFluent`, the specification of any `when`, `allows` or `expects` against a method will override the return value of that method for the specified parameter configuration.  This is true whether a return is specified for the method or not.
@@ -480,7 +480,7 @@ classController
 
 AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
 
-System.assertEquals( null, classDouble.methodUnderDouble( '1', 2 ) );
+Assert.areEqual( null, classDouble.methodUnderDouble( '1', 2 ) );
 ```
 
 ## Specifying parameters in different ways
@@ -917,7 +917,7 @@ Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDo
 AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 
-System.assertEquals( classToDouble1, classToDouble2 );
+Assert.areEqual( classToDouble1, classToDouble2 );
 
 ```
 
@@ -936,12 +936,12 @@ Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDo
 AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
 AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
 
-System.assertNotEquals( classToDouble1, classToDouble2 );
+Assert.areNotEqual( classToDouble1, classToDouble2 );
 
 classToDouble1.methodUnderDouble( '1', 2 );
 classToDouble2.methodUnderDouble( '1', 2 );
 
-System.assertEquals( 2, classToDoubleController.countOf( 'methodUnderDouble' ) );
+Assert.areEqual( 2, classToDoubleController.countOf( 'methodUnderDouble' ) );
 
 ```
 
@@ -961,13 +961,13 @@ Amoss_Instance classToDoubleController2 = classToDoubleController1.createClone()
 AmossTest_ClassToDouble classToDouble1 = (AmossTest_ClassToDouble)classToDoubleController1.getDouble();
 AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController2.getDouble();
 
-System.assertNotEquals( classToDouble1, classToDouble2 );
+Assert.areNotEqual( classToDouble1, classToDouble2 );
 
 classToDouble1.methodUnderDouble( '1', 2 );
 classToDouble2.methodUnderDouble( '1', 2 );
 
-System.assertEquals( 1, classToDoubleController1.countOf( 'methodUnderDouble' ) );
-System.assertEquals( 1, classToDoubleController2.countOf( 'methodUnderDouble' ) );
+Assert.areEqual( 1, classToDoubleController1.countOf( 'methodUnderDouble' ) );
+Assert.areEqual( 1, classToDoubleController2.countOf( 'methodUnderDouble' ) );
 
 ```
 
@@ -1099,11 +1099,11 @@ spiedUponObjectController
 
 // followed by
 
-System.assertEquals( 'expectedParameterValue1',
+Assert.areEqual( 'expectedParameterValue1',
                         spiedUponObjectController.latestCallOf( 'method1' ).parameter( 'parameter1' ),
                         'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
 
-System.assertEquals( 'expectedParameterValue2',
+Assert.areEqual( 'expectedParameterValue2',
                         spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 'parameter2' ),
                         'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
 
@@ -1135,11 +1135,11 @@ spiedUponObjectController
 
 // followed by
 
-System.assertEquals( 'expectedParameterValue1',
+Assert.areEqual( 'expectedParameterValue1',
                         spiedUponObjectController.latestCallOf( 'method1' ).parameter( 'parameter1' ),
                         'methodUnderTest, when called will pass "expectedParameterValue1" into "method1"' );
 
-System.assertEquals( 'expectedParameterValue2',
+Assert.areEqual( 'expectedParameterValue2',
                         spiedUponObjectController.call( 0 ).of( 'method2' ).parameter( 'parameter2' ),
                         'methodUnderTest, when called will pass "expectedParameterValue2" into "method2"' );
 

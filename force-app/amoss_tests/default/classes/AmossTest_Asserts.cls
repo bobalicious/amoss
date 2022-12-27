@@ -259,7 +259,7 @@ public with sharing class AmossTest_Asserts {
             String assertion = 'getType, when passed ' + (String)thisTestCase.get( 'case' ) + ' will return its type';
 
             String actual = Amoss_Asserts.getType( parameter );
-            System.assertEquals( expected, actual, assertion );
+            Assert.areEqual( expected, actual, assertion );
         }
     }
 }

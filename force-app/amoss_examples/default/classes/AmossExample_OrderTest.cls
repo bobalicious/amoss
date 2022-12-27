@@ -93,16 +93,16 @@ public with sharing class AmossExample_OrderTest {
 
         Test.stopTest();
 
-        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+        Assert.areEqual( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
 
         //
         // Check that the delivery provider was called with the parameters that we expected
         //
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+        Assert.areEqual( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        Assert.areEqual( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
 
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
+        Assert.areEqual( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
+        Assert.areEqual( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
     }
 
     /**
@@ -161,7 +161,7 @@ public with sharing class AmossExample_OrderTest {
         // Check that the methods were all called against the mock, with the right parameters.
         deliveryProviderController.verify();
 
-        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+        Assert.areEqual( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
     }
 
     /**
@@ -221,16 +221,16 @@ public with sharing class AmossExample_OrderTest {
         // the correct parameters are called.
         deliveryProviderController.verify();
 
-        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+        Assert.areEqual( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
 
         //
         // Check that the delivery provider was called with the parameters that we expected
         //
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+        Assert.areEqual( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        Assert.areEqual( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
 
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
+        Assert.areEqual( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
+        Assert.areEqual( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
     }
 
     /**
@@ -286,16 +286,16 @@ public with sharing class AmossExample_OrderTest {
 
         Test.stopTest();
 
-        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+        Assert.areEqual( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
 
         //
         // Check that the delivery provider was called with the parameters that we expected (this time using positional notation to retrieve the values)
         //
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+        Assert.areEqual( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 0 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        Assert.areEqual( deliveryDate    , deliveryProviderController.get().latestCallOf( 'canDeliver' ).parameter( 1 ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
 
-        System.assertEquals( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 0 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 1 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
+        Assert.areEqual( deliveryPostcode, deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 0 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the postcode' );
+        Assert.areEqual( deliveryDate    , deliveryProviderController.get().latestCallOf( 'scheduleDelivery' ).parameter( 1 ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against that delivery providers, passing the delivery date' );
     }
 
     //
@@ -350,30 +350,30 @@ public with sharing class AmossExample_OrderTest {
 
         Test.stopTest();
 
-        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+        Assert.areEqual( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
 
         //
         // Check that the delivery providers was called with the parameters that we expected
         //
-        System.assertEquals( deliveryPostcode, cannotDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , cannotDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
+        Assert.areEqual( deliveryPostcode, cannotDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        Assert.areEqual( deliveryDate    , cannotDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the delivery date' );
 
-        System.assertEquals( 0, cannotDeliverController.countOf( 'scheduleDelivery' ), 'scheduleDelivery, will not call scheduleDelivery against a deliveryProvider that cannot deliver' );
-
-        //
-        // Check that the delivery providers was called with the parameters that we expected
-        //
-        System.assertEquals( deliveryPostcode, canDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
-        System.assertEquals( deliveryDate    , canDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery provider , passing the delivery date' );
-
-        System.assertEquals( deliveryPostcode, canDeliverController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against the first delivery provider that can perform the delivery, passing the postcode' );
-        System.assertEquals( deliveryDate    , canDeliverController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against the first delivery provider that can perform the delivery, passing the delivery date' );
+        Assert.areEqual( 0, cannotDeliverController.countOf( 'scheduleDelivery' ), 'scheduleDelivery, will not call scheduleDelivery against a deliveryProvider that cannot deliver' );
 
         //
         // Check that the delivery providers was called with the parameters that we expected
         //
-        System.assertEquals( 0, shouldntBeCalledController.countOf( 'canDeliver'       ), 'scheduleDelivery, will not call canDeliver against a deliveryProvider further down the list than one that can provide the delivery' );
-        System.assertEquals( 0, shouldntBeCalledController.countOf( 'scheduleDelivery' ), 'scheduleDelivery, will not call canDeliver against a deliveryProvider further down the list than one that can provide the delivery' );
+        Assert.areEqual( deliveryPostcode, canDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'postcode' )    , 'scheduleDelivery will call canDeliver against the passed in delivery providers, passing the postcode' );
+        Assert.areEqual( deliveryDate    , canDeliverController.get().latestCallOf( 'canDeliver' ).parameter( 'deliveryDate' ), 'scheduleDelivery will call canDeliver against the passed in delivery provider , passing the delivery date' );
+
+        Assert.areEqual( deliveryPostcode, canDeliverController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'postcode' )    , 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against the first delivery provider that can perform the delivery, passing the postcode' );
+        Assert.areEqual( deliveryDate    , canDeliverController.get().latestCallOf( 'scheduleDelivery' ).parameter( 'deliveryDate' ), 'scheduleDelivery, when a provider can deliver, will call scheduleDelivery against the first delivery provider that can perform the delivery, passing the delivery date' );
+
+        //
+        // Check that the delivery providers was called with the parameters that we expected
+        //
+        Assert.areEqual( 0, shouldntBeCalledController.countOf( 'canDeliver'       ), 'scheduleDelivery, will not call canDeliver against a deliveryProvider further down the list than one that can provide the delivery' );
+        Assert.areEqual( 0, shouldntBeCalledController.countOf( 'scheduleDelivery' ), 'scheduleDelivery, will not call canDeliver against a deliveryProvider further down the list than one that can provide the delivery' );
     }
 
     /**
@@ -441,7 +441,7 @@ public with sharing class AmossExample_OrderTest {
         canDeliverController.verify();
         shouldntBeCalledController.verify();
 
-        System.assertEquals( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
+        Assert.areEqual( true, scheduleDeliveryResponse, 'scheduleDelivery, when the delivery can be scheduled, will return true' );
     }
 
     /**
@@ -480,6 +480,6 @@ public with sharing class AmossExample_OrderTest {
 
         deliveryProviderController.verify();
 
-        System.assertEquals( false, scheduleDeliveryResponse, 'scheduleDelivery, when a delivery provider throws an exception, returns false' );
+        Assert.areEqual( false, scheduleDeliveryResponse, 'scheduleDelivery, when a delivery provider throws an exception, returns false' );
     }
 }

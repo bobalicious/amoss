@@ -49,7 +49,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when no methods are defined, and a method called, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when no methods are defined, and a method called, will return null' );
     }
 
     /**
@@ -66,7 +66,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = interfaceUnderDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when no methods are defined, and a method called, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when no methods are defined, and a method called, will return null' );
     }
 
     /**
@@ -89,7 +89,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.willReturn, and the method called, will return the stated value, regardless of the parameters passed' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.willReturn, and the method called, will return the stated value, regardless of the parameters passed' );
     }
 
     /**
@@ -111,7 +111,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.willReturn (shortcut), and the method called, will return the stated value, regardless of the parameters passed' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.willReturn (shortcut), and the method called, will return the stated value, regardless of the parameters passed' );
     }
 
     /**
@@ -134,7 +134,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.returns, and the method called, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.returns, and the method called, will return the stated value' );
     }
 
     /**
@@ -157,7 +157,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.returning, and the method called, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.returning, and the method called, will return the stated value' );
     }
 
     /**
@@ -178,7 +178,7 @@ public with sharing class AmossTest_InstanceTest {
             AmossTest_ClassToDouble returnFromDouble = classToDouble.fluentMethod();
         Test.stopTest();
 
-        System.assertEquals( classToDouble, returnFromDouble, 'isFluent, when an unspecified, fluent method is called, will return the generated double' );
+        Assert.areEqual( classToDouble, returnFromDouble, 'isFluent, when an unspecified, fluent method is called, will return the generated double' );
     }
 
     /**
@@ -207,8 +207,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( true, exceptionThrown, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
-        System.assertEquals( 'Invalid conversion from runtime type ' + CLASS_TO_DOUBLE + ' to String', exceptionMessage, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
+        Assert.areEqual( true, exceptionThrown, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
+        Assert.areEqual( 'Invalid conversion from runtime type ' + CLASS_TO_DOUBLE + ' to String', exceptionMessage, 'isFluent, when an unspecified, non fluent method is called, will throw an exception' );
     }
 
     /**
@@ -237,7 +237,7 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( false, exceptionThrown, 'isFluent, when an unspecified, method with no return is called, will not throw an exception' );
+        Assert.areEqual( false, exceptionThrown, 'isFluent, when an unspecified, method with no return is called, will not throw an exception' );
     }
 
     /**
@@ -259,7 +259,7 @@ public with sharing class AmossTest_InstanceTest {
             AmossTest_ClassToDouble returnFromMethod = classToDouble.fluentMethod();
         Test.stopTest();
 
-        System.assertEquals( null, returnFromMethod, 'isFluent, when a specified method with no defined return is called, will return null' );
+        Assert.areEqual( null, returnFromMethod, 'isFluent, when a specified method with no defined return is called, will return null' );
     }
 
     /**
@@ -283,7 +283,7 @@ public with sharing class AmossTest_InstanceTest {
             AmossTest_ClassToDouble returnFromMethod = classToDouble.fluentMethod();
         Test.stopTest();
 
-        System.assertEquals( specifiedReturn, returnFromMethod, 'isFluent, when a specified method with a defined return is called, will return the specified return' );
+        Assert.areEqual( specifiedReturn, returnFromMethod, 'isFluent, when a specified method with a defined return is called, will return the specified return' );
     }
 
     /**
@@ -304,7 +304,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
         Test.stopTest();
 
-        System.assertEquals( 'DefaultReturn', returnFromDouble, 'byDefaultMethodsReturn,  when an unspecified, method is called, will return the specified value' );
+        Assert.areEqual( 'DefaultReturn', returnFromDouble, 'byDefaultMethodsReturn,  when an unspecified, method is called, will return the specified value' );
     }
 
     /**
@@ -333,8 +333,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( true, exceptionThrown, 'byDefaultMethodsReturn, when an unspecified method with a different return type is called, will throw an exception' );
-        System.assertEquals( 'Invalid conversion from runtime type String to List<ANY>', exceptionMessage, 'byDefaultMethodsReturn, when an unspecified method with a different return type, will throw an exception' );
+        Assert.areEqual( true, exceptionThrown, 'byDefaultMethodsReturn, when an unspecified method with a different return type is called, will throw an exception' );
+        Assert.areEqual( 'Invalid conversion from runtime type String to List<ANY>', exceptionMessage, 'byDefaultMethodsReturn, when an unspecified method with a different return type, will throw an exception' );
     }
 
     /**
@@ -363,7 +363,7 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( false, exceptionThrown, 'byDefaultMethodsReturn, when an unspecified, method with no return is called, will not throw an exception' );
+        Assert.areEqual( false, exceptionThrown, 'byDefaultMethodsReturn, when an unspecified, method with no return is called, will not throw an exception' );
     }
 
     /**
@@ -390,7 +390,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'when.method.handledBy, when given a StubProvider, and the method called, will call handleMethodCall on the given object and return the result' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'when.method.handledBy, when given a StubProvider, and the method called, will call handleMethodCall on the given object and return the result' );
     }
 
     // This cannot be mocked - ironically because of the limitations of StubProvider
@@ -439,7 +439,7 @@ public with sharing class AmossTest_InstanceTest {
 
         methodHandlerController.verify();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.handledBy, when given an Amoss_Instance.Amoss_MethodHandler, and the method called, will call handleMethodCall on the given object and return the result' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.handledBy, when given an Amoss_Instance.Amoss_MethodHandler, and the method called, will call handleMethodCall on the given object and return the result' );
     }
 
     /**
@@ -470,8 +470,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( true, exceptionThrown, 'when.method.throw, and the method called, will throw the stated exception' );
-        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.throw, and the method called, will throw the stated exception' );
+        Assert.areEqual( true, exceptionThrown, 'when.method.throw, and the method called, will throw the stated exception' );
+        Assert.areEqual( 'The defined exception', exceptionMessage, 'when.method.throw, and the method called, will throw the stated exception' );
     }
 
     /**
@@ -502,8 +502,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( true, exceptionThrown, 'when.method.throwing, and the method called, will throw the stated exception' );
-        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.throwing, and the method called, will throw the stated exception' );
+        Assert.areEqual( true, exceptionThrown, 'when.method.throwing, and the method called, will throw the stated exception' );
+        Assert.areEqual( 'The defined exception', exceptionMessage, 'when.method.throwing, and the method called, will throw the stated exception' );
     }
 
     /**
@@ -534,8 +534,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( true, exceptionThrown, 'when.method.willThrow, and the method called, will throw the stated exception' );
-        System.assertEquals( 'The defined exception', exceptionMessage, 'when.method.willThrow, and the method called, will throw the stated exception' );
+        Assert.areEqual( true, exceptionThrown, 'when.method.willThrow, and the method called, will throw the stated exception' );
+        Assert.areEqual( 'The defined exception', exceptionMessage, 'when.method.willThrow, and the method called, will throw the stated exception' );
     }
 
     /**
@@ -558,7 +558,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = interfaceUnderDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.willReturn, for an interface, and the method called, will return the stated value, regardless of the parameters passed' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.willReturn, for an interface, and the method called, will return the stated value, regardless of the parameters passed' );
     }
 
     /**
@@ -581,7 +581,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.otherMethodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.willReturn, and a different method called, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.willReturn, and a different method called, will return null' );
     }
 
     /**
@@ -606,7 +606,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the stated parameters, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -631,7 +631,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the stated parameters, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -656,7 +656,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'SetValue', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.set.willReturn, and the method called with parameter set to not null, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameter.set.willReturn, and the method called with parameter set to not null, will return the stated value' );
     }
 
     /**
@@ -681,7 +681,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.set.willReturn, and the method called with the parameter set to null, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.set.willReturn, and the method called with the parameter set to null, will not return the stated value' );
     }
 
     /**
@@ -706,7 +706,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to a string containing the given value, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to a string containing the given value, will return the stated value' );
     }
 
     /**
@@ -731,7 +731,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to a string containing the given value in the wrong case, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to a string containing the given value in the wrong case, will not return the stated value' );
     }
 
     /**
@@ -756,7 +756,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( '', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to an empty string, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to an empty string, will not return the stated value' );
     }
 
     /**
@@ -781,7 +781,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to null, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.containing.willReturn, and the method called with parameter set to null, will not return the stated value' );
     }
 
     /**
@@ -806,7 +806,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
     }
 
     /**
@@ -831,7 +831,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string that does not all match the given expression will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string that does not all match the given expression will not return the stated value' );
     }
 
     /**
@@ -856,7 +856,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'this nomatches', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string not matching the given value will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to a string not matching the given value will not return the stated value' );
     }
 
     /**
@@ -881,7 +881,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to null, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.matching.willReturn, and the method called with parameter set to null, will not return the stated value' );
     }
 
     /**
@@ -908,7 +908,7 @@ public with sharing class AmossTest_InstanceTest {
                 } catch( TestException e ) {}
         Test.stopTest();
 
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method.withParameter.matching.willReturn, and the RegExp is not valid will fail, by calling assert with false' );
 
         String expectedAssertion = 'The regular expression "*" does not appear to be valid: Invalid regex: Dangling meta character \'*\' near index 0';
         String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
@@ -945,7 +945,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
         Test.stopTest();
 
-        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter set to a List that is the stated length, will return the stated value' );
+        Assert.areEqual( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter set to a List that is the stated length, will return the stated value' );
     }
 
     /**
@@ -969,7 +969,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter set to a List that is not the stated length, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter set to a List that is not the stated length, will not return the stated value' );
     }
 
     /**
@@ -994,7 +994,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'Thing', 2 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter that is not a list, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.aListOfLength.willReturn, when that method is called with the parameter that is not a list, will not return the stated value' );
     }
 
     /**
@@ -1021,7 +1021,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
         Test.stopTest();
 
-        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameter.aListOfLength.withElementAt.willReturn, when that method is called with all criteria met, will return the stated value' );
+        Assert.areEqual( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameter.aListOfLength.withElementAt.willReturn, when that method is called with all criteria met, will return the stated value' );
     }
 
     /**
@@ -1048,7 +1048,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.aListOfLength.withElementAt.willReturn, when that method is called with not all criteria met, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.aListOfLength.withElementAt.willReturn, when that method is called with not all criteria met, will not return the stated value' );
     }
 
     /**
@@ -1107,7 +1107,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, and the method called with the stated parameters, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -1132,7 +1132,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamedSetTo.willReturn, and the method called with the stated parameters, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamedSetTo.willReturn, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -1156,7 +1156,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamedSetTo.willReturn, not all parameters set, and the method called with the stated parameters, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamedSetTo.willReturn, not all parameters set, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -1182,7 +1182,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, named version, and the method called with the stated parameters, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, named version, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -1208,7 +1208,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, named version, when not all parameters are specified and the method called with the stated parameters, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameters.willReturn, named version, when not all parameters are specified and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -1233,7 +1233,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = interfaceUnderDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameter.willReturn, for an interface, and the method called with the stated parameters, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameter.willReturn, for an interface, and the method called with the stated parameters, will return the stated value' );
     }
 
     /**
@@ -1258,7 +1258,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the different parameters, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.willReturn, and the method called with the different parameters, will return null' );
     }
 
     /**
@@ -1284,7 +1284,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameters.willReturn, and the method called with the different parameters, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameters.willReturn, and the method called with the different parameters, will return null' );
     }
 
     /**
@@ -1309,7 +1309,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the different parameters, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameter.setTo.willReturn, and the method called with the different parameters, will return null' );
     }
 
     /**
@@ -1333,7 +1333,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.setTo.willReturn, and the method called with the different parameters, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.setTo.willReturn, and the method called with the different parameters, will return null' );
     }
 
     /**
@@ -1357,7 +1357,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'SetValue', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.set.willReturn, and the method called with parameter set to not null, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.set.willReturn, and the method called with parameter set to not null, will return the stated value' );
     }
 
     /**
@@ -1381,7 +1381,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( null, 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.set.willReturn, and the method called with the parameter set to null, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.set.willReturn, and the method called with the parameter set to null, will not return the stated value' );
     }
 
     /**
@@ -1405,7 +1405,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'this will match the config', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.containing.willReturn, and the method called with parameter set to a String containing, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.containing.willReturn, and the method called with parameter set to a String containing, will return the stated value' );
     }
 
     /**
@@ -1429,7 +1429,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'this will no match the config', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.containing.willReturn, and the method called with parameter set to a String not containing, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.containing.willReturn, and the method called with parameter set to a String not containing, will not return the stated value' );
     }
 
     /**
@@ -1453,7 +1453,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'this matches', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.matching.willReturn, and the method called with parameter set to a string matching the given value, will return the stated value' );
     }
 
     /**
@@ -1477,7 +1477,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'does not match', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.matching.willReturn, and the method called with parameter set to a string that does not match the given value, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.matching.willReturn, and the method called with parameter set to a string that does not match the given value, will not return the stated value' );
     }
 
     /**
@@ -1501,7 +1501,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
         Test.stopTest();
 
-        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter set to a List that is the stated length, will return the stated value' );
+        Assert.areEqual( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter set to a List that is the stated length, will return the stated value' );
     }
 
     /**
@@ -1525,7 +1525,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter set to a List that is not the stated length, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter set to a List that is not the stated length, will not return the stated value' );
     }
 
     /**
@@ -1549,7 +1549,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'Thing', 2 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter that is not a list, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.willReturn, when that method is called with the parameter that is not a list, will not return the stated value' );
     }
 
     /**
@@ -1576,7 +1576,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
         Test.stopTest();
 
-        System.assertEquals( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.withElementAt.willReturn, when that method is called with all criteria met, will return the stated value' );
+        Assert.areEqual( new List<String>{ 'return' }, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.withElementAt.willReturn, when that method is called with all criteria met, will return the stated value' );
     }
 
     /**
@@ -1603,7 +1603,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> returnFromDouble = classToDouble.methodWithListOfObjects( new List<Integer>{ 1, 2, 3 } );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.withElementAt.willReturn, when that method is called with not all criteria met, will not return the stated value' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.aListOfLength.withElementAt.willReturn, when that method is called with not all criteria met, will not return the stated value' );
     }
 
     /**
@@ -1632,7 +1632,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'DifferentParam', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameters.setTo.willReturn (named), and the method called with the different parameters, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameters.setTo.willReturn (named), and the method called with the different parameters, will return null' );
     }
 
     //
@@ -1664,7 +1664,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
@@ -1691,7 +1691,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed, will return null' ) ;
+        Assert.areEqual( null, returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed, will return null' ) ;
     }
 
     /**
@@ -1717,7 +1717,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
@@ -1744,7 +1744,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'ExpectedToReturn', returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed with same properties, will return the stated value' ) ;
+        Assert.areEqual( 'ExpectedToReturn', returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed with same properties, will return the stated value' ) ;
     }
 
     /**
@@ -1771,7 +1771,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed with different properties, will return null' ) ;
+        Assert.areEqual( null, returnFromDouble, 'when.method.willReturn, when set up with an object, and a different instance is passed with different properties, will return null' ) ;
     }
 
     /**
@@ -1797,7 +1797,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
@@ -1824,7 +1824,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed, will return null' ) ;
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed, will return null' ) ;
     }
 
     /**
@@ -1850,7 +1850,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.setToTheSameValueAs.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParameterNamed.setToTheSameValueAs.willReturn, when set up with an object, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
@@ -1877,7 +1877,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'ExpectedToReturn', returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed with same properties, will return the stated value' ) ;
+        Assert.areEqual( 'ExpectedToReturn', returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed with same properties, will return the stated value' ) ;
     }
 
     /**
@@ -1904,7 +1904,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.objectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed with different properties, will return null' ) ;
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParameterNamed.willReturn, when set up with an object, and a different instance is passed with different properties, will return null' ) ;
     }
 
     /**
@@ -1930,7 +1930,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
@@ -1957,7 +1957,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.willReturn, when set up with an sobject, and a different instance is passed, will return null' ) ;
+        Assert.areEqual( null, returnFromDouble, 'when.method.willReturn, when set up with an sobject, and a different instance is passed, will return null' ) ;
     }
 
     /**
@@ -1983,7 +1983,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
@@ -2010,7 +2010,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'ExpectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with the same properies, will return the stated value' ) ;
+        Assert.areEqual( 'ExpectedReturn', returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with the same properies, will return the stated value' ) ;
     }
 
     /**
@@ -2037,7 +2037,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with different properies, will return null' ) ;
+        Assert.areEqual( null, returnFromDouble, 'when.method.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with different properies, will return null' ) ;
     }
 
     /**
@@ -2063,7 +2063,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParamterNamed.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParamterNamed.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
@@ -2090,7 +2090,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParamterNamed.willReturn, when set up with an sobject, and a different instance is passed, will return null' ) ;
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParamterNamed.willReturn, when set up with an sobject, and a different instance is passed, will return null' ) ;
     }
 
     /**
@@ -2116,7 +2116,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and that instance is passed, will return the set up value' ) ;
     }
 
     /**
@@ -2143,7 +2143,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( 'ExpectedReturn', returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with the same properies, will return the stated value' ) ;
+        Assert.areEqual( 'ExpectedReturn', returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with the same properies, will return the stated value' ) ;
     }
 
     /**
@@ -2170,7 +2170,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.sobjectMethodUnderDouble( objectPassed );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with different properies, will return null' ) ;
+        Assert.areEqual( null, returnFromDouble, 'when.method.withParamterNamed.setToTheSameValueAs.willReturn, when set up with an sobject, and a different instance is passed with different properies, will return null' ) ;
     }
 
     /**
@@ -2201,8 +2201,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble2 = classToDouble.methodUnderDouble( 'ActualParam2', 2 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, and the method called with the stated parameters, will return the stated value for the matching parameters' );
-        System.assertEquals( 'expectedReturn2', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, and the method called with the stated parameters, will return the stated value for the matching parameters' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, and the method called with the stated parameters, will return the stated value for the matching parameters' );
+        Assert.areEqual( 'expectedReturn2', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, and the method called with the stated parameters, will return the stated value for the matching parameters' );
     }
 
     /**
@@ -2233,8 +2233,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble2 = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
-        System.assertEquals( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
     }
 
     /**
@@ -2265,8 +2265,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble2 = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, position notation used first, then named notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
-        System.assertEquals( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, position notation used first, then named notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, position notation used first, then named notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, position notation used first, then named notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
     }
 
     /**
@@ -2297,8 +2297,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble2 = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, named notation used first, then position notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
-        System.assertEquals( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, named notation used first, then position notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, named notation used first, then position notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (1st call)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, named notation used first, then position notation, when the method is defined with the same parameters, and the method called with the stated parameters, will always return the first match (2nd call)' );
     }
 
     /**
@@ -2329,8 +2329,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble2 = classToDouble.otherMethodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, with different methods with the same parameters, will return the stated value for the matching method (1)' );
-        System.assertEquals( 'expectedReturn2', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, with different methods with the same parameters, will return the stated value for the matching method (2)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble1, 'when.method.withParameter.willReturn multiple times, with different methods with the same parameters, will return the stated value for the matching method (1)' );
+        Assert.areEqual( 'expectedReturn2', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, with different methods with the same parameters, will return the stated value for the matching method (2)' );
     }
 
     /**
@@ -2365,8 +2365,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble2 = classToDouble.methodUnderDouble( 'DropToWithAnyParams', 100 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturnFor1'           , returnFromDouble1, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (1)' );
-        System.assertEquals( 'expectedReturnForAnythingElse', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (2)' );
+        Assert.areEqual( 'expectedReturnFor1'           , returnFromDouble1, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (1)' );
+        Assert.areEqual( 'expectedReturnForAnythingElse', returnFromDouble2, 'when.method.withParameter.willReturn multiple times, and the method called with parameters that match many options, will return the first matching value (2)' );
     }
 
     /**
@@ -2389,7 +2389,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'allows.method.returning, and the method called, will return the stated value, regardless of the parameters passed' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'allows.method.returning, and the method called, will return the stated value, regardless of the parameters passed' );
     }
 
     /**
@@ -2411,7 +2411,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'allows.method.returning (shortcut), and the method called, will return the stated value, regardless of the parameters passed' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'allows.method.returning (shortcut), and the method called, will return the stated value, regardless of the parameters passed' );
     }
     /**
     * @method allows.method.returning
@@ -2440,7 +2440,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method.returning, when a different method is called, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method.returning, when a different method is called, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method.returning, when a different method is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -2473,7 +2473,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method.returning, when the method is called with different parameters, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method.returning, when the method is called with different parameters, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method.returning, when the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -2501,8 +2501,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble2 = classToDouble.otherMethodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'allows.method.returning, when multiple methods are defined and each are called, will return the stated value for each method (1)' );
-        System.assertEquals( 'expectedReturn2', returnFromDouble2, 'allows.method.returning, when multiple methods are defined and each are called, will return the stated value for each method (2)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble1, 'allows.method.returning, when multiple methods are defined and each are called, will return the stated value for each method (1)' );
+        Assert.areEqual( 'expectedReturn2', returnFromDouble2, 'allows.method.returning, when multiple methods are defined and each are called, will return the stated value for each method (2)' );
     }
 
     /**
@@ -2538,9 +2538,9 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromGenericMatch    = classToDouble.methodUnderDouble( 'AnyOleParam', 100 );
         Test.stopTest();
 
-        System.assertEquals( 'returnForExactMatch'     , returnFromExactMatch     , 'allows.method.returning, when method is defined with multiple overlapping parameters, will return the first stated value that matches the parameters (1)' );
-        System.assertEquals( 'returnForFirstParamMatch', returnFromFirstParamMatch, 'allows.method.returning, when method is defined with multiple overlapping parameters, will return the first stated value that matches the parameters (2)' );
-        System.assertEquals( 'returnForGenericMatch'   , returnFromGenericMatch   , 'allows.method.returning, when method is defined with multiple overlapping parameters, will return the first stated value that matches the parameters (3)' );
+        Assert.areEqual( 'returnForExactMatch'     , returnFromExactMatch     , 'allows.method.returning, when method is defined with multiple overlapping parameters, will return the first stated value that matches the parameters (1)' );
+        Assert.areEqual( 'returnForFirstParamMatch', returnFromFirstParamMatch, 'allows.method.returning, when method is defined with multiple overlapping parameters, will return the first stated value that matches the parameters (2)' );
+        Assert.areEqual( 'returnForGenericMatch'   , returnFromGenericMatch   , 'allows.method.returning, when method is defined with multiple overlapping parameters, will return the first stated value that matches the parameters (3)' );
     }
 
     /**
@@ -2567,13 +2567,13 @@ public with sharing class AmossTest_InstanceTest {
             } catch( TestException e ) {}
         Test.stopTest();
 
-        System.assertEquals( '' , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with an empty string as expected' );
+        Assert.areEqual( '' , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with an empty string as expected' );
 
         String expectedMethodCall = 'methodUnderDouble(OtherActualParam1, 1)';
-        System.assertEquals( expectedMethodCall, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with the method called as actual' );
+        Assert.areEqual( expectedMethodCall, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with the method called as actual' );
 
         String expectedAssertion = CLASS_TO_DOUBLE + ' did not expect any methods to be called';
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expectsNoCalls, when a method is called, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -2615,7 +2615,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'expects.method.returning, and the method called once, will return the stated value, regardless of the parameters passed' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'expects.method.returning, and the method called once, will return the stated value, regardless of the parameters passed' );
     }
 
     /**
@@ -2637,7 +2637,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn', returnFromDouble, 'expects.method.returning (shortcut), and the method called once, will return the stated value, regardless of the parameters passed' );
+        Assert.areEqual( 'expectedReturn', returnFromDouble, 'expects.method.returning (shortcut), and the method called once, will return the stated value, regardless of the parameters passed' );
     }
 
     /**
@@ -2667,9 +2667,9 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDouble was expected to be called';
-        System.assertEquals( 'methodUnderDouble'     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with the expected method' );
-        System.assertEquals( 'otherMethodUnderDouble', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with the actual method called' );
-        System.assertEquals( expectedAssertion       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( 'methodUnderDouble'     , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with the expected method' );
+        Assert.areEqual( 'otherMethodUnderDouble', assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with the actual method called' );
+        Assert.areEqual( expectedAssertion       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when a different method is called, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -3189,7 +3189,7 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( 'Cannot specify NULL for a "FieldsSetLike" expectation', exceptionMessage, 'expects.method.withFieldsSetLike.returning, when the expectation is set with null, will throw an exception detailing the problem' );
+        Assert.areEqual( 'Cannot specify NULL for a "FieldsSetLike" expectation', exceptionMessage, 'expects.method.withFieldsSetLike.returning, when the expectation is set with null, will throw an exception detailing the problem' );
     }
 
     /**
@@ -3398,7 +3398,7 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( 'Cannot specify NULL for a "FieldsSetTo" expectation', exceptionMessage, 'expects.method.withFieldsSetTo.returning, when the expectation is set with null, will throw an exception detailing the problem' );
+        Assert.areEqual( 'Cannot specify NULL for a "FieldsSetTo" expectation', exceptionMessage, 'expects.method.withFieldsSetTo.returning, when the expectation is set with null, will throw an exception detailing the problem' );
     }
 
     /**
@@ -3498,7 +3498,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAllElements.setTo.returning, when the list parameter passed does matches all elements, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withAllElements.setTo.returning, when the list parameter passed does matches all elements, will return the specified value' );
     }
 
     /**
@@ -3594,7 +3594,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAnyElement.setTo.returning, when the list parameter passed matches an element, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withAnyElement.setTo.returning, when the list parameter passed matches an element, will return the specified value' );
     }
 
     /**
@@ -3690,7 +3690,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.setTo.returning, when the list parameter contains the element matching the specified value, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withElementAt.setTo.returning, when the list parameter contains the element matching the specified value, will return the specified value' );
     }
 
     /**
@@ -3721,7 +3721,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.setTo.returning, when specified multiple times, and the list parameter contains the elements matching the specified value, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withElementAt.setTo.returning, when specified multiple times, and the list parameter contains the elements matching the specified value, will return the specified value' );
     }
 
     /**
@@ -3918,7 +3918,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.set.returning, when the list parameter contains the element set to not null, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withElementAt.set.returning, when the list parameter contains the element set to not null, will return the specified value' );
     }
 
     /**
@@ -3979,7 +3979,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAllElements.set.returning, when the list parameter contains the elements set to not null, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withAllElements.set.returning, when the list parameter contains the elements set to not null, will return the specified value' );
     }
 
     /**
@@ -4040,7 +4040,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withAnyElement.set.returning, when the list parameter contains an elements set to not null, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withAnyElement.set.returning, when the list parameter contains an elements set to not null, will return the specified value' );
     }
 
     /**
@@ -4134,7 +4134,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.containing.returning, when the list parameter contains the element set to contain, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withElementAt.containing.returning, when the list parameter contains the element set to contain, will return the specified value' );
     }
 
     /**
@@ -4294,7 +4294,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.matching.returning, when the list parameter contains the element set to match, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withElementAt.matching.returning, when the list parameter contains the element set to match, will return the specified value' );
     }
 
     /**
@@ -4454,7 +4454,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.withElementAt.aListOfLength.returning, when the list parameter contains the element set to match, will return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.withElementAt.aListOfLength.returning, when the list parameter contains the element set to match, will return the specified value' );
     }
 
     /**
@@ -4657,7 +4657,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.verifiedBy.returning, when the verifier does not throw an exception (I.E. passes) will pass the test' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.verifiedBy.returning, when the verifier does not throw an exception (I.E. passes) will pass the test' );
     }
 
     /**
@@ -4695,7 +4695,7 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'expects.method.verifiedBy.returning, when the verifier does not throw an exception (I.E. passes) will pass the test' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'expects.method.verifiedBy.returning, when the verifier does not throw an exception (I.E. passes) will pass the test' );
     }
 
     /**
@@ -4785,7 +4785,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'expectedParameterValue', 1 );
         Test.stopTest();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'when.method.verifiedBy.returning, when the verifier does not throw an exception (I.E. passes) will match the return' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'when.method.verifiedBy.returning, when the verifier does not throw an exception (I.E. passes) will match the return' );
     }
 
     /**
@@ -4829,7 +4829,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'expectedParameterValue', 1 );
         Test.stopTest();
 
-        System.assertEquals( expectedReturn, returnFromDouble, 'when.method.verifiedBy.returning, when the verifier throws an exception (I.E. fails) will not match and return the specified value' );
+        Assert.areEqual( expectedReturn, returnFromDouble, 'when.method.verifiedBy.returning, when the verifier throws an exception (I.E. fails) will not match and return the specified value' );
     }
 
     /**
@@ -6094,8 +6094,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble2 = classToDouble.otherMethodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'expectedReturn1', returnFromDouble1, 'expects.method.returning, when multiple methods are defined and each are called in order, will return the stated value for each method (1)' );
-        System.assertEquals( 'expectedReturn2', returnFromDouble2, 'expects.method.returning, when multiple methods are defined and each are called in order, will return the stated value for each method (2)' );
+        Assert.areEqual( 'expectedReturn1', returnFromDouble1, 'expects.method.returning, when multiple methods are defined and each are called in order, will return the stated value for each method (1)' );
+        Assert.areEqual( 'expectedReturn2', returnFromDouble2, 'expects.method.returning, when multiple methods are defined and each are called in order, will return the stated value for each method (2)' );
     }
 
     /**
@@ -6132,9 +6132,9 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromThirdCall  = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (1)' );
-        System.assertEquals( 'secondReturn', returnFromSecondCall, 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (2)' );
-        System.assertEquals( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (3)' );
+        Assert.areEqual( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (1)' );
+        Assert.areEqual( 'secondReturn', returnFromSecondCall, 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (2)' );
+        Assert.areEqual( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (3)' );
     }
 
     /**
@@ -6171,9 +6171,9 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromThirdCall  = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (1)' );
-        System.assertEquals( 'secondReturn', returnFromSecondCall, 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (2)' );
-        System.assertEquals( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (3)' );
+        Assert.areEqual( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (1)' );
+        Assert.areEqual( 'secondReturn', returnFromSecondCall, 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (2)' );
+        Assert.areEqual( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters, will return the values stated, in the order they are called (3)' );
     }
 
     /**
@@ -6208,9 +6208,9 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromThirdCall  = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (1)' );
-        System.assertEquals( 'secondReturn', returnFromSecondCall, 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (2)' );
-        System.assertEquals( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (3)' );
+        Assert.areEqual( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (1)' );
+        Assert.areEqual( 'secondReturn', returnFromSecondCall, 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (2)' );
+        Assert.areEqual( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, using named notation, when method is defined with multiple overlapping parameters with some not specified, will return the values stated, in the order they are called (3)' );
     }
 
     /**
@@ -6246,9 +6246,9 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromThirdCall  = classToDouble.methodUnderDouble( 'ActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (1)' );
-        System.assertEquals( 'secondReturn', returnFromSecondCall, 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (2)' );
-        System.assertEquals( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (3)' );
+        Assert.areEqual( 'firstReturn' , returnFromFirstCall , 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (1)' );
+        Assert.areEqual( 'secondReturn', returnFromSecondCall, 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (2)' );
+        Assert.areEqual( 'thirdReturn' , returnFromThirdCall , 'expects.method.returning, when method is defined with multiple overlapping parameters using the anyParameter methods, will return the values stated, in the order they are called (3)' );
     }
 
     //
@@ -6277,7 +6277,7 @@ public with sharing class AmossTest_InstanceTest {
             Integer returnedMethodCallCount = classToDoubleController.countOf( 'methodUnderDouble' );
         Test.stopTest();
 
-        System.assertEquals( 4, returnedMethodCallCount, 'countOf, when given the details of a method call that happened amongst many - will return the number of calls' );
+        Assert.areEqual( 4, returnedMethodCallCount, 'countOf, when given the details of a method call that happened amongst many - will return the number of calls' );
     }
 
     /**
@@ -6295,7 +6295,7 @@ public with sharing class AmossTest_InstanceTest {
             Integer returnedMethodCallCount = classToDoubleController.countOf( 'methodUnderDouble' );
         Test.stopTest();
 
-        System.assertEquals( 0, returnedMethodCallCount, 'countOf, when given the details of a method call that did not happen - will return zero' );
+        Assert.areEqual( 0, returnedMethodCallCount, 'countOf, when given the details of a method call that did not happen - will return zero' );
     }
 
     /**
@@ -6314,7 +6314,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.call( 0 ).of( 'methodUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call that happened, will return the parameters of that call' );
+        Assert.areEqual( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call that happened, will return the parameters of that call' );
     }
 
     /**
@@ -6333,7 +6333,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.call( 0 ).of( 'methodUnderDoubleWithNoReturn' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call that returns nothing, will return the parameters of that call' );
+        Assert.areEqual( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call that returns nothing, will return the parameters of that call' );
     }
 
     /**
@@ -6359,7 +6359,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.call( 2 ).of( 'methodUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ 'ActualParam3', 3 }, passedParameters, 'call.of.parameters, when given the details of a method call that happened amongst many - index from 0, will return the parameters of that call' );
+        Assert.areEqual( new List<Object>{ 'ActualParam3', 3 }, passedParameters, 'call.of.parameters, when given the details of a method call that happened amongst many - index from 0, will return the parameters of that call' );
     }
 
     /**
@@ -6386,7 +6386,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.call( -1 ).of( 'methodUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ 'ActualParam4', 4 }, passedParameters, 'call.of.parameters, when given the details of a method call with -1 call number, will return the parameters of the last call' );
+        Assert.areEqual( new List<Object>{ 'ActualParam4', 4 }, passedParameters, 'call.of.parameters, when given the details of a method call with -1 call number, will return the parameters of the last call' );
     }
 
     /**
@@ -6413,7 +6413,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.latestCallOf( 'methodUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ 'ActualParam4', 4 }, passedParameters, 'latestCallOf.parameters, when the method has been called, will return the parameters of the last call' );
+        Assert.areEqual( new List<Object>{ 'ActualParam4', 4 }, passedParameters, 'latestCallOf.parameters, when the method has been called, will return the parameters of the last call' );
     }
 
     /**
@@ -6439,7 +6439,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.call( -3 ).of( 'methodUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ 'ActualParam2', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call with a negative call number, will return the parameters of the call that many from the end' );
+        Assert.areEqual( new List<Object>{ 'ActualParam2', 2 }, passedParameters, 'call.of.parameters, when given the details of a method call with a negative call number, will return the parameters of the call that many from the end' );
     }
 
     /**
@@ -6460,7 +6460,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.call( 0 ).of( 'sobjectMethodUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ passedContact }, passedParameters, 'call.of.parameters, when given the details of a method call that happened with an sobject, will return the parameters of that call' );
+        Assert.areEqual( new List<Object>{ passedContact }, passedParameters, 'call.of.parameters, when given the details of a method call that happened with an sobject, will return the parameters of that call' );
     }
 
     /**
@@ -6479,7 +6479,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.call( 0 ).of( 'methodWithNoParametersUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>(), passedParameters, 'call.of.parameters, when given the details of a method call that happened without any parameters, will return an empty list' );
+        Assert.areEqual( new List<Object>(), passedParameters, 'call.of.parameters, when given the details of a method call that happened without any parameters, will return an empty list' );
     }
 
     /**
@@ -6509,7 +6509,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameters, when given the details of a call number that did not happen, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameters, when given the details of a call number that did not happen, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was not called 2 times', exceptionMessage, 'call.of.parameters, when given the details of a call number that did not happen, will throw an exception with a useful message' );
     }
 
@@ -6541,7 +6541,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameters, when given the details of a negative call number that did not happen, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameters, when given the details of a negative call number that did not happen, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was not called 2 times', exceptionMessage, 'call.of.parameters, when given the details of a negative mcall number that did not happen, will throw an exception with a useful message' );
     }
 
@@ -6570,7 +6570,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameters, when given the details of a method that was never called, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameters, when given the details of a method that was never called, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was never called', exceptionMessage, 'call.of.parameters, when given the details of method that was never called, will throw an exception with a useful message' );
     }
 
@@ -6599,7 +6599,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parametersByName, when given the details of a method that was never called, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parametersByName, when given the details of a method that was never called, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was never called', exceptionMessage, 'call.of.parametersByName, when given the details of method that was never called, will throw an exception with a useful message' );
     }
 
@@ -6619,7 +6619,7 @@ public with sharing class AmossTest_InstanceTest {
             Object passedParameter = classToDoubleController.call( 0 ).of( 'methodUnderDouble' ).parameter( 0 );
         Test.stopTest();
 
-        System.assertEquals( 'ActualParam', passedParameter, 'call.of.parameter, when given the details of a method call that happened, will return the stated parameter of that call' );
+        Assert.areEqual( 'ActualParam', passedParameter, 'call.of.parameter, when given the details of a method call that happened, will return the stated parameter of that call' );
     }
 
     /**
@@ -6638,7 +6638,7 @@ public with sharing class AmossTest_InstanceTest {
             Object passedParameter = classToDoubleController.call( 0 ).of( 'methodUnderDouble' ).parameter( 'parameter1' );
         Test.stopTest();
 
-        System.assertEquals( 'ActualParam', passedParameter, 'call.of.parameter (String), when given the details of a method call that happened, will return the stated parameter of that call' );
+        Assert.areEqual( 'ActualParam', passedParameter, 'call.of.parameter (String), when given the details of a method call that happened, will return the stated parameter of that call' );
     }
 
     /**
@@ -6664,7 +6664,7 @@ public with sharing class AmossTest_InstanceTest {
             Object passedParameter = classToDoubleController.call( 2 ).of( 'methodUnderDouble' ).parameter( 1 );
         Test.stopTest();
 
-        System.assertEquals( 3, passedParameter, 'call.of.parameter, when given the details of a method call that happened amongst many - index from 0, will return the stated parameter of that call' );
+        Assert.areEqual( 3, passedParameter, 'call.of.parameter, when given the details of a method call that happened amongst many - index from 0, will return the stated parameter of that call' );
     }
 
     /**
@@ -6690,7 +6690,7 @@ public with sharing class AmossTest_InstanceTest {
             Object passedParameter = classToDoubleController.call( 2 ).of( 'methodUnderDouble' ).parameter( 'parameter2' );
         Test.stopTest();
 
-        System.assertEquals( 3, passedParameter, 'call.of.parameter (String), when given the details of a method call that happened amongst many - index from 0, will return the stated parameter of that call' );
+        Assert.areEqual( 3, passedParameter, 'call.of.parameter (String), when given the details of a method call that happened amongst many - index from 0, will return the stated parameter of that call' );
     }
 
     /**
@@ -6720,7 +6720,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter, when given the details of a call number that did not happen, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter, when given the details of a call number that did not happen, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was not called 2 times', exceptionMessage, 'call.of.parameter, when given the details of a call number that did not happen, will throw an exception with a useful message' );
     }
 
@@ -6751,7 +6751,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter (String), when given the details of a call number that did not happen, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter (String), when given the details of a call number that did not happen, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was not called 2 times', exceptionMessage, 'call.of.parameter (String), when given the details of a call number that did not happen, will throw an exception with a useful message' );
     }
 
@@ -6780,7 +6780,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter, when given the details of a method that was never called, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter, when given the details of a method that was never called, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was never called', exceptionMessage, 'call.of.parameter, when given the details of method that was never called, will throw an exception with a useful message' );
     }
 
@@ -6809,7 +6809,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter (String), when given the details of a method that was never called, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter (String), when given the details of a method that was never called, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was never called', exceptionMessage, 'call.of.parameter (String), when given the details of method that was never called, will throw an exception with a useful message' );
     }
 
@@ -6840,7 +6840,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter, when given a parameter number that is out of range, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter, when given a parameter number that is out of range, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was not called with 3 parameters', exceptionMessage, 'call.of.parameter, when given a parameter number that is out of range, will throw an exception with a useful message' );
     }
 
@@ -6871,7 +6871,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter, when given a parameter number that is negative, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter, when given a parameter number that is negative, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot request a negative parameter number (got -1)', exceptionMessage, 'call.of.parameter, when given a parameter number that is negative, will throw an exception with a useful message' );
     }
 
@@ -6902,7 +6902,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter (String), when given a parameter name that does not exist, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter (String), when given a parameter name that does not exist, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodUnderDouble was not called with parameter "doesNotExist"', exceptionMessage, 'call.of.parameter (String), when given a parameter name that does not exist, will throw an exception with a useful message' );
     }
 
@@ -6933,7 +6933,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodWithNoParametersUnderDouble was not called with any parameters', exceptionMessage, 'call.of.parameter, when given a parameter number for a method that has no parameters, will throw an exception with a useful message' );
     }
 
@@ -6964,7 +6964,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assert( exceptionThrown, 'call.of.parameter (String), when given a parameter name for a method that has no parameters, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'call.of.parameter (String), when given a parameter name for a method that has no parameters, will throw an exception' );
         Amoss_Asserts.assertContains( 'methodWithNoParametersUnderDouble was not called with any parameters', exceptionMessage, 'call.of.parameter (String), when given a parameter name for a method that has no parameters, will throw an exception with a useful message' );
     }
 
@@ -6984,7 +6984,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.get().call( 0 ).of( 'methodUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'get.call.of.parameters, when given the details of a method call that happened, will return the parameters of that call' );
+        Assert.areEqual( new List<Object>{ 'ActualParam', 2 }, passedParameters, 'get.call.of.parameters, when given the details of a method call that happened, will return the parameters of that call' );
     }
 
     /**
@@ -7003,7 +7003,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.get().call( 0 ).of( 'methodWithNoParametersUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>(), passedParameters, 'get.call.of.parameters, when given the details of a method call with no parameters that happened, will return an empty list of parameters' );
+        Assert.areEqual( new List<Object>(), passedParameters, 'get.call.of.parameters, when given the details of a method call with no parameters that happened, will return an empty list of parameters' );
     }
 
     /**
@@ -7027,7 +7027,7 @@ public with sharing class AmossTest_InstanceTest {
             'parameter2' => 2
         };
 
-        System.assertEquals( expectedParameters, passedParameters, 'get.call.of.parametersByName, when given the details of a method call that happened, will return the parameters of that call indexed by name' );
+        Assert.areEqual( expectedParameters, passedParameters, 'get.call.of.parametersByName, when given the details of a method call that happened, will return the parameters of that call indexed by name' );
     }
 
     /**
@@ -7046,7 +7046,7 @@ public with sharing class AmossTest_InstanceTest {
             Map<String,Object> passedParameters = classToDoubleController.get().call( 0 ).of( 'methodWithNoParametersUnderDouble' ).parametersByName();
         Test.stopTest();
 
-        System.assertEquals( new Map<String,Object>(), passedParameters, 'get.call.of.parameters, when given the details of a method call with no parameters that happened, will return an empty map of parameters' );
+        Assert.areEqual( new Map<String,Object>(), passedParameters, 'get.call.of.parameters, when given the details of a method call with no parameters that happened, will return an empty map of parameters' );
     }
 
     /**
@@ -7067,7 +7067,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> passedParameters = classToDoubleController.get().latestCallOf( 'methodUnderDouble' ).parameters();
         Test.stopTest();
 
-        System.assertEquals( new List<Object>{ 'ActualParam3', 4 }, passedParameters, 'get.latestCallOf.parameters, when given the details of a method call that happened, will return the parameters of that call' );
+        Assert.areEqual( new List<Object>{ 'ActualParam3', 4 }, passedParameters, 'get.latestCallOf.parameters, when given the details of a method call that happened, will return the parameters of that call' );
     }
 
     /**
@@ -7088,7 +7088,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> parameterReturned = (List<Object>)classToDoubleController.call( 0 ).of( 'methodWithListOfObjects' ).parameter( 0 );
         Test.stopTest();
 
-        System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a list of objects, will return the parameter' );
+        Assert.areEqual( parameterPassed, parameterReturned, 'parameters, when a parameter is a list of objects, will return the parameter' );
     }
 
     /**
@@ -7109,7 +7109,7 @@ public with sharing class AmossTest_InstanceTest {
             List<Object> parameterReturned = (List<Object>)classToDoubleController.call( 0 ).of( 'methodWithListOfObjects' ).parameter( 'parameter1' );
         Test.stopTest();
 
-        System.assertEquals( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a list of objects, will return the parameter' );
+        Assert.areEqual( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a list of objects, will return the parameter' );
     }
 
     /**
@@ -7130,7 +7130,7 @@ public with sharing class AmossTest_InstanceTest {
             Set<Object> parameterReturned = (Set<Object>)classToDoubleController.call( 0 ).of( 'methodWithSetOfObjects' ).parameter( 0 );
         Test.stopTest();
 
-        System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a set of objects, will return the parameter' );
+        Assert.areEqual( parameterPassed, parameterReturned, 'parameters, when a parameter is a set of objects, will return the parameter' );
     }
 
     /**
@@ -7151,7 +7151,7 @@ public with sharing class AmossTest_InstanceTest {
             Set<Object> parameterReturned = (Set<Object>)classToDoubleController.call( 0 ).of( 'methodWithSetOfObjects' ).parameter( 'parameter1' );
         Test.stopTest();
 
-        System.assertEquals( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a set of objects, will return the parameter' );
+        Assert.areEqual( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a set of objects, will return the parameter' );
     }
 
     /**
@@ -7172,7 +7172,7 @@ public with sharing class AmossTest_InstanceTest {
             Map<String,Object> parameterReturned = (Map<String,Object>)classToDoubleController.call( 0 ).of( 'methodWithMapStringToObject' ).parameter( 0 );
         Test.stopTest();
 
-        System.assertEquals( parameterPassed, parameterReturned, 'parameters, when a parameter is a map of objects, will return the parameter' );
+        Assert.areEqual( parameterPassed, parameterReturned, 'parameters, when a parameter is a map of objects, will return the parameter' );
     }
 
     /**
@@ -7193,7 +7193,7 @@ public with sharing class AmossTest_InstanceTest {
             Map<String,Object> parameterReturned = (Map<String,Object>)classToDoubleController.call( 0 ).of( 'methodWithMapStringToObject' ).parameter( 'parameter1' );
         Test.stopTest();
 
-        System.assertEquals( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a map of objects, will return the parameter' );
+        Assert.areEqual( parameterPassed, parameterReturned, 'parameter (String), when a parameter is a map of objects, will return the parameter' );
     }
 
     //
@@ -7218,7 +7218,7 @@ public with sharing class AmossTest_InstanceTest {
             classToDouble.methodUnderDoubleWithNoReturn( 'this', 1 );
         Test.stopTest();
 
-        System.assertEquals( 1, classToDoubleController.countOf( 'methodUnderDoubleWithNoReturn' ), 'expects.method, when the method is called once, will not fail - and the call count will be 1' );
+        Assert.areEqual( 1, classToDoubleController.countOf( 'methodUnderDoubleWithNoReturn' ), 'expects.method, when the method is called once, will not fail - and the call count will be 1' );
     }
 
     /**
@@ -7249,7 +7249,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDoubleWithNoReturn was called more times than was expected';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when the method is called more times than expected, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when the method is called more times than expected, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when the method is called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -7272,7 +7272,7 @@ public with sharing class AmossTest_InstanceTest {
             // we do nothing, because we're testing what happens when the method is not called
         Test.stopTest();
 
-        System.assertEquals( 0, classToDoubleController.countOf( 'methodUnderDoubleWithNoReturn' ), 'expects.method, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
+        Assert.areEqual( 0, classToDoubleController.countOf( 'methodUnderDoubleWithNoReturn' ), 'expects.method, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
     }
 
     /**
@@ -7303,9 +7303,9 @@ public with sharing class AmossTest_InstanceTest {
 
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()                                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ 'methodUnderDoubleWithNoReturn( any )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ 'methodUnderDoubleWithNoReturn( any )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7341,9 +7341,9 @@ public with sharing class AmossTest_InstanceTest {
         List<String> expectedMethodDescriptions = new List<String>{ 'methodUnderDoubleWithNoReturn( any )', 'methodUnderDouble( any )', 'methodUnderDouble( any )' };
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( expectedMethodDescriptions, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( expectedMethodDescriptions, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method multiple time, when the methods are not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7376,9 +7376,9 @@ public with sharing class AmossTest_InstanceTest {
 
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()                                       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ 'methodUnderDouble( ParamValue1, 2 )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                                       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ 'methodUnderDouble( ParamValue1, 2 )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7411,9 +7411,9 @@ public with sharing class AmossTest_InstanceTest {
 
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()                                               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ 'methodUnderDouble( ParamValue1, Any value )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                                                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                                               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ 'methodUnderDouble( ParamValue1, Any value )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                                                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and an any parameter is defined, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7445,9 +7445,9 @@ public with sharing class AmossTest_InstanceTest {
 
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()                                              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ 'methodUnderDouble( expectedParameterValue )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                                               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                                              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ 'methodUnderDouble( expectedParameterValue )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                                               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7481,9 +7481,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCall      = 'methodUnderDouble( AmossTest_ClassToDouble:[], AmossTest_ClassToDouble:[] )';
 
-        System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7516,9 +7516,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( SObject with at least the same fields set as {Field=expectedValue} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7551,9 +7551,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( SObject with fields set like Contact:{FirstName=expectedName} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7586,9 +7586,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( All => SObject with fields set like Contact:{FirstName=expectedName} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7621,9 +7621,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( At least one => SObject with fields set like Contact:{FirstName=expectedName} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7656,9 +7656,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( 1 => SObject with fields set like Contact:{FirstName=expectedName} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7692,9 +7692,9 @@ public with sharing class AmossTest_InstanceTest {
         List<String> expectedCallDescriptions = new List<String>{ 'methodUnderDouble( parameter1 => ParamValue1, parameter2 => 2 )' };
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()      , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( expectedCallDescriptions, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()      , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( expectedCallDescriptions, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7727,9 +7727,9 @@ public with sharing class AmossTest_InstanceTest {
         List<String> expectedCallDescriptions = new List<String>{ 'methodWithSetOfObjects( Same instance as {Contact:{LastName=expectedName}} )' };
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()      , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setTo (Set), when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( expectedCallDescriptions, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.setTo (Set), when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.setTo (Set), when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()      , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setTo (Set), when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( expectedCallDescriptions, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.setTo (Set), when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.setTo (Set), when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7762,9 +7762,9 @@ public with sharing class AmossTest_InstanceTest {
         List<String> expectedCallDescriptions = new List<String>{ 'methodWithListOfObjects( Same instance as (Contact:{LastName=expectedName}) )' };
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()      , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setTo (List), when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( expectedCallDescriptions, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.setTo (List), when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.setTo (List), when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()      , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.setTo (List), when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( expectedCallDescriptions, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.setTo (List), when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion       , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.setTo (List), when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7797,9 +7797,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( parameter1 => expectedParameterValue )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.setToTheSameValueAs, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7833,9 +7833,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( parameter1 => AmossTest_ClassToDouble:[], parameter2 => AmossTest_ClassToDouble:[] )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.setToTheSameValueAs, with an object, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7869,9 +7869,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( parameter1 => SObject with at least the same fields set as {Field=expectedValue}, parameter2 => SObject with at least the same fields set as {Field2=expectedValue2} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withFieldsSetTo, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7904,9 +7904,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( parameter1 => SObject with fields set like Contact:{FirstName=expectedName} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withFieldsSetLike, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7939,9 +7939,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( parameter1 => All => SObject with fields set like Contact:{FirstName=expectedName} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withAllElements, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -7987,9 +7987,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( Should match all of [ At least one => anyElementSetTo1, At least one => anyElementSetTo2, All => SObject with fields set like Contact:{FirstName=allSet}, All => SObject with at least the same fields set as {LastName=allSet}, 0 => setToValue, 1 => VerifiedBy ] )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -8035,9 +8035,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( parameter1 => Should match all of [ At least one => anyElementSetTo1, At least one => anyElementSetTo2, All => SObject with fields set like Contact:{FirstName=allSet}, All => SObject with at least the same fields set as {LastName=allSet}, 0 => setToValue, 1 => VerifiedBy ] )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameter.withAllElements.withAnyElement.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -8070,9 +8070,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( parameter1 => At least one => SObject with fields set like Contact:{FirstName=expectedName} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withAnyElement, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -8105,9 +8105,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCallStackEntry = 'methodUnderDouble( parameter1 => 1 => SObject with fields set like Contact:{FirstName=expectedName} )';
 
-        System.assertEquals( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                        , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCallStackEntry }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                         , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.withElementAt, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     //HERE
@@ -8132,7 +8132,7 @@ public with sharing class AmossTest_InstanceTest {
             String actualReturn = classToDouble.methodUnderDouble( 'this', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'TheReturn', actualReturn, 'expects.method, when the method is called, will not fail, and will return the stated result' );
+        Assert.areEqual( 'TheReturn', actualReturn, 'expects.method, when the method is called, will not fail, and will return the stated result' );
     }
 
     /**
@@ -8164,7 +8164,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -8188,7 +8188,7 @@ public with sharing class AmossTest_InstanceTest {
             // we do nothing, because we're testing what happens when the method is not called
         Test.stopTest();
 
-        System.assertEquals( 0, classToDoubleController.countOf( 'methodUnderDouble' ), 'expects.method.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
+        Assert.areEqual( 0, classToDoubleController.countOf( 'methodUnderDouble' ), 'expects.method.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
     }
 
     /**
@@ -8221,9 +8221,9 @@ public with sharing class AmossTest_InstanceTest {
 
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()                            , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ 'methodUnderDouble( any )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                             , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                            , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ 'methodUnderDouble( any )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                             , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -8247,7 +8247,7 @@ public with sharing class AmossTest_InstanceTest {
             String actualReturn = classToDouble.methodUnderDouble( 'this', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'TheReturn', actualReturn, 'expects.method.withAnyParameters.returning, when the method is called, will not fail, and will return the stated result' );
+        Assert.areEqual( 'TheReturn', actualReturn, 'expects.method.withAnyParameters.returning, when the method is called, will not fail, and will return the stated result' );
     }
 
     /**
@@ -8280,7 +8280,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called more times than expected, will fail by calling assert with false' );
+        Assert.areEqual( false            , assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called more times than expected, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -8305,7 +8305,7 @@ public with sharing class AmossTest_InstanceTest {
             // we do nothing, because we're testing what happens when the method is not called
         Test.stopTest();
 
-        System.assertEquals( 0, classToDoubleController.countOf( 'methodUnderDouble' ), 'expects.method.withAnyParameters.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
+        Assert.areEqual( 0, classToDoubleController.countOf( 'methodUnderDouble' ), 'expects.method.withAnyParameters.returning, when the method is not called, and neither is verify, will not fail - and the call count will be zero' );
     }
 
     /**
@@ -8339,9 +8339,9 @@ public with sharing class AmossTest_InstanceTest {
 
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
 
-        System.assertEquals( new List<String>()                            , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ 'methodUnderDouble( any )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
-        System.assertEquals( expectedAssertion                             , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()                            , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ 'methodUnderDouble( any )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that describes the outstanding method calls' );
+        Assert.areEqual( expectedAssertion                             , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withAnyParameters.returning, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -8387,9 +8387,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCall      = 'methodUnderDouble( The custom description for parameter 1, The custom description for parameter 2 )';
 
-        System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that contains the return from the custom verifier toString method' );
-        System.assertEquals( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that contains the return from the custom verifier toString method' );
+        Assert.areEqual( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -8435,9 +8435,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCall      = 'methodUnderDouble( parameter1 => The custom description for parameter 1, parameter2 => The custom description for parameter 2 )';
 
-        System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that contains the return from the custom verifier toString method' );
-        System.assertEquals( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with a call stack description that contains the return from the custom verifier toString method' );
+        Assert.areEqual( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.verifiedBy.returning.verify, when the method is not called, and verify is, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
 
@@ -8471,9 +8471,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected call stack for ' + CLASS_TO_DOUBLE + ' should be empty, and it is not';
         String expectedCall      = 'methodUnderDouble( parameter1 => ERROR: No specification of the parameter shape was made (e.g. setTo) )';
 
-        System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.noVerifier.verify, when verify is called, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.noVerifier.verify, when verify is called, will fail by calling assertEquals with a call stack description that contains a message stating the verifier was not set up' );
-        System.assertEquals( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.noVerifier.verify, when verify is called, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method.withParameterNamed.noVerifier.verify, when verify is called, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method.withParameterNamed.noVerifier.verify, when verify is called, will fail by calling assertEquals with a call stack description that contains a message stating the verifier was not set up' );
+        Assert.areEqual( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'expects.method.withParameterNamed.noVerifier.verify, when verify is called, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -8498,7 +8498,7 @@ public with sharing class AmossTest_InstanceTest {
             String actualReturn = classToDouble.methodUnderDouble( 'this', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'TheReturn', actualReturn, 'expects.method.withParameter.thenParameter.returning, when the method is called with matching parameters, will not fail, and will return the stated result' );
+        Assert.areEqual( 'TheReturn', actualReturn, 'expects.method.withParameter.thenParameter.returning, when the method is called with matching parameters, will not fail, and will return the stated result' );
     }
 
     /**
@@ -8561,7 +8561,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allowsAnyCall, when given false, no methods are defined and a method is called, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allowsAnyCall, when given false, no methods are defined and a method is called, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allowsAnyCall, when given false, no methods are defined and a method is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -8582,7 +8582,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
-        System.assertEquals( null, returnFromDouble, 'when given true, when no methods are defined, and a method is called, will return null' );
+        Assert.areEqual( null, returnFromDouble, 'when given true, when no methods are defined, and a method is called, will return null' );
     }
 
     /**
@@ -8613,8 +8613,8 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
@@ -8647,7 +8647,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times than expected, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times than expected, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times than expected, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -8679,8 +8679,8 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and a method that is not expected is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and a method that is not expected is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and a method that is not expected is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and a method that is not expected is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
@@ -8711,8 +8711,8 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall, and a method that is not expected is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall, and a method that is not expected is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall, and a method that is not expected is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall, and a method that is not expected is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
@@ -8745,7 +8745,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.otherMethodUnderDouble was called more times than was expected';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -8779,8 +8779,8 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, with different parameters, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method is called too many times, with different parameters, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
@@ -8815,7 +8815,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDouble was called more times than was expected';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times with different parameters, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times with different parameters, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'expects.method, when allowsAnyCall is called with false, and the method is called more times with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -8852,8 +8852,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( new List<String>()                                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>{ 'methodUnderDouble( this, 1 )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with a non empty actual remaining call stack - and fail the test' );
+        Assert.areEqual( new List<String>()                                , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'expects.method, when allowsAnyCall is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        Assert.areEqual( new List<String>{ 'methodUnderDouble( this, 1 )' }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'expects.method, when allowsAnyCall is true, and the expected method only once, with different parameters, and verify is called, will call assertEquals with a non empty actual remaining call stack - and fail the test' );
     }
 
     /**
@@ -8915,8 +8915,8 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'when.method, when allowsAnyCall is true, and a method that is not set up as a when is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'when.method, when allowsAnyCall is true, and a method that is not set up as a when is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'when.method, when allowsAnyCall is true, and a method that is not set up as a when is called, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'when.method, when allowsAnyCall is true, and a method that is not set up as a when is called, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
@@ -8947,7 +8947,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowsAnyCall is called with false, and a method that is not expected is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -8980,8 +8980,8 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController.verify();
 
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'when.method, when allowsAnyCall is true, and the when method is called with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
-        System.assertEquals( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'when.method, when allowsAnyCall is true, and the when method is called with different parameters, and verify is called, will call assertEquals with an empty actual remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'when.method, when allowsAnyCall is true, and the when method is called with different parameters, and verify is called, will call assertEquals with an empty expected remaining call stack' );
+        Assert.areEqual( new List<String>(), assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'when.method, when allowsAnyCall is true, and the when method is called with different parameters, and verify is called, will call assertEquals with an empty actual remaining call stack' );
     }
 
     /**
@@ -9014,7 +9014,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'when.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'when.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -9043,8 +9043,8 @@ public with sharing class AmossTest_InstanceTest {
             classToDouble.otherMethodUnderDouble( 'this', 1 );
         Test.stopTest();
 
-        System.assertEquals( 0, assertsDoubleController.countOf( 'assert'       ), 'allows.method, when allowsAnyCall is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert called)' );
-        System.assertEquals( 0, assertsDoubleController.countOf( 'assertEquals' ), 'allows.method, when allowsAnyCall is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert equals called)' );
+        Assert.areEqual( 0, assertsDoubleController.countOf( 'assert'       ), 'allows.method, when allowsAnyCall is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert called)' );
+        Assert.areEqual( 0, assertsDoubleController.countOf( 'assertEquals' ), 'allows.method, when allowsAnyCall is true, and a method that is not explicitly allowed is called, will not fail the tests (no assert equals called)' );
     }
 
     /**
@@ -9075,7 +9075,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.otherMethodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowsAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowsAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowsAnyCall is called with false, and a method that is not explictly allowed is called, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -9106,8 +9106,8 @@ public with sharing class AmossTest_InstanceTest {
             classToDouble.methodUnderDouble( 'that', 1 );
         Test.stopTest();
 
-        System.assertEquals( 0, assertsDoubleController.countOf( 'assert'       ), 'allows.method, when allowsAnyCall is true, and the allowed method is called with different parameters, will not fail the test (no assert called)' );
-        System.assertEquals( 0, assertsDoubleController.countOf( 'assertEquals' ), 'allows.method, when allowsAnyCall is true, and the allowed method is called with different parameters, will not fail the test (no assert equals called)' );
+        Assert.areEqual( 0, assertsDoubleController.countOf( 'assert'       ), 'allows.method, when allowsAnyCall is true, and the allowed method is called with different parameters, will not fail the test (no assert called)' );
+        Assert.areEqual( 0, assertsDoubleController.countOf( 'assertEquals' ), 'allows.method, when allowsAnyCall is true, and the allowed method is called with different parameters, will not fail the test (no assert equals called)' );
     }
 
     /**
@@ -9140,7 +9140,7 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         String expectedAssertion = CLASS_TO_DOUBLE + '.methodUnderDouble was called more times than was expected, and no matching "when" or "allows" exists';
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allows.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with false' );
         Amoss_Asserts.assertContains( expectedAssertion, (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'allows.method, when allowsAnyCall is called with false, and the method is called with different parameters, will fail by calling assert with an assertion message that clearly describes the issue' );
     }
 
@@ -9168,7 +9168,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'expectsNoCalls, when already configured with an expects, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'expectsNoCalls, when already configured with an expects, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot state the double expectsNoCalls when expectations or whens have been defined', exceptionMessage, 'expectsNoCalls, when already configured with an expects, will throw an exception with a useful message' );
     }
 
@@ -9196,7 +9196,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'expectsNoCalls, when already configured with an allows, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'expectsNoCalls, when already configured with an allows, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot state the double expectsNoCalls when expectations or whens have been defined', exceptionMessage, 'expectsNoCalls, when already configured with an allows, will throw an exception with a useful message' );
     }
 
@@ -9224,7 +9224,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'expectsNoCalls, when already configured with a when, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'expectsNoCalls, when already configured with a when, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot state the double expectsNoCalls when expectations or whens have been defined', exceptionMessage, 'expectsNoCalls, when already configured with a when, will throw an exception with a useful message' );
     }
 
@@ -9250,7 +9250,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'expectsNoCalls, when already configured with allows any call, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'expectsNoCalls, when already configured with allows any call, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot state the double expectsNoCalls when allowsAnyCall has been set to true', exceptionMessage, 'expectsNoCalls, when already configured with allows any call, will throw an exception with a useful message' );
     }
 
@@ -9278,7 +9278,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'expects, when already configured as expectsNoCalls, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'expects, when already configured as expectsNoCalls, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot state the double expects a call when it has been stated that it expectsNoCalls', exceptionMessage, 'expects, when already configured as expectsNoCalls, will throw an exception with a useful message' );
     }
 
@@ -9306,7 +9306,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'allows, when already configured as expectsNoCalls, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'allows, when already configured as expectsNoCalls, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot state the double allows a call when it has been stated that it expectsNoCalls', exceptionMessage, 'allows, when already configured as expectsNoCalls, will throw an exception with a useful message' );
     }
 
@@ -9334,7 +9334,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'when, when already configured as expectsNoCalls, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'when, when already configured as expectsNoCalls, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot state the when on a double when it has been stated that it expectsNoCalls', exceptionMessage, 'when, when already configured as expectsNoCalls, will throw an exception with a useful message' );
     }
 
@@ -9362,7 +9362,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'allowsAnyCall, when already configured as expectsNoCalls, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'allowsAnyCall, when already configured as expectsNoCalls, will throw an exception' );
         Amoss_Asserts.assertContains( 'Cannot state the double allowsAnyCall when it has been stated that it expectsNoCalls', exceptionMessage, 'allowsAnyCall, when already configured as expectsNoCalls, will throw an exception with a useful message' );
     }
 
@@ -9384,7 +9384,7 @@ public with sharing class AmossTest_InstanceTest {
             AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
         Test.stopTest();
 
-        System.assertEquals( classToDouble1, classToDouble2, 'getDouble, when called multiple times, will return the same instance' );
+        Assert.areEqual( classToDouble1, classToDouble2, 'getDouble, when called multiple times, will return the same instance' );
     }
 
     /**
@@ -9401,7 +9401,7 @@ public with sharing class AmossTest_InstanceTest {
             AmossTest_ClassToDouble classToDouble2 = (AmossTest_ClassToDouble)classToDoubleController.generateDouble();
         Test.stopTest();
 
-        System.assertNotEquals( classToDouble1, classToDouble2, 'generateDouble, will return a different instance to getDouble' );
+        Assert.areNotEqual( classToDouble1, classToDouble2, 'generateDouble, will return a different instance to getDouble' );
     }
 
     /**
@@ -9424,9 +9424,9 @@ public with sharing class AmossTest_InstanceTest {
             AmossTest_ClassToDouble returnFromDouble2 = classToDouble2.fluentMethod();
         Test.stopTest();
 
-        System.assertEquals( classToDouble1, returnFromDouble1, 'generateDouble, against an isFluent double, will return a double that responds to method calls as per the original - the original will still behave as per normal' );
-        System.assertEquals( classToDouble2, returnFromDouble2, 'generateDouble, against an isFluent double, will return a double that responds to method calls as per the original' );
-        System.assertNotEquals( returnFromDouble1, returnFromDouble2, 'generateDouble, against an isFluent double, will return a double that responds to method calls with a different instance to the orignal one' );
+        Assert.areEqual( classToDouble1, returnFromDouble1, 'generateDouble, against an isFluent double, will return a double that responds to method calls as per the original - the original will still behave as per normal' );
+        Assert.areEqual( classToDouble2, returnFromDouble2, 'generateDouble, against an isFluent double, will return a double that responds to method calls as per the original' );
+        Assert.areNotEqual( returnFromDouble1, returnFromDouble2, 'generateDouble, against an isFluent double, will return a double that responds to method calls with a different instance to the orignal one' );
     }
 
     /**
@@ -9448,7 +9448,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
         Test.stopTest();
 
-        System.assertEquals( 'specifiedValue', returnFromDouble, 'when.returns.generateDouble, when the method is called, will return the stated value' );
+        Assert.areEqual( 'specifiedValue', returnFromDouble, 'when.returns.generateDouble, when the method is called, will return the stated value' );
     }
 
     /**
@@ -9469,7 +9469,7 @@ public with sharing class AmossTest_InstanceTest {
             classToDouble2.methodUnderDouble( '1', 2 );
         Test.stopTest();
 
-        System.assertEquals( 2, classToDoubleController.countOf( 'methodUnderDouble' ), 'getDouble.generateDouble.countOf, when the methods are called on the different instances,  will consolidate the calls into the one controller' );
+        Assert.areEqual( 2, classToDoubleController.countOf( 'methodUnderDouble' ), 'getDouble.generateDouble.countOf, when the methods are called on the different instances,  will consolidate the calls into the one controller' );
     }
 
     /**
@@ -9519,11 +9519,11 @@ public with sharing class AmossTest_InstanceTest {
             classToDouble2.methodUnderDouble( '1', 12 );
         Test.stopTest();
 
-        System.assertEquals( 3, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the call count on the original' );
-        System.assertEquals( 2, classToDoubleController2.countOf( 'methodUnderDouble' ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the call count on the new controller' );
+        Assert.areEqual( 3, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the call count on the original' );
+        Assert.areEqual( 2, classToDoubleController2.countOf( 'methodUnderDouble' ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the call count on the new controller' );
 
-        System.assertEquals(  1, classToDoubleController1.get().call(0).of( 'methodUnderDouble' ).parameter( 1 ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the parameter log on the original' );
-        System.assertEquals( 12, classToDoubleController2.get().call(1).of( 'methodUnderDouble' ).parameter( 1 ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the parameter log on the new controller' );
+        Assert.areEqual(  1, classToDoubleController1.get().call(0).of( 'methodUnderDouble' ).parameter( 1 ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the parameter log on the original' );
+        Assert.areEqual( 12, classToDoubleController2.get().call(1).of( 'methodUnderDouble' ).parameter( 1 ), 'createClone.when.countOf, when the methods are called on the different instances, will split the calls between the appropriate controllers - including the parameter log on the new controller' );
     }
 
     /**
@@ -9570,7 +9570,7 @@ public with sharing class AmossTest_InstanceTest {
             classToDouble1.methodUnderDouble( '1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 1, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone, when when additional config is added to the new, will not affect the original' );
+        Assert.areEqual( 1, classToDoubleController1.countOf( 'methodUnderDouble' ), 'createClone, when when additional config is added to the new, will not affect the original' );
     }
 
     /**
@@ -9599,8 +9599,8 @@ public with sharing class AmossTest_InstanceTest {
             String returnFrom2 = classToDouble2.methodUnderDouble( '1', 1 );
         Test.stopTest();
 
-        System.assertEquals( 'ReturnFrom1', returnFrom1, 'createClone, when when additional config is added to the new, will not affect the original' );
-        System.assertEquals( 'ReturnFrom2', returnFrom2, 'createClone, when when additional config is added to the original, will not affect the new' );
+        Assert.areEqual( 'ReturnFrom1', returnFrom1, 'createClone, when when additional config is added to the new, will not affect the original' );
+        Assert.areEqual( 'ReturnFrom2', returnFrom2, 'createClone, when when additional config is added to the original, will not affect the new' );
     }
 
     /**
@@ -9623,7 +9623,7 @@ public with sharing class AmossTest_InstanceTest {
             String returnFromDouble = classToDouble.methodUnderDouble( '1', 2 );
         Test.stopTest();
 
-        System.assertEquals( 'specifiedValue', returnFromDouble, 'isFluent.when.returns.generateDouble, when the method is called, will return the stated value' );
+        Assert.areEqual( 'specifiedValue', returnFromDouble, 'isFluent.when.returns.generateDouble, when the method is called, will return the stated value' );
     }
 
     //
@@ -9650,7 +9650,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'getDouble, when given an Sobject to create a test double for, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'getDouble, when given an Sobject to create a test double for, will throw an exception' );
     }
 
     /**
@@ -9674,7 +9674,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'getDouble, when given an inner class to create a test double for, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'getDouble, when given an inner class to create a test double for, will throw an exception' );
     }
 
     /**
@@ -9697,7 +9697,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'getDouble, when given an system type to create a test double for, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'getDouble, when given an system type to create a test double for, will throw an exception' );
     }
 
     /**
@@ -9720,7 +9720,7 @@ public with sharing class AmossTest_InstanceTest {
             exceptionMessage = e.getMessage();
         }
 
-        System.assert( exceptionThrown, 'getDouble, when given a class with no public constructor to create a test double for, will throw an exception' );
+        Assert.isTrue( exceptionThrown, 'getDouble, when given a class with no public constructor to create a test double for, will throw an exception' );
     }
 
     //
@@ -9743,7 +9743,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assert( true, 'isACalloutMock will generate an HttpCalloutMock and register it, meaning HTTP requests can be made in the test without exceptions' );
+        Assert.isTrue( true, 'isACalloutMock will generate an HttpCalloutMock and register it, meaning HTTP requests can be made in the test without exceptions' );
     }
 
     /**
@@ -9764,7 +9764,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.respondsWith.statusCode, will set the status code that is returned on the generated HttpResponse' );
+        Assert.areEqual( 404, response.getStatusCode(), 'isACalloutMock.respondsWith.statusCode, will set the status code that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9785,7 +9785,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'Complete', response.getStatus(), 'isACalloutMock.respondsWith.status, will set the status that is returned on the generated HttpResponse' );
+        Assert.areEqual( 'Complete', response.getStatus(), 'isACalloutMock.respondsWith.status, will set the status that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9806,7 +9806,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.respondsWith.body( String ), will set the body that is returned on the generated HttpResponse' );
+        Assert.areEqual( 'The body', response.getBody(), 'isACalloutMock.respondsWith.body( String ), will set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9827,7 +9827,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( '{"parameter":"value"}', response.getBody(), 'isACalloutMock.respondsWith.body( Object ), will serialise the object and set the body that is returned on the generated HttpResponse' );
+        Assert.areEqual( '{"parameter":"value"}', response.getBody(), 'isACalloutMock.respondsWith.body( Object ), will serialise the object and set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9848,7 +9848,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.respondsWith.body( Blob ), will set the body that is returned on the generated HttpResponse' );
+        Assert.areEqual( 'The body', response.getBody(), 'isACalloutMock.respondsWith.body( Blob ), will set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9870,8 +9870,8 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'oneValue', response.getHeader( 'one' ), 'isACalloutMock.respondsWith.header.setTo, will set the headers that are returned on the generated HttpResponse' );
-        System.assertEquals( 'twoValue', response.getHeader( 'two' ), 'isACalloutMock.respondsWith.header.setTo, will set the headers that are returned on the generated HttpResponse' );
+        Assert.areEqual( 'oneValue', response.getHeader( 'one' ), 'isACalloutMock.respondsWith.header.setTo, will set the headers that are returned on the generated HttpResponse' );
+        Assert.areEqual( 'twoValue', response.getHeader( 'two' ), 'isACalloutMock.respondsWith.header.setTo, will set the headers that are returned on the generated HttpResponse' );
     }
 
     /**
@@ -9894,9 +9894,9 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 200       , response.getStatusCode(), 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'Complete', response.getStatus()    , 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'A body'  , response.getBody()      , 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
+        Assert.areEqual( 200       , response.getStatusCode(), 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
+        Assert.areEqual( 'Complete', response.getStatus()    , 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
+        Assert.areEqual( 'A body'  , response.getBody()      , 'isACalloutMock.respondsWith, when multiple properties are set, will set them all on the generated HttpResponse' );
     }
 
     /**
@@ -9921,7 +9921,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.byDefault.respondsWith.statusCode, and does not match a defined call, will set the status that is returned on the generated HttpResponse' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.byDefault.respondsWith.statusCode, and does not match a defined call, will set the status that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9946,7 +9946,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'Complete', response.getStatus(), 'isACalloutMock.byDefault.respondsWith.status, and does not match a defined call, will set the status that is returned on the generated HttpResponse' );
+        Assert.areEqual( 'Complete', response.getStatus(), 'isACalloutMock.byDefault.respondsWith.status, and does not match a defined call, will set the status that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9971,7 +9971,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( String ), and does not match a defined call, will set the body that is returned on the generated HttpResponse' );
+        Assert.areEqual( 'The body', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( String ), and does not match a defined call, will set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -9996,7 +9996,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( '{"parameter":"value"}', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( Object ), and does not match a defined call, will serialise the object and set the body that is returned on the generated HttpResponse' );
+        Assert.areEqual( '{"parameter":"value"}', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( Object ), and does not match a defined call, will serialise the object and set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -10021,7 +10021,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'The body', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( Blob ), and does not match a defined call, will set the body that is returned on the generated HttpResponse' );
+        Assert.areEqual( 'The body', response.getBody(), 'isACalloutMock.byDefault.respondsWith.body( Blob ), and does not match a defined call, will set the body that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -10046,7 +10046,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'default', response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith.header.setTo, and does not match a defined call, will set the header that is returned on the generated HttpResponse' );
+        Assert.areEqual( 'default', response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith.header.setTo, and does not match a defined call, will set the header that is returned on the generated HttpResponse' );
     }
 
     /**
@@ -10077,10 +10077,10 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 200       , response.getStatusCode()          , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'Complete', response.getStatus()              , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'A body'  , response.getBody()                , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
-        System.assertEquals( 'true'    , response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        Assert.areEqual( 200       , response.getStatusCode()          , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        Assert.areEqual( 'Complete', response.getStatus()              , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        Assert.areEqual( 'A body'  , response.getBody()                , 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
+        Assert.areEqual( 'true'    , response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith, when multiple properties are set, and does not match a defined call, will set them all on the generated HttpResponse' );
     }
 
     /**
@@ -10113,10 +10113,10 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 404        , response.getStatusCode()          , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
-        System.assertEquals( 'Not Found', response.getStatus()              , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
-        System.assertEquals( 'No body'  , response.getBody()                , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
-        System.assertEquals( 'false'    , response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        Assert.areEqual( 404        , response.getStatusCode()          , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        Assert.areEqual( 'Not Found', response.getStatus()              , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        Assert.areEqual( 'No body'  , response.getBody()                , 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
+        Assert.areEqual( 'false'    , response.getHeader( 'Authorised' ), 'isACalloutMock.byDefault.respondsWith, when the call matches a defined one, will return the defined response instead' );
     }
 
     /**
@@ -10145,7 +10145,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (Amoss_MethodHandler), when a call is made, will be handled by the object specified' );
+        Assert.areEqual( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (Amoss_MethodHandler), when a call is made, will be handled by the object specified' );
     }
 
     /**
@@ -10165,7 +10165,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (StubProvider), when a call is made, will be handled by the object specified' );
+        Assert.areEqual( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (StubProvider), when a call is made, will be handled by the object specified' );
     }
 
     class MockHttpMethodHandlerUsingStubProvider implements StubProvider {
@@ -10207,7 +10207,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (HttpCalloutMock), when a call is made, will be handled by the object specified' );
+        Assert.areEqual( 'FromTheHandler', response.getBody(), 'isACalloutMock.handledBy (HttpCalloutMock), when a call is made, will be handled by the object specified' );
     }
 
     /**
@@ -10235,8 +10235,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( true, exceptionThrown, 'isACalloutMock.throws, when called, will throw the stated exception' );
-        System.assertEquals( 'An Exception', exceptionMessage, 'isACalloutMock.throws, when called, will throw the stated exception' );
+        Assert.areEqual( true, exceptionThrown, 'isACalloutMock.throws, when called, will throw the stated exception' );
+        Assert.areEqual( 'An Exception', exceptionMessage, 'isACalloutMock.throws, when called, will throw the stated exception' );
     }
 
     /**
@@ -10264,8 +10264,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( true, exceptionThrown, 'isACalloutMock.throwing, when called, will throw the stated exception' );
-        System.assertEquals( 'An Exception', exceptionMessage, 'isACalloutMock.throwing, when called, will throw the stated exception' );
+        Assert.areEqual( true, exceptionThrown, 'isACalloutMock.throwing, when called, will throw the stated exception' );
+        Assert.areEqual( 'An Exception', exceptionMessage, 'isACalloutMock.throwing, when called, will throw the stated exception' );
     }
 
     /**
@@ -10293,8 +10293,8 @@ public with sharing class AmossTest_InstanceTest {
             }
         Test.stopTest();
 
-        System.assertEquals( true, exceptionThrown, 'isACalloutMock.willThrow, when called, will throw the stated exception' );
-        System.assertEquals( 'An Exception', exceptionMessage, 'isACalloutMock.willThrow, when called, will throw the stated exception' );
+        Assert.areEqual( true, exceptionThrown, 'isACalloutMock.willThrow, when called, will throw the stated exception' );
+        Assert.areEqual( 'An Exception', exceptionMessage, 'isACalloutMock.willThrow, when called, will throw the stated exception' );
     }
 
     /**
@@ -10312,7 +10312,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( new HttpRequest() );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock, when no calls specified and call made, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock, when no calls specified and call made, will return an empty response' );
     }
 
     /**
@@ -10338,7 +10338,7 @@ public with sharing class AmossTest_InstanceTest {
 
         String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
 
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allowsAnyCallFalse.isACalloutMock, when no calls specified and a call is made, will fail the test' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'allowsAnyCallFalse.isACalloutMock, when no calls specified and a call is made, will fail the test' );
         Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT, exceptionMessage,  'allowsAnyCallFalse.isACalloutMock, when no calls specified and a call is made, will fail the test, with a message that explains the issue' );
     }
 
@@ -10365,7 +10365,7 @@ public with sharing class AmossTest_InstanceTest {
 
         String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
 
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.allowsAnyCallFalse, when no calls specified and a call is made, will fail the test' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.allowsAnyCallFalse, when no calls specified and a call is made, will fail the test' );
         Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT, exceptionMessage,  'isACalloutMock.allowsAnyCallFalse, when no calls specified and a call is made, will fail the test, with a message that explains the issue' );
     }
 
@@ -10390,7 +10390,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.method, when the method matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.method, when the method matches, will return as specified' );
     }
 
     /**
@@ -10422,7 +10422,7 @@ public with sharing class AmossTest_InstanceTest {
 
         String exceptionMessage = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
 
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.allowsAnyCallFalse.when.method, when called without matching method, will fail the test' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.allowsAnyCallFalse.when.method, when called without matching method, will fail the test' );
         Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT     , exceptionMessage, 'isACalloutMock.allowsAnyCallFalse.when.method, when called without matching method, will fail the test, with a message that explains the issue' );
         Amoss_Asserts.assertContains( 'System.HttpRequest[Endpoint=null, Method=POST]', exceptionMessage, 'isACalloutMock.allowsAnyCallFalse.when.method, when called without matching method, will fail the test, with a message that contains the request' );
     }
@@ -10448,7 +10448,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.method, when called without matching method, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.method, when called without matching method, will return an empty response' );
     }
 
     /**
@@ -10472,7 +10472,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint, when the endpoint matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint, when the endpoint matches, will return as specified' );
     }
 
     /**
@@ -10498,7 +10498,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint, when called without matching endpoint, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint, when called without matching endpoint, will return an empty response' );
     }
 
     /**
@@ -10522,7 +10522,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.setTo, when the endpoint matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.setTo, when the endpoint matches, will return as specified' );
     }
 
     /**
@@ -10546,7 +10546,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint.setTo, when called without matching endpoint, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint.setTo, when called without matching endpoint, will return an empty response' );
     }
 
     /**
@@ -10570,7 +10570,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.set, when the endpoint set, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.set, when the endpoint set, will return as specified' );
     }
 
     /**
@@ -10593,7 +10593,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint.set, when called without matching endpoint, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint.set, when called without matching endpoint, will return an empty response' );
     }
 
     /**
@@ -10617,7 +10617,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.containing, when the endpoint matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.containing, when the endpoint matches, will return as specified' );
     }
 
     /**
@@ -10641,7 +10641,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint.containing, when called without matching endpoint, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint.containing, when called without matching endpoint, will return an empty response' );
     }
 
     /**
@@ -10665,7 +10665,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.matching, when the endpoint matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.endpoint.matching, when the endpoint matches, will return as specified' );
     }
 
     /**
@@ -10689,7 +10689,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint.matching, when called without matching endpoint, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.endpoint.matching, when called without matching endpoint, will return an empty response' );
     }
 
     /**
@@ -10713,7 +10713,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body, when the body matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.body, when the body matches, will return as specified' );
     }
 
     /**
@@ -10737,7 +10737,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.body, when called without matching body, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.body, when called without matching body, will return an empty response' );
     }
 
     /**
@@ -10761,7 +10761,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body.setTo, when the body matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.body.setTo, when the body matches, will return as specified' );
     }
 
     /**
@@ -10785,7 +10785,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.body.setTo, when called without matching body, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.body.setTo, when called without matching body, will return an empty response' );
     }
 
     /**
@@ -10809,7 +10809,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body.set, when the body set, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.body.set, when the body set, will return as specified' );
     }
 
     /**
@@ -10832,7 +10832,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.body.set, when called without matching body, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.body.set, when called without matching body, will return an empty response' );
     }
 
     /**
@@ -10856,7 +10856,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body.containing, when the body matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.body.containing, when the body matches, will return as specified' );
     }
 
     /**
@@ -10880,7 +10880,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.body.containing, when called without matching body, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.body.containing, when called without matching body, will return an empty response' );
     }
 
     /**
@@ -10904,7 +10904,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.body.matching, when the body matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.body.matching, when the body matches, will return as specified' );
     }
 
     /**
@@ -10928,7 +10928,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.body.matching, when called without matching body, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.body.matching, when called without matching body, will return an empty response' );
     }
 
     /**
@@ -10952,7 +10952,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.header.setTo, when the header matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.header.setTo, when the header matches, will return as specified' );
     }
 
     /**
@@ -10976,7 +10976,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.header.setTo, when called without matching header, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.header.setTo, when called without matching header, will return an empty response' );
     }
 
 
@@ -11001,7 +11001,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.header.setTo, when called without matching header set at all, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.header.setTo, when called without matching header set at all, will return an empty response' );
     }
 
     /**
@@ -11025,7 +11025,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.header.set, when the header set, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.header.set, when the header set, will return as specified' );
     }
 
     /**
@@ -11048,7 +11048,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'iisACalloutMock.when.header.set, when called without matching header, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'iisACalloutMock.when.header.set, when called without matching header, will return an empty response' );
     }
 
     /**
@@ -11072,7 +11072,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.header.containing, when the header matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.header.containing, when the header matches, will return as specified' );
     }
 
     /**
@@ -11096,7 +11096,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.header.containing, when called without matching header, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.header.containing, when called without matching header, will return an empty response' );
     }
 
     /**
@@ -11120,7 +11120,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.header.matching, when the header matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.header.matching, when the header matches, will return as specified' );
     }
 
     /**
@@ -11144,7 +11144,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.header.matching, when called without matching header, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.header.matching, when called without matching header, will return an empty response' );
     }
 
     /**
@@ -11168,7 +11168,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.compressed, when the request is compressed, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.compressed, when the request is compressed, will return as specified' );
     }
 
     /**
@@ -11192,7 +11192,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.compressed, when called with request that is not compressed, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.compressed, when called with request that is not compressed, will return an empty response' );
     }
 
     /**
@@ -11215,7 +11215,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.compressed, when called with request with compressed not set, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.compressed, when called with request with compressed not set, will return an empty response' );
     }
 
     /**
@@ -11239,7 +11239,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when the request is not compressed, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when the request is not compressed, will return as specified' );
     }
 
     /**
@@ -11263,7 +11263,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when called with request that is compressed, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when called with request that is compressed, will return an empty response' );
     }
 
     /**
@@ -11286,7 +11286,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when the request does not have compressed set, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.notCompressed, when the request does not have compressed set, will return as specified' );
     }
 
     /**
@@ -11316,7 +11316,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when, when multiple properties set, and the call matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when, when multiple properties set, and the call matches, will return as specified' );
     }
 
     /**
@@ -11348,7 +11348,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 0, response.getStatusCode(), 'isACalloutMock.when, when multiple properties set, and the call does not match, will return an empty response' );
+        Assert.areEqual( 0, response.getStatusCode(), 'isACalloutMock.when, when multiple properties set, and the call does not match, will return an empty response' );
     }
 
     /**
@@ -11380,7 +11380,7 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and a call matches one, will return as specified' );
+        Assert.areEqual( 404, response.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and a call matches one, will return as specified' );
     }
 
     /**
@@ -11420,9 +11420,9 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.stopTest();
 
-        System.assertEquals( 404, response404.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 0' );
-        System.assertEquals( 500, response500.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 1' );
-        System.assertEquals( 200, response200.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 2' );
+        Assert.areEqual( 404, response404.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 0' );
+        Assert.areEqual( 500, response500.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 1' );
+        Assert.areEqual( 200, response200.getStatusCode(), 'isACalloutMock.when, when multiple definitions set, and multiple calls made, will return as specified - 2' );
     }
 
     /**
@@ -11458,7 +11458,7 @@ public with sharing class AmossTest_InstanceTest {
 
         customVerifierController.verify();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_ValueVerifier), when the verifier matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_ValueVerifier), when the verifier matches, will return as specified' );
     }
 
     /**
@@ -11498,7 +11498,7 @@ public with sharing class AmossTest_InstanceTest {
 
         customVerifierController.verify();
 
-        System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_ValueVerifier), when the verifier does not match, will not return what was specified for that call' );
+        Assert.areEqual( 404, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_ValueVerifier), when the verifier does not match, will not return what was specified for that call' );
     }
 
 
@@ -11535,7 +11535,7 @@ public with sharing class AmossTest_InstanceTest {
 
         customVerifierController.verify();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier), when the verifier matches, will return as specified' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier), when the verifier matches, will return as specified' );
     }
 
     /**
@@ -11575,7 +11575,7 @@ public with sharing class AmossTest_InstanceTest {
 
         customVerifierController.verify();
 
-        System.assertEquals( 404, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier), when the verifier does not match, will not return what was specified for that call' );
+        Assert.areEqual( 404, response.getStatusCode(), 'isACalloutMock.when.verifiedBy (Amoss_HttpRequestVerifier), when the verifier does not match, will not return what was specified for that call' );
     }
 
     /**
@@ -11602,13 +11602,13 @@ public with sharing class AmossTest_InstanceTest {
             } catch( TestException e ) {}
         Test.stopTest();
 
-        System.assertEquals( '' , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with an empty string as expected' );
+        Assert.areEqual( '' , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with an empty string as expected' );
 
         String expectedMethodCall = 'respond(System.HttpRequest[Endpoint=null, Method=null])';
-        System.assertEquals( expectedMethodCall, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with the method called as actual' );
+        Assert.areEqual( expectedMethodCall, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with the method called as actual' );
 
         String expectedAssertion = 'Did not expect any HTTP Callouts to be made';
-        System.assertEquals( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( expectedAssertion, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'isACalloutMock.expectsNoCalls, when a callout is made, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -11636,7 +11636,7 @@ public with sharing class AmossTest_InstanceTest {
 
         customVerifierController.verify();
 
-        System.assertEquals( 200, response.getStatusCode(), 'isACalloutMock.expects.verify, when a call matches, returns' );
+        Assert.areEqual( 200, response.getStatusCode(), 'isACalloutMock.expects.verify, when a call matches, returns' );
     }
 
     /**
@@ -11706,8 +11706,8 @@ public with sharing class AmossTest_InstanceTest {
 
         customVerifierController.verify();
 
-        System.assertEquals( 200, response1.getStatusCode(), 'isACalloutMock.expects.verify, when the calls match, returns - call 1' );
-        System.assertEquals( 404, response2.getStatusCode(), 'isACalloutMock.expects.verify, when the calls match, returns - call 2' );
+        Assert.areEqual( 200, response1.getStatusCode(), 'isACalloutMock.expects.verify, when the calls match, returns - call 1' );
+        Assert.areEqual( 404, response2.getStatusCode(), 'isACalloutMock.expects.verify, when the calls match, returns - call 2' );
     }
 
     /**
@@ -11750,9 +11750,9 @@ public with sharing class AmossTest_InstanceTest {
         String expectedAssertion = 'Expected more HTTP Callouts to be made';
         String expectedCall      = 'respond( request => HttpRequest with the method POST )';
 
-        System.assertEquals( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with an expected empty call stack' );
-        System.assertEquals( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with a call stack description that contains a message stating the calls that were expected' );
-        System.assertEquals( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( new List<String>()              , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 0 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with an expected empty call stack' );
+        Assert.areEqual( new List<String>{ expectedCall }, assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 1 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with a call stack description that contains a message stating the calls that were expected' );
+        Assert.areEqual( expectedAssertion               , assertsDoubleController.get().latestCallOf( 'assertEquals' ).parameter( 2 ), 'isACalloutMock.expects.expects.verify, when few calls were made than specified, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
 
     /**
@@ -11780,9 +11780,9 @@ public with sharing class AmossTest_InstanceTest {
             HttpResponse response3  = new Http().send( request );
         Test.stopTest();
 
-        System.assertEquals( 200, response1.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (1)' );
-        System.assertEquals( 200, response2.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (2)' );
-        System.assertEquals( 200, response3.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (3)' );
+        Assert.areEqual( 200, response1.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (1)' );
+        Assert.areEqual( 200, response2.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (2)' );
+        Assert.areEqual( 200, response3.getStatusCode(), 'isACalloutMock.allows, when multiple calls made that match, returns (3)' );
     }
 
     /**
@@ -11815,7 +11815,7 @@ public with sharing class AmossTest_InstanceTest {
             } catch ( Exception e ) {} // NOPMD: catching the exception thrown by the mock assert
         Test.stopTest();
 
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.allows, when request made that does not match, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), 'isACalloutMock.allows, when request made that does not match, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
         Amoss_Asserts.assertContains( HTTP_CALLOUT_MOCK_UNEXPECTED_EXCEPTION_TEXT, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'isACalloutMock.allows, when request made that does not match, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
         Amoss_Asserts.assertContains( 'respond(System.HttpRequest[Endpoint=null, Method=POST])', assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 ), 'isACalloutMock.allows, when request made that does not match, will fail by calling assertEquals with an assertion message that clearly describes the issue' );
     }
@@ -11889,7 +11889,7 @@ public with sharing class AmossTest_InstanceTest {
 
     private static void checkForWrongParameterInPositionAssertion( Amoss_Instance assertsDoubleController, String expectedDetailAssertion, String method, Integer parameterPosition, String message ) {
 
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), message + ', will fail, by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), message + ', will fail, by calling assert with false' );
 
         String expectedAssertion = method + ' had a problem with the parameter value in position ' + String.valueOf( parameterPosition );
         String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
@@ -11917,7 +11917,7 @@ public with sharing class AmossTest_InstanceTest {
 
     private static void checkForEqualsAssertionFailure( Amoss_Instance assertsDoubleController, String expectedDetailAssertion, String expectedAssertion, Object expected, Object actual, String message ) {
 
-        System.assertEquals( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), message + ', will fail, by calling assert with false' );
+        Assert.areEqual( false, assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 0 ), message + ', will fail, by calling assert with false' );
 
         String actualAssertion = (String)assertsDoubleController.get().latestCallOf( 'assert' ).parameter( 1 );
 
@@ -11959,13 +11959,13 @@ public with sharing class AmossTest_InstanceTest {
         Http transport = new Http();
         HttpResponse response = transport.send( request );
 
-        System.assertEquals( 200, response.getStatusCode() );
-        System.assertEquals( 'Complete', response.getStatus() );
+        Assert.areEqual( 200, response.getStatusCode() );
+        Assert.areEqual( 'Complete', response.getStatus() );
 
         response = transport.send( request );
 
-        System.assertEquals( 500, response.getStatusCode() );
-        System.assertEquals( 'Error', response.getStatus() );
+        Assert.areEqual( 500, response.getStatusCode() );
+        Assert.areEqual( 'Error', response.getStatus() );
 
     }
 
