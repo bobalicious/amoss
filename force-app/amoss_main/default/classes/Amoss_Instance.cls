@@ -1222,6 +1222,21 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States that the current double (I.E. the effective 'this') should be returned when this 'expectation' or 'when' is met.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .returnsItself()
+        *
+        * Has 'returningItself' and 'willReturnItself' as synonyms, and these methods are entirely interchangeable based on preference.
+        */
+		public Amoss_NextExpectationDefiner returnsItself() {
+			expectation.setExpectionReturns( new Amoss_ExpectationValueReturn().setReturnValue( expectation.getAmossInstance().getDouble() ) );
+			return new Amoss_NextExpectationDefiner( expectation );
+		}
+
+        /**
         * States the value that should be returned when this 'expectation' or 'when' is met.
         *
         * For example, to specify:
@@ -1238,6 +1253,20 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         }
 
         /**
+        * States that the current double (I.E. the effective 'this') should be returned when this 'expectation' or 'when' is met.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .willReturnItself()
+        *
+        * Has 'returningItself' and 'returnsItself' as synonyms, and these methods are entirely interchangeable based on preference.
+        */
+		public Amoss_NextExpectationDefiner willReturnItself() {
+			return this.returnsItself();
+		}
+
+        /**
         * States the value that should be returned when this 'expectation' or 'when' is met.
         *
         * For example, to specify:
@@ -1252,6 +1281,21 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public Amoss_NextExpectationDefiner returning( Object returnValue ) {
             return this.returns( returnValue );
         }
+
+        /**
+        * States that the current double (I.E. the effective 'this') should be returned when this 'expectation' or 'when' is met.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .returningItself()
+        *
+        * Has 'willReturnItself' and 'returnsItself' as synonyms, and these methods are entirely interchangeable based on preference.
+        */
+		public Amoss_NextExpectationDefiner returningItself() {
+			return this.returnsItself();
+		}
+
 
         /**
         * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
@@ -3256,7 +3300,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public override String getParametersDescription() {
             List<String> stringParameters = new List<String>();
             for( Object thisParameter : expectedParameters ) {
-                stringParameters.add( String.valueOf( thisParameter ) );
+				stringParameters.add( toString( thisParameter ) );
             }
             return String.join( stringParameters, ', ' );
         }
@@ -3341,7 +3385,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         public override String getParametersDescription() {
             List<String> stringParameters = new List<String>();
             for( String thisParameterName : expectedParameters.keySet() ) {
-                stringParameters.add( thisParameterName + ' => ' + String.valueOf( expectedParameters.get( thisParameterName ) ) );
+                stringParameters.add( thisParameterName + ' => ' + toString( expectedParameters.get( thisParameterName ) ) );
             }
             return String.join( stringParameters, ', ' );
         }
@@ -3602,7 +3646,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
                     throw new Amoss_EqualsAssertionFailureException()
                                 .setExpected( this.value )
                                 .setActual( actualValue )
-                                .setAssertionMessage( 'The value is not what was expected - If it is an object, it may be the wrong instance' );
+                                .setAssertionMessage( 'The value is not what was expected - If it is an object, it may be the wrong instance (consider setToTheSameValueAs if you only require equivalence rather than equality)' );
                 }
             }
         }
@@ -5704,4 +5748,17 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
             return standardHandler.respond( (HttpRequest)parameters[0] );
         }
     }
+
+	private static String toString( Object parameterValue )
+	{
+		String stringParameter =  String.valueOf( parameterValue );
+		if ( stringParameter == null ) {
+			return 'null';
+		}
+
+		if ( String.isBlank( stringParameter ) ) {
+			return '\'' + stringParameter + '\'';
+		}
+		return stringParameter;
+	}
 }

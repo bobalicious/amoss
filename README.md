@@ -350,6 +350,24 @@ This means that `canDeliver` and `scheduleDelivery` can be called in any order, 
 
 ## Specifying return values in different ways
 
+### `returnsItself` / `returningItself` / `willReturnItself`
+
+If you wish to define a method as returning 'this' - for example, if your class implements a flient interface, you can use `returnsItself` or one of its synonyms.
+
+For example, the following is true:
+
+```java
+
+Amoss_Instance classController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classController
+    .when( 'fluentMethod' )
+	.returnsItself();
+
+AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
+
+Assert.areEqual( classDouble, classDouble.fluentMethod() );
+```
+
 ### `isFluent`
 
 Defining a controller as `isFluent` will ensure that all otherwise unspecified method calls will return an instance of the generated Test Double.
@@ -398,7 +416,23 @@ AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.g
 Assert.areEqual( null, classDouble.fluentMethod() );
 ```
 
+If you wish to define a method as being fluent in such a scenario, you can use `returningItself` or one of its synonyms.  For example, the following is true:
+
+```java
+
+Amoss_Instance classController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+classController
+    .isFluent()
+    .when( 'fluentMethod' )
+	.returnsItself();
+
+AmossTest_ClassToDouble classDouble = (AmossTest_ClassToDouble)classController.getDouble();
+
+Assert.areEqual( classDouble, classDouble.fluentMethod() );
+```
+
 It should be noted that if a method is called that has an incompatible type, then a "System.TypeException: Invalid conversion from runtime type..." exception will be thrown.  Currently, there is no way for Amoss to detect and stop this exception from occurring.  If Salesforce provides the capabiliy to stop this from occurring in the future, then the library will be updated to more helpfully describe the issue, or stop it from occurring.
+
 
 #### Behaviour with `createClone` and `generateDouble`
 

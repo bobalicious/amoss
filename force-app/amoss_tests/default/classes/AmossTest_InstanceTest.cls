@@ -105,13 +105,58 @@ public with sharing class AmossTest_InstanceTest {
 
         classToDoubleController
             .when( 'methodUnderDouble' )
-                .willReturn( 'expectedReturn' );
+            	.willReturn( 'expectedReturn' );
 
         Test.startTest();
             String returnFromDouble = classToDouble.methodUnderDouble( 'OtherActualParam1', 1 );
         Test.stopTest();
 
         Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.willReturn (shortcut), and the method called, will return the stated value, regardless of the parameters passed' );
+    }
+
+    /**
+    * @method when.method.willReturnItself
+    * @case   when that method is called
+    * @result will return the double
+    */
+    @isTest
+    private static void whenMethodWillReturnItself_whenCalled_returnTheDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'fluentMethod' )
+                .willReturnItself();
+
+        Test.startTest();
+			AmossTest_ClassToDouble returnFromDouble = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        Assert.areEqual( classToDoubleController.getDouble(), returnFromDouble, 'when.method.willReturnItself, and the method called, will return the double' );
+    }
+
+    /**
+    * @method when.method.willReturnItself (shortcut version)
+    * @case   when that method is called
+    * @result will return the double
+    */
+    @isTest
+    private static void whenMethodWillReturnItselfShortcut_whenCalled_returnTheDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when( 'fluentMethod' )
+				.willReturnItself();
+
+        Test.startTest();
+			AmossTest_ClassToDouble returnFromDouble = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        Assert.areEqual( classToDoubleController.getDouble(), returnFromDouble, 'when.method.willReturn (shortcut), and the method called, will return the double' );
     }
 
     /**
@@ -138,6 +183,29 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.returnsItself
+    * @case   when that method is called
+    * @result will return the double
+    */
+    @isTest
+    private static void whenMethodReturnsItself_whenCalled_returnTheDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'fluentMethod' )
+                .returnsItself();
+
+        Test.startTest();
+			AmossTest_ClassToDouble returnFromDouble = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        Assert.areEqual( classToDoubleController.getDouble(), returnFromDouble, 'when.method.returnsItself, and the method called, will return the double' );
+    }
+
+    /**
     * @method when.method.returning
     * @case   when that method is called
     * @result will return the stated value
@@ -158,6 +226,29 @@ public with sharing class AmossTest_InstanceTest {
         Test.stopTest();
 
         Assert.areEqual( 'expectedReturn', returnFromDouble, 'when.method.returning, and the method called, will return the stated value' );
+    }
+
+    /**
+    * @method when.method.returningItself
+    * @case   when that method is called
+    * @result will return the double
+    */
+    @isTest
+    private static void whenMethodReturningItself_whenCalled_returnTheDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'fluentMethod' )
+                .returningItself();
+
+        Test.startTest();
+			AmossTest_ClassToDouble returnFromDouble = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        Assert.areEqual( classToDoubleController.getDouble(), returnFromDouble, 'when.method.returningItself, and the method called, will return the double' );
     }
 
     /**
@@ -10462,13 +10553,13 @@ public with sharing class AmossTest_InstanceTest {
         new Amoss_Instance()
             .isACalloutMock()
             .when()
-                .endpoint( 'http://www.example.com' )
+                .endpoint( 'https://www.example.com' )
                 .respondsWith()
                     .statusCode( 200 );
 
         Test.startTest();
             HttpRequest request = new HttpRequest();
-            request.setEndpoint( 'http://www.example.com' );
+            request.setEndpoint( 'https://www.example.com' );
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
@@ -10488,7 +10579,7 @@ public with sharing class AmossTest_InstanceTest {
         new Amoss_Instance()
             .isACalloutMock()
             .when()
-                .endpoint( 'http://www.example.com' )
+                .endpoint( 'https://www.example.com' )
                 .respondsWith()
                     .statusCode( 200 );
 
@@ -10512,13 +10603,13 @@ public with sharing class AmossTest_InstanceTest {
         new Amoss_Instance()
             .isACalloutMock()
             .when()
-                .endpoint().setTo( 'http://www.example.com' )
+                .endpoint().setTo( 'https://www.example.com' )
                 .respondsWith()
                     .statusCode( 200 );
 
         Test.startTest();
             HttpRequest request = new HttpRequest();
-            request.setEndpoint( 'http://www.example.com' );
+            request.setEndpoint( 'https://www.example.com' );
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
@@ -10536,7 +10627,7 @@ public with sharing class AmossTest_InstanceTest {
         new Amoss_Instance()
             .isACalloutMock()
             .when()
-                .endpoint().setTo( 'http://www.example.com' )
+                .endpoint().setTo( 'https://www.example.com' )
                 .respondsWith()
                     .statusCode( 200 );
 
@@ -10566,7 +10657,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.startTest();
             HttpRequest request = new HttpRequest();
-            request.setEndpoint( 'http://www.example.com' );
+            request.setEndpoint( 'https://www.example.com' );
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
@@ -10613,7 +10704,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.startTest();
             HttpRequest request = new HttpRequest();
-            request.setEndpoint( 'http://www.example.com' );
+            request.setEndpoint( 'https://www.example.com' );
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
@@ -10661,7 +10752,7 @@ public with sharing class AmossTest_InstanceTest {
 
         Test.startTest();
             HttpRequest request = new HttpRequest();
-            request.setEndpoint( 'http://www.example.com' );
+            request.setEndpoint( 'https://www.example.com' );
             HttpResponse response  = new Http().send( request );
         Test.stopTest();
 
@@ -11944,7 +12035,7 @@ public with sharing class AmossTest_InstanceTest {
                     .body( '[{"Name":"sForceTest1"}]' )
                 .then().expects()
                     .method( 'GET' )
-                    .endpoint( 'http://api.example.com/accounts' )
+                    .endpoint( 'https://api.example.com/accounts' )
                     .header( 'Authorization' ).setTo( 'value' )
                 .respondsWith()
                     .statusCode( 500 )
@@ -11953,7 +12044,7 @@ public with sharing class AmossTest_InstanceTest {
 
         HttpRequest request = new HttpRequest();
         request.setMethod( 'GET' );
-        request.setEndpoint( 'http://api.example.com/accounts' );
+        request.setEndpoint( 'https://api.example.com/accounts' );
         request.setHeader( 'Authorization', 'value' );
 
         Http transport = new Http();
