@@ -252,6 +252,29 @@ public with sharing class AmossTest_InstanceTest {
     }
 
     /**
+    * @method when.method.isFluent
+    * @case   when that method is called
+    * @result will return the double
+    */
+    @isTest
+    private static void whenMethodIsFluent_whenCalled_returnTheDouble() {
+
+        Amoss_Instance classToDoubleController = new Amoss_Instance( AmossTest_ClassToDouble.class );
+        AmossTest_ClassToDouble classToDouble = (AmossTest_ClassToDouble)classToDoubleController.getDouble();
+
+        classToDoubleController
+            .when()
+                .method( 'fluentMethod' )
+                .isFluent();
+
+        Test.startTest();
+			AmossTest_ClassToDouble returnFromDouble = classToDouble.fluentMethod();
+        Test.stopTest();
+
+        Assert.areEqual( classToDoubleController.getDouble(), returnFromDouble, 'when.method.isFluent, and the method called, will return the double' );
+    }
+
+    /**
     * @method isFluent
     * @case   when an unspecified, fluent method is called
     * @result will return the generated double

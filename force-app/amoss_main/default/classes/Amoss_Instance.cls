@@ -1229,7 +1229,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .method( 'methodName' )
         *       .returnsItself()
         *
-        * Has 'returningItself' and 'willReturnItself' as synonyms, and these methods are entirely interchangeable based on preference.
+        * Has 'returningItself', 'willReturnItself'  and 'isFluent' as synonyms, and these methods are entirely interchangeable based on preference.
         */
 		public Amoss_NextExpectationDefiner returnsItself() {
 			expectation.setExpectionReturns( new Amoss_ExpectationValueReturn().setReturnValue( expectation.getAmossInstance().getDouble() ) );
@@ -1260,7 +1260,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .method( 'methodName' )
         *       .willReturnItself()
         *
-        * Has 'returningItself' and 'returnsItself' as synonyms, and these methods are entirely interchangeable based on preference.
+        * Has 'returningItself', 'returnsItself' and 'isFluent' as synonyms, and these methods are entirely interchangeable based on preference.
         */
 		public Amoss_NextExpectationDefiner willReturnItself() {
 			return this.returnsItself();
@@ -1290,12 +1290,26 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         *       .method( 'methodName' )
         *       .returningItself()
         *
-        * Has 'willReturnItself' and 'returnsItself' as synonyms, and these methods are entirely interchangeable based on preference.
+        * Has 'willReturnItself', 'returnsItself' and 'isFluent' as synonyms, and these methods are entirely interchangeable based on preference.
         */
 		public Amoss_NextExpectationDefiner returningItself() {
 			return this.returnsItself();
 		}
 
+
+		/**
+        * States that the current double (I.E. the effective 'this') should be returned when this 'expectation' or 'when' is met.
+        *
+        * For example, to specify:
+        *   .when()
+        *       .method( 'methodName' )
+        *       .returnsItself()
+        *
+        * Has 'returningItself', 'willReturnItself' and 'returnsItself' as synonyms, and these methods are entirely interchangeable based on preference.
+        */
+		public Amoss_NextExpectationDefiner isFluent() {
+			return this.returnsItself();
+		}
 
         /**
         * States that when this 'expectation' or 'when' is met, the method show throw the given exception.
