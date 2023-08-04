@@ -74,6 +74,9 @@ public with sharing class Amoss_Asserts {
      * @param String - The assertion message
      */
     public static void assertContains( String expectedString, Object actualString, String assertionMessage ) {
+        if ( actualString == null && expectedString != null ) {
+			Assert.isTrue(false, assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
+        }
         Assert.isTrue( ((String)actualString).contains( expectedString ), assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
     }
 
@@ -89,6 +92,40 @@ public with sharing class Amoss_Asserts {
      */
     public static void assertDoesNotContain( String expectedString, String actualString, String assertionMessage ) {
         Assert.isTrue( ! actualString.contains( expectedString ), assertionMessage + ' (looking for: ' + expectedString + ', got: ' + actualString + ')' );
+    }
+
+    /**
+     * Assert that the actualString ends with the expectedString
+     *
+     * Provided as this is a common assertion case, and usually requires the building
+     * of an assertion message for clarity when the assertion fails.
+     *
+     * @param String - The string to search for (expected)
+     * @param Object - The string to search within (actual)
+     * @param String - The assertion message
+     */
+    public static void assertEndsWith( String expectedString, Object actualString, String assertionMessage ) {
+        if ( actualString == null && expectedString != null ) {
+            Assert.isTrue(false, assertionMessage + ' (looking for ending with: ' + expectedString + ', got: ' + actualString + ')' );
+        }
+        Assert.isTrue( ((String)actualString).endsWith( expectedString ), assertionMessage + ' (looking for ending with: ' + expectedString + ', got: ' + actualString + ')' );
+    }
+
+    /**
+     * Assert that the actualString starts with with the expectedString
+     *
+     * Provided as this is a common assertion case, and usually requires the building
+     * of an assertion message for clarity when the assertion fails.
+     *
+     * @param String - The string to search for (expected)
+     * @param Object - The string to search within (actual)
+     * @param String - The assertion message
+     */
+    public static void assertStartsWith( String expectedString, Object actualString, String assertionMessage ) {
+        if ( actualString == null && expectedString != null ) {
+            Assert.isTrue(false, assertionMessage + ' (looking for starting with: ' + expectedString + ', got: ' + actualString + ')' );
+        }
+        Assert.isTrue( ((String)actualString).startsWith( expectedString ), assertionMessage + ' (looking for starting with: ' + expectedString + ', got: ' + actualString + ')' );
     }
 
     /**
