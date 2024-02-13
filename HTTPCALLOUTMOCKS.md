@@ -41,7 +41,7 @@ httpCalloutMock
         .respondsWith()
             .status( 'Complete' )
             .statusCode( 200 )
-            .body( Map<String,Object>{ 'parameter' => 'value' } )
+            .body( new Map<String,Object>{ 'parameter' => 'value' } )
             .header( 'ResponseHeaderKey' ).setTo( 'value' )
 ```
 
@@ -100,7 +100,7 @@ httpCalloutMock
         .respondsWith()
             .status( 'Complete' )
             .statusCode( 200 )
-            .body( Map<String,Object>{ 'parameter' => 'value' } )
+            .body( new Map<String,Object>{ 'parameter' => 'value' } )
             .header( 'ResponseHeaderKey' ).setTo( 'value' );
 ```
 
@@ -125,7 +125,7 @@ httpCalloutMock
         .respondsWith()
             .status( 'Complete' )
             .statusCode( 200 )
-            .body( Map<String,Object>{ 'parameter' => 'value' } )
+            .body( new Map<String,Object>{ 'parameter' => 'value' } )
     .also().when()
         .method( 'POST' )
         .respondsWith()
@@ -209,7 +209,7 @@ Amoss_Instance httpCalloutMock = new Amoss_Instance();
 httpCalloutMock
     .isACalloutMock()
     .when()
-        .header( 'Authorization' ).setTo()
+        .header( 'Authorization' ).set()
         .respondsWith()
             .status( 'Complete' )
             .statusCode( 200 );
@@ -228,7 +228,7 @@ Amoss_Instance httpCalloutMock = new Amoss_Instance();
 httpCalloutMock
     .isACalloutMock()
     .when()
-        .endpoint().contains( 'account/12345' )
+        .endpoint().containing( 'account/12345' )
         .respondsWith()
             .status( 'Complete' )
             .statusCode( 200 );
@@ -249,7 +249,7 @@ Amoss_Instance httpCalloutMock = new Amoss_Instance();
 httpCalloutMock
     .isACalloutMock()
     .when()
-        .endpoint().matches( '.*/account/12345' )
+        .endpoint().matching( '.*/account/12345' )
         .respondsWith()
             .status( 'Complete' )
             .statusCode( 200 );
