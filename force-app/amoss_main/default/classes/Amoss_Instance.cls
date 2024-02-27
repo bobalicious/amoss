@@ -47,6 +47,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
     public class Amoss_ExpectsNoCallsAndCallsConfiguredException extends Exception {}
     public class Amoss_ExpectedObjectCannotBeNullException extends Exception {}
     public class Amoss_NotAnHttpCalloutMockException extends Exception {}
+	public class Amoss_UnsupportedSameValueAsTypeException extends Exception {}
 
     private Amoss_Expectations expectations = new Amoss_Expectations();
     private Amoss_Expectations whens        = new Amoss_Expectations();
@@ -65,7 +66,7 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
 
     private String moreCallsThanExpectedMessage = '{0}.{1} was called more times than was expected';
     private String expectedNoCallsMessage = '{0} did not expect any methods to be called';
-    private String expectedEmptyCallStackMessage = 'Expected call stack for {0} should be empty, and it is not';
+    private String expectedEmptyCallStackMessage = 'Expected the list of "expects" methods against {0} to be empty, and it is not.  This means that these "expects" calls against the mock controller have not happened.';
 
     public static Amoss_ValueVerifierBuilder valueVerifierBuilder = new Amoss_ValueVerifierBuilder();
 
@@ -3958,6 +3959,13 @@ public without sharing class Amoss_Instance implements StubProvider { //NOPMD - 
         * @return Amoss_SameValueAsVerifier - Itself, allowing for a fluent interface
         */
         public Amoss_SameValueAsVerifier setValueToVerifyAgainst( Object value ) {
+
+			try {
+				JSON.serialize( value );
+			}
+			catch( Exception e ) {
+				throw new Amoss_UnsupportedSameValueAsTypeException( 'setToTheSameValueAs only supports types that can be JSON Serialized, and the passed value cannot (' + String.valueOf( value ) + ').\nConsider using "setTo", and if that is not possible, consider using an "anyParameter" method and checking the value of the parameter after the call instead.', e );
+			}
             this.value = value;
             return this;
         }
