@@ -2,6 +2,14 @@
 
 Apex Mock Objects, Spies and Stubs - A Simple Mocking framework for Apex (Salesforce)
 
+## Costs, and a note from the author...
+
+Use, replication and extension of Amoss is entirely free, and provided without support (see the associated license, which will take precendence in any ambiguity).
+
+If you wish to donate to the original author and major contributor, you can do so via the original source repository (https://github.com/bobalicious), and using the Sponsorship button on that site.
+
+Please note, there is no obligation to donate, and doing so does not imply any form of contract or support arrangement.  I'll always do my best to help though... just reach out to me.
+
 ## Why use Amoss?
 
 Amoss provides a simple interface for implementing Mock, Test Spy and Stub objects (Test Doubles) for use in Unit Testing.
